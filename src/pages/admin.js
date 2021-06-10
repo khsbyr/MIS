@@ -85,6 +85,7 @@ class Admin extends React.Component {
                 <Menu.Item key="14" icon={<NotificationOutlined />}>Төлөвлөгөө</Menu.Item>
                 <Menu.Item key="15" icon={<NotificationOutlined />}>Тайлан</Menu.Item>
                 <Menu.Item key="15" icon={<NotificationOutlined />}>Хянах самбар</Menu.Item>
+                <Menu.Item key="20" icon={<NotificationOutlined />}>Login</Menu.Item>
               </Menu>
             </Sider>
             <Layout className="site-layout">
