@@ -1,0 +1,125 @@
+import React from "react";
+import "antd/dist/antd.css";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Layout, Menu } from "antd";
+import {
+  UserOutlined,
+  LaptopOutlined,
+  NotificationOutlined,
+} from "@ant-design/icons";
+// import {useTranslation} from 'react-i18next';
+import Criteria from "./criteria";
+import Plan from "./plan";
+
+const { SubMenu } = Menu;
+const { Header, Content, Sider } = Layout;
+
+class Admin extends React.Component {
+  state = {
+    collapsed: false,
+  };
+
+  toggle = () => {
+    this.setState({
+      collapsed: !this.state.collapsed,
+    });
+  };
+
+  render() {
+    return (
+      <Router>
+        <Layout>
+          <Header className="header">
+            {/* <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["2"]}>
+              <Menu.Item key="1">
+                {" "}
+                <Link to="/criteria">Шалгуур үзүүлэлт</Link>
+              </Menu.Item>
+              <Menu.Item key="2">
+                {" "}
+                <Link to="/plan">Төлөвлөгөө</Link>
+              </Menu.Item>
+              <Menu.Item key="3">nav 3</Menu.Item>
+            </Menu> */}
+          </Header>
+          <Layout>
+            <Sider
+              className="site-layout-background"
+              trigger={null}
+              collapsible
+              collapsed={this.state.collapsed}
+              width="300px"
+            >
+              <Menu
+                className="menu"
+                mode="inline"
+                defaultSelectedKeys={["1"]}
+                style={{ height: "100%", borderRight: 0 }}
+              >
+                <SubMenu key="sub1" icon={<UserOutlined />} title="Шалгуур үзүүлэлт">
+                  <Menu.Item key="1">{" "}
+                <Link to="/criteria">Шалгуур үзүүлэлт</Link></Menu.Item>
+                  <Menu.Item key="2">option2</Menu.Item>
+                  <Menu.Item key="3">option3</Menu.Item>
+                  <Menu.Item key="4">option4</Menu.Item>
+                </SubMenu>
+                <SubMenu key="sub2" icon={<LaptopOutlined />} title="Сургалт">
+                  <Menu.Item key="5">{" "}
+                <Link to="/plan">Төлөвлөгөө</Link>
+                </Menu.Item>
+                  <Menu.Item key="6">option6</Menu.Item>
+                  <Menu.Item key="7">option7</Menu.Item>
+                  <Menu.Item key="8">option8</Menu.Item>
+                </SubMenu>
+                <SubMenu
+                  key="sub3"
+                  icon={<NotificationOutlined />}
+                  title="Түншлэл"
+                >
+                  <Menu.Item key="9">option9</Menu.Item>
+                  <Menu.Item key="10">option10</Menu.Item>
+                  <Menu.Item key="11">option11</Menu.Item>
+                  <Menu.Item key="12">option12</Menu.Item>
+                </SubMenu>
+                <Menu.Item key="13" icon={<NotificationOutlined />}>Төсөл</Menu.Item>
+                <Menu.Item key="14" icon={<NotificationOutlined />}>Төлөвлөгөө</Menu.Item>
+                <Menu.Item key="15" icon={<NotificationOutlined />}>Тайлан</Menu.Item>
+                <Menu.Item key="15" icon={<NotificationOutlined />}>Хянах самбар</Menu.Item>
+              </Menu>
+            </Sider>
+            <Layout className="site-layout">
+              {/* <Header className="site-layout-background" style={{ padding: 0 }}>
+                {React.createElement(
+                  this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+                  {
+                    className: "trigger",
+                    onClick: this.toggle,
+                  }
+                )}
+              </Header> */}
+              <Content
+                className="site-layout-background"
+                style={{
+                  padding: 24,
+                  margin: 0,
+                  minHeight: 280,
+                }}
+              >
+                <Switch>
+                  <Route exact path="/criteria">
+                    <Criteria />
+                  </Route>
+                  <Route path="/plan">
+                    <Plan />
+                  </Route>
+                </Switch>{" "}
+              </Content>
+            </Layout>
+          </Layout>
+        </Layout>
+        ,
+      </Router>
+    );
+  }
+}
+export default Admin;
