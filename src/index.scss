@@ -12,9 +12,9 @@ code {
     monospace;
 }
 .trigger {
-  padding: 0 24px;
+  padding: 0;
   font-size: 18px;
-  line-height: 64px;
+  line-height: 50px;
   cursor: pointer;
   transition: color 0.3s;
 }
@@ -38,7 +38,11 @@ code {
 .site-layout-background {
   background: #fff;
 }
-.ant-layout-header {
-  padding: 0px;
-  background-color: #fff;
+
+.ant-menu-root.ant-menu-vertical, 
+.ant-menu-root.ant-menu-vertical-left, .ant-menu-root.ant-menu-vertical-right, .ant-menu-root.ant-menu-inline {
+  margin-top: "50px"
 }
+.ant-layout-header {
+  padding: 0px 0px !important;    
+}   

@@ -1,8 +1,6 @@
 import React from "react";
 import 'antd/dist/antd.css';
-import { Header } from "antd/lib/layout/layout";
 import { Button, Row, Col, Form, Input  } from "antd";
-import {EnvironmentFilled, GlobalOutlined, PhoneFilled, MailFilled } from '@ant-design/icons';
 import TextWrapper, {LogIn} from "./Login.style"
 
 const Register = () => {
@@ -13,22 +11,6 @@ const Register = () => {
     
     return (
         <>
-        <Header style={{backgroundColor: "#103154"}}>
-            <Row>
-                <Col xs={24} md={15}>
-                    
-                    <p style={{color: "white", float: "left", marginLeft: "80px"}}><EnvironmentFilled/> Монгол Улс, Улаанбаатар, 1-р хороо, Сүхбаатар дүүрэг, Парк плэйс оффис, 602 тоот</p>
-                </Col>
-                <Col xs={24} md={9}>
-                    <Row style={{color: "white", cursor: "pointer"}}>
-                        <Col span={6}><p>И-мэйл шалгах:</p></Col>
-                        <Col span={6}><p><MailFilled /> info@lcp.mn</p></Col>
-                        <Col span={6}><p><PhoneFilled /> 70104041</p></Col>
-                        <Col span={6}><p><GlobalOutlined /> Монгол</p></Col>
-                    </Row>
-                </Col>
-            </Row>
-        </Header>
         <Row >
            
             <Col xs={24} md={24} lg={14}  style={{backgroundColor:'white', height: '93vh'}}>

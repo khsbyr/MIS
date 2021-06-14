@@ -1,23 +1,18 @@
 import React from "react";
 import "antd/dist/antd.css";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Layout, Menu, Avatar, Dropdown, Icon,Divider } from "antd";
+import { Divider, Layout, Menu } from "antd";
 import {
-  EnvironmentFilled,
-  GlobalOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
-  PhoneFilled,
-  MailFilled,
   UserOutlined,
   LaptopOutlined,
   NotificationOutlined,
-  CaretDownOutlined,
 } from "@ant-design/icons";
-import { Row, Col } from "antd";
 // import {useTranslation} from 'react-i18next';
 import Criteria from "./criteria";
 import Plan from "./plan";
+import adminWrapper from "./admin.style";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -47,42 +42,9 @@ class Admin extends React.Component {
 
   render() {
     return (
+      <adminWrapper>
       <Router>
         <Layout>
-          <Header style={{ backgroundColor: "#103154" }}>
-            <Row>
-              <Col xs={24} md={15}>
-                <p
-                  style={{ color: "white", float: "left", marginLeft: "80px" }}
-                >
-                  <EnvironmentFilled /> Монгол Улс, Улаанбаатар, 1-р хороо,
-                  Сүхбаатар дүүрэг, Парк плэйс оффис, 602 тоот
-                </p>
-              </Col>
-              <Col xs={24} md={9}>
-                <Row style={{ color: "white", cursor: "pointer" }}>
-                  <Col span={6}>
-                    <p>И-мэйл шалгах:</p>
-                  </Col>
-                  <Col span={6}>
-                    <p>
-                      <MailFilled /> info@lcp.mn
-                    </p>
-                  </Col>
-                  <Col span={6}>
-                    <p>
-                      <PhoneFilled /> 70104041
-                    </p>
-                  </Col>
-                  <Col span={6}>
-                    <p>
-                      <GlobalOutlined /> Монгол
-                    </p>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Header>
           <Layout>
             <Sider
               className="site-layout-background"
@@ -90,12 +52,13 @@ class Admin extends React.Component {
               collapsible
               collapsed={this.state.collapsed}
               width="300px"
+              style={{background: "#fff"}}
             >
               <Menu
                 className="menu"
                 mode="inline"
                 defaultSelectedKeys={["1"]}
-                style={{ height: "100%", borderRight: 0 }}
+                style={{ height: "100%", borderRight: 0 , marginTop: "50px", background:"#fff"}}
               >
                 <SubMenu
                   key="sub1"
@@ -152,6 +115,7 @@ class Admin extends React.Component {
               className: 'trigger',
               onClick: this.toggle,
             })}
+            <Divider style={{ position:"absolute" ,backgroundColor:"#103154"}} />
           </Header>
               <Content
                 className="site-layout-background"
@@ -175,6 +139,7 @@ class Admin extends React.Component {
         </Layout>
         ,
       </Router>
+      </adminWrapper>
     );
   }
 }

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Route, Switch } from "react-router-dom";
 import Loadable from "react-loadable";
 import { ADMIN_PAGE, LOGIN_PAGE, REGISTER } from "./settings/constantRoutes";
+import Layouts from "./container/Layout/Layouts";
 
 /**
  *
@@ -61,12 +62,14 @@ const routes = [
 class Routes extends Component {
   render() {
     return (
+        <Layouts>
         <Switch>
           {routes.map(({ path, component, exact = false }) => (
             <Route key={path} path={path} exact={exact} component={component} />
           ))}
           {/* <Route component={NotFound} /> */}
         </Switch>
+        </Layouts>
     );
   }
 }
