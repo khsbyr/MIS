@@ -110,12 +110,12 @@ class Admin extends React.Component {
               </Menu>
             </Sider>
             <Layout className="site-layout">
-            <Header className="site-layout-background" style={{ backgroundColor: "white" }}>
+          <Header className="site-layout-background" style={{ backgroundColor: "white" }}>
             {React.createElement(this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
               className: 'trigger',
               onClick: this.toggle,
             })}
-            <Divider style={{ position:"absolute" ,backgroundColor:"#103154"}} />
+            <Divider style={{ position:"absolute" ,backgroundColor:"#103154",}} />
           </Header>
               <Content
                 className="site-layout-background"
