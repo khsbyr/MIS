@@ -1,9 +1,9 @@
-import { Typography, Row, Col, DatePicker, Input, Button, Table } from "antd";
+import { Row, Col, DatePicker, Input, Button, Table } from "antd";
 import React from "react";
 import HeaderWrapper from "./plan.styled";
 import { DownOutlined, SearchOutlined, CopyOutlined } from "@ant-design/icons";
 
-export default function Criteria() {
+export default function Tunshlel() {
   function onChange(date, dateString) {
     console.log(date, dateString);
   }

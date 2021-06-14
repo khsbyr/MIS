@@ -9,8 +9,8 @@ const HeaderWrapper = styled.div`
     }
 
     .title {
-        font-size: 25px;
-        font-weight: 600;
+        font-size: 24px;
+        font-weight: Bold;
     }
 
     .ant-btn {

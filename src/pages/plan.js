@@ -1,4 +1,4 @@
-import { Typography, Row, Col, DatePicker, Input, Button, Table } from "antd"
+import { Row, Col, DatePicker, Input, Button, Table } from "antd"
 import React from "react"
 import HeaderWrapper from "./plan.styled"
 import {

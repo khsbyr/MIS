@@ -10,17 +10,19 @@ import {
   LaptopOutlined,
   NotificationOutlined,
   CaretDownOutlined,
+  PoweroffOutlined,
 } from "@ant-design/icons";
 // import {useTranslation} from 'react-i18next';
 import Criteria from "./criteria";
 import Plan from "./plan";
-
+import Tunshlel from "./tunshlel";
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 const menu = (
   <Menu>
     <Menu.Item key="0">
-      <a style={{ color: "black" }}>Гарах</a>
+    <PoweroffOutlined />
+      <a style={{ color: "black" ,paddingLeft: "0px"}}>Гарах</a>
     </Menu.Item>
   </Menu>
 );
@@ -88,7 +90,10 @@ class Admin extends React.Component {
                     icon={<NotificationOutlined />}
                     title="Түншлэл"
                   >
-                    <Menu.Item key="9">option9</Menu.Item>
+                    <Menu.Item key="9">
+                      {" "}
+                      <Link to="/tunshlel">Түншлэл</Link>
+                    </Menu.Item>{" "}
                     <Menu.Item key="10">option10</Menu.Item>
                     <Menu.Item key="11">option11</Menu.Item>
                     <Menu.Item key="12">option12</Menu.Item>
@@ -110,7 +115,11 @@ class Admin extends React.Component {
               <Layout className="site-layout">
                 <Header
                   className="site-layout-background"
-                  style={{ backgroundColor: "white", height:"50px", lineHeight: "50px" }}
+                  style={{
+                    backgroundColor: "white",
+                    height: "50px",
+                    lineHeight: "50px",
+                  }}
                 >
                   <Row>
                     <Col span={20}>
@@ -123,12 +132,14 @@ class Admin extends React.Component {
                           onClick: this.toggle,
                         }
                       )}
-                      <a style={{float:"right"}}>МЭДЭЭЛЛИЙН УДИРДЛАГЫН СИСТЕМ</a>
+                      <a style={{ float: "right" }}>
+                        МЭДЭЭЛЛИЙН УДИРДЛАГЫН СИСТЕМ
+                      </a>
                     </Col>
                     <Col span={4} style={{ textAlign: "center" }}>
                       <div>
                         <Avatar
-                        size="small"
+                          size="small"
                           style={{
                             color: "#f56a00",
                             backgroundColor: "#103154",
@@ -164,9 +175,9 @@ class Admin extends React.Component {
                 <Content
                   className="site-layout-background"
                   style={{
-                    padding: 24,
+                    padding: 0,
                     margin: 0,
-                    minHeight: 280,
+                    minHeight: "100%",
                   }}
                 >
                   <Switch>
@@ -175,6 +186,9 @@ class Admin extends React.Component {
                     </Route>
                     <Route path="/plan">
                       <Plan />
+                    </Route>
+                    <Route path="/tunshlel">
+                      <Tunshlel />
                     </Route>
                   </Switch>{" "}
                 </Content>

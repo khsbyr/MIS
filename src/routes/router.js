@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Route, Switch } from "react-router-dom";
 import Loadable from "react-loadable";
-import { ADMIN_PAGE, LOGIN_PAGE, REGISTER } from "./settings/constantRoutes";
-import Layouts from "./container/Layout/Layouts";
+import { ADMIN_PAGE, LOGIN_PAGE, REGISTER } from "../settings/constantRoutes";
+import Layouts from "../container/Layout/Layouts";
 
 /**
  *
@@ -16,7 +16,7 @@ const routes = [
     path: LOGIN_PAGE,
     component: Loadable({
       loader: () =>
-        import(/* webpackChunkName: "Home" */ "./pages/login"),
+        import(/* webpackChunkName: "Home" */ "../pages/login"),
       loading: Loading,
       modules: ["Home"],
     }),
@@ -26,7 +26,7 @@ const routes = [
     path: REGISTER,
     component: Loadable({
       loader: () =>
-        import(/* webpackChunkName: "Home" */ "./pages/Register"),
+        import(/* webpackChunkName: "Home" */ "../pages/Register"),
       loading: Loading,
       modules: ["Register"],
     }),
@@ -35,7 +35,7 @@ const routes = [
     path: ADMIN_PAGE,
     component: Loadable({
       loader: () =>
-        import(/* webpackChunkName: "Home" */ "./pages/admin"),
+        import(/* webpackChunkName: "Home" */ "../pages/admin"),
       loading: Loading,
       modules: ["admin"],
     }),
