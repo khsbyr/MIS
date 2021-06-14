@@ -9,8 +9,29 @@ const TextWrapper = styled.div `
         color: #103154; 
     }
 
-    .subTitle1 { 
-        width: 70%;
+    .ant-carousel .slick-dots li {
+        background-color: #fff;
+        width: 10px;
+        height: 10px;
+        border-radius: 5px;
+    }
+    .ant-carousel .slick-dots li.slick-active button {
+        background-color: #103154;
+        width: 10px;
+        height: 10px;
+        border-radius: 5px;
+
+    }
+    .ant-carousel .slick-dots li button {
+        background-color: #103154;
+        width: 10px;
+        height: 10px;
+        border-radius: 5px;
+    }
+
+    .ant-carousel .slick-dots {
+        margin-left: 0%;
+        margin-right: 93%;
     }
 
     @media (max-width: 991px) {

@@ -1,5 +1,8 @@
 import React from "react";
+import styled from 'styled-components'
+
 import "antd/dist/antd.css";
+import LogoWrapper from './admin.style'
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Divider, Layout, Menu } from "antd";
 import { Row, Col, Avatar, Dropdown } from "antd";
@@ -16,6 +19,8 @@ import {
 import Criteria from "./criteria";
 import Plan from "./plan";
 import Tunshlel from "./tunshlel";
+
+
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 const menu = (
@@ -37,6 +42,7 @@ class Admin extends React.Component {
       collapsed: !this.state.collapsed,
     });
   };
+  
 
   render() {
     return (
@@ -59,7 +65,7 @@ class Admin extends React.Component {
                   style={{
                     height: "100%",
                     borderRight: 0,
-                    marginTop: "50px",
+                    marginTop: "75px",
                     background: "#fff",
                   }}
                 >
@@ -111,6 +117,14 @@ class Admin extends React.Component {
                     Хянах самбар
                   </Menu.Item>
                 </Menu>
+                {/* <LogoWrapper id="myDIV">
+                    <h2 className="title"> МЭДЭЭЛЛИЙН УДИРДЛАГЫН</h2>
+                    <img
+                          src="/images/svg/logo-head.svg"
+                          className="icon"
+                          alt="card-icon"
+                    />
+                </LogoWrapper> */}
               </Sider>
               <Layout className="site-layout">
                 <Header

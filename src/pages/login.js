@@ -1,6 +1,6 @@
 import React from "react";
 import "antd/dist/antd.css";
-import { Button, Row, Col, Form, Input } from "antd";
+import { Button, Row, Col, Form, Input, Carousel } from "antd";
 import TextWrapper, { LogIn } from "./Login.style";
 import { useHistory } from "react-router-dom";
 
@@ -14,6 +14,15 @@ function Login() {
   }
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
+  };
+  function onChange(a, b, c) {
+    console.log(a, b, c);
+  }
+  const contentStyle = {
+    height: '180px',
+    color: '#103154',
+    textAlign: 'left',
+   //backgroundColor: "blue"
   };
 
   return (
@@ -33,15 +42,35 @@ function Login() {
             <h2 className="title" style={{ marginTop: "50px" }}>
               Төслийн зорилго:
             </h2>
-            <p className="subTitle1">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s Lorem Ipsum has been the industry's standard
-              dummy text ever since the 1500s
-            </p>
+            <Carousel afterChange={onChange}  style={{height:"160px", width:"600px"}}>
+              <div>           
+                <p style={contentStyle} className="subTitle1">
+                  Lorem Ipsum is simply dummy text of the printing and typesetting
+                  industry. Lorem Ipsum has been the industry's standard dummy text
+                  ever since  the 1500s Lorem Ipsum has been the industry's standard
+                  dummy text ever since the 1500s
+                </p>             
+              </div>
+              <div>
+                <p style={contentStyle} className="subTitle1">
+                It is a long established fact that a reader will be distracted by the 
+                readable content of a page when looking at its layout. The point of using Lorem 
+                Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 
+                'Content here, content here', making it look like readable English. Many desktop publishing 
+                </p>  
+              </div>
+              <div>
+                <h3 style={contentStyle}>3</h3>
+              </div>
+          </Carousel> 
             <h2 className="title" style={{ marginTop: "50px" }}>
               Хамтран ажиллагч байгууллагууд:
             </h2>
+            <img
+              src="/images/svg/logos.svg"
+              className="icon"
+              alt="card-icon"
+              />
           </TextWrapper>
         </Col>
 
