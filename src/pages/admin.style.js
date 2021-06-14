@@ -40,8 +40,21 @@ body {
   .site-layout-background {
     background: #fff;
   }
-  .ant-menu-root.ant-menu-vertical, 
-  .ant-menu-root.ant-menu-vertical-left, .ant-menu-root.ant-menu-vertical-right, .ant-menu-root.ant-menu-inline {
-    margin-top: "50px"
+
+  .title {
+    font-size: 16px;
+    text-align: center;
+    color: #103154;
+    font-weight: 400;
+    margin-bottom: 30px;
   }
+
+  .icon {
+    width: 250px;
+    display: block;
+    margin: auto;
+  }
+
   `;
+
+export default adminWrapper;
