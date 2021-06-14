@@ -16,7 +16,7 @@ const {Header} = Layout;
 const Headers = () => {
 
 return(
-<Header style={{ backgroundColor: "#103154" }}>
+<Header style={{ backgroundColor: "#103154",height:"50px",lineHeight: "50px" }}>
             <Row>
               <Col xs={24} md={15}>
                 <p
