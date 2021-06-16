@@ -17,12 +17,13 @@ const onSearch = (value) => console.log(value);
 const Pageheader = ({ className }) => {
   return (
     <Row>
-      <Col xs={24} md={24} lg={6}>
+      <Col xs={8} md={8} lg={6}>
         <DatePicker
           onChange={onChange}
           bordered={false}
           suffixIcon={<DownOutlined />}
-          placeholder="Select date"
+          placeholder="Select year"
+          picker="year"
           className="DatePicker"
           style={{
             width: "120px",
@@ -31,7 +32,7 @@ const Pageheader = ({ className }) => {
           }}
         />
       </Col>
-      <Col xs={24} md={24} lg={6}>
+      <Col xs={8} md={8} lg={6}>
         <Input
           placeholder="Хайлт хийх"
           allowClear
@@ -44,13 +45,13 @@ const Pageheader = ({ className }) => {
           }}
         />
       </Col>
-      <Col xs={24} md={24} lg={4}>
+      <Col xs={8} md={8} lg={4}>
         <Button icon={<CopyOutlined />}>Хэвлэх</Button>
       </Col>
-      <Col xs={24} md={24} lg={4}>
+      <Col xs={8} md={8} lg={4}>
         <Button icon={<CopyOutlined />}>Экспорт</Button>
       </Col>
-      <Col xs={24} md={24} lg={4}>
+      <Col xs={8} md={8} lg={4}>
         <Button icon={<CopyOutlined />}>Нэмэх</Button>
       </Col>
     </Row>
