@@ -1,8 +1,9 @@
 import React from "react";
 import HeaderWrapper from "./plan.styled"
 import ContentWrapper  from "./Company.style";
-import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined  } from "@ant-design/icons";
-import { Row, Col, DatePicker, Input, Button, Upload, message, Form, Select } from "antd";
+import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined  } from "@ant-design/icons";
+import { Row, Col, DatePicker, Input, Button, Upload, message, Form, Select, InputNumber, Checkbox } from "antd";
+import Pageheader from "../container/Layout/component/Pageheader";
 function onChange(date, dateString) {
     console.log(date, dateString);
   }
@@ -36,47 +37,10 @@ const Company = () => {
         <HeaderWrapper>
             <Row>           
                 <Col xs={24} md={12} lg={9}>
-                    <p className="title">Сургалтын төлөвлөгөө</p>
+                    <p className="title" style={{marginLeft: "45px"}}>Байгууллага</p>
                 </Col>
                 <Col xs={24} md={12} lg={15} >
-                    <Row> 
-                        <Col xs={8} md={8} lg={6}>
-                            <DatePicker 
-                                onChange={onChange}
-                                bordered={false}                          
-                                suffixIcon={<DownOutlined/>}
-                                placeholder="Select year"
-                                picker="year"
-                                className="DatePicker"
-                                style={{
-                                    width: "120px",
-                                    color: "black",
-                                    cursor: "pointer",
-                                }}
-                                />
-                        </Col>
-                        <Col xs={8} md={8} lg={6}>
-                            <Input 
-                                placeholder="Хайлт хийх" 
-                                allowClear 
-                                prefix={<SearchOutlined />}
-                                bordered={false}
-                                onSearch={onSearch} 
-                                style={{ 
-                                    width: 150,
-                                    borderBottom: "1px solid #103154"
-                                }} />
-                        </Col>
-                        <Col xs={8} md={8} lg={4}>
-                            <Button icon={<CopyOutlined />}>Хэвлэх</Button>
-                        </Col>
-                        <Col xs={8} md={8} lg={4}>
-                            <Button icon={<CopyOutlined />}>Экспорт</Button>
-                        </Col>
-                        <Col xs={8} md={8} lg={4}>
-                            <Button icon={<CopyOutlined />}>Нэмэх</Button>
-                        </Col>
-                    </Row>
+                    <Pageheader/>
                 </Col>      
             </Row>
             <Row>
@@ -87,21 +51,22 @@ const Company = () => {
         </HeaderWrapper>
 
       <ContentWrapper>
-        <Row>
-            <Col  xs={24} md={24} lg={6}>
+        <Row gutter={[72]}>
+            <Col  xs={24} md={24} lg={4}>
                 <Dragger {...props} style={{}}>
                     <p className="ant-upload-drag-icon">
                     <InboxOutlined />
                     </p>
-                    {/* <p className="ant-upload-text">Зураг оруулах</p> */}
+                   
                     <p className="ant-upload-hint">
                     Зураг оруулах
                     </p>
                 </Dragger>
+              
             </Col>
             <Col  xs={24} md={24} lg={10}>
                   <h2 className="title"> Байгууллагын мэдээлэл</h2>
-                  <Row>
+                  <Row gutter={32}>
                       <Col xs={24} md={24} lg={12}>
                         <Form layout="vertical">
                             <Form.Item label="Байгууллагын нэр:">                              
@@ -117,7 +82,7 @@ const Company = () => {
                         </Form> 
                       </Col>
                   </Row>
-                  <Row>
+                  <Row gutter={32}>
                       <Col xs={24} md={24} lg={12}>
                         <Form layout="vertical">
                             <Form.Item label="Банкны нэр:">                              
@@ -133,7 +98,7 @@ const Company = () => {
                         </Form> 
                       </Col>
                   </Row>
-                  <Row>
+                  <Row gutter={32}> 
                       <Col xs={24} md={24} lg={12}>
                         <Form layout="vertical">
                             <Form.Item label="Дансны дугаар:">                              
@@ -147,11 +112,6 @@ const Company = () => {
                                 <Select
                                 placeholder="Вальют"
                                 allowClear
-                                style={{
-                                    width: "290px",
-                                    borderRadius: "3px"
-
-                                }}
                                 >
                                     <Option value="tugrug">Төгрөг</Option>
                                     <Option value="dollar">$</Option>
@@ -161,9 +121,180 @@ const Company = () => {
                         </Form> 
                       </Col>
                   </Row>
+
+                  <h2 className="title">Холбоо барих мэдээлэл</h2>
+                  <Row gutter={32}>
+                      <Col xs={24} md={24} lg={12}>
+                        <Form layout="vertical">
+                            <Form.Item label="Аймаг, хот:">                              
+                                <Select
+                                    placeholder="Аймаг, хот"
+                                    allowClear
+   
+                                    >
+                                        <Option value="Ulaanbaatar">Улаанбаатар</Option>
+                                        <Option value="Arkhangai">Архангай</Option>
+                                        <Option value="other">other</Option>
+                                </Select>
+                            </Form.Item>
+                        </Form>
+                      </Col>
+                      <Col xs={24} md={24} lg={12}>
+                        <Form layout="vertical">
+                            <Form.Item label="Сум, дүүрэг:">                              
+                                <Select
+                                        placeholder="Сум, дүүрэг"
+                                        allowClear
+       
+                                        >
+                                            <Option value="Sukhbaatar">Сүхбаатар дүүрэг</Option>
+                                            <Option value="Bayangol">Баянгол</Option>
+                                            <Option value="other">other</Option>
+                                </Select>
+                            </Form.Item>
+                        </Form> 
+                      </Col>
+                  </Row>
+                  <Row gutter={32}>
+                      <Col xs={24} md={24} lg={12}>
+                        <Form layout="vertical">
+                            <Form.Item label="Баг, хороо:">                              
+                                <Select
+                                        placeholder="Баг, хороо"
+                                        allowClear
+       
+                                        >
+                                            <Option value="1khoroo">1-р хороо</Option>
+                                            <Option value="2khoroo">2-р хороо</Option>
+                                            <Option value="other">other</Option>
+                                </Select>
+                            </Form.Item>
+                        </Form>
+                      </Col>
+                      <Col xs={24} md={24} lg={12}>
+                        <Form layout="vertical">
+                            <Form.Item label="Утас:">                              
+                                <Input />
+                            </Form.Item>
+                        </Form> 
+                      </Col>
+                  </Row>
+                  <Row gutter={32}>
+                      <Col xs={24} md={24} lg={12}>
+                        <Form layout="vertical">
+                            <Form.Item label="Е-майл хаяг:">                              
+                                <Input />
+                            </Form.Item>
+                        </Form>
+                      </Col>
+                      <Col xs={24} md={24} lg={12}>
+                        <Form layout="vertical">
+                            <Form.Item label="Веб хаяг:">                              
+                                <Input />
+                            </Form.Item>
+                        </Form> 
+                      </Col>
+                  </Row>
+                  <Row>
+                      <Col xs={24} md={24} lg={24}>
+                        <Form layout="vertical">
+                            <Form.Item label="Хаяг:"> 
+                                <Input.TextArea 
+                                    style={{
+                                        width: "100%",
+                                        height: "110px"
+                                    }}
+                                />
+                            </Form.Item>
+                        </Form>
+                      </Col>
+                  </Row>
             </Col>
-            <Col  xs={24} md={24} lg={8}>
-                  <h2> sd</h2>
+            <Col  xs={24} md={24} lg={10}>
+                <h2 className="title">Хариуцсан ажилтан:</h2>
+                    <Row>
+                        <Col xs={24} md={24} lg={12}>
+                            <Form layout="vertical">
+                                <Form.Item label="Овог:">                              
+                                    <Input />
+                                </Form.Item>
+                            </Form>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={24} md={24} lg={12}>
+                            <Form layout="vertical">
+                                <Form.Item label="Нэр:">                              
+                                    <Input />
+                                </Form.Item>
+                            </Form>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={24} md={24} lg={12}>
+                            <Form layout="vertical">
+                                <Form.Item label="Регистрийн дугаар:">                              
+                                    <Input />
+                                </Form.Item>
+                            </Form>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={24} md={24} lg={12}>
+                            <Form layout="vertical">
+                                <Form.Item label="Албан тушаал:">                              
+                                    <Input />
+                                </Form.Item>
+                            </Form>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={24} md={24} lg={12}>
+                            <Form layout="vertical">
+                                <Form.Item label="Утасны дугаар:">                              
+                                    <Input />
+                                </Form.Item>
+                            </Form>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={24} md={24} lg={12}>
+                            <Form layout="vertical">
+                                <Form.Item label="Е-майл хаяг:">                              
+                                    <Input />
+                                </Form.Item>
+                            </Form>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={24} md={24} lg={12}>
+                            <Form layout="vertical">
+                                <Form.Item label="Танилцуулга оруулах:">                              
+                                <Upload {...props}>
+                                    <Button icon={<UploadOutlined />}  style={{height: "40px"}}>Танилцуулга оруулах</Button>
+                                </Upload>
+                                </Form.Item>
+                            </Form>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={24} md={24} lg={12}>
+                            <Form layout="vertical">
+                                <Form.Item>                              
+                                    <Checkbox onChange={onChange}>Оруулсан мэдээлэл үнэн болно.</Checkbox>
+                                </Form.Item>
+                            </Form>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={24} md={24} lg={12}>
+                        <Form.Item layout="vertical">
+                            <Button type="primary" htmlType="submit" className="button">
+                            Хадгалах
+                            </Button>
+                        </Form.Item>
+                        </Col>
+                    </Row>
             </Col>
         </Row>
         </ContentWrapper>
