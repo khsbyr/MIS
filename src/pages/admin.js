@@ -1,6 +1,5 @@
 import React from "react";
 import styled from 'styled-components'
-
 import "antd/dist/antd.css";
 import LogoWrapper from './admin.style'
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
@@ -9,6 +8,7 @@ import { Row, Col, Avatar, Dropdown } from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
+  MenuOutlined,
   UserOutlined,
   LaptopOutlined,
   NotificationOutlined,
@@ -19,7 +19,7 @@ import {
 import Criteria from "./criteria";
 import Plan from "./plan";
 import Tunshlel from "./tunshlel";
-
+import Company from "./Company";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -52,11 +52,20 @@ class Admin extends React.Component {
             <Layout>
               <Sider
                 className="site-layout-background"
-                trigger={null}
-                collapsible
-                collapsed={this.state.collapsed}
-                width="300px"
-                style={{ background: "#fff" }}
+                // trigger={null}
+                // collapsible
+                // collapsed={this.state.collapsed}              
+                style={{ background: "#fff"}}
+                breakpoint="lg"
+                width= "300px"
+                collapsedWidth="0"
+                trigger={<MenuOutlined />}
+                onBreakpoint={broken => {
+                  console.log(broken);
+                }}
+                onCollapse={(collapsed, type) => {
+                  console.log(collapsed, type);
+                }}
               >
                 <Menu
                   className="menu"
@@ -78,7 +87,10 @@ class Admin extends React.Component {
                       {" "}
                       <Link to="/criteria">Шалгуур үзүүлэлт</Link>
                     </Menu.Item>
-                    <Menu.Item key="2">option2</Menu.Item>
+                    <Menu.Item key="2">
+                    {" "}
+                      <Link to="/company">option2</Link>
+                    </Menu.Item>
                     <Menu.Item key="3">option3</Menu.Item>
                     <Menu.Item key="4">option4</Menu.Item>
                   </SubMenu>
@@ -136,7 +148,7 @@ class Admin extends React.Component {
                   }}
                 >
                   <Row>
-                    <Col span={20}>
+                    {/* <Col span={20}>
                       {React.createElement(
                         this.state.collapsed
                           ? MenuUnfoldOutlined
@@ -149,8 +161,8 @@ class Admin extends React.Component {
                       <a style={{ float: "right" }}>
                         МЭДЭЭЛЛИЙН УДИРДЛАГЫН СИСТЕМ
                       </a>
-                    </Col>
-                    <Col span={4} style={{ textAlign: "center" }}>
+                    </Col> */}
+                    <Col span={24} style={{ textAlign: "end " }}>
                       <div>
                         <Avatar
                           size="small"
@@ -175,14 +187,14 @@ class Admin extends React.Component {
                       </div>
                     </Col>
                   </Row>
-
                   <Divider
                     style={{
-                      position: "absolute",
+                      position: "relative",
+                      left: "0px",
                       backgroundColor: "#103154",
                       margin: "0px 0px",
-                      width: "80%",
-                      minWidth: "80%",
+                      width: "100%",
+                      minWidth: "100%",
                     }}
                   />
                 </Header>
@@ -197,6 +209,9 @@ class Admin extends React.Component {
                   <Switch>
                     <Route exact path="/criteria">
                       <Criteria />
+                    </Route>
+                    <Route path="/company">
+                      <Company />
                     </Route>
                     <Route path="/plan">
                       <Plan />

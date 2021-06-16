@@ -20,19 +20,18 @@ function Login() {
   }
   const contentStyle = {
     height: '180px',
+    fontSize: '16px',
     color: '#103154',
     textAlign: 'left',
-   //backgroundColor: "blue"
   };
 
   return (
-    <>
       <Row>
         <Col
-          xs={24}
-          md={24}
+          xs={0}
+          md={0}
           lg={15}
-          style={{ backgroundColor: "white", height: "93vh" }}
+          style={{ backgroundColor: "white", height: "100vh" }}
         >
           <TextWrapper>
             <h2 className="title">
@@ -42,9 +41,9 @@ function Login() {
             <h2 className="title" style={{ marginTop: "50px" }}>
               Төслийн зорилго:
             </h2>
-            <Carousel afterChange={onChange}  style={{height:"160px", width:"600px"}}>
+            <Carousel auto afterChange={onChange}  style={{height:"160px", width:"510px"}}>
               <div>           
-                <p style={contentStyle} className="subTitle1">
+                <p style={contentStyle}>
                   Lorem Ipsum is simply dummy text of the printing and typesetting
                   industry. Lorem Ipsum has been the industry's standard dummy text
                   ever since  the 1500s Lorem Ipsum has been the industry's standard
@@ -52,7 +51,7 @@ function Login() {
                 </p>             
               </div>
               <div>
-                <p style={contentStyle} className="subTitle1">
+                <p style={contentStyle}>
                 It is a long established fact that a reader will be distracted by the 
                 readable content of a page when looking at its layout. The point of using Lorem 
                 Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 
@@ -63,14 +62,40 @@ function Login() {
                 <h3 style={contentStyle}>3</h3>
               </div>
           </Carousel> 
-            <h2 className="title" style={{ marginTop: "50px" }}>
+            <h2 className="title" style={{ marginTop: "80px", marginBottom: "30px" }}>
               Хамтран ажиллагч байгууллагууд:
             </h2>
-            <img
-              src="/images/svg/logos.svg"
-              className="icon"
-              alt="card-icon"
-              />
+            <Row gutter={[32,32]}>
+              <Col >
+                <img
+                  src="/images/svg/logo2.svg"
+                  className="icon"
+                  alt="card-icon"
+                
+                />
+                </Col>
+                <Col>
+                <img
+                  src="/images/svg/logo1.svg"
+                  className="icon"
+                  alt="card-icon"
+                />
+              </Col>
+              <Col>
+                <img
+                  src="/images/svg/logo3.svg"
+                  className="icon"
+                  alt="card-icon"
+                  />
+                </Col>
+                <Col>
+                <img
+                  src="/images/svg/logo4.svg"
+                  className="icon"
+                  alt="card-icon"
+                  />
+                </Col>
+              </Row>
           </TextWrapper>
         </Col>
 
@@ -100,7 +125,7 @@ function Login() {
                   },
                 ]}
               >
-                <Input placeholder="НЭВТРЭХ НЭР" bordered={false} />
+              <Input placeholder="НЭВТРЭХ НЭР" bordered={false} />
               </Form.Item>
               <Form.Item>
                 <p className="subTitle">Нууц үг</p>
@@ -114,7 +139,7 @@ function Login() {
                   },
                 ]}
               >
-                <Input
+                <Input.Password
                   type="password"
                   placeholder="**************"
                   bordered={false}
@@ -139,7 +164,7 @@ function Login() {
                 <Button
                   type="ghost"
                   htmlType="submit"
-                  className="register-form-button"
+                  className="login-form-button"
                   onClick={moveToRegister}
                 >
                   Бүртгүүлэх
@@ -156,7 +181,6 @@ function Login() {
           </LogIn>
         </Col>
       </Row>
-    </>
   );
 }
 

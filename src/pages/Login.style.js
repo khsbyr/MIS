@@ -3,12 +3,20 @@ import styled from 'styled-components'
 const TextWrapper = styled.div `
     float: left;
     text-align: start;
+    margin: 200px 0 0 120px;
 
-    margin: 180px 0 0 120px;
     .title {
         color: #103154; 
+        font-size: 24px;
     }
 
+    .icon {
+        width: 190px;
+        height: 100%;
+        text-align: start;
+        
+    }
+    
     .ant-carousel .slick-dots li {
         background-color: #fff;
         width: 10px;
@@ -37,11 +45,34 @@ const TextWrapper = styled.div `
     @media (max-width: 991px) {
         margin: 5%;
     }
+    
 `;
 
+export const LoginWrapper = styled.div`
+
+`;
+
+export const ImageWrapper = styled.div`
+    margin-left: 20px;
+`;
 
 export const LogIn = styled.div`
     margin: 120px;
+
+    @media (max-width: 1626px) {
+        margin: 80px 30px 0px 30px;
+        .login-form-button, .register-form-button {
+            margin-bottom: 10px;
+        }
+    }
+    
+    @media (max-width: 991px) {
+        height: 100vh;
+        .title {
+            text-align: center;
+        }
+    }
+
     .title {
         color: #103154;
         font-size: 25px;
@@ -69,10 +100,10 @@ export const LogIn = styled.div`
         color: #103154;
         font-weight: 600;
         border-color: #103154;
-        width: 120px;
+        width: 150px;
         height: 50px;
         border-radius: 36px;
-        margin-right: 45px;
+        margin-right: 35px;
 
     :hover {
         background-color: #103154;
@@ -88,7 +119,7 @@ export const LogIn = styled.div`
         width: 150px;
         height: 50px;
         border-radius: 36px;
-        margin-right: 45px;
+        
     }
 
     .register-form-button {

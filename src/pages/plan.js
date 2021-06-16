@@ -20,13 +20,12 @@ export default function Plan(){
     return(    
         <HeaderWrapper>
             <Row>           
-                <Col xs={24} md={24} lg={10}>
+                <Col xs={24} md={12} lg={9}>
                     <p className="title">Сургалтын төлөвлөгөө</p>
                 </Col>
-                <Col xs={24} md={24} lg={14} >
-                    <Row>
-                        
-                        <Col xs={24} md={24} lg={6}>
+                <Col xs={24} md={12} lg={15} >
+                    <Row> 
+                        <Col xs={8} md={8} lg={6}>
                             <DatePicker 
                                 onChange={onChange}
                                 bordered={false}                          
@@ -41,7 +40,7 @@ export default function Plan(){
                                 }}
                                 />
                         </Col>
-                        <Col xs={24} md={24} lg={6}>
+                        <Col xs={8} md={8} lg={6}>
                             <Input 
                                 placeholder="Хайлт хийх" 
                                 allowClear 
@@ -53,13 +52,13 @@ export default function Plan(){
                                     borderBottom: "1px solid #103154"
                                 }} />
                         </Col>
-                        <Col xs={24} md={24} lg={4}>
+                        <Col xs={8} md={8} lg={4}>
                             <Button icon={<CopyOutlined />}>Хэвлэх</Button>
                         </Col>
-                        <Col xs={24} md={24} lg={4}>
+                        <Col xs={8} md={8} lg={4}>
                             <Button icon={<CopyOutlined />}>Экспорт</Button>
                         </Col>
-                        <Col xs={24} md={24} lg={4}>
+                        <Col xs={8} md={8} lg={4}>
                             <Button icon={<CopyOutlined />}>Нэмэх</Button>
                         </Col>
                     </Row>
@@ -67,7 +66,6 @@ export default function Plan(){
             </Row>
             <Row>
                 <Col>
-
                 </Col>
             </Row>
         </HeaderWrapper>

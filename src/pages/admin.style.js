@@ -1,10 +1,12 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
+
 const adminWrapper = styled.div `
+
 body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
       'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
+      sans-serif; */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -38,7 +40,8 @@ body {
   }
   
   .site-layout-background {
-    background: #fff;
+    background: green;
+    width: 500px;
   }
 
   .title {
@@ -53,6 +56,11 @@ body {
     width: 250px;
     display: block;
     margin: auto;
+  }
+
+  .ant-layout-sider-zero-width-trigger {
+    background: white;
+    color: green;
   }
 
   `;

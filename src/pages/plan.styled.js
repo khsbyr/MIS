@@ -1,12 +1,7 @@
 import styled from 'styled-components'
 
 const HeaderWrapper = styled.div`
-    margin: 20px;
-    color: #103154;
-
-    @media (max-width: 991px) {
-    
-    }
+    margin-top: 30px;
 
     .title {
         font-size: 24px;
