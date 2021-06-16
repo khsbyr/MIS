@@ -1,7 +1,7 @@
 import React from "react";
-import styled from 'styled-components'
+import styled from "styled-components";
 import "antd/dist/antd.css";
-import LogoWrapper from './admin.style'
+import LogoWrapper from "./admin.style";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Divider, Layout, Menu } from "antd";
 import { Row, Col, Avatar, Dropdown } from "antd";
@@ -26,8 +26,8 @@ const { Header, Content, Sider } = Layout;
 const menu = (
   <Menu>
     <Menu.Item key="0">
-    <PoweroffOutlined />
-      <a style={{ color: "black" ,paddingLeft: "0px"}}>Гарах</a>
+      <PoweroffOutlined />
+      <a style={{ color: "black", paddingLeft: "0px" }}>Гарах</a>
     </Menu.Item>
   </Menu>
 );
@@ -42,7 +42,6 @@ class Admin extends React.Component {
       collapsed: !this.state.collapsed,
     });
   };
-  
 
   render() {
     return (
@@ -54,13 +53,13 @@ class Admin extends React.Component {
                 className="site-layout-background"
                 // trigger={null}
                 // collapsible
-                // collapsed={this.state.collapsed}              
-                style={{ background: "#fff"}}
+                // collapsed={this.state.collapsed}
+                style={{ background: "#fff" }}
                 breakpoint="lg"
-                width= "300px"
+                width="300px"
                 collapsedWidth="0"
                 trigger={<MenuOutlined />}
-                onBreakpoint={broken => {
+                onBreakpoint={(broken) => {
                   console.log(broken);
                 }}
                 onCollapse={(collapsed, type) => {
@@ -70,7 +69,7 @@ class Admin extends React.Component {
                 <Menu
                   className="menu"
                   mode="inline"
-                  defaultSelectedKeys={["1"]}
+                  // defaultSelectedKeys={["1"]}
                   style={{
                     height: "100%",
                     borderRight: 0,
@@ -78,56 +77,135 @@ class Admin extends React.Component {
                     background: "#fff",
                   }}
                 >
+                  {" "}
+                  <SubMenu key="sub1" icon={<UserOutlined />} title="Хэрэглэгч">
+                    <Menu.Item key="1">
+                      {" "}
+                      <Link>Хэрэглэгч</Link>
+                    </Menu.Item>{" "}
+                    <Menu.Item key="2">Эрхийн тохиргоо</Menu.Item>
+                  </SubMenu>
                   <SubMenu
-                    key="sub1"
+                    key="sub2"
                     icon={<UserOutlined />}
                     title="Шалгуур үзүүлэлт"
                   >
-                    <Menu.Item key="1">
+                    <Menu.Item key="3">
                       {" "}
-                      <Link to="/criteria">Шалгуур үзүүлэлт</Link>
+                      <Link to="/criteria">Шалгуур үзүүлэлтийн бүртгэл</Link>
                     </Menu.Item>
-                    <Menu.Item key="2">
-                    {" "}
-                      <Link to="/company">option2</Link>
-                    </Menu.Item>
-                    <Menu.Item key="3">option3</Menu.Item>
-                    <Menu.Item key="4">option4</Menu.Item>
                   </SubMenu>
-                  <SubMenu key="sub2" icon={<LaptopOutlined />} title="Сургалт">
-                    <Menu.Item key="5">
-                      {" "}
-                      <Link to="/plan">Төлөвлөгөө</Link>
-                    </Menu.Item>
-                    <Menu.Item key="6">option6</Menu.Item>
-                    <Menu.Item key="7">option7</Menu.Item>
-                    <Menu.Item key="8">option8</Menu.Item>
+                  <SubMenu key="sub3" icon={<LaptopOutlined />} title="Сургалт">
+                    <SubMenu
+                      key="sub4"
+                      icon={<LaptopOutlined />}
+                      title="Сургалтын төлөвлөгөө"
+                    >
+                      <Menu.Item key="4">
+                        {" "}
+                        <Link to="/plan">Бүрэлдэхүүн 1</Link>
+                      </Menu.Item>
+                      <Menu.Item key="5">Бүрэлдэхүүн 2</Menu.Item>
+                      <Menu.Item key="6">Бүрэлдэхүүн 3</Menu.Item>
+                      <Menu.Item key="7">Бүрэлдэхүүн 4</Menu.Item>
+                    </SubMenu>
+                    <SubMenu
+                      key="sub5"
+                      icon={<LaptopOutlined />}
+                      title="Сургалт"
+                    >
+                      <Menu.Item key="8">
+                        <Link>Зөвлөх байгууллага</Link>
+                      </Menu.Item>
+                      <Menu.Item key="9">Сургалтын удирдамж</Menu.Item>
+                      <Menu.Item key="10">Сургалтын төлөвлөгөө</Menu.Item>
+                      <Menu.Item key="11">Сургагч багшийн CV</Menu.Item>
+                      <Menu.Item key="12">
+                        <Link>Сургалтын хөтөлбөр</Link>
+                      </Menu.Item>
+                      <Menu.Item key="13">Ирцийн бүртгэл</Menu.Item>
+                      <Menu.Item key="14">Сорилын нэгтгэл</Menu.Item>
+                      <Menu.Item key="15">Сургалтын тайлан</Menu.Item>
+                      <Menu.Item key="16">Сургалтын төсөв</Menu.Item>
+                    </SubMenu>
                   </SubMenu>
                   <SubMenu
-                    key="sub3"
+                    key="sub6"
                     icon={<NotificationOutlined />}
                     title="Түншлэл"
                   >
-                    <Menu.Item key="9">
+                    <SubMenu
+                      key="sub7"
+                      icon={<NotificationOutlined />}
+                      title="Бүтээмжит түншлэл"
+                    >
                       {" "}
-                      <Link to="/tunshlel">Түншлэл</Link>
-                    </Menu.Item>{" "}
-                    <Menu.Item key="10">option10</Menu.Item>
-                    <Menu.Item key="11">option11</Menu.Item>
-                    <Menu.Item key="12">option12</Menu.Item>
+                      <Menu.Item key="17">
+                        {" "}
+                        <Link to="/tunshlel">Зөвлөх байгууллага</Link>
+                      </Menu.Item>
+                    </SubMenu>
                   </SubMenu>
-                  <Menu.Item key="13" icon={<NotificationOutlined />}>
-                    Төсөл
-                  </Menu.Item>
-                  <Menu.Item key="14" icon={<NotificationOutlined />}>
+                  <SubMenu
+                    key="sub8"
+                    icon={<NotificationOutlined />}
+                    title="Төсөл"
+                  >
+                    <SubMenu
+                      key="sub9"
+                      icon={<NotificationOutlined />}
+                      title="Бүтээмжит төсөл"
+                    >
+                      {" "}
+                      <Menu.Item key="18">
+                        {" "}
+                        <Link to="/tunshlel">Товч төсөл</Link>
+                      </Menu.Item>
+                      <Menu.Item key="19">
+                        {" "}
+                        <Link to="/tunshlel">Хөрөнгө оруулалт</Link>
+                      </Menu.Item>
+                      <Menu.Item key="20">
+                        {" "}
+                        <Link to="/tunshlel">Орлого зардал</Link>
+                      </Menu.Item>
+                      <Menu.Item key="21">
+                        {" "}
+                        <Link to="/tunshlel">Зөвлөх байгууллага</Link>
+                      </Menu.Item>
+                      <Menu.Item key="22">
+                        {" "}
+                        <Link to="/tunshlel">Дэлгэрэнгүй төсөл</Link>
+                      </Menu.Item>
+                    </SubMenu>
+                  </SubMenu>
+                  <Menu.Item key="23" icon={<NotificationOutlined />}>
                     Төлөвлөгөө
                   </Menu.Item>
-                  <Menu.Item key="15" icon={<NotificationOutlined />}>
+                  <Menu.Item key="24" icon={<NotificationOutlined />}>
                     Тайлан
                   </Menu.Item>
-                  <Menu.Item key="15" icon={<NotificationOutlined />}>
-                    Хянах самбар
+                  <Menu.Item key="25" icon={<NotificationOutlined />}>
+                  Хянах самбар
                   </Menu.Item>
+                  <SubMenu
+                    key="sub10"
+                    icon={<NotificationOutlined />}
+                    title="Лавлах бүртгэл"
+                  >
+                    <Menu.Item key="26" icon={<NotificationOutlined />}>
+                      Хамрах хүрээ
+                    </Menu.Item>
+                    <Menu.Item key="27" icon={<NotificationOutlined />}>
+                      Хаяг
+                    </Menu.Item>
+                    <Menu.Item key="28" icon={<NotificationOutlined />}>
+                      Харилцах тал{" "}
+                    </Menu.Item>
+                    <Menu.Item key="29" icon={<NotificationOutlined />}>
+                      Шалгуур үзүүлэлтийн төрөл{" "}
+                    </Menu.Item>
+                  </SubMenu>
                 </Menu>
                 {/* <LogoWrapper id="myDIV">
                     <h2 className="title"> МЭДЭЭЛЛИЙН УДИРДЛАГЫН</h2>
