@@ -7,10 +7,6 @@ const ContentWrapper = styled.div `
     .ant-upload.ant-upload-drag {
         width: 100%;
         height: 200px;
-        //margin: 50px 20px 20px 40px;
-        left: 20%;
-        /* top: 10%;
-        bottom: 20%; */
         border: 1px solid #d9d9d9;
         border-radius: 15px;
     }
@@ -56,6 +52,11 @@ const ContentWrapper = styled.div `
     .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
         background-color: #fff;
     }
+
+    .ant-form-item-control-input-content {
+        max-width: 50%  ;
+    }
+    
 `;
 
 export default ContentWrapper;

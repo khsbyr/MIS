@@ -1,13 +1,14 @@
-import React from "react";
+import React, {useState} from "react";
 import HeaderWrapper from "./plan.styled";
 import ContentWrapper  from "./criteria.style";
+import CriteriaModal from "./criteriaModal";
 import {
   DownOutlined,
   SearchOutlined,
   CopyOutlined,
   ExclamationCircleOutlined
 } from "@ant-design/icons";
-import { Row, Col, DatePicker, Input, Button, Table } from "antd";
+import { Row, Col, DatePicker, Input, Button, Table, Modal, Form } from "antd";
 import PageHeaderWrapper from "../container/Layout/component/Pageheader.style";
 
 function onChange(date, dateString) {
@@ -28,8 +29,11 @@ const onSearch = (value) => console.log(value);
 //     },
 //   });
 // }
+
+
 export default function Criteria() {
   //const { Search } = Input;
+  
   const dataSource = [
     {
       code: "1",
@@ -68,7 +72,7 @@ export default function Criteria() {
       key: "type",
     },
   ];
-
+  const [visible, setVisible] = useState(false);
   return (
     <HeaderWrapper>
       <Row>
@@ -124,9 +128,8 @@ export default function Criteria() {
         </Col>
       </Row>
       <ContentWrapper>
-              <Table dataSource={dataSource} columns={columns} />
-
-</ContentWrapper>
+          <CriteriaModal/>
+      </ContentWrapper>
     </HeaderWrapper>
   );
 }
