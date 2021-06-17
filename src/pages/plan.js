@@ -1,12 +1,42 @@
 import { Typography, Row, Col, DatePicker, Input, Button, Table, Popconfirm } from "antd"
 import React, {Component} from "react"
 import HeaderWrapper from "./plan.styled"
+import Pageheader from "../container/Layout/component/Pageheader";
+import ContentWrapper from "./plan.styled";
 
-import {
-    DownOutlined, 
-    SearchOutlined,
-    CopyOutlined,
-} from "@ant-design/icons";
+const dataSource = [
+    {
+      key: '1',
+      name: 'Mike',
+      age: 32,
+      address: '10 Downing Street',
+    },
+    {
+      key: '2',
+      name: 'John',
+      age: 42,
+      address: '10 Downing Street',
+    },
+  ];
+  
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Age',
+      dataIndex: 'age',
+      key: 'age',
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
+    },
+  ];
+
 
 export default function Plan(){
 
@@ -18,6 +48,7 @@ export default function Plan(){
     
 
     return(    
+        <>
         <HeaderWrapper>
             <Row>           
                 <Col xs={24} md={12} lg={9}>
@@ -25,49 +56,19 @@ export default function Plan(){
                 </Col>
                 <Col xs={24} md={12} lg={15} >
                     <Row> 
-                        <Col xs={8} md={8} lg={6}>
-                            <DatePicker 
-                                onChange={onChange}
-                                bordered={false}                          
-                                suffixIcon={<DownOutlined/>}
-                                placeholder="Select year"
-                                picker="year"
-                                className="DatePicker"
-                                style={{
-                                    width: "120px",
-                                    color: "black",
-                                    cursor: "pointer",
-                                }}
-                                />
-                        </Col>
-                        <Col xs={8} md={8} lg={6}>
-                            <Input 
-                                placeholder="Хайлт хийх" 
-                                allowClear 
-                                prefix={<SearchOutlined />}
-                                bordered={false}
-                                onSearch={onSearch} 
-                                style={{ 
-                                    width: 150,
-                                    borderBottom: "1px solid #103154"
-                                }} />
-                        </Col>
-                        <Col xs={8} md={8} lg={4}>
-                            <Button icon={<CopyOutlined />}>Хэвлэх</Button>
-                        </Col>
-                        <Col xs={8} md={8} lg={4}>
-                            <Button icon={<CopyOutlined />}>Экспорт</Button>
-                        </Col>
-                        <Col xs={8} md={8} lg={4}>
-                            <Button icon={<CopyOutlined />}>Нэмэх</Button>
-                        </Col>
+                      <Pageheader/>
                     </Row>
                 </Col>      
             </Row>
+        </HeaderWrapper>
+
+        <ContentWrapper>
             <Row>
                 <Col>
+                    <Table dataSource={dataSource} columns={columns} />
                 </Col>
             </Row>
-        </HeaderWrapper>
+        </ContentWrapper>
+        </>
     )
 }

@@ -1,29 +1,14 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
-const HeaderWrapper = styled.div`
-    margin-top: 30px;
 
-    .title {
-        font-size: 24px;
-        font-weight: Bold;
-        margin-left: 45px;
-    }
-
-    .ant-btn {
-        border: none;
-        font-size: 15px;
-    }
-
-`;
-export const ContentWrapper = styled.div`
-
+const ContentWrapper = styled.div `
     margin-left: 45px;
     margin-right: 45px;
     .ant-upload.ant-upload-drag {
         width: 100%;
         height: 200px;
         //margin: 50px 20px 20px 40px;
-       
+        left: 20%;
         /* top: 10%;
         bottom: 20%; */
         border: 1px solid #d9d9d9;
@@ -31,10 +16,9 @@ export const ContentWrapper = styled.div`
     }
 
     .title {
-        font-size: 14px;
+        font-size: 16px;
         font-weight: bold;
-        color: #0D0D0D;
-        margin: 20px 0px 20px 0px;
+        color: #103154;
     }
 
     label {
@@ -42,14 +26,10 @@ export const ContentWrapper = styled.div`
         font-size: 13px;
     }
 
-    .FormItem {
-        width: 60%;
+    Input {
+        width: 100%;
         height: 40px;
-        border:none;
-        border-bottom: 1px solid #103154;
-        @media (max-width: 991px) {
-            width: 100%;
-        }
+        border-radius: 3px;
     }
 
     Select {
@@ -76,11 +56,6 @@ export const ContentWrapper = styled.div`
     .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
         background-color: #fff;
     }
-
-    .ant-input-prefix {
-        color: #103154;
-        margin-right: 25px;
-    }
 `;
 
-export default HeaderWrapper;
+export default ContentWrapper;

@@ -59,10 +59,9 @@ body {
   }
 
   .ant-layout-sider-zero-width-trigger {
-    background: white;
-    color: green;
+    position: absolute;
+    top: 10px;
   }
-
   `;
 
 export default adminWrapper;

@@ -1,6 +1,6 @@
 import React from "react";
 import HeaderWrapper from "./plan.styled"
-import ContentWrapper  from "./Company.style";
+import ContentWrapper  from "./organization.style";
 import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined  } from "@ant-design/icons";
 import { Row, Col, DatePicker, Input, Button, Upload, message, Form, Select, InputNumber, Checkbox } from "antd";
 import Pageheader from "../container/Layout/component/Pageheader";
@@ -31,7 +31,7 @@ const props = {
   },
 };
 
-const Company = () => {
+const Orgoanization = () => {
     return (
         <>
         <HeaderWrapper>
@@ -302,4 +302,4 @@ const Company = () => {
     )
 }
 
-export default Company;
+export default Orgoanization;

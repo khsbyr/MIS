@@ -1,21 +1,6 @@
-import styled from 'styled-components'
+import styled from "styled-components"
 
-const HeaderWrapper = styled.div`
-    margin-top: 30px;
-
-    .title {
-        font-size: 24px;
-        font-weight: Bold;
-        margin-left: 45px;
-    }
-
-    .ant-btn {
-        border: none;
-        font-size: 15px;
-    }
-
-`;
-export const ContentWrapper = styled.div`
+const ContentWrapper = styled.div`
 
     margin-left: 45px;
     margin-right: 45px;
@@ -83,4 +68,4 @@ export const ContentWrapper = styled.div`
     }
 `;
 
-export default HeaderWrapper;
+export default ContentWrapper;

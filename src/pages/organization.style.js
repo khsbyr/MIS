@@ -2,11 +2,13 @@ import styled from 'styled-components';
 
 
 const ContentWrapper = styled.div `
+    margin-left: 45px;
+    margin-right: 45px;
     .ant-upload.ant-upload-drag {
         width: 100%;
         height: 200px;
         //margin: 50px 20px 20px 40px;
-        left: 20%;
+        
         /* top: 10%;
         bottom: 20%; */
         border: 1px solid #d9d9d9;

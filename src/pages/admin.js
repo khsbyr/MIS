@@ -1,13 +1,10 @@
 import React from "react";
-import styled from "styled-components";
 import "antd/dist/antd.css";
-import LogoWrapper from "./admin.style";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Divider, Layout, Menu } from "antd";
 import { Row, Col, Avatar, Dropdown } from "antd";
+
 import {
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
   MenuOutlined,
   UserOutlined,
   LaptopOutlined,
@@ -19,7 +16,9 @@ import {
 import Criteria from "./criteria";
 import Plan from "./plan";
 import Tunshlel from "./tunshlel";
-import Company from "./Company";
+import Organization from "./organization";
+import Guidelines from "./guidelines";
+import CV from "./cv"
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -101,10 +100,7 @@ class Admin extends React.Component {
                       icon={<LaptopOutlined />}
                       title="Сургалтын төлөвлөгөө"
                     >
-                      <Menu.Item key="4">
-                        {" "}
-                        <Link to="/plan">Бүрэлдэхүүн 1</Link>
-                      </Menu.Item>
+                      <Menu.Item key="4">Бүрэлдэхүүн 1</Menu.Item>
                       <Menu.Item key="5">Бүрэлдэхүүн 2</Menu.Item>
                       <Menu.Item key="6">Бүрэлдэхүүн 3</Menu.Item>
                       <Menu.Item key="7">Бүрэлдэхүүн 4</Menu.Item>
@@ -115,11 +111,14 @@ class Admin extends React.Component {
                       title="Сургалт"
                     >
                       <Menu.Item key="8">
-                        <Link>Зөвлөх байгууллага</Link>
+                        <Link to="/organization">Зөвлөх байгууллага</Link>
                       </Menu.Item>
-                      <Menu.Item key="9">Сургалтын удирдамж</Menu.Item>
-                      <Menu.Item key="10">Сургалтын төлөвлөгөө</Menu.Item>
-                      <Menu.Item key="11">Сургагч багшийн CV</Menu.Item>
+                      <Menu.Item key="9">
+                          <Link to="/guidelines">
+                            Сургалтын удирдамж
+                          </Link></Menu.Item>
+                      <Menu.Item key="10"><Link to="/plan">Сургалтын төлөвлөгөө</Link></Menu.Item>
+                      <Menu.Item key="11"><Link to="/cv">Сургагч багшийн CV</Link></Menu.Item>
                       <Menu.Item key="12">
                         <Link>Сургалтын хөтөлбөр</Link>
                       </Menu.Item>
@@ -288,8 +287,8 @@ class Admin extends React.Component {
                     <Route exact path="/criteria">
                       <Criteria />
                     </Route>
-                    <Route path="/company">
-                      <Company />
+                    <Route path="/guidelines">
+                      <Guidelines />
                     </Route>
                     <Route path="/plan">
                       <Plan />
@@ -297,12 +296,17 @@ class Admin extends React.Component {
                     <Route path="/tunshlel">
                       <Tunshlel />
                     </Route>
+                    <Route path="/organization">
+                      <Organization />
+                    </Route>
+                    <Route path="/cv">
+                      <CV />
+                    </Route>
                   </Switch>{" "}
                 </Content>
               </Layout>
             </Layout>
           </Layout>
-          ,
         </Router>
       </adminWrapper>
     );
