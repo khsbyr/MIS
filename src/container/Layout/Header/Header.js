@@ -1,7 +1,7 @@
 import React from "react";
 import "antd/dist/antd.css";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Layout, Menu, Avatar, Dropdown, Icon,Divider } from "antd";
+import { Layout, Select, Button } from "antd";
 import {
   EnvironmentFilled,
   GlobalOutlined,
@@ -11,11 +11,17 @@ import {
 } from "@ant-design/icons";
 import { Row, Col } from "antd";
 import HeaderWrapper from "./Header.style";
+import {useTranslation} from 'react-i18next';
+import i18n from "../../../i18n";
 
-// import {useTranslation} from 'react-i18next';
-
+const { Option } = Select;
 const {Header} = Layout;
 const Headers = () => {
+const {t, i18} = useTranslation();
+
+function handleClick(lang) {
+  i18n.changeLanguage(lang)
+}
 
 return(
     <HeaderWrapper>
@@ -33,7 +39,7 @@ return(
           <Col xs={24} md={24} lg={9}>
             <Row style={{ color: "white", cursor: "pointer" }}>
               <Col lg={6}>
-                <p className="texthide">И-мэйл шалгах:</p>
+                <p className="texthide">{t('checkEmail')}:</p>
               </Col>
               <Col lg={6}>
                 <p className="texthide">
@@ -46,9 +52,11 @@ return(
                 </p>
               </Col>
               <Col xs={12} lg={6} md={12}>
-                <p className="textshow">
+                  <Button onClick={()=>handleClick('mn')}>MN</Button>
+                  <Button onClick={()=>handleClick('en')}>EN</Button>
+                {/* <p className="textshow">
                   <GlobalOutlined /> Монгол
-                </p>
+                </p> */}
               </Col>
             </Row>
           </Col>
