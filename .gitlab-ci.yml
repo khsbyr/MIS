@@ -1,0 +1,39 @@
+.only-default: &only-default
+  only:
+    - master
+
+stages:
+  - docker-build
+  - deploy
+
+variables:
+  DOCKER_VERSION: 20.10.6
+  DOCKER_TLS_CERTDIR: "/certs"
+  APP_NAME: mis-front
+  PORT: 80
+
+docker-build:
+  <<: *only-default
+  stage: docker-build
+  image: docker:$DOCKER_VERSION
+  services: 
+    - docker:$DOCKER_VERSION-dind
+  script:
+    - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin "$CI_REGISTRY"
+    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+    - docker push "$CI_REGISTRY_IMAGE"
+
+deploy:
+  <<: *only-default
+  stage: deploy
+  image: kroniak/ssh-client
+  before_script:
+    - echo "Deploying app"
+  script:
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > key.pem
+    - chmod 400 key.pem
+    - ssh -o StrictHostKeyChecking=no -i key.pem root@$PROD_SERVER_IP "docker pull $CI_REGISTRY_IMAGE"
+    - ssh -o StrictHostKeyChecking=no -i key.pem root@$PROD_SERVER_IP "docker stop $APP_NAME || true && docker rm $APP_NAME || true"
+
+    - ssh -o StrictHostKeyChecking=no -i key.pem root@$PROD_SERVER_IP "docker run -p $PORT:$PORT -d --name $APP_NAME $CI_REGISTRY_IMAGE"
+
