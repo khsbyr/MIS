@@ -8,7 +8,7 @@ import {
   CopyOutlined,
   ExclamationCircleOutlined
 } from "@ant-design/icons";
-import { Row, Col, DatePicker, Input, Button, Table, Modal, Form } from "antd";
+import { Row, Col, DatePicker, Input, Button, Table, Modal, Form, InputNumber } from "antd";
 import PageHeaderWrapper from "../container/Layout/component/Pageheader.style";
 
 function onChange(date, dateString) {
@@ -73,6 +73,7 @@ export default function Criteria() {
     },
   ];
   const [visible, setVisible] = useState(false);
+
   return (
     <HeaderWrapper>
       <Row>
@@ -119,17 +120,59 @@ export default function Criteria() {
                 </Button>
               </Col>
               <Col xs={8} md={8} lg={4}>
-                <Button className="export" icon={<CopyOutlined />}>
+              <Button className="export" icon={<CopyOutlined />} onClick={() => setVisible(true)}>
                   Нэмэх
                 </Button>
+              <CriteriaModal/>
+              <Modal
+                  title="Шалгуур үзүүлэлт бүртгэх "
+                  centered
+                  visible={visible}
+                  onOk={() => setVisible(false)}
+                  onCancel={() => setVisible(false)}
+                  width={1000}
+              >
+                  <Row gutter={[50]}>
+                  <Col span={12}>
+                      <Form layout="vertical">
+                          <Form.Item label="Код /Дугаар/:" >                    
+                              <Input placeholder="Код /Дугаар/:"/>
+                          </Form.Item>
+                      </Form>
+                      <Form layout="vertical">
+                          <Form.Item label="Шалгуур үзүүлэлтийн нэр:" >                    
+                              <Input placeholder="Шалгуур үзүүлэлтийн нэр:"/>
+                          </Form.Item>
+                      </Form>
+                      <Form layout="vertical">
+                          <Form.Item label="Хүрэх үр дүн:" >                    
+                              <InputNumber style={{ width: "20vw" }} placeholder="Хүрэх үр дүн:"/>
+                          </Form.Item>
+                      </Form>
+                  </Col>
+                  <Col span={12}>
+                      <Form layout="vertical">
+                          <Form.Item label="Үр дүнгийн биелэлт:" >                    
+                              <InputNumber style={{ width: "20vw" }} placeholder="Үр дүнгийн биелэлт:"/>
+                          </Form.Item>
+                      </Form>
+                      <Form layout="vertical">
+                          <Form.Item label="Шалгуур үзүүлэлтийн төрөл:" >                    
+                              <Input placeholder="Шалгуур үзүүлэлтийн төрөл:"/>
+                          </Form.Item>
+                      </Form>
+                  </Col>
+                  </Row>
+              </Modal>
               </Col>
             </Row>
           </PageHeaderWrapper>{" "}
         </Col>
       </Row>
       <ContentWrapper>
-          <CriteriaModal/>
+          
       </ContentWrapper>
     </HeaderWrapper>
+
   );
 }

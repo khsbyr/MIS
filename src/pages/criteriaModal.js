@@ -7,9 +7,6 @@ export default function CriteriaModal()  {
     return(
         
         <ContentWrapper>          
-            <Button type="primary" onClick={() => setVisible(true)}>
-                Нэмэх
-            </Button>
             <Modal
                 title="Шалгуур үзүүлэлт бүртгэх "
                 centered
