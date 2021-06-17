@@ -56,7 +56,6 @@ export default function Plan(){
                 </Col>
                 <Col xs={24} md={12} lg={15} >
                     <Row> 
-                      <Pageheader/>
                     </Row>
                 </Col>      
             </Row>

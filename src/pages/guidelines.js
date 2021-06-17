@@ -76,7 +76,6 @@ const Guidelines = () => {
                     <p className="title" style={{marginLeft: "45px"}}>Сургалтын удирдамж</p>
                 </Col>
                 <Col xs={24} md={12} lg={15} >
-                    <Pageheader/>
                 </Col>      
             </Row>
         </HeaderWrapper>

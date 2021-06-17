@@ -40,7 +40,6 @@ const Orgoanization = () => {
                     <p className="title" style={{marginLeft: "45px"}}>Байгууллага</p>
                 </Col>
                 <Col xs={24} md={12} lg={15} >
-                    <Pageheader/>
                 </Col>      
             </Row>
             <Row>

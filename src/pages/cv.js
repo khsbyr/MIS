@@ -5,7 +5,7 @@ import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlin
 import { Row, Col, DatePicker, Input, Button, Upload, message, Form, Select, InputNumber, Checkbox, Table } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import Pageheader from "../container/Layout/component/Pageheader";
+// import Pageheader from "../container/Layout/component/Pageheader";
 import { faCalendarAlt, faEnvelope, faHome, faPhone, faUser, faUserEdit } from "@fortawesome/free-solid-svg-icons";
 function onChange(date, dateString) {
     console.log(date, dateString);
@@ -76,7 +76,6 @@ const CV = () => {
                     <p className="title" style={{marginLeft: "45px"}}>Сургагч байгшийн CV</p>
                 </Col>
                 <Col xs={24} md={12} lg={15} >
-                    <Pageheader/>
                 </Col>      
             </Row>
         </HeaderWrapper>

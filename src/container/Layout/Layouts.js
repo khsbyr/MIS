@@ -2,7 +2,6 @@ import React, { Fragment } from "react";
 import { withRouter } from "react-router-dom";
 import { Layout as LayoutWrapper } from "antd";
 import Headers from "./Header/Header";
-import Pageheader from "./component/Pageheader";
 
 
 const { Content } = LayoutWrapper;
