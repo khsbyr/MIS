@@ -1,4 +1,15 @@
 {
     "checkEmail": "И-мэйл шалгах",
-    "login": "СИСТЕМД НЭВТРЭХ"
+    "login": "СИСТЕМД НЭВТРЭХ",
+    "user": "Хэрэглэгч",
+    "user_role": "Эрхийн тохиргоо",
+    "training_plan": "Сургалтын төлөвлөгөө",
+        "composition1": "Бүрэлдэхүүн 1",
+        "composition2": "Бүрэлдэхүүн 2",
+        "composition3": "Бүрэлдэхүүн 3",
+        "composition4": "Бүрэлдэхүүн 4",
+    "training": "Сургалт",
+        "consulting_orga": "Зөвлөх байгууллага",
+        "training_intro": "Сургалтын удирдамж",
+        "cv_teachers": "Сургагч багшийн CV"
 }
