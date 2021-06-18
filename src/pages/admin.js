@@ -3,6 +3,7 @@ import "antd/dist/antd.css";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Divider, Layout, Menu } from "antd";
 import { Row, Col, Avatar, Dropdown } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
   MenuOutlined,
@@ -18,7 +19,8 @@ import Plan from "./plan";
 import Tunshlel from "./tunshlel";
 import Organization from "./organization";
 import Guidelines from "./guidelines";
-import CV from "./cv"
+import CV from "./cv";
+import { faClipboardCheck, faFileSignature, faHandsHelping, faLayerGroup, faList, faListAlt, faProjectDiagram, faUser, faUserAlt, faUserAltSlash, faUserCheck, faUserCircle, faUserCog, faUserGraduate, faUserSecret } from "@fortawesome/free-solid-svg-icons";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -77,27 +79,34 @@ class Admin extends React.Component {
                   }}
                 >
                   {" "}
-                  <SubMenu key="sub1" icon={<UserOutlined />} title="Хэрэглэгч">
-                    <Menu.Item key="1">
+                  <SubMenu key="sub1"                     icon={<FontAwesomeIcon icon={faUserAlt}/>}                    
+ title="Хэрэглэгч">
+                    <Menu.Item key="1"                    icon={<FontAwesomeIcon icon={faUserAlt}/>}                    
+>
                       {" "}
                       <Link>Хэрэглэгч</Link>
                     </Menu.Item>{" "}
-                    <Menu.Item key="2">Эрхийн тохиргоо</Menu.Item>
+                    <Menu.Item key="2" icon={<FontAwesomeIcon icon={faUserCog}/>}>Эрхийн тохиргоо</Menu.Item>
                   </SubMenu>
                   <SubMenu
                     key="sub2"
-                    icon={<UserOutlined />}
+                    icon={<FontAwesomeIcon icon={faClipboardCheck}/>}                    
                     title="Шалгуур үзүүлэлт"
                   >
-                    <Menu.Item key="3">
+                    <Menu.Item key="3"                    icon={<FontAwesomeIcon icon={faClipboardCheck}/>}                    
+>
                       {" "}
-                      <Link to="/criteria">Шалгуур үзүүлэлтийн бүртгэл</Link>
+                      <Link to="/criteria" >Шалгуур үзүүлэлтийн бүртгэл</Link>
                     </Menu.Item>
                   </SubMenu>
-                  <SubMenu key="sub3" icon={<LaptopOutlined />} title="Сургалт">
+                  <SubMenu
+                    key="sub3"
+                    icon={<FontAwesomeIcon icon={faLayerGroup} />}
+                    title="Сургалт"
+                  >
                     <SubMenu
                       key="sub4"
-                      icon={<LaptopOutlined />}
+                      icon={<FontAwesomeIcon icon={faLayerGroup} />}
                       title="Сургалтын төлөвлөгөө"
                     >
                       <Menu.Item key="4">Бүрэлдэхүүн 1</Menu.Item>
@@ -107,18 +116,21 @@ class Admin extends React.Component {
                     </SubMenu>
                     <SubMenu
                       key="sub5"
-                      icon={<LaptopOutlined />}
+                      icon={<FontAwesomeIcon icon={faLayerGroup} />}
                       title="Сургалт"
                     >
                       <Menu.Item key="8">
                         <Link to="/organization">Зөвлөх байгууллага</Link>
                       </Menu.Item>
                       <Menu.Item key="9">
-                          <Link to="/guidelines">
-                            Сургалтын удирдамж
-                          </Link></Menu.Item>
-                      <Menu.Item key="10"><Link to="/plan">Сургалтын төлөвлөгөө</Link></Menu.Item>
-                      <Menu.Item key="11"><Link to="/cv">Сургагч багшийн CV</Link></Menu.Item>
+                        <Link to="/guidelines">Сургалтын удирдамж</Link>
+                      </Menu.Item>
+                      <Menu.Item key="10">
+                        <Link to="/plan">Сургалтын төлөвлөгөө</Link>
+                      </Menu.Item>
+                      <Menu.Item key="11">
+                        <Link to="/cv">Сургагч багшийн CV</Link>
+                      </Menu.Item>
                       <Menu.Item key="12">
                         <Link>Сургалтын хөтөлбөр</Link>
                       </Menu.Item>
@@ -130,12 +142,13 @@ class Admin extends React.Component {
                   </SubMenu>
                   <SubMenu
                     key="sub6"
-                    icon={<NotificationOutlined />}
+                    icon={<FontAwesomeIcon icon={faHandsHelping}/>}                    
+
                     title="Түншлэл"
                   >
                     <SubMenu
                       key="sub7"
-                      icon={<NotificationOutlined />}
+                      icon={<FontAwesomeIcon icon={faHandsHelping}/>}
                       title="Бүтээмжит түншлэл"
                     >
                       {" "}
@@ -147,12 +160,11 @@ class Admin extends React.Component {
                   </SubMenu>
                   <SubMenu
                     key="sub8"
-                    icon={<NotificationOutlined />}
-                    title="Төсөл"
+                    icon={<FontAwesomeIcon icon={faProjectDiagram}/>}                    title="Төсөл"
                   >
                     <SubMenu
                       key="sub9"
-                      icon={<NotificationOutlined />}
+                      icon={<FontAwesomeIcon icon={faProjectDiagram}/>}
                       title="Бүтээмжит төсөл"
                     >
                       {" "}
@@ -178,30 +190,30 @@ class Admin extends React.Component {
                       </Menu.Item>
                     </SubMenu>
                   </SubMenu>
-                  <Menu.Item key="23" icon={<NotificationOutlined />}>
+                  <Menu.Item key="23" icon={<FontAwesomeIcon icon={faListAlt}/>}>
                     Төлөвлөгөө
                   </Menu.Item>
-                  <Menu.Item key="24" icon={<NotificationOutlined />}>
+                  <Menu.Item key="24" icon={<FontAwesomeIcon icon={faFileSignature}/>}>
                     Тайлан
                   </Menu.Item>
-                  <Menu.Item key="25" icon={<NotificationOutlined />}>
-                  Хянах самбар
+                  <Menu.Item key="25" icon={<FontAwesomeIcon icon={faList}/>}>
+                    Хянах самбар
                   </Menu.Item>
                   <SubMenu
                     key="sub10"
-                    icon={<NotificationOutlined />}
+                    icon={<FontAwesomeIcon icon={faLayerGroup}/>}
                     title="Лавлах бүртгэл"
                   >
-                    <Menu.Item key="26" icon={<NotificationOutlined />}>
+                    <Menu.Item key="26" icon={<FontAwesomeIcon icon={faLayerGroup}/>}>
                       Хамрах хүрээ
                     </Menu.Item>
-                    <Menu.Item key="27" icon={<NotificationOutlined />}>
+                    <Menu.Item key="27" icon={<FontAwesomeIcon icon={faLayerGroup}/>}>
                       Хаяг
                     </Menu.Item>
-                    <Menu.Item key="28" icon={<NotificationOutlined />}>
+                    <Menu.Item key="28" icon={<FontAwesomeIcon icon={faLayerGroup}/>}>
                       Харилцах тал{" "}
                     </Menu.Item>
-                    <Menu.Item key="29" icon={<NotificationOutlined />}>
+                    <Menu.Item key="29" icon={<FontAwesomeIcon icon={faLayerGroup}/>}>
                       Шалгуур үзүүлэлтийн төрөл{" "}
                     </Menu.Item>
                   </SubMenu>
