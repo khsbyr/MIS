@@ -1,12 +1,13 @@
 import React from "react";
 import "antd/dist/antd.css";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Layout, Select, Button } from "antd";
+import { Layout, Select, Button, Menu, Dropdown } from "antd";
 import {
   EnvironmentFilled,
   GlobalOutlined,
   PhoneFilled,
   MailFilled,
+  DownOutlined
 
 } from "@ant-design/icons";
 import { Row, Col } from "antd";
@@ -18,9 +19,19 @@ const { Option } = Select;
 const {Header} = Layout;
 const Headers = () => {
 const {t, i18} = useTranslation();
+// const menu = (
+//   <Menu>
+//     <Menu.Item key="0">
+//       <Button onClick={()=>handleClick('mn')}>MN</Button>              
+//     </Menu.Item>
+//     <Menu.Item key="1">
+//       <Button onClick={()=>handleClick('en')}>EN</Button>
+//     </Menu.Item>
+//   </Menu>
+// );
 
-function handleClick(lang) {
-  i18n.changeLanguage(lang)
+function handleChange(value) {
+  i18n.changeLanguage(value)
 }
 
 return(
@@ -52,8 +63,15 @@ return(
                 </p>
               </Col>
               <Col xs={12} lg={6} md={12}>
-                  <Button onClick={()=>handleClick('mn')}>MN</Button>
-                  <Button onClick={()=>handleClick('en')}>EN</Button>
+                <Select defaultValue="MN" style={{ width: 80, color: "blue" }} onChange={handleChange}>
+                  <Option value="mn">MN</Option>
+                  <Option value="en">EN</Option>
+                </Select>
+                  {/* <Dropdown overlay={menu}>
+                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                      Click me <DownOutlined />
+                    </a>
+                  </Dropdown> */}
                 {/* <p className="textshow">
                   <GlobalOutlined /> Монгол
                 </p> */}

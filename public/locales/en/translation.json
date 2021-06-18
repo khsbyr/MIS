@@ -3,6 +3,14 @@
     "login": "LOGIN SYSTEM",
     "user": "User",
         "user_role": "User Role",
+
+    "criteria": "Criteria",
+        "criteria_regist": "Criteria registration",
+    "partnership": "Partnership",
+    "project": "Project",
+    "plan": "Plan",
+    "report": "Report",
+    "dashboard": "Dashboard",
     "training_plan": "Training plan",
         "composition1": "Composition 1",
         "composition2": "Composition 2",
@@ -11,6 +19,20 @@
     "training": "Training",
         "consulting_orga": "Consulting organization",
         "training_intro": "Training introduction",
-        "cv_teachers": "CV of Teachers"
+        "cv_teachers": "CV of Teachers",
+        "training_program": "Training program",
+        "attendance_registration": "Attendance registration",
+        "test_aggregation": "Test aggregation",
+        "training_report": "Training report",
+        "training_budget": "Training budget",
+    
+    "productive_project": "Productive project",
+        "brief_draft": "Brief draft",
+        "investment": "Investment",
+        "income_expenses": "Income and expenses",
+        "detailed_project": "Detailed project",
 
+    "lawlah": "Лавлах бүртгэл",
+        "address": "Address",
+        "criteria_type": "Criteria type"
 }

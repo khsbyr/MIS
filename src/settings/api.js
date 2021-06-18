@@ -14,45 +14,6 @@ const checkTokenExpired = (token) => {
   return false;
 };
 
-const postRequest = async (url, data) => {
-  delay(1000);
-  let token = localStorage.getItem("token");
-
-  if (!token || (token && checkTokenExpired(token))) {
-    await postRequestNoToken("api/account/guest_jwt/", {}).then((res) => {
-      token = res.result.JWToken;
-    });
-  }
-
-  localStorage.setItem("token", token);
-
-  const lang = localStorage.getItem("i18nextLng")
-    ? localStorage.getItem("i18nextLng")
-    : "en";
-  const currency = localStorage.getItem("currency")
-    ? localStorage.getItem("currency")
-    : "MNT";
-
-  let config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Accept-Language": lang,
-      "x-display-currency": currency,
-    },
-  };
-
-  return await axios
-    .post(url, data, config)
-    .then((response) => {
-      if (response.status === 400 || response.status === 500)
-        throw response.data;
-      return response.data;
-    })
-    .catch((err) => {
-      throw err[1];
-    });
-};
-
 const postRequestNoToken = (url, data) => {
   return axios
     .post(url, data)
