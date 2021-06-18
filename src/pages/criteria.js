@@ -170,7 +170,8 @@ export default function Criteria() {
         </Col>
       </Row>
       <ContentWrapper>
-          
+      <Table dataSource={dataSource} columns={columns} />
+     
       </ContentWrapper>
     </HeaderWrapper>
 
