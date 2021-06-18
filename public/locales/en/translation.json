@@ -1,4 +1,16 @@
 {
     "checkEmail": "Check Email",
-    "login": "LOGIN SYSTEM"
+    "login": "LOGIN SYSTEM",
+    "user": "User",
+        "user_role": "User Role",
+    "training_plan": "Training plan",
+        "composition1": "Composition 1",
+        "composition2": "Composition 2",
+        "composition3": "Composition 3",
+        "composition4": "Composition 4",
+    "training": "Training",
+        "consulting_orga": "Consulting organization",
+        "training_intro": "Training introduction",
+        "cv_teachers": "CV of Teachers"
+
 }

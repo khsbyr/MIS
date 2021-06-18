@@ -13,7 +13,8 @@ import {
   CaretDownOutlined,
   PoweroffOutlined,
 } from "@ant-design/icons";
-// import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
+import i18n from "../i18n";
 import Criteria from "./criteria";
 import Plan from "./plan";
 import Tunshlel from "./tunshlel";
@@ -33,18 +34,23 @@ const menu = (
   </Menu>
 );
 
-class Admin extends React.Component {
-  state = {
-    collapsed: false,
-  };
 
-  toggle = () => {
-    this.setState({
-      collapsed: !this.state.collapsed,
-    });
-  };
 
-  render() {
+const Admin = () =>  {
+  const {t, i18} = useTranslation();
+
+function handleClick(lang) {
+  i18n.changeLanguage(lang)
+}
+  // state = {
+  //   collapsed: false,
+  // };
+
+  // toggle = () => {
+  //   this.setState({
+  //     collapsed: !this.state.collapsed,
+  //   });
+  // };
     return (
       <adminWrapper>
         <Router>
@@ -80,13 +86,13 @@ class Admin extends React.Component {
                 >
                   {" "}
                   <SubMenu key="sub1"                     icon={<FontAwesomeIcon icon={faUserAlt}/>}                    
- title="Хэрэглэгч">
+ title={t("user")}>
                     <Menu.Item key="1"                    icon={<FontAwesomeIcon icon={faUserAlt}/>}                    
 >
                       {" "}
-                      <Link>Хэрэглэгч</Link>
+                      <Link>{t("user")}</Link>
                     </Menu.Item>{" "}
-                    <Menu.Item key="2" icon={<FontAwesomeIcon icon={faUserCog}/>}>Эрхийн тохиргоо</Menu.Item>
+                    <Menu.Item key="2" icon={<FontAwesomeIcon icon={faUserCog}/>}>{t("user_role")}</Menu.Item>
                   </SubMenu>
                   <SubMenu
                     key="sub2"
@@ -102,34 +108,34 @@ class Admin extends React.Component {
                   <SubMenu
                     key="sub3"
                     icon={<FontAwesomeIcon icon={faLayerGroup} />}
-                    title="Сургалт"
+                    title={t("training")}
                   >
                     <SubMenu
                       key="sub4"
                       icon={<FontAwesomeIcon icon={faLayerGroup} />}
-                      title="Сургалтын төлөвлөгөө"
+                      title={t("training_plan")}
                     >
-                      <Menu.Item key="4">Бүрэлдэхүүн 1</Menu.Item>
-                      <Menu.Item key="5">Бүрэлдэхүүн 2</Menu.Item>
-                      <Menu.Item key="6">Бүрэлдэхүүн 3</Menu.Item>
-                      <Menu.Item key="7">Бүрэлдэхүүн 4</Menu.Item>
+                      <Menu.Item key="4">{t("composition1")}</Menu.Item>
+                      <Menu.Item key="5">{t("composition2")}</Menu.Item>
+                      <Menu.Item key="6">{t("composition3")}</Menu.Item>
+                      <Menu.Item key="7">{t("composition4")}</Menu.Item>
                     </SubMenu>
                     <SubMenu
                       key="sub5"
                       icon={<FontAwesomeIcon icon={faLayerGroup} />}
-                      title="Сургалт"
+                      title={t("training")}
                     >
                       <Menu.Item key="8">
-                        <Link to="/organization">Зөвлөх байгууллага</Link>
+                        <Link to="/organization">{t("consulting_orga")}</Link>
                       </Menu.Item>
                       <Menu.Item key="9">
-                        <Link to="/guidelines">Сургалтын удирдамж</Link>
+                        <Link to="/guidelines">{t("training_intro")}</Link>
                       </Menu.Item>
                       <Menu.Item key="10">
                         <Link to="/plan">Сургалтын төлөвлөгөө</Link>
                       </Menu.Item>
                       <Menu.Item key="11">
-                        <Link to="/cv">Сургагч багшийн CV</Link>
+                        <Link to="/cv">{t("cv_teachers")}</Link>
                       </Menu.Item>
                       <Menu.Item key="12">
                         <Link>Сургалтын хөтөлбөр</Link>
@@ -322,6 +328,6 @@ class Admin extends React.Component {
         </Router>
       </adminWrapper>
     );
-  }
+  
 }
 export default Admin;
