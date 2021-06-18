@@ -3,8 +3,16 @@ import "antd/dist/antd.css";
 import { Button, Row, Col, Form, Input, Carousel } from "antd";
 import TextWrapper, { LogIn } from "./Login.style";
 import { useHistory } from "react-router-dom";
+import {useTranslation} from 'react-i18next';
+import i18n from "../i18n"
 
 function Login() {
+  const {t, i18} = useTranslation();
+
+  function handleClick(lang) {
+  i18n.changeLanguage(lang)
+  }
+
   const history = useHistory();
   function moveToRegister() {
     history.push("/register");
@@ -110,7 +118,7 @@ function Login() {
               onFinish={onFinish}
             >
               <Form.Item>
-                <p className="title">СИСТЕМД НЭВТРЭХ</p>
+                <p className="title">{t('login')}</p>
               </Form.Item>
               <Form.Item>
                 <p className="subTitle">Нэвтрэх нэр</p>
