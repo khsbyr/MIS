@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import HeaderWrapper from "./plan.styled";
 import ContentWrapper  from "./criteria.style";
 import CriteriaModal from "./criteriaModal";
@@ -6,12 +6,13 @@ import {
   DownOutlined,
   SearchOutlined,
   CopyOutlined,
-  ExclamationCircleOutlined
 } from "@ant-design/icons";
 import { Row, Col, DatePicker, Input, Button, Table, Modal, Form, InputNumber } from "antd";
 import PageHeaderWrapper from "../container/Layout/component/Pageheader.style";
 import { useTranslation } from 'react-i18next';
 import i18n from "../i18n";
+import { getService } from "../service/service";
+
 
 function onChange(date, dateString) {
   console.log(date, dateString);
@@ -22,6 +23,7 @@ const onSearch = (value) => console.log(value);
 export default function Criteria() {
   //const { Search } = Input;
   const { t, i18 } = useTranslation();
+  const [list, setList] = useState([]);
   function handleClick(lang) {
     i18n.changeLanguage(lang)
   }
@@ -31,11 +33,14 @@ export default function Criteria() {
       title: 'Код / Дугаар/',
       dataIndex: 'code',
       key: 'code',
+      code:"code"
+      
     },
     {
       title: 'Шалгуур үзүүлэлтийн нэр',
       dataIndex: 'name',
       key: 'name',
+      name:"name"
     },
     {
       title: 'Хүрэх үр дүн',
@@ -55,18 +60,14 @@ export default function Criteria() {
   ];
 
 
-  const data = [
-    {
-      key: '1',
-      code: 'asd',
-      name: 'zxc',
-      urDun: 'bnm',
-      biylelt: 'qwe',
-      indicators: 'poi'
-    },
-  ];
-
   const [visible, setVisible] = useState(false);
+  useEffect(()=>{
+    getService("criteria/get").then(result=>{
+      let list  = result.content || []
+      setList(list)
+
+    })
+    },[])
 
   return (
     <HeaderWrapper>
@@ -164,7 +165,7 @@ export default function Criteria() {
         </Col>
       </Row>
       <ContentWrapper>
-      <Table dataSource={data} columns={columns} bordered />
+      <Table dataSource={list} columns={columns} bordered />
      
       </ContentWrapper>
     </HeaderWrapper>

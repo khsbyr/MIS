@@ -9,7 +9,6 @@ let config = {
   },
 };
 export async function getService(serviceName) {
-  console.log(config);
   return (await axios.get(serviceName, config)).data;
 }
 
