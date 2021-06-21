@@ -12,6 +12,11 @@ const HeaderWrapper = styled.div `
             text-align: center;
         }
     }
+    .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+        color: white;
+        border: none;
+        background-color: transparent;
+    }
 `;
 
 

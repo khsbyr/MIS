@@ -47,6 +47,21 @@ code {
 .ant-layout-header {
   padding: 0px 0px !important;    
 }
+.ant-menu-item .ant-menu-item-icon, .ant-menu-submenu-title .ant-menu-item-icon, .ant-menu-item .anticon, .ant-menu-submenu-title .anticon  {
+  color: #103154;
+  font-size: 1rem;
+}
+.ant-menu-inline.ant-menu-root .ant-menu-item > .ant-menu-title-content, .ant-menu-inline.ant-menu-root .ant-menu-submenu-title > .ant-menu-title-content {
+  // color: #103154;
+  font-size: 1rem;
+}
+.ant-menu-submenu-arrow::before, .ant-menu-submenu-arrow::after {
+  color: #103154;
+  font-size: 1rem;
+}
+.ant-menu-submenu-expand-icon, .ant-menu-submenu-arrow {
+position: none;
+}
 
   
 

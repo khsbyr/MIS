@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const adminWrapper = styled.div `
+const AdminWrapper = styled.div `
 
 body {
     margin: 0;
@@ -64,4 +64,4 @@ body {
   }
   `;
 
-export default adminWrapper;
+export default AdminWrapper;

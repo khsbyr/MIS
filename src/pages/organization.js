@@ -37,7 +37,7 @@ const Orgoanization = () => {
         <HeaderWrapper>
             <Row>           
                 <Col xs={24} md={12} lg={9}>
-                    <p className="title" style={{marginLeft: "45px"}}>Байгууллага</p>
+                    <p className="title" style={{marginLeft: "45px"}}>Зөвлөх байгууллага</p>
                 </Col>
                 <Col xs={24} md={12} lg={15} >
                 </Col>      

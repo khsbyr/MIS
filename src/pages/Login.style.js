@@ -18,6 +18,7 @@ const TextWrapper = styled.div `
     }
     
     .ant-carousel .slick-dots li {
+        margin-top: 30px;
         background-color: #fff;
         width: 10px;
         height: 10px;
@@ -35,11 +36,12 @@ const TextWrapper = styled.div `
         width: 10px;
         height: 10px;
         border-radius: 5px;
+        margin-top: 40px;
     }
 
     .ant-carousel .slick-dots {
         margin-left: 0%;
-        margin-right: 93%;
+        margin-right: 92%;
     }
 
     @media (max-width: 991px) {

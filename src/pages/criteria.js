@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import HeaderWrapper from "./plan.styled";
 import ContentWrapper  from "./criteria.style";
 import CriteriaModal from "./criteriaModal";
@@ -6,73 +6,69 @@ import {
   DownOutlined,
   SearchOutlined,
   CopyOutlined,
-  ExclamationCircleOutlined
 } from "@ant-design/icons";
-import { Row, Col, DatePicker, Input, Button, Table, Modal, Form } from "antd";
+import { Row, Col, DatePicker, Input, Button, Table, Modal, Form, InputNumber } from "antd";
 import PageHeaderWrapper from "../container/Layout/component/Pageheader.style";
+import { useTranslation } from 'react-i18next';
+import i18n from "../i18n";
+import { getService } from "../service/service";
+
 
 function onChange(date, dateString) {
   console.log(date, dateString);
 }
 const onSearch = (value) => console.log(value);
-// function addCriteria() {
-//   confirm({
-//     title: 'Do you Want to delete these items?',
-//     icon: <ExclamationCircleOutlined />,
-//     content: 'Some descriptions',
-//     Input: 'asda',
-//     onOk() {
-//       console.log('OK');
-//     },
-//     onCancel() {
-//       console.log('Cancel');
-//     },
-//   });
-// }
 
 
 export default function Criteria() {
   //const { Search } = Input;
+  const { t, i18 } = useTranslation();
+  const [list, setList] = useState([]);
+  function handleClick(lang) {
+    i18n.changeLanguage(lang)
+  }
   
-  const dataSource = [
+  const columns = [
     {
-      code: "1",
-      name: "Criteria",
-      result: "bla2",
-      results: "10 Downing Street",
-      type: "torol",
-      type: ""
+      title: 'Код / Дугаар/',
+      dataIndex: 'code',
+      key: 'code',
+      code:"code"
+      
+    },
+    {
+      title: 'Шалгуур үзүүлэлтийн нэр',
+      dataIndex: 'name',
+      key: 'name',
+      name:"name"
+    },
+    {
+      title: 'Хүрэх үр дүн',
+      dataIndex: 'urDun',
+      key: 'urDun',
+    },
+    {
+      title: 'Үр дүнгийн биелэлт',
+      dataIndex: 'biylelt',
+      key: 'biylelt',
+    },
+    {
+      title: 'Шалгуур үзүүлэлтийн төрөл',
+      dataIndex: 'indicators',
+      key: 'indicators',
     },
   ];
 
-  const columns = [
-    {
-      title: "Code",
-      dataIndex: "code",
-      key: "code",
-    },
-    {
-      title: "Criteria name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Achieved results",
-      dataIndex: "result",
-      key: "result",
-    },
-    {
-      title: "Execution of results",
-      dataIndex: "results",
-      key: "results",
-    },
-    {
-      title: "Criteria type",
-      dataIndex: "type",
-      key: "type",
-    },
-  ];
+
   const [visible, setVisible] = useState(false);
+  useEffect(()=>{
+    getService("criteria/get").then(result=>{
+      let list  = result.content || []
+      setList(list)
+
+    })
+    },[])
+
   return (
     <HeaderWrapper>
       <Row>
@@ -119,17 +115,60 @@ export default function Criteria() {
                 </Button>
               </Col>
               <Col xs={8} md={8} lg={4}>
-                <Button className="export" icon={<CopyOutlined />}>
+              <Button className="export" icon={<CopyOutlined />} onClick={() => setVisible(true)}>
                   Нэмэх
                 </Button>
+              <CriteriaModal/>
+              <Modal
+                  title="Шалгуур үзүүлэлт бүртгэх "
+                  centered
+                  visible={visible}
+                  onOk={() => setVisible(false)}
+                  onCancel={() => setVisible(false)}
+                  width={1000}
+              >
+                  <Row gutter={[50]}>
+                  <Col span={12}>
+                      <Form layout="vertical">
+                          <Form.Item label="Код /Дугаар/:" >                    
+                              <Input placeholder="Код /Дугаар/:"/>
+                          </Form.Item>
+                      </Form>
+                      <Form layout="vertical">
+                          <Form.Item label="Шалгуур үзүүлэлтийн нэр:" >                    
+                              <Input placeholder="Шалгуур үзүүлэлтийн нэр:"/>
+                          </Form.Item>
+                      </Form>
+                      <Form layout="vertical">
+                          <Form.Item label="Хүрэх үр дүн:" >                    
+                              <InputNumber style={{ width: "20vw" }} placeholder="Хүрэх үр дүн:"/>
+                          </Form.Item>
+                      </Form>
+                  </Col>
+                  <Col span={12}>
+                      <Form layout="vertical">
+                          <Form.Item label="Үр дүнгийн биелэлт:" >                    
+                              <InputNumber style={{ width: "20vw" }} placeholder="Үр дүнгийн биелэлт:"/>
+                          </Form.Item>
+                      </Form>
+                      <Form layout="vertical">
+                          <Form.Item label="Шалгуур үзүүлэлтийн төрөл:" >                    
+                              <Input placeholder="Шалгуур үзүүлэлтийн төрөл:"/>
+                          </Form.Item>
+                      </Form>
+                  </Col>
+                  </Row>
+              </Modal>
               </Col>
             </Row>
           </PageHeaderWrapper>{" "}
         </Col>
       </Row>
       <ContentWrapper>
-          <CriteriaModal/>
+      <Table dataSource={list} columns={columns} bordered />
+     
       </ContentWrapper>
     </HeaderWrapper>
+
   );
 }
