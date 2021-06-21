@@ -248,19 +248,39 @@ export default function Composition1() {
                       </Form>
                       <Form layout="vertical">
                           <Form.Item label="Суурь үзүүлэлт:" >                    
-                              <InputNumber style={{ width: "20vw" }} placeholder="Хүрэх үр дүн:"/>
+                              <InputNumber style={{ width: "20vw" }} placeholder="Суурь үзүүлэлт:"/>
+                          </Form.Item>
+                      </Form>
+                      <Form layout="vertical">
+                          <Form.Item label="Мэдээллийн эх үүсвэр:" >                    
+                              <InputNumber style={{ width: "20vw" }} placeholder="Мэдээллийн эх үүсвэр:"/>
+                          </Form.Item>
+                      </Form>
+                      <Form layout="vertical">
+                          <Form.Item label="Хариуцах нэгж:" >                    
+                          <Input placeholder="Хариуцах нэгж:"/>
                           </Form.Item>
                       </Form>
                   </Col>
                   <Col span={12}>
                       <Form layout="vertical">
-                          <Form.Item label="Үр дүнгийн биелэлт:" >                    
-                              <InputNumber style={{ width: "20vw" }} placeholder="Үр дүнгийн биелэлт:"/>
+                          <Form.Item label="Зорилтот үр дүн:" >                    
+                              <InputNumber style={{ width: "20vw" }} placeholder="Зорилтот үр дүн:"/>
                           </Form.Item>
                       </Form>
                       <Form layout="vertical">
-                          <Form.Item label="Шалгуур үзүүлэлтийн төрөл:" >                    
-                              <Input placeholder="Шалгуур үзүүлэлтийн төрөл:"/>
+                          <Form.Item label="Тайлбар/Тодорхойлолт:" >                    
+                              <Input placeholder="Тайлбар/Тодорхойлолт:"/>
+                          </Form.Item>
+                      </Form>
+                      <Form layout="vertical">
+                          <Form.Item label="Давтамж:" >                    
+                              <Input placeholder="Давтамж:"/>
+                          </Form.Item>
+                      </Form>
+                      <Form layout="vertical">
+                          <Form.Item label="Мэдээлэл цуглуулах аргачлал:" >                    
+                              <Input placeholder="Мэдээлэл цуглуулах аргачлал:"/>
                           </Form.Item>
                       </Form>
                   </Col>
