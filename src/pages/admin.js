@@ -21,6 +21,7 @@ import Tunshlel from "./tunshlel";
 import Organization from "./organization";
 import Guidelines from "./guidelines";
 import CV from "./cv";
+import Composition1 from "./composition1";
 import TrainingReport from "./trainingReport";
 import { faClipboardCheck, faFileSignature, faHandsHelping, faLayerGroup, faList, faListAlt, faProjectDiagram, faUser, faUserAlt, faUserAltSlash, faUserCheck, faUserCircle, faUserCog, faUserGraduate, faUserSecret } from "@fortawesome/free-solid-svg-icons";
 
@@ -116,7 +117,7 @@ const Admin = () => {
                     icon={<FontAwesomeIcon icon={faLayerGroup} />}
                     title={t("training_plan")}
                   >
-                    <Menu.Item key="4">{t("composition1")}</Menu.Item>
+                    <Menu.Item key="4"><Link to="/composition1">{t("composition1")}</Link></Menu.Item>
                     <Menu.Item key="5">{t("composition2")}</Menu.Item>
                     <Menu.Item key="6">{t("composition3")}</Menu.Item>
                     <Menu.Item key="7">{t("composition4")}</Menu.Item>
@@ -323,6 +324,9 @@ const Admin = () => {
                   </Route>
                   <Route path="/training_report">
                     <TrainingReport />
+                  </Route>
+                  <Route path="/composition1">
+                    <Composition1 />
                   </Route>
                 </Switch>{" "}
               </Content>
