@@ -1,11 +1,21 @@
 {
     "checkEmail": "Check Email",
-    "login": "LOGIN SYSTEM",
+    "login_system": "LOGIN SYSTEM",
     "user": "User",
         "user_role": "User Role",
-
-    "criteria": "Criteria",
-        "criteria_regist": "Criteria registration",
+    "login_title": "LIVESTOCK COMMERCIALIZATION PROJECT",
+    "project_background": "Project background:",
+    "background_content": "The project development objective is “to improve livestock health, productivity, and commercialization of targeted value chains in project locations and, in the event of an eligible crisis or emergency, to provide immediate and effective response to the said eligible crisis or emergency”. The project beneficiaries will include small and marginal herders, herder/producer organizations and other agro-enterprises.",
+    "login_subtitle": "Management Information System",
+    "partner": "Partner organizations:",
+    "username": "Username",
+    "password": "Password",
+    "login": "Login",
+    "register": "Register",
+    "forgot_pass": "Forgot password?",
+    "rights_reserved": "©2021 Livestock Commercialization Project. All Rights Reserved.",
+    "criteria": "Indicators",
+        "criteria_regist": "Indicators registration",
     "partnership": "Partnership",
     "project": "Project",
     "plan": "Plan",
@@ -17,8 +27,8 @@
         "composition3": "Composition 3",
         "composition4": "Composition 4",
     "training": "Training",
-        "consulting_orga": "Consulting organization",
-        "training_intro": "Training introduction",
+        "consulting_orga": "Consulting firm",
+        "training_intro": "Training agenda",
         "cv_teachers": "CV of Teachers",
         "training_program": "Training program",
         "attendance_registration": "Attendance registration",
@@ -26,13 +36,17 @@
         "training_report": "Training report",
         "training_budget": "Training budget",
     
-    "productive_project": "Productive project",
-        "brief_draft": "Brief draft",
+    "productive_project": "Productive partnership",
+        "brief_draft": "Concept note",
         "investment": "Investment",
         "income_expenses": "Income and expenses",
-        "detailed_project": "Detailed project",
+        "detailed_project": "Full project proposal",
 
-    "lawlah": "Лавлах бүртгэл",
+    "directory_regis": "Directory registration",
+        "scope": "Scope",
         "address": "Address",
-        "criteria_type": "Criteria type"
+        "contact_side": "Contact side",
+        "criteria_type": "Types of indicators"
+
+    
 }

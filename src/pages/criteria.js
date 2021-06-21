@@ -10,68 +10,170 @@ import {
 } from "@ant-design/icons";
 import { Row, Col, DatePicker, Input, Button, Table, Modal, Form, InputNumber } from "antd";
 import PageHeaderWrapper from "../container/Layout/component/Pageheader.style";
+import { useTranslation } from 'react-i18next';
+import i18n from "../i18n";
 
 function onChange(date, dateString) {
   console.log(date, dateString);
 }
 const onSearch = (value) => console.log(value);
-// function addCriteria() {
-//   confirm({
-//     title: 'Do you Want to delete these items?',
-//     icon: <ExclamationCircleOutlined />,
-//     content: 'Some descriptions',
-//     Input: 'asda',
-//     onOk() {
-//       console.log('OK');
-//     },
-//     onCancel() {
-//       console.log('Cancel');
-//     },
-//   });
-// }
 
 
 export default function Criteria() {
   //const { Search } = Input;
+  const { t, i18 } = useTranslation();
+  function handleClick(lang) {
+    i18n.changeLanguage(lang)
+  }
   
-  const dataSource = [
+  const columns = [
     {
-      code: "1",
-      name: "Criteria",
-      result: "bla2",
-      results: "10 Downing Street",
-      type: "torol",
-      type: ""
+      title: t("Row1_Col1"),
+      dataIndex: 'Row1_Col1',
+      key: 'Row1_Col1',
+      render: (value, row, index) => {
+        const obj = {
+          children: value,
+          props: {},
+        };
+
+        if (index === 2) {
+          obj.props.rowSpan = 4;
+        }
+        // These two are merged into above cell
+        if (index === 3) {
+          obj.props.rowSpan = 0;
+        }
+        if (index === 4) {
+          obj.props.colSpan = 0;
+        }
+        if (index === 5) {
+          obj.props.colSpan = 0;
+        }
+        return obj;
+      },
+    },
+    {
+      title: t("Row1_Col2"),
+      dataIndex: 'Row1_Col2',
+      key: 'Row1_Col2',
+    },
+    {
+      title: t("Row1_Col3"),
+      dataIndex: 'Row1_Col3',
+      key: 'Row1_Col3',
+    },
+    {
+      title: t("Row1_Col4"),
+      dataIndex: 'Row1_Col4',
+      key: 'Row1_Col4',
+    },
+    {
+      title: t("Row1_Col5"),
+      dataIndex: 'Row1_Col5',
+      key: 'Row1_Col5',
+    },
+    {
+      title: t("Row1_Col6"),
+      dataIndex: 'Row1_Col6',
+      key: 'Row1_Col6',
+      children: [
+        {
+          title: t("Row1_Col6_1"),
+          dataIndex: 'Row1_Col6_1',
+          key: 'Row1_Col6_1',
+          
+        },
+        {
+          title: t("Row1_Col6_2"),
+          dataIndex: 'Row1_Col6_2',
+          key: 'Row1_Col6_2',
+        },
+        {
+          title: t("Row1_Col6_3"),
+          dataIndex: 'Row1_Col6_3',
+          key: 'Row1_Col6_3',
+        },
+        {
+          title: t("Row1_Col6_4"),
+          dataIndex: 'Row1_Col6_4',
+          key: 'Row1_Col6_4',
+        },
+        {
+          title: t("Row1_Col6_5"),
+          dataIndex: 'Row1_Col6_5',
+          key: 'Row1_Col6_5',
+        },
+      ],
     },
   ];
 
-  const columns = [
+
+  const data = [
     {
-      title: "Code",
-      dataIndex: "code",
-      key: "code",
+      key: '1',
+      Row1_Col1: 'ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТӨВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД',
+      colSpan: 6,
     },
     {
-      title: "Criteria name",
-      dataIndex: "name",
-      key: "name",
+      key: '2',
+      Row1_Col1: t("Row2_Col1"),
+      Row1_Col3: t("Row2_Col3"),
+      Row1_Col4: '0',
+      Row1_Col5: '10',
+      Row1_Col6_1: t("Row2_Col6"),
+      Row1_Col6_2: t("Row2_Col7"),
+      Row1_Col6_3: t("Row2_Col8"),
+      Row1_Col6_5: t("Row2_Col10"),
+      
     },
     {
-      title: "Achieved results",
-      dataIndex: "result",
-      key: "result",
+      key: '3',
+      Row1_Col1: t("Row3_Col1"),
+      Row1_Col3: t("Row3_Col3"),
+      Row1_Col4: '0',
+      Row1_Col5: '10',
+      Row1_Col6_1: t("Row3_Col6"),
+      Row1_Col6_2: t("Row3_Col7"),
+      Row1_Col6_3: t("Row3_Col8"),
+      Row1_Col6_5: t("Row3_Col10"),
+      
     },
     {
-      title: "Execution of results",
-      dataIndex: "results",
-      key: "results",
+      key: '4',
+      Row1_Col3: t("Row3_Col3_2"),
+      Row1_Col4: '0',
+      Row1_Col5: '10',
+      Row1_Col6_1: t("Row3_Col6_2"),
+      Row1_Col6_2: t("Row3_Col7"),
+      Row1_Col6_3: t("Row3_Col8_2"),
+      Row1_Col6_4: t("Row3_Col9_2"),
+      Row1_Col6_5: t("Row3_Col10"),
     },
     {
-      title: "Criteria type",
-      dataIndex: "type",
-      key: "type",
+      key: '5',
+      Row1_Col3: t("Row3_Col3_3"),
+      Row1_Col4: '0',
+      Row1_Col5: '10',
+      Row1_Col6_1: t("Row3_Col6_3"),
+      Row1_Col6_2: t("Row3_Col7"),
+      Row1_Col6_3: t("Row3_Col8_2"),
+      Row1_Col6_4: t("Row3_Col9_2"),
+      Row1_Col6_5: t("Row3_Col10"),    
+    },
+    {
+      key: '6',
+      Row1_Col3: t("Row3_Col3_4"),
+      Row1_Col4: '0',
+      Row1_Col5: '10',
+      Row1_Col6_1: t("Row3_Col6_4"),
+      Row1_Col6_2: t("Row3_Col7"),
+      Row1_Col6_3: t("Row3_Col8_4"),
+      Row1_Col6_4: t("Row3_Col9_4"),
+      Row1_Col6_5: t("Row3_Col10_4"),     
     },
   ];
+
   const [visible, setVisible] = useState(false);
 
   return (
@@ -170,7 +272,7 @@ export default function Criteria() {
         </Col>
       </Row>
       <ContentWrapper>
-      <Table dataSource={dataSource} columns={columns} />
+      <Table dataSource={data} columns={columns} bordered />
      
       </ContentWrapper>
     </HeaderWrapper>

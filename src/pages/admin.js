@@ -21,6 +21,7 @@ import Tunshlel from "./tunshlel";
 import Organization from "./organization";
 import Guidelines from "./guidelines";
 import CV from "./cv";
+import TrainingReport from "./trainingReport";
 import { faClipboardCheck, faFileSignature, faHandsHelping, faLayerGroup, faList, faListAlt, faProjectDiagram, faUser, faUserAlt, faUserAltSlash, faUserCheck, faUserCircle, faUserCog, faUserGraduate, faUserSecret } from "@fortawesome/free-solid-svg-icons";
 
 const { SubMenu } = Menu;
@@ -52,7 +53,7 @@ const Admin = () => {
   //   });
   // };
   return (
-    <adminWrapper>
+    
       <Router>
         <Layout>
           <Layout>
@@ -90,7 +91,7 @@ const Admin = () => {
                   <Menu.Item key="1" icon={<FontAwesomeIcon icon={faUserAlt} />}
                   >
                     {" "}
-                    <Link>{t("user")}</Link>
+                    <Link to="#">{t("user")}</Link>
                   </Menu.Item>{" "}
                   <Menu.Item key="2" icon={<FontAwesomeIcon icon={faUserCog} />}>{t("user_role")}</Menu.Item>
                 </SubMenu>
@@ -138,11 +139,11 @@ const Admin = () => {
                       <Link to="/cv">{t("cv_teachers")}</Link>
                     </Menu.Item>
                     <Menu.Item key="12">
-                      <Link>{t("training_program")}</Link>
+                      <Link to="#">{t("training_program")}</Link>
                     </Menu.Item>
                     <Menu.Item key="13">{t("attendance_registration")}</Menu.Item>
                     <Menu.Item key="14">{t("test_aggregation")}</Menu.Item>
-                    <Menu.Item key="15">{t("training_report")}</Menu.Item>
+                    <Menu.Item key="15"><Link to="/training_report">{t("training_report")}</Link></Menu.Item>
                     <Menu.Item key="16">{t("training_budget")}</Menu.Item>
                   </SubMenu>
                 </SubMenu>
@@ -208,16 +209,16 @@ const Admin = () => {
                 <SubMenu
                   key="sub10"
                   icon={<FontAwesomeIcon icon={faLayerGroup} />}
-                  title={t("lawlah")}
+                  title={t("directory_regis")}
                 >
                   <Menu.Item key="26" icon={<FontAwesomeIcon icon={faLayerGroup} />}>
-                    Хамрах хүрээ
+                  {t("scope")}
                   </Menu.Item>
                   <Menu.Item key="27" icon={<FontAwesomeIcon icon={faLayerGroup} />}>
                     {t("address")}
                   </Menu.Item>
                   <Menu.Item key="28" icon={<FontAwesomeIcon icon={faLayerGroup} />}>
-                    Харилцах тал{" "}
+                  {t("contact_side")}
                   </Menu.Item>
                   <Menu.Item key="29" icon={<FontAwesomeIcon icon={faLayerGroup} />}>
                     {t("criteria_type")}{" "}
@@ -320,13 +321,16 @@ const Admin = () => {
                   <Route path="/cv">
                     <CV />
                   </Route>
+                  <Route path="/training_report">
+                    <TrainingReport />
+                  </Route>
                 </Switch>{" "}
               </Content>
             </Layout>
           </Layout>
         </Layout>
       </Router>
-    </adminWrapper>
+    
   );
 
 }
