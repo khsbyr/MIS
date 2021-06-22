@@ -24,23 +24,9 @@ import Guidelines from "./guidelines";
 import CV from "./cv";
 import Composition1 from "./composition1";
 import TrainingReport from "./trainingReport";
-import {
-  faClipboardCheck,
-  faFileSignature,
-  faHandsHelping,
-  faLayerGroup,
-  faList,
-  faListAlt,
-  faProjectDiagram,
-  faUser,
-  faUserAlt,
-  faUserAltSlash,
-  faUserCheck,
-  faUserCircle,
-  faUserCog,
-  faUserGraduate,
-  faUserSecret,
-} from "@fortawesome/free-solid-svg-icons";
+import TrainingProgram from "./trainingProgram";
+import { faClipboardCheck, faFileSignature, faHandsHelping, faLayerGroup, faList, faListAlt, faProjectDiagram, faUser, faUserAlt, faUserAltSlash, faUserCheck, faUserCircle, faUserCog, faUserGraduate, faUserSecret } from "@fortawesome/free-solid-svg-icons";
+import Attendance from "./attendance";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -156,27 +142,41 @@ const Admin = () => {
                   icon={<FontAwesomeIcon icon={faLayerGroup} />}
                   title={t("training")}
                 >
-                  <Menu.Item key="8">
-                    <Link to="/organization">{t("consulting_orga")}</Link>
-                  </Menu.Item>
-                  <Menu.Item key="9">
-                    <Link to="/guidelines">{t("training_intro")}</Link>
-                  </Menu.Item>
-                  <Menu.Item key="10">
-                    <Link to="/plan">{t("training_plan")}</Link>
-                  </Menu.Item>
-                  <Menu.Item key="11">
-                    <Link to="/cv">{t("cv_teachers")}</Link>
-                  </Menu.Item>
-                  <Menu.Item key="12">
-                    <Link to="#">{t("training_program")}</Link>
-                  </Menu.Item>
-                  <Menu.Item key="13">{t("attendance_registration")}</Menu.Item>
-                  <Menu.Item key="14">{t("test_aggregation")}</Menu.Item>
-                  <Menu.Item key="15">
-                    <Link to="/training_report">{t("training_report")}</Link>
-                  </Menu.Item>
-                  <Menu.Item key="16">{t("training_budget")}</Menu.Item>
+                  <SubMenu
+                    key="sub4"
+                    icon={<FontAwesomeIcon icon={faLayerGroup} />}
+                    title={t("training_plan")}
+                  >
+                    <Menu.Item key="4"><Link to="/composition1">{t("composition1")}</Link></Menu.Item>
+                    <Menu.Item key="5">{t("composition2")}</Menu.Item>
+                    <Menu.Item key="6">{t("composition3")}</Menu.Item>
+                    <Menu.Item key="7">{t("composition4")}</Menu.Item>
+                  </SubMenu>
+                  <SubMenu
+                    key="sub5"
+                    icon={<FontAwesomeIcon icon={faLayerGroup} />}
+                    title={t("training")}
+                  >
+                    <Menu.Item key="8">
+                      <Link to="/organization">{t("consulting_orga")}</Link>
+                    </Menu.Item>
+                    <Menu.Item key="9">
+                      <Link to="/guidelines">{t("training_intro")}</Link>
+                    </Menu.Item>
+                    <Menu.Item key="10">
+                      <Link to="/plan">{t("training_plan")}</Link>
+                    </Menu.Item>
+                    <Menu.Item key="11">
+                      <Link to="/cv">{t("cv_teachers")}</Link>
+                    </Menu.Item>
+                    <Menu.Item key="12">
+                      <Link to="/training_program">{t("training_program")}</Link>
+                    </Menu.Item>
+                    <Menu.Item key="13"><Link to="/attendance">{t("attendance_registration")}</Link></Menu.Item>
+                    <Menu.Item key="14">{t("test_aggregation")}</Menu.Item>
+                    <Menu.Item key="15"><Link to="/training_report">{t("training_report")}</Link></Menu.Item>
+                    <Menu.Item key="16">{t("training_budget")}</Menu.Item>
+                  </SubMenu>
                 </SubMenu>
               </SubMenu>
               <SubMenu
@@ -379,9 +379,41 @@ const Admin = () => {
                 </Route>
               </Switch>{" "}
             </Content>
+                <Switch>
+                  <Route exact path="/criteria">
+                    <Criteria />
+                  </Route>
+                  <Route path="/guidelines">
+                    <Guidelines />
+                  </Route>
+                  <Route path="/plan">
+                    <Plan />
+                  </Route>
+                  <Route path="/tunshlel">
+                    <Tunshlel />
+                  </Route>
+                  <Route path="/organization">
+                    <Organization />
+                  </Route>
+                  <Route path="/cv">
+                    <CV />
+                  </Route>
+                  <Route path="/training_report">
+                    <TrainingReport />
+                  </Route>
+                  <Route path="/composition1">
+                    <Composition1 />
+                  </Route>
+                  <Route path="/training_program">
+                    <TrainingProgram />
+                  </Route>
+                  <Route path="/attendance">
+                    <Attendance />
+                  </Route>
+                </Switch>{" "}
+            </Layout>
           </Layout>
         </Layout>
-      </Layout>
     </Router>
   );
 };
