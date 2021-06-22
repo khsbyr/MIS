@@ -1,4 +1,4 @@
-export const PAGESIZE = 25
+export const PAGESIZE = 20
 
 export const ORG_WISH = {
     CREATE: 1,

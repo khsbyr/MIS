@@ -30,32 +30,34 @@ export default function Criteria() {
   
   const columns = [
     {
-      title: 'Код / Дугаар/',
-      dataIndex: 'code',
-      key: 'code',
-      code:"code"
-      
+      title: "Код / Дугаар/ sadsa",
+      dataIndex: "code",
+      key: "code",
+      code: "code",
     },
     {
-      title: 'Шалгуур үзүүлэлтийн нэр',
-      dataIndex: 'name',
-      key: 'name',
-      name:"name"
+      title: "Шалгуур үзүүлэлтийн нэр",
+      dataIndex: "name",
+      key: "name",
+      name: "name",
     },
     {
-      title: 'Хүрэх үр дүн',
-      dataIndex: 'urDun',
-      key: 'urDun',
+      title: "Хүрэх үр дүн",
+      dataIndex: "indicatorProcess",
+      key: "indicatorProcess",
+      indicatorProcess: "indicatorProcess",
     },
     {
-      title: 'Үр дүнгийн биелэлт',
-      dataIndex: 'biylelt',
-      key: 'biylelt',
+      title: "Үр дүнгийн биелэлт",
+      dataIndex: "upIndicator",
+      key: "upIndicator",
+      upIndicator: "upIndicator",
     },
     {
-      title: 'Шалгуур үзүүлэлтийн төрөл',
-      dataIndex: 'indicators',
-      key: 'indicators',
+      title: "Шалгуур үзүүлэлтийн төрөл",
+      dataIndex: "criteriaIndicator",
+      key: "criteriaIndicator",
+      criteriaIndicator: "criteriaIndicator",
     },
   ];
 
