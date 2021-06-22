@@ -23,7 +23,9 @@ import Guidelines from "./guidelines";
 import CV from "./cv";
 import Composition1 from "./composition1";
 import TrainingReport from "./trainingReport";
+import TrainingProgram from "./trainingProgram";
 import { faClipboardCheck, faFileSignature, faHandsHelping, faLayerGroup, faList, faListAlt, faProjectDiagram, faUser, faUserAlt, faUserAltSlash, faUserCheck, faUserCircle, faUserCog, faUserGraduate, faUserSecret } from "@fortawesome/free-solid-svg-icons";
+import Attendance from "./attendance";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -140,9 +142,9 @@ const Admin = () => {
                       <Link to="/cv">{t("cv_teachers")}</Link>
                     </Menu.Item>
                     <Menu.Item key="12">
-                      <Link to="#">{t("training_program")}</Link>
+                      <Link to="/training_program">{t("training_program")}</Link>
                     </Menu.Item>
-                    <Menu.Item key="13">{t("attendance_registration")}</Menu.Item>
+                    <Menu.Item key="13"><Link to="/attendance">{t("attendance_registration")}</Link></Menu.Item>
                     <Menu.Item key="14">{t("test_aggregation")}</Menu.Item>
                     <Menu.Item key="15"><Link to="/training_report">{t("training_report")}</Link></Menu.Item>
                     <Menu.Item key="16">{t("training_budget")}</Menu.Item>
@@ -327,6 +329,12 @@ const Admin = () => {
                   </Route>
                   <Route path="/composition1">
                     <Composition1 />
+                  </Route>
+                  <Route path="/training_program">
+                    <TrainingProgram />
+                  </Route>
+                  <Route path="/attendance">
+                    <Attendance />
                   </Route>
                 </Switch>{" "}
               </Content>
