@@ -13,10 +13,10 @@ import {
   CaretDownOutlined,
   PoweroffOutlined,
 } from "@ant-design/icons";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 import i18n from "../i18n";
 import Criteria from "./criteria";
-import Tester from "./tester";
+import Tester from "./tester"
 import Plan from "./plan";
 import Tunshlel from "./tunshlel";
 import Organization from "./organization";
@@ -39,11 +39,13 @@ const menu = (
   </Menu>
 );
 
+
+
 const Admin = () => {
   const { t, i18 } = useTranslation();
 
   function handleClick(lang) {
-    i18n.changeLanguage(lang);
+    i18n.changeLanguage(lang)
   }
   // state = {
   //   collapsed: false,
@@ -55,90 +57,66 @@ const Admin = () => {
   //   });
   // };
   return (
-    <Router>
-      <Layout>
+    
+      <Router>
         <Layout>
-          <Sider
-            className="site-layout-background"
-            // trigger={null}
-            // collapsible
-            // collapsed={this.state.collapsed}
-            style={{ background: "#fff" }}
-            breakpoint="lg"
-            width="300px"
-            collapsedWidth="0"
-            trigger={<MenuOutlined />}
-            onBreakpoint={(broken) => {
-              console.log(broken);
-            }}
-            onCollapse={(collapsed, type) => {
-              console.log(collapsed, type);
-            }}
-          >
-            <Menu
-              className="menu"
-              mode="inline"
-              // defaultSelectedKeys={["1"]}
-              style={{
-                height: "100%",
-                borderRight: 0,
-                marginTop: "75px",
-                background: "#fff",
+          <Layout>
+            <Sider
+              className="site-layout-background"
+              // trigger={null}
+              // collapsible
+              // collapsed={this.state.collapsed}
+              style={{ background: "#fff" }}
+              breakpoint="lg"
+              width="300px"
+              collapsedWidth="0"
+              trigger={<MenuOutlined />}
+              onBreakpoint={(broken) => {
+                console.log(broken);
+              }}
+              onCollapse={(collapsed, type) => {
+                console.log(collapsed, type);
               }}
             >
-              {" "}
-              <SubMenu
-                key="sub1"
-                icon={<FontAwesomeIcon icon={faUserAlt} />}
-                title={t("user")}
+              <Menu
+                className="menu"
+                mode="inline"
+                // defaultSelectedKeys={["1"]}
+                style={{
+                  height: "100%",
+                  borderRight: 0,
+                  marginTop: "75px",
+                  background: "#fff",
+                }}
               >
-                <Menu.Item key="1" icon={<FontAwesomeIcon icon={faUserAlt} />}>
-                  {" "}
-                  <Link to="#">{t("user")}</Link>
-                </Menu.Item>{" "}
-                <Menu.Item key="2" icon={<FontAwesomeIcon icon={faUserCog} />}>
-                  {t("user_role")}
-                </Menu.Item>
-              </SubMenu>
-              <SubMenu
-                key="sub2"
-                icon={<FontAwesomeIcon icon={faClipboardCheck} />}
-                title={t("criteria")}
-              >
-                <Menu.Item
-                  key="3"
-                  icon={<FontAwesomeIcon icon={faClipboardCheck} />}
-                >
-                  {" "}
-                  <Link to="/criteria">{t("criteria_regist")}</Link>
-                </Menu.Item>
-                <Menu.Item
-                  key="40"
-                  icon={<FontAwesomeIcon icon={faClipboardCheck} />}
-                >
-                  {" "}
-                  <Link to="/tester">{t("criteria_regist")} test</Link>
-                </Menu.Item>
-              </SubMenu>
-              <SubMenu
-                key="sub3"
-                icon={<FontAwesomeIcon icon={faLayerGroup} />}
-                title={t("training")}
-              >
-                <SubMenu
-                  key="sub4"
-                  icon={<FontAwesomeIcon icon={faLayerGroup} />}
-                  title={t("training_plan")}
-                >
-                  <Menu.Item key="4">
-                    <Link to="/composition1">{t("composition1")}</Link>
-                  </Menu.Item>
-                  <Menu.Item key="5">{t("composition2")}</Menu.Item>
-                  <Menu.Item key="6">{t("composition3")}</Menu.Item>
-                  <Menu.Item key="7">{t("composition4")}</Menu.Item>
+                {" "}
+                <SubMenu key="sub1" icon={<FontAwesomeIcon icon={faUserAlt} />}
+                  title={t("user")}>
+                  <Menu.Item key="1" icon={<FontAwesomeIcon icon={faUserAlt} />}
+                  >
+                    {" "}
+                    <Link to="#">{t("user")}</Link>
+                  </Menu.Item>{" "}
+                  <Menu.Item key="2" icon={<FontAwesomeIcon icon={faUserCog} />}>{t("user_role")}</Menu.Item>
                 </SubMenu>
                 <SubMenu
-                  key="sub5"
+                  key="sub2"
+                  icon={<FontAwesomeIcon icon={faClipboardCheck} />}
+                  title={t("criteria")}
+                >
+                  <Menu.Item key="3" icon={<FontAwesomeIcon icon={faClipboardCheck} />}
+                  >
+                    {" "}
+                    <Link to="/criteria" >{t("criteria_regist")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="40" icon={<FontAwesomeIcon icon={faClipboardCheck} />}
+                  >
+                    {" "}
+                    <Link to="/tester" >{t("criteria_regist")} test</Link>
+                  </Menu.Item>
+                </SubMenu>
+                <SubMenu
+                  key="sub3"
                   icon={<FontAwesomeIcon icon={faLayerGroup} />}
                   title={t("training")}
                 >
@@ -178,101 +156,85 @@ const Admin = () => {
                     <Menu.Item key="16">{t("training_budget")}</Menu.Item>
                   </SubMenu>
                 </SubMenu>
-              </SubMenu>
-              <SubMenu
-                key="sub6"
-                icon={<FontAwesomeIcon icon={faHandsHelping} />}
-                title={t("partnership")}
-              >
                 <SubMenu
-                  key="sub7"
+                  key="sub6"
                   icon={<FontAwesomeIcon icon={faHandsHelping} />}
-                  title={t("productive_project")}
+
+                  title={t("partnership")}
                 >
-                  {" "}
-                  <Menu.Item key="17">
+                  <SubMenu
+                    key="sub7"
+                    icon={<FontAwesomeIcon icon={faHandsHelping} />}
+                    title={t("productive_project")}
+                  >
                     {" "}
-                    <Link to="/tunshlel">{t("consulting_orga")}</Link>
-                  </Menu.Item>
+                    <Menu.Item key="17">
+                      {" "}
+                      <Link to="/tunshlel">{t("consulting_orga")}</Link>
+                    </Menu.Item>
+                  </SubMenu>
                 </SubMenu>
-              </SubMenu>
-              <SubMenu
-                key="sub8"
-                icon={<FontAwesomeIcon icon={faProjectDiagram} />}
-                title={t("project")}
-              >
                 <SubMenu
-                  key="sub9"
-                  icon={<FontAwesomeIcon icon={faProjectDiagram} />}
-                  title={t("productive_project")}
+                  key="sub8"
+                  icon={<FontAwesomeIcon icon={faProjectDiagram} />} title={t("project")}
                 >
-                  {" "}
-                  <Menu.Item key="18">
+                  <SubMenu
+                    key="sub9"
+                    icon={<FontAwesomeIcon icon={faProjectDiagram} />}
+                    title={t("productive_project")}
+                  >
                     {" "}
-                    <Link to="/tunshlel">{t("brief_draft")}</Link>
+                    <Menu.Item key="18">
+                      {" "}
+                      <Link to="/tunshlel">{t("brief_draft")}</Link>
+                    </Menu.Item>
+                    <Menu.Item key="19">
+                      {" "}
+                      <Link to="/tunshlel">{t("investment")}</Link>
+                    </Menu.Item>
+                    <Menu.Item key="20">
+                      {" "}
+                      <Link to="/tunshlel">{t("income_expenses")}</Link>
+                    </Menu.Item>
+                    <Menu.Item key="21">
+                      {" "}
+                      <Link to="/tunshlel">{t("consulting_orga")}</Link>
+                    </Menu.Item>
+                    <Menu.Item key="22">
+                      {" "}
+                      <Link to="/tunshlel">{t("detailed_project")}</Link>
+                    </Menu.Item>
+                  </SubMenu>
+                </SubMenu>
+                <Menu.Item key="23" icon={<FontAwesomeIcon icon={faListAlt} />}>
+                  {t("plan")}
+                </Menu.Item>
+                <Menu.Item key="24" icon={<FontAwesomeIcon icon={faFileSignature} />}>
+                  {t("report")}
+                </Menu.Item>
+                <Menu.Item key="25" icon={<FontAwesomeIcon icon={faList} />}>
+                  {t("dashboard")}
+                </Menu.Item>
+                <SubMenu
+                  key="sub10"
+                  icon={<FontAwesomeIcon icon={faLayerGroup} />}
+                  title={t("directory_regis")}
+                >
+                  <Menu.Item key="26" icon={<FontAwesomeIcon icon={faLayerGroup} />}>
+                  {t("scope")}
                   </Menu.Item>
-                  <Menu.Item key="19">
-                    {" "}
-                    <Link to="/tunshlel">{t("investment")}</Link>
+                  <Menu.Item key="27" icon={<FontAwesomeIcon icon={faLayerGroup} />}>
+                    {t("address")}
                   </Menu.Item>
-                  <Menu.Item key="20">
-                    {" "}
-                    <Link to="/tunshlel">{t("income_expenses")}</Link>
+                  <Menu.Item key="28" icon={<FontAwesomeIcon icon={faLayerGroup} />}>
+                  {t("contact_side")}
                   </Menu.Item>
-                  <Menu.Item key="21">
-                    {" "}
-                    <Link to="/tunshlel">{t("consulting_orga")}</Link>
-                  </Menu.Item>
-                  <Menu.Item key="22">
-                    {" "}
-                    <Link to="/tunshlel">{t("detailed_project")}</Link>
+                  <Menu.Item key="29" icon={<FontAwesomeIcon icon={faLayerGroup} />}>
+                    {t("criteria_type")}{" "}
                   </Menu.Item>
                 </SubMenu>
-              </SubMenu>
-              <Menu.Item key="23" icon={<FontAwesomeIcon icon={faListAlt} />}>
-                {t("plan")}
-              </Menu.Item>
-              <Menu.Item
-                key="24"
-                icon={<FontAwesomeIcon icon={faFileSignature} />}
-              >
-                {t("report")}
-              </Menu.Item>
-              <Menu.Item key="25" icon={<FontAwesomeIcon icon={faList} />}>
-                {t("dashboard")}
-              </Menu.Item>
-              <SubMenu
-                key="sub10"
-                icon={<FontAwesomeIcon icon={faLayerGroup} />}
-                title={t("directory_regis")}
-              >
-                <Menu.Item
-                  key="26"
-                  icon={<FontAwesomeIcon icon={faLayerGroup} />}
-                >
-                  {t("scope")}
-                </Menu.Item>
-                <Menu.Item
-                  key="27"
-                  icon={<FontAwesomeIcon icon={faLayerGroup} />}
-                >
-                  {t("address")}
-                </Menu.Item>
-                <Menu.Item
-                  key="28"
-                  icon={<FontAwesomeIcon icon={faLayerGroup} />}
-                >
-                  {t("contact_side")}
-                </Menu.Item>
-                <Menu.Item
-                  key="29"
-                  icon={<FontAwesomeIcon icon={faLayerGroup} />}
-                >
-                  {t("criteria_type")}{" "}
-                </Menu.Item>
-              </SubMenu>
-            </Menu>
-            {/* <LogoWrapper id="myDIV">
+              </Menu>
+              {/* <LogoWrapper id="myDIV">
                     <h2 className="title"> МЭДЭЭЛЛИЙН УДИРДЛАГЫН</h2>
                     <img
                           src="/images/svg/logo-head.svg"
@@ -280,18 +242,18 @@ const Admin = () => {
                           alt="card-icon"
                     />
                 </LogoWrapper> */}
-          </Sider>
-          <Layout className="site-layout">
-            <Header
-              className="site-layout-background"
-              style={{
-                backgroundColor: "white",
-                height: "50px",
-                lineHeight: "50px",
-              }}
-            >
-              <Row>
-                {/* <Col span={20}>
+            </Sider>
+            <Layout className="site-layout">
+              <Header
+                className="site-layout-background"
+                style={{
+                  backgroundColor: "white",
+                  height: "50px",
+                  lineHeight: "50px",
+                }}
+              >
+                <Row>
+                  {/* <Col span={20}>
                       {React.createElement(
                         this.state.collapsed
                           ? MenuUnfoldOutlined
@@ -305,83 +267,59 @@ const Admin = () => {
                         МЭДЭЭЛЛИЙН УДИРДЛАГЫН СИСТЕМ
                       </a>
                     </Col> */}
-                <Col span={24} style={{ textAlign: "end " }}>
-                  <div>
-                    <Avatar
-                      size="small"
-                      style={{
-                        color: "#f56a00",
-                        backgroundColor: "#103154",
-                        marginRight: "5px",
-                      }}
-                    >
-                      A
-                    </Avatar>
-                    <Dropdown overlay={menu} trigger={["click"]}>
-                      <a
-                        className="ant-dropdown-link"
-                        href="#"
-                        style={{ color: "#103154", marginRight: "5px" }}
+                  <Col span={24} style={{ textAlign: "end " }}>
+                    <div>
+                      <Avatar
+                        size="small"
+                        style={{
+                          color: "#f56a00",
+                          backgroundColor: "#103154",
+                          marginRight: "5px",
+                        }}
                       >
-                        Айтмухамед
-                        <CaretDownOutlined />
-                      </a>
-                    </Dropdown>
-                  </div>
-                </Col>
-              </Row>
-              <Divider
+                        A
+                      </Avatar>
+                      <Dropdown overlay={menu} trigger={["click"]}>
+                        <a
+                          className="ant-dropdown-link"
+                          href="#"
+                          style={{ color: "#103154", marginRight: "5px" }}
+                        >
+                          Айтмухамед
+                          <CaretDownOutlined />
+                        </a>
+                      </Dropdown>
+                    </div>
+                  </Col>
+                </Row>
+                <Divider
+                  style={{
+                    position: "relative",
+                    left: "0px",
+                    backgroundColor: "#103154",
+                    margin: "0px 0px",
+                    width: "100%",
+                    minWidth: "100%",
+                  }}
+                />
+              </Header>
+              <Content
+                className="site-layout-background"
                 style={{
-                  position: "relative",
-                  left: "0px",
-                  backgroundColor: "#103154",
-                  margin: "0px 0px",
-                  width: "100%",
-                  minWidth: "100%",
+                  padding: 0,
+                  margin: 0,
+                  minHeight: "100%",
                 }}
-              />
-            </Header>
-            <Content
-              className="site-layout-background"
-              style={{
-                padding: 0,
-                margin: 0,
-                minHeight: "100%",
-              }}
-            >
-              <Switch>
-                <Route exact path="/criteria">
-                  <Criteria />
-                </Route>
-                <Route exact path="/tester">
-                  <Tester />
-                </Route>
-                <Route path="/guidelines">
-                  <Guidelines />
-                </Route>
-                <Route path="/plan">
-                  <Plan />
-                </Route>
-                <Route path="/tunshlel">
-                  <Tunshlel />
-                </Route>
-                <Route path="/organization">
-                  <Organization />
-                </Route>
-                <Route path="/cv">
-                  <CV />
-                </Route>
-                <Route path="/training_report">
-                  <TrainingReport />
-                </Route>
-                <Route path="/composition1">
-                  <Composition1 />
-                </Route>
-              </Switch>{" "}
-            </Content>
+              >
                 <Switch>
                   <Route exact path="/criteria">
                     <Criteria />
+                  </Route>
+                  <Route exact path="/tester">
+                    <Tester />
+                  </Route>
+                  <Route exact path="/criteria">
+                    <Tester />
                   </Route>
                   <Route path="/guidelines">
                     <Guidelines />
@@ -411,11 +349,13 @@ const Admin = () => {
                     <Attendance />
                   </Route>
                 </Switch>{" "}
+              </Content>
             </Layout>
           </Layout>
         </Layout>
-    </Router>
+      </Router>
+    
   );
-};
-export default Admin;
 
+}
+export default Admin;
