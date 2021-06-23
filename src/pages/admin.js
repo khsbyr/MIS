@@ -11,6 +11,9 @@ import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 import i18n from "../i18n";
 import Attendance from "./training/training/attendance";
 import Composition1 from "./training/trainingplan/composition1";
+import Composition2 from "./training/trainingplan/composition2";
+import Composition3 from "./training/trainingplan/composition3";
+import Composition4 from "./training/trainingplan/composition4";
 import Criteria from "./criteria/criteria";
 import CV from "./training/training/cv";
 import Guidelines from "./training/training/guidelines";
@@ -114,9 +117,9 @@ const Admin = () => {
                     title={t("training_plan")}
                   >
                     <Menu.Item key="4"><Link to="/composition1">{t("composition1")}</Link></Menu.Item>
-                    <Menu.Item key="5">{t("composition2")}</Menu.Item>
-                    <Menu.Item key="6">{t("composition3")}</Menu.Item>
-                    <Menu.Item key="7">{t("composition4")}</Menu.Item>
+                    <Menu.Item key="5"><Link to="/composition2">{t("composition2")}</Link></Menu.Item>
+                    <Menu.Item key="6"><Link to="/composition3">{t("composition3")}</Link></Menu.Item>
+                    <Menu.Item key="7"><Link to="/composition4">{t("composition4")}</Link></Menu.Item>
                   </SubMenu>
                   <SubMenu
                     key="sub5"
@@ -323,6 +326,15 @@ const Admin = () => {
                   </Route>
                   <Route path="/composition1">
                     <Composition1 />
+                  </Route>
+                  <Route path="/composition2">
+                    <Composition2 />
+                  </Route>
+                  <Route path="/composition3">
+                    <Composition3 />
+                  </Route>
+                  <Route path="/composition4">
+                    <Composition4 />
                   </Route>
                   <Route path="/training_program">
                     <TrainingProgram />
