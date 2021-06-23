@@ -13,20 +13,19 @@ export async function getService(serviceName) {
 }
 
 export async function postService(serviceName, data) {
-  console.log(config);
   const response = await axios.post(serviceName, data, config);
   if (response.status === 200) console.log("Амжилттай хадгалагдлаа");
   else message.warning("АМЖИЛТГҮЙ:", response.statusText);
   return response;
 }
 
-export async function putService(serviceName, data = null) {
-  const response = await axios.put(serviceName, data, config);
-  if (response.status === 200) console.log("Амжилттай хадгалагдлаа");
-  else message.warning("АМЖИЛТГҮЙ:", response.statusText);
-  return response.data;
-}
+// export async function putService(serviceName, data = null) {
+//   const response = await axios.put(serviceName, data, config);
+//   if (response.status === 200) console.log("Амжилттай хадгалагдлаа");
+//   else message.warning("АМЖИЛТГҮЙ:", response.statusText);
+//   return response.data;
+// }
 
-export async function deleteService(serviceName, data) {
-  return await axios.delete(serviceName, { data }, config);
+export async function putService(serviceName, data) {
+  return await axios.put(serviceName, { data }, config);
 }
