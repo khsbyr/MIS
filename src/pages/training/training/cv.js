@@ -1,207 +1,275 @@
-import React from "react";
-import HeaderWrapper from "../training/components/plan.styled";
-import ContentWrapper  from "./components/cv.styled";
-import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined , UserOutlined } from "@ant-design/icons";
-import { Row, Col, DatePicker, Input, Button, Upload, message, Form, Select, InputNumber, Checkbox, Table } from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-// import Pageheader from "../container/Layout/component/Pageheader";
-import { faCalendarAlt, faEnvelope, faHome, faPhone, faUser, faUserEdit } from "@fortawesome/free-solid-svg-icons";
+import {
+    ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled
+} from "@ant-design/icons";
+import SaveIcon from "@material-ui/icons/Save";
+import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker } from "antd";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import React, { useEffect, useRef, useState } from "react";
+import { isShowLoading } from "../../../context/Tools";
+import { getService, putService } from "../../../service/service";
+import { PAGESIZE } from "../../../tools/Constant";
+import { errorCatch } from "../../../tools/Tools";
+import CvModal from "../training/components/CvModal";
+import ContentWrapper from "../../criteria/criteria.style";
+const { Content } = Layout;
+function handleMenuClick(e) { console.log("click", e.key[0]); }
 function onChange(date, dateString) {
     console.log(date, dateString);
   }
-const onSearch = (value) => console.log(value);
-const { Dragger } = Upload;
-const { Option } = Select;
+const menu = (
+    <Menu onClick={handleMenuClick}>
+        <Menu.Item
+            key="1"
+            icon={<FileSyncOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
+        >
 
-const props = {
-  name: 'file',
-  multiple: true,
-  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-  onChange(info) {
-    const { status } = info.file;
-    if (status !== 'uploading') {
-      console.log(info.file, info.fileList);
+            Импорт
+        </Menu.Item>
+        <Menu.Item
+            key="2"
+            icon={<FileOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
+        >
+            Экспорт
+        </Menu.Item>
+
+        <Menu.Item
+            key="3"
+            icon={<PrinterOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
+        >
+
+            Хэвлэх
+        </Menu.Item>
+
+    </Menu>
+);
+var isEditMode;
+var editRow
+function CV() {
+    let loadLazyTimeout = null;
+    const dt = useRef(null);
+    const [list, setList] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [form] = Form.useForm();
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [expandedRows, setExpandedRows] = useState([]);
+    const [lazyParams, setLazyParams] = useState({
+        first: 0,
+        rows: 25,
+        page: 0,
+    });
+
+    useEffect(() => {
+        onInit();
+    }, [lazyParams])
+
+    const onInit = () => {
+        setLoading(true);
+        if (loadLazyTimeout) {
+            clearTimeout(loadLazyTimeout);
+        }
+        getService("guidelines/get")
+            .then((result) => {
+                let list = result.content || [];
+                list.map(
+                    (item, index) =>
+                        (item.index = lazyParams.page * PAGESIZE + index + 1)
+                );
+                setLoading(false);
+                setTotalRecords(result.totalElements);
+                setList(list);
+                setSelectedRows([]);
+                setExpandedRows();
+            })
+            .catch((error) => {
+                errorCatch(error);
+                isShowLoading(false);
+            });
+    };
+
+    const onPage = (event) => {
+        let _lazyParams = { ...lazyParams, ...event };
+        setLazyParams(_lazyParams);
+    };
+    const onSort = (event) => {
+        let _lazyParams = { ...lazyParams, ...event };
+        setLazyParams(_lazyParams);
+    };
+    const onFilter = (event) => {
+        let _lazyParams = { ...lazyParams, ...event };
+        _lazyParams["first"] = 0;
+        setLazyParams(_lazyParams);
+    };
+    const add = () => {
+        setIsModalVisible(true);
+        isEditMode = false;
+    };
+    const edit = (row) => {
+        editRow = row.data
+        isEditMode = true
+        setIsModalVisible(true)
     }
-    if (status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully.`);
-    } else if (status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
+    const closeModal = (isSuccess = false) => {
+        setIsModalVisible(false);
+        if (isSuccess) onInit();
+    };
+    const handleDeleted = () => {
+        if (selectedRows.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        }
+        debugger
+        putService("guidelines/delete/" + selectedRows[0].id)
+            .then((result) => {
+                message.success("Амжилттай устлаа");
+                onInit();
+            })
+            .catch((error) => {
+                errorCatch(error);
+            });
+    };
+    const pop = () => {
+        if (selectedRows.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        } else {
+            confirm();
+        }
+    };
+    // const rowExpansionTemplate = (data) => {
+    //     return (
+    //         <div className="orders-subtable">
+    //             <span>{data.name}</span>
+    //             <DataTable
+    //                 selection={selectedRows}
+    //                 onSelectionChange={(e) => {
+    //                     setSelectedRows(e.value);
+    //                 }}
+    //                 value={data.criteriaIndicator.filter((z) => z.status === true)}
+    //                 onRowClick={edit}
+    //             >
+    //                 <Column
+    //                     selectionMode="multiple"
+    //                     headerStyle={{ width: "53px", padding: "0px" }}
+    //                 ></Column>
+    //                 <Column field="id" header="Id" style={{ width: "50px" }}></Column>
+    //                 <Column field="name" header="Нэр" />
+    //                 <Column field="path" header="Зам" />
+    //                 <Column headerStyle={{ width: "4rem" }}></Column>
+    //             </DataTable>
+    //         </div>
+    //     );
+    // };
+    const rowExpandCity = (e) => {
+
+        if (e.data.userControllers)
+            return
+        getService("guidelines/get").then((result) => {
+            e.data.userControllers = result.content || []
+            setList([...list])
+        })
     }
-  },
-  onDrop(e) {
-    console.log('Dropped files', e.dataTransfer.files);
-  },
-};
 
-const dataSource = [
-    {
-      key: '1',
-      name: 'Mike',
-      age: 32,
-      address: '10 Downing Street',
-    },
-    {
-      key: '2',
-      name: 'John',
-      age: 42,
-      address: '10 Downing Street',
-    },
-  ];
-  
-  const columns = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
-    },
-    {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-    },
-  ];
+    const expandedCity = (e) => {
+        setExpandedRows(e.data)
+    };
 
-const CV = () => {
     return (
-        <>
-        <HeaderWrapper>
-            <Row>           
-                <Col xs={24} md={24} lg={9}>
-                    <p className="title" style={{marginLeft: "45px"}}>Сургагч байгшийн CV</p>
-                </Col>
-                <Col xs={24} md={12} lg={15} >
-                </Col>      
-            </Row>
-        </HeaderWrapper>
-
         <ContentWrapper>
-            <h1 className="title">1. Хувь хүний мэдээлэл</h1>
-            <Row>
-                
-                <Col xs={24} md={24} lg={4}>
-                    <Dragger {...props} style={{}}>
-                        <p className="ant-upload-drag-icon">
-                        <InboxOutlined />
-                        </p>
-                        <p className="ant-upload-hint">
-                        Зураг оруулах
-                        </p>
-                    </Dragger>            
-                </Col>
-                <Col xs={24} md={24} lg={2}>
-                </Col>
-                <Col xs={24} md={24} lg={9}>
-                    <Form>
-                        <Form.Item>                   
-                            <Input className="FormItem" placeholder="Овог, нэр:" prefix={<FontAwesomeIcon icon={faUser}/>}/>
-                        </Form.Item>
-                    </Form>
-                    <Form>
-                        <Form.Item>
-                            <Input className="FormItem" placeholder="Төрсөн огноо:" prefix={<FontAwesomeIcon icon={faCalendarAlt}/>}/>
-                        </Form.Item>
-                    </Form>
-                    <Form>
-                        <Form.Item>
-                            <Input className="FormItem"placeholder="Регистрийн дугаар:" prefix={<FontAwesomeIcon icon={faUserEdit}/>}/>
-                        </Form.Item>
-                    </Form>
-                </Col>
-
-                <Col xs={24} md={24} lg={9}>
-                <Form>
-                    <Form.Item>
-                            <Input className="FormItem"placeholder="Хаяг:" prefix={<FontAwesomeIcon icon={faHome}/>}/>
-                    </Form.Item>
-                    </Form>
-                    <Form>
-                        <Form.Item>
-                            <Input className="FormItem" placeholder="Утас, факс:" prefix={<FontAwesomeIcon icon={faPhone}/>}/>
-                        </Form.Item>
-                    </Form>
-                    <Form>
-                        <Form.Item>
-                            <Input className="FormItem" placeholder="И-мэйл хаяг:" prefix={<FontAwesomeIcon icon={faEnvelope}/>}/>
-                        </Form.Item>
-                    </Form>
-                </Col>
-            </Row>
-
-            <h1 className="title">2. Ажлын зорилго</h1>
-            <Row>
-                <Col xs={24} md={24} lg={22}>
-                    <Form layout="vertical">
-                        <Form.Item> 
-                            <Input.TextArea 
-                                placeholder="(Горилж буй ажлын зорилгоо товч бичнэ үү)"
-                                style={{
-                                    width: "100%",
-                                    height: "110px",                                  
-                                }}
-                            />
-                        </Form.Item>
-                    </Form>
-                </Col>
-            </Row>
-
-            <h1 className="title">3. Боловсрол</h1>
-            <Row >
-                <Col xs={24} md={24} lg={22}>
-                    <Table dataSource={dataSource} columns={columns} />
-                </Col>
-            </Row>
-
-            <h1 className="title">4. Ажлын туршлага</h1>
-            <Row >
-                <Col xs={24} md={24} lg={22}>
-                    <Table dataSource={dataSource} columns={columns} />
-                </Col>
-            </Row>
-
-            <h1 className="title">5. Зөвлөх үйлчилгээний ажлын туршлага</h1>
-            <Row >
-                <Col xs={24} md={24} lg={22}>
-                    <Table dataSource={dataSource} columns={columns} />
-                </Col>
-            </Row>
-
-            <h1 className="title">6. Башгийн ажлын туршлага</h1>
-            <Row >
-                <Col xs={24} md={24} lg={22}>
-                    <Table dataSource={dataSource} columns={columns} />
-                </Col>
-            </Row>
-
-            <h1 className="title">10. Ур чадвар</h1>
-            <Row >
-                <Col xs={24} md={24} lg={22}>
-                    <Input.TextArea 
-                        placeholder="(Өөрийн давуу тал, ур чадвараа нэрлэнэ үү)"
-                        style={{
-                            width: "100%",
-                            height: "140px"
-                        }}
-                    />
-                </Col>
-            </Row>
-            <Row>
-                <Col xs={24} md={24} lg={22}>
-                    <Form.Item style={{marginTop: "20px"}}>
-                        <Button type="primary" htmlType="submit" className="button">
-                        Хадгалах
-                        </Button>
-                    </Form.Item>
-                </Col>
-            </Row>
+        <div>
+            <Layout className="btn-layout">
+                <Content>
+                <Row>
+        <Col>
+          <h2 className="title">Сургагч багшийн CV</h2>
+        </Col></Row>
+                    <Row>
+                        <Col span={2}>
+                            <Button onClick={add} type="link" icon={<SaveIcon />}>
+                                Нэмэх
+                            </Button>
+                        </Col>
+                        <Col span={2}>
+                            <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
+                                Устгах
+                            </Button>
+                        </Col>
+                        <Col span={2}>
+                            <DatePicker onChange={onChange} picker="year" />
+                        </Col>
+                        <Col span={18} style={{ textAlign: "right" }}>
+                            <div style={{ marginRight: "5px" }}>
+                                <Dropdown.Button
+                                    overlay={menu}
+                                    placement="bottomCenter"
+                                    icon={
+                                        <SettingFilled
+                                            style={{ marginLeft: "8px", color: "#45629c" }}
+                                        />
+                                    }
+                                ></Dropdown.Button>
+                            </div>
+                        </Col>
+                    </Row>
+                </Content>
+            </Layout>
+            <DataTable
+                ref={dt}
+                value={list}
+                lazy
+                paginator
+                first={lazyParams.first}
+                rows={25}
+                totalRecords={totalRecords}
+                onPage={onPage}
+                onSort={onSort}
+                sortField={lazyParams.sortField}
+                sortOrder={lazyParams.sortOrder}
+                onFilter={onFilter}
+                filters={lazyParams.filters}
+                emptyMessage="Өгөгдөл олдсонгүй..."
+                className="p-datatable-gridlines"
+                selection={selectedRows}
+                onSelectionChange={(e) => {
+                    setSelectedRows(e.value);
+                }}
+                dataKey="id"
+                onRowToggle={expandedCity}
+                className="p-datatable-gridlines"
+            >
+                <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
+                <Column field="index" header="№" style={{ width: "50px" }} />
+                <Column field="" header="Овог, нэр"/>
+                <Column field="" header="Боловсрол"/>
+                <Column field="" header="Ажлын туршлага"/>
+               
+            </DataTable>
+            {isModalVisible && (
+                <CvModal
+                    Usercontroller={editRow}
+                    isModalVisible={isModalVisible}
+                    close={closeModal}
+                    isEditMode={isEditMode}
+                />
+            )}
+        </div>
         </ContentWrapper>
-        </>
-    )
+    );
+    function confirm() {
+        Modal.confirm({
+            title: "Та устгахдаа итгэлтэй байна уу ?",
+            icon: <ExclamationCircleOutlined />,
+            okButtonProps: {},
+            okText: "Устгах",
+            cancelText: "Буцах",
+            onOk() {
+                handleDeleted();
+                onInit();
+            },
+            onCancel() { },
+        });
+    }
 }
-
 export default CV;
