@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
-import HeaderWrapper from "./plan.styled";
-import ContentWrapper  from "./criteria.style";
-import CriteriaModal from "./criteriaModal";
+import HeaderWrapper from "../training/components/plan.styled";
+import ContentWrapper  from "../../criteria/criteria.style";
+import CriteriaModal from "../../criteria/components/CriteriaModal";
 import {
   DownOutlined,
   SearchOutlined,
@@ -9,10 +9,10 @@ import {
   ExclamationCircleOutlined
 } from "@ant-design/icons";
 import { Row, Col, DatePicker, Input, Button, Table, Modal, Form, InputNumber, Select, Menu, Dropdown } from "antd";
-import PageHeaderWrapper from "../container/Layout/component/Pageheader.style";
+import PageHeaderWrapper from "../../../container/Layout/component/Pageheader.style";
 import { useTranslation } from 'react-i18next';
-import i18n from "../i18n";
-import { getService } from "../service/service";
+import i18n from "../../../i18n";
+import { getService } from "../../../service/service";
 
 const { SubMenu } = Menu;
 

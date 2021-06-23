@@ -56,7 +56,10 @@ const ContentWrapper = styled.div `
     .ant-form-item-control-input-content {
         max-width: 50%  ;
     }
-    
+    .p-checkbox .p-checkbox-box {
+        width: 15px !important;
+        height: 15px !important;
+        border: 1px solid;}
 `;
 
 export default ContentWrapper;

@@ -9,15 +9,15 @@ import React from "react";
 import { useTranslation } from 'react-i18next';
 import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 import i18n from "../i18n";
-import Attendance from "./attendance";
-import Composition1 from "./composition1";
-import Criteria from "./criteria";
-import CV from "./cv";
-import Guidelines from "./guidelines";
-import Organization from "./organization";
-import Plan from "./plan";
-import TrainingProgram from "./trainingProgram";
-import TrainingReport from "./trainingReport";
+import Attendance from "./training/training/attendance";
+import Composition1 from "./training/trainingplan/composition1";
+import Criteria from "./criteria/criteria";
+import CV from "./training/training/cv";
+import Guidelines from "./training/training/guidelines";
+import Organization from "./training/training/organization";
+import Plan from "./training/training/plan";
+import TrainingProgram from "./training/training/trainingProgram";
+import TrainingReport from "./training/training/trainingReport";
 import Tunshlel from "./tunshlel";
 
 

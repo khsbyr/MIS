@@ -1,13 +1,13 @@
-import { Typography, Row, Col, DatePicker, Input, Button, Table, Popconfirm, Form, Upload, message } from "antd"
-import React, {Component} from "react"
-import HeaderWrapper from "./plan.styled"
-import ContentWrapper from "./trainingReport.style";
+import { Typography, Row, Col, DatePicker, Input, Button, Table, Popconfirm, Form, Upload, message } from "antd";
+import React, {Component} from "react";
+import HeaderWrapper from "../training/components/plan.styled";
+import ContentWrapper from "./components/trainingReport.style";
 import { UploadOutlined  } from "@ant-design/icons";
 
 const { Dragger } = Upload;
 
 function onChange(date, dateString) {
-    console.log(date, dateString);
+    console.log(date, dateString);     
   }
 
 const props = {

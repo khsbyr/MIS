@@ -1,8 +1,8 @@
-import { Typography, Row, Col, DatePicker, Input, Button, Table, Popconfirm } from "antd"
-import React, {Component} from "react"
-import HeaderWrapper from "./plan.styled"
-import Pageheader from "../container/Layout/component/Pageheader";
-import ContentWrapper from "./plan.styled";
+import { Typography, Row, Col, DatePicker, Input, Button, Table, Popconfirm } from "antd";
+import React, {Component} from "react";
+import HeaderWrapper from "../training/components/plan.styled";
+import Pageheader from "../../../container/Layout/Header/Header";
+import ContentWrapper from "../training/components/plan.styled";
 
 const dataSource = [
     {

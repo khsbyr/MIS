@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import HeaderWrapper from "./plan.styled";
+import HeaderWrapper from "../plan.styled";
 import ContentWrapper  from "./criteria.style";
 import CriteriaModal from "./criteriaModal";
 import {
@@ -8,10 +8,10 @@ import {
   CopyOutlined,
 } from "@ant-design/icons";
 import { Row, Col, DatePicker, Input, Button, Table, Modal, Form, InputNumber } from "antd";
-import PageHeaderWrapper from "../container/Layout/component/Pageheader.style";
+import PageHeaderWrapper from "../../container/Layout/component/Pageheader.style";
 import { useTranslation } from 'react-i18next';
-import i18n from "../i18n";
-import { getService } from "../service/service";
+import i18n from "../../i18n";
+import { getService } from "../../service/service";
 
 
 function onChange(date, dateString) {

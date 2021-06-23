@@ -6,11 +6,11 @@ import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row } from "
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import React, { useEffect, useRef, useState } from "react";
-import { isShowLoading } from "../context/Tools";
-import { getService, putService } from "../service/service";
-import { PAGESIZE } from "../tools/Constant";
-import { errorCatch } from "../tools/Tools";
-import CriteriaModal from "./CriteriaModal";
+import { isShowLoading } from "../../context/Tools";
+import { getService, putService } from "../../service/service";
+import { PAGESIZE } from "../../tools/Constant";
+import { errorCatch } from "../../tools/Tools";
+import CriteriaModal from "../criteria/components/CriteriaModal";
 const { Content } = Layout;
 function handleMenuClick(e) { console.log("click", e.key[0]); }
 const menu = (

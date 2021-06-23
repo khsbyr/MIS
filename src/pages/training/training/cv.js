@@ -1,6 +1,6 @@
 import React from "react";
-import HeaderWrapper from "./plan.styled"
-import ContentWrapper  from "./cv.styled";
+import HeaderWrapper from "../training/components/plan.styled";
+import ContentWrapper  from "./components/cv.styled";
 import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined , UserOutlined } from "@ant-design/icons";
 import { Row, Col, DatePicker, Input, Button, Upload, message, Form, Select, InputNumber, Checkbox, Table } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

@@ -1,13 +1,13 @@
 import { RepeatRounded } from "@material-ui/icons";
 import React, {useState, useEffect} from "react";
 import { Row, Col, DatePicker, Input, Button, Table, Modal, Form, InputNumber, Select } from "antd";
-import PageHeaderWrapper from "../container/Layout/component/Pageheader.style";
-import HeaderWrapper from "./plan.styled";
-import ContentWrapper from "./attendance.style";
-import CriteriaModal from "./criteriaModal";
+import PageHeaderWrapper from "../../../container/Layout/component/Pageheader.style";
+import HeaderWrapper from "../training/components/plan.styled";
+import ContentWrapper from "./components/attendance.style";
+import CriteriaModal from "../../criteria/components/CriteriaModal";
 import { useTranslation } from 'react-i18next';
-import i18n from "../i18n";
-import { getService } from "../service/service";
+import i18n from "../../../i18n";
+import { getService } from "../../../service/service";
 import {
     DownOutlined,
     SearchOutlined,

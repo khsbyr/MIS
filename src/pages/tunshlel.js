@@ -1,6 +1,6 @@
 import { Row, Col, DatePicker, Input, Button, Table } from "antd";
 import React from "react";
-import HeaderWrapper from "./plan.styled";
+import HeaderWrapper from "../pages/training/training/components/plan.styled";
 import { DownOutlined, SearchOutlined, CopyOutlined } from "@ant-design/icons";
 
 export default function Tunshlel() {

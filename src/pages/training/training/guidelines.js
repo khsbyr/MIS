@@ -1,9 +1,9 @@
 import React from "react";
-import HeaderWrapper from "./plan.styled"
+import HeaderWrapper from "../training/components/plan.styled";
 import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined  } from "@ant-design/icons";
 import { Row, Col, DatePicker, Input, Button, Upload, message, Form, Select, InputNumber, Checkbox, Table } from "antd";
-import Pageheader from "../container/Layout/component/Pageheader";
-import ContentWrapper  from "./guidelines.style";
+import Pageheader from "../../../container/Layout/Header/Header";
+import ContentWrapper  from "./components/guidelines.style";
 
 function onChange(date, dateString) {
     console.log(date, dateString);
