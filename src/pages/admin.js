@@ -1,32 +1,25 @@
-import React from "react";
-import "antd/dist/antd.css";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Divider, Layout, Menu } from "antd";
-import { Row, Col, Avatar, Dropdown } from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import {
-  MenuOutlined,
-  UserOutlined,
-  LaptopOutlined,
-  NotificationOutlined,
-  CaretDownOutlined,
-  PoweroffOutlined,
+  CaretDownOutlined, MenuOutlined, PoweroffOutlined
 } from "@ant-design/icons";
+import { faClipboardCheck, faFileSignature, faHandsHelping, faLayerGroup, faList, faListAlt, faProjectDiagram, faUserAlt, faUserCog } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Avatar, Col, Divider, Dropdown, Layout, Menu, Row } from "antd";
+import "antd/dist/antd.css";
+import React from "react";
 import { useTranslation } from 'react-i18next';
+import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 import i18n from "../i18n";
-import Criteria from "./criteria";
-import Tester from "./tester"
-import Plan from "./plan";
-import Tunshlel from "./tunshlel";
-import Organization from "./organization";
-import Guidelines from "./guidelines";
-import CV from "./cv";
-import Composition1 from "./composition1";
-import TrainingReport from "./trainingReport";
-import TrainingProgram from "./trainingProgram";
-import { faClipboardCheck, faFileSignature, faHandsHelping, faLayerGroup, faList, faListAlt, faProjectDiagram, faUser, faUserAlt, faUserAltSlash, faUserCheck, faUserCircle, faUserCog, faUserGraduate, faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import Attendance from "./attendance";
+import Composition1 from "./composition1";
+import Criteria from "./criteria";
+import CV from "./cv";
+import Guidelines from "./guidelines";
+import Organization from "./organization";
+import Plan from "./plan";
+import TrainingProgram from "./trainingProgram";
+import TrainingReport from "./trainingReport";
+import Tunshlel from "./tunshlel";
+
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -108,11 +101,6 @@ const Admin = () => {
                   >
                     {" "}
                     <Link to="/criteria" >{t("criteria_regist")}</Link>
-                  </Menu.Item>
-                  <Menu.Item key="40" icon={<FontAwesomeIcon icon={faClipboardCheck} />}
-                  >
-                    {" "}
-                    <Link to="/tester" >{t("criteria_regist")} test</Link>
                   </Menu.Item>
                 </SubMenu>
                 <SubMenu
@@ -314,12 +302,6 @@ const Admin = () => {
                 <Switch>
                   <Route exact path="/criteria">
                     <Criteria />
-                  </Route>
-                  <Route exact path="/tester">
-                    <Tester />
-                  </Route>
-                  <Route exact path="/criteria">
-                    <Tester />
                   </Route>
                   <Route path="/guidelines">
                     <Guidelines />
