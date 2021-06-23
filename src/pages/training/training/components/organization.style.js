@@ -48,6 +48,9 @@ const ContentWrapper = styled.div `
         width: 110px;
         border-radius: 8px;
     }
+    .ant-upload.ant-upload-drag{
+        height: 14%;
+    }
 `;
 
 export default ContentWrapper;

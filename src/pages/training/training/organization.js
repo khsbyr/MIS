@@ -70,7 +70,8 @@ function Organization() {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("criteria/get")
+        debugger
+        getService("organization/get")
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -121,7 +122,7 @@ function Organization() {
             return;
         }
         debugger
-        putService("criteria/delete/" + selectedRows[0].id)
+        putService("organization/delete/" + selectedRows[0].id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -166,7 +167,7 @@ function Organization() {
 
         if (e.data.userControllers)
             return
-        getService("criteria/get").then((result) => {
+        getService("organization/get").then((result) => {
             e.data.userControllers = result.content || []
             setList([...list])
         })
@@ -195,9 +196,6 @@ function Organization() {
                             <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
                                 Устгах
                             </Button>
-                        </Col>
-                        <Col span={2}>
-                            <DatePicker onChange={onChange} picker="year" />
                         </Col>
                         <Col span={18} style={{ textAlign: "right" }}>
                             <div style={{ marginRight: "5px" }}>
@@ -241,11 +239,11 @@ function Organization() {
             >
                 <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
                 <Column field="index" header="№" style={{ width: "50px" }} />
-                <Column field="code" header="Код"/>
-                <Column field="name" header="Шалгуур үзүүлэлтийн нэр"/>
-                <Column field="indicatorProcess" header="Хүрэх үр дүн"/>
-                <Column field="upIndicator" header="Үр дүнгийн биелэлт"/>
-                <Column field="" header="Шалгуур үзүүлэлтийн төрөл"/>
+                <Column field="name" header="Байгууллагын нэр"/>
+                <Column field="" header="Регистрийн дугаар"/>
+                <Column field="" header="Банкны нэр"/>
+                <Column field="" header="Дансны нэр"/>
+                <Column field="" header="Дансны дугаар"/>
             </DataTable>
             {isModalVisible && (
                 <OrganizationModal
