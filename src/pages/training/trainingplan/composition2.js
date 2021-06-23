@@ -10,7 +10,7 @@ import { isShowLoading } from "../../../context/Tools";
 import { getService, putService } from "../../../service/service";
 import { PAGESIZE } from "../../../tools/Constant";
 import { errorCatch } from "../../../tools/Tools";
-import Composition1Modal from "../trainingplan/components/Composition1Modal"
+import Composition2Modal from "../trainingplan/components/Composition2Modal"
 const { Content } = Layout;
 function handleMenuClick(e) { console.log("click", e.key[0]); }
 const menu = (
@@ -41,7 +41,7 @@ const menu = (
 );
 var isEditMode;
 var editRow
-function Composition1() {
+function Composition2() {
   let loadLazyTimeout = null;
   const dt = useRef(null);
   const [list, setList] = useState([]);
@@ -178,7 +178,7 @@ function Composition1() {
               <Content>
               <Row>
       <Col>
-        <h2 className="title">Бүрэлдэхүүн 1</h2>
+        <h2 className="title">Бүрэлдэхүүн 2</h2>
       </Col></Row>
                   <Row>
                       <Col span={2}>
@@ -245,7 +245,7 @@ function Composition1() {
               <Column field="" header="Шалгуур үзүүлэлтийн төрөл"/>
           </DataTable>
           {isModalVisible && (
-              <Composition1Modal
+              <Composition2Modal
               Composition={editRow}
                   isModalVisible={isModalVisible}
                   close={closeModal}
@@ -269,4 +269,4 @@ function Composition1() {
       });
   }
 }
-export default Composition1;
+export default Composition2;
