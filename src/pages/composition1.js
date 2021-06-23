@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import HeaderWrapper from "./plan.styled";
 import ContentWrapper  from "./criteria.style";
 import CriteriaModal from "./criteriaModal";
@@ -8,179 +8,122 @@ import {
   CopyOutlined,
   ExclamationCircleOutlined
 } from "@ant-design/icons";
-import { Row, Col, DatePicker, Input, Button, Table, Modal, Form, InputNumber } from "antd";
+import { Row, Col, DatePicker, Input, Button, Table, Modal, Form, InputNumber, Select, Menu, Dropdown } from "antd";
 import PageHeaderWrapper from "../container/Layout/component/Pageheader.style";
 import { useTranslation } from 'react-i18next';
 import i18n from "../i18n";
+import { getService } from "../service/service";
+
+const { SubMenu } = Menu;
 
 function onChange(date, dateString) {
   console.log(date, dateString);
 }
 const onSearch = (value) => console.log(value);
+const { Option } = Select;
+const provinceData = ['Хувиар', 'Тоогоор'];
+
+const cityData = {
+  Хувиар: [],
+  Тоогоор: [],
+};
 
 
 export default function Composition1() {
   //const { Search } = Input;
   const { t, i18 } = useTranslation();
+  const [cities, setCities] = React.useState(cityData[provinceData[0]]);
+  const [secondCity, setSecondCity] = React.useState(cityData[provinceData[0]][0]);
+
+  const handleProvinceChange = value => {
+    setCities(cityData[value]);
+    setSecondCity(cityData[value][0]);
+  };
+
+  const onSecondCityChange = value => {
+    setSecondCity(value);
+  };
+
+  const [list, setList] = useState([]);
   function handleClick(lang) {
     i18n.changeLanguage(lang)
+  }
+  for (let i = 0; i <= 100; i++){
+    console.log(i)
   }
   
   const columns = [
     {
-      title: t("Row1_Col1"),
-      dataIndex: 'Row1_Col1',
-      key: 'Row1_Col1',
-      render: (value, row, index) => {
-        const obj = {
-          children: value,
-          props: {},
-        };
-
-        if (index === 2) {
-          obj.props.rowSpan = 4;
-        }
-        // These two are merged into above cell
-        if (index === 3) {
-          obj.props.rowSpan = 0;
-        }
-        if (index === 4) {
-          obj.props.colSpan = 0;
-        }
-        if (index === 5) {
-          obj.props.colSpan = 0;
-        }
-        return obj;
-      },
+      title: '№',
+      dataIndex: 'code',
+      key: 'code',
+      name: 'code'
     },
     {
-      title: t("Row1_Col2"),
-      dataIndex: 'Row1_Col2',
-      key: 'Row1_Col2',
+      title: 'Сургалтын агууллага',
+      dataIndex: 'name',
+      key: 'name',
+      name: 'name',
+      // render: (value, row, index) => {
+      //   const obj = {
+      //     children: value,
+      //     props: {},
+      //   };
+      //   if (index === 1) {
+      //     obj.props.rowSpan = 2;
+      //   }
+      //   return obj;
+      // },
     },
     {
-      title: t("Row1_Col3"),
+      title: 'Зорилтот үр дүн',
       dataIndex: 'Row1_Col3',
       key: 'Row1_Col3',
     },
     {
-      title: t("Row1_Col4"),
+      title: 'Шалгуур үзүүлэлт',
       dataIndex: 'Row1_Col4',
       key: 'Row1_Col4',
     },
     {
-      title: t("Row1_Col5"),
+      title: 'I улирал',
       dataIndex: 'Row1_Col5',
       key: 'Row1_Col5',
     },
     {
-      title: t("Row1_Col6"),
+      title: 'II улирал',
       dataIndex: 'Row1_Col6',
       key: 'Row1_Col6',
-      children: [
-        {
-          title: t("Row1_Col6_1"),
-          dataIndex: 'Row1_Col6_1',
-          key: 'Row1_Col6_1',
-          
-        },
-        {
-          title: t("Row1_Col6_2"),
-          dataIndex: 'Row1_Col6_2',
-          key: 'Row1_Col6_2',
-        },
-        {
-          title: t("Row1_Col6_3"),
-          dataIndex: 'Row1_Col6_3',
-          key: 'Row1_Col6_3',
-        },
-        {
-          title: t("Row1_Col6_4"),
-          dataIndex: 'Row1_Col6_4',
-          key: 'Row1_Col6_4',
-        },
-        {
-          title: t("Row1_Col6_5"),
-          dataIndex: 'Row1_Col6_5',
-          key: 'Row1_Col6_5',
-        },
-      ],
-    },
-  ];
-
-
-  const data = [
-    {
-      key: '1',
-      Row1_Col1: 'ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТӨВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД',
-      colSpan: 6,
     },
     {
-      key: '2',
-      Row1_Col1: t("Row2_Col1"),
-      Row1_Col3: t("Row2_Col3"),
-      Row1_Col4: '0',
-      Row1_Col5: '10',
-      Row1_Col6_1: t("Row2_Col6"),
-      Row1_Col6_2: t("Row2_Col7"),
-      Row1_Col6_3: t("Row2_Col8"),
-      Row1_Col6_5: t("Row2_Col10"),
-      
+      title: 'III улирал',
     },
     {
-      key: '3',
-      Row1_Col1: t("Row3_Col1"),
-      Row1_Col3: t("Row3_Col3"),
-      Row1_Col4: '0',
-      Row1_Col5: '10',
-      Row1_Col6_1: t("Row3_Col6"),
-      Row1_Col6_2: t("Row3_Col7"),
-      Row1_Col6_3: t("Row3_Col8"),
-      Row1_Col6_5: t("Row3_Col10"),
-      
+      title: 'IV улирал',
     },
     {
-      key: '4',
-      Row1_Col3: t("Row3_Col3_2"),
-      Row1_Col4: '0',
-      Row1_Col5: '10',
-      Row1_Col6_1: t("Row3_Col6_2"),
-      Row1_Col6_2: t("Row3_Col7"),
-      Row1_Col6_3: t("Row3_Col8_2"),
-      Row1_Col6_4: t("Row3_Col9_2"),
-      Row1_Col6_5: t("Row3_Col10"),
+      title: 'Нийт',
     },
     {
-      key: '5',
-      Row1_Col3: t("Row3_Col3_3"),
-      Row1_Col4: '0',
-      Row1_Col5: '10',
-      Row1_Col6_1: t("Row3_Col6_3"),
-      Row1_Col6_2: t("Row3_Col7"),
-      Row1_Col6_3: t("Row3_Col8_2"),
-      Row1_Col6_4: t("Row3_Col9_2"),
-      Row1_Col6_5: t("Row3_Col10"),    
-    },
-    {
-      key: '6',
-      Row1_Col3: t("Row3_Col3_4"),
-      Row1_Col4: '0',
-      Row1_Col5: '10',
-      Row1_Col6_1: t("Row3_Col6_4"),
-      Row1_Col6_2: t("Row3_Col7"),
-      Row1_Col6_3: t("Row3_Col8_4"),
-      Row1_Col6_4: t("Row3_Col9_4"),
-      Row1_Col6_5: t("Row3_Col10_4"),     
+      title: 'Үр дүнгийн биелэлт',
     },
   ];
 
   const [visible, setVisible] = useState(false);
 
+  useEffect(()=>{
+    getService("composition1/get").then(result=>{
+      let list  = result.content || []
+      debugger
+      setList(list)
+
+    })
+    },[])
   return (
     <HeaderWrapper>
       <Row>
         <Col xs={24} md={24} lg={10}>
-          <p className="title">Шалгуур үзүүлэлт</p>
+          <p className="title">Бүрэлдэхүүн хэсэг 1: {list.name}</p>
         </Col>
         <Col xs={24} md={24} lg={14}>
           <PageHeaderWrapper>
@@ -283,6 +226,36 @@ export default function Composition1() {
                               <Input placeholder="Мэдээлэл цуглуулах аргачлал:"/>
                           </Form.Item>
                       </Form>
+                      <Form layout="vertical">
+                          <Form.Item label="Мэдээлэл цуглуулах аргачлал:" >                    
+                          {/* <Select
+                            showSearch
+                            style={{ width: 200 }}
+                            placeholder="Select a person"
+                            optionFilterProp="children"
+                            onChange={onChangee}
+                            onFocus={onFocus}
+                            onBlur={onBlur}
+                            onSearch={onSearchhj}
+          
+                          >
+                            <Option><Input placeholder="Basic usage" /></Option>
+                            <Option value="lucy">Lucy</Option>
+                            <Option value="tom">Tom</Option>
+                          </Select> */}
+                        <Select defaultValue={provinceData[0]} style={{ width: 120 }} onChange={handleProvinceChange}>
+                        {provinceData.map(province => (
+                          <Option key={province}>{province}</Option>
+                        ))}
+                      </Select>
+                      <Select style={{ width: 120 }} value={secondCity} onChange={onSecondCityChange}>
+                        {cities.map(city => (
+                          <Option key={city}>{city}</Option>                  
+                        ))}                       
+                      </Select>
+                   
+                          </Form.Item>
+                      </Form>
                   </Col>
                   </Row>
               </Modal>
@@ -292,8 +265,7 @@ export default function Composition1() {
         </Col>
       </Row>
       <ContentWrapper>
-      <Table dataSource={data} columns={columns} bordered />
-     
+        <Table dataSource={list} columns={columns} bordered />   
       </ContentWrapper>
     </HeaderWrapper>
 
