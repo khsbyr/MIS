@@ -2,7 +2,7 @@ import {
     ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled
 } from "@ant-design/icons";
 import SaveIcon from "@material-ui/icons/Save";
-import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row } from "antd";
+import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker } from "antd";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import React, { useEffect, useRef, useState } from "react";
@@ -11,8 +11,13 @@ import { getService, putService } from "../../service/service";
 import { PAGESIZE } from "../../tools/Constant";
 import { errorCatch } from "../../tools/Tools";
 import CriteriaModal from "../criteria/components/CriteriaModal";
+import "./criteria.style"
+import ContentWrapper from "./criteria.style";
 const { Content } = Layout;
 function handleMenuClick(e) { console.log("click", e.key[0]); }
+function onChange(date, dateString) {
+    console.log(date, dateString);
+  }
 const menu = (
     <Menu onClick={handleMenuClick}>
         <Menu.Item
@@ -173,6 +178,7 @@ function Criteria() {
     };
 
     return (
+        <ContentWrapper>
         <div>
             <Layout className="btn-layout">
                 <Content>
@@ -192,9 +198,7 @@ function Criteria() {
                             </Button>
                         </Col>
                         <Col span={2}>
-                        <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
-                                Устгах
-                            </Button>
+                            <DatePicker onChange={onChange} picker="year" />
                         </Col>
                         <Col span={18} style={{ textAlign: "right" }}>
                             <div style={{ marginRight: "5px" }}>
@@ -253,6 +257,7 @@ function Criteria() {
                 />
             )}
         </div>
+        </ContentWrapper>
     );
     function confirm() {
         Modal.confirm({

@@ -5,7 +5,7 @@ import { errorCatch } from "../../../tools/Tools";
 import AutocompleteSelect from "../../components/Autocomplete"
 const layout = {
     labelCol: {
-        span: 7,
+        span: 10,
     },
     wrapperCol: {
         span: 14,
