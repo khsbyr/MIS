@@ -1,304 +1,276 @@
-import React from "react";
-import HeaderWrapper from "../training/components/plan.styled";
-import ContentWrapper  from "./components/organization.style";
-import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined  } from "@ant-design/icons";
-import { Row, Col, DatePicker, Input, Button, Upload, message, Form, Select, InputNumber, Checkbox } from "antd";
-import Pageheader from "../../../container/Layout/Header/Header";
+import {
+    ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled
+} from "@ant-design/icons";
+import SaveIcon from "@material-ui/icons/Save";
+import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker } from "antd";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import React, { useEffect, useRef, useState } from "react";
+import { isShowLoading } from "../../../context/Tools";
+import { getService, putService } from "../../../service/service";
+import { PAGESIZE } from "../../../tools/Constant";
+import { errorCatch } from "../../../tools/Tools";
+import OrganizationModal from "../training/components/OrganizationModal";
+import ContentWrapper from "../../criteria/criteria.style";
+const { Content } = Layout;
+function handleMenuClick(e) { console.log("click", e.key[0]); }
 function onChange(date, dateString) {
     console.log(date, dateString);
   }
-const onSearch = (value) => console.log(value);
-const { Dragger } = Upload;
-const { Option } = Select;
+const menu = (
+    <Menu onClick={handleMenuClick}>
+        <Menu.Item
+            key="1"
+            icon={<FileSyncOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
+        >
 
-const props = {
-  name: 'file',
-  multiple: true,
-  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-  onChange(info) {
-    const { status } = info.file;
-    if (status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
-    if (status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully.`);
-    } else if (status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-  onDrop(e) {
-    console.log('Dropped files', e.dataTransfer.files);
-  },
-};
+            Импорт
+        </Menu.Item>
+        <Menu.Item
+            key="2"
+            icon={<FileOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
+        >
+            Экспорт
+        </Menu.Item>
 
-const Orgoanization = () => {
+        <Menu.Item
+            key="3"
+            icon={<PrinterOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
+        >
+
+            Хэвлэх
+        </Menu.Item>
+
+    </Menu>
+);
+var isEditMode;
+var editRow
+function Organization() {
+    let loadLazyTimeout = null;
+    const dt = useRef(null);
+    const [list, setList] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [form] = Form.useForm();
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [expandedRows, setExpandedRows] = useState([]);
+    const [lazyParams, setLazyParams] = useState({
+        first: 0,
+        rows: 25,
+        page: 0,
+    });
+
+    useEffect(() => {
+        onInit();
+    }, [lazyParams])
+
+    const onInit = () => {
+        setLoading(true);
+        if (loadLazyTimeout) {
+            clearTimeout(loadLazyTimeout);
+        }
+        getService("criteria/get")
+            .then((result) => {
+                let list = result.content || [];
+                list.map(
+                    (item, index) =>
+                        (item.index = lazyParams.page * PAGESIZE + index + 1)
+                );
+                setLoading(false);
+                setTotalRecords(result.totalElements);
+                setList(list);
+                setSelectedRows([]);
+                setExpandedRows();
+            })
+            .catch((error) => {
+                errorCatch(error);
+                isShowLoading(false);
+            });
+    };
+
+    const onPage = (event) => {
+        let _lazyParams = { ...lazyParams, ...event };
+        setLazyParams(_lazyParams);
+    };
+    const onSort = (event) => {
+        let _lazyParams = { ...lazyParams, ...event };
+        setLazyParams(_lazyParams);
+    };
+    const onFilter = (event) => {
+        let _lazyParams = { ...lazyParams, ...event };
+        _lazyParams["first"] = 0;
+        setLazyParams(_lazyParams);
+    };
+    const add = () => {
+        setIsModalVisible(true);
+        isEditMode = false;
+    };
+    const edit = (row) => {
+        editRow = row.data
+        isEditMode = true
+        setIsModalVisible(true)
+    }
+    const closeModal = (isSuccess = false) => {
+        setIsModalVisible(false);
+        if (isSuccess) onInit();
+    };
+    const handleDeleted = () => {
+        if (selectedRows.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        }
+        debugger
+        putService("criteria/delete/" + selectedRows[0].id)
+            .then((result) => {
+                message.success("Амжилттай устлаа");
+                onInit();
+            })
+            .catch((error) => {
+                errorCatch(error);
+            });
+    };
+    const pop = () => {
+        if (selectedRows.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        } else {
+            confirm();
+        }
+    };
+    // const rowExpansionTemplate = (data) => {
+    //     return (
+    //         <div className="orders-subtable">
+    //             <span>{data.name}</span>
+    //             <DataTable
+    //                 selection={selectedRows}
+    //                 onSelectionChange={(e) => {
+    //                     setSelectedRows(e.value);
+    //                 }}
+    //                 value={data.criteriaIndicator.filter((z) => z.status === true)}
+    //                 onRowClick={edit}
+    //             >
+    //                 <Column
+    //                     selectionMode="multiple"
+    //                     headerStyle={{ width: "53px", padding: "0px" }}
+    //                 ></Column>
+    //                 <Column field="id" header="Id" style={{ width: "50px" }}></Column>
+    //                 <Column field="name" header="Нэр" />
+    //                 <Column field="path" header="Зам" />
+    //                 <Column headerStyle={{ width: "4rem" }}></Column>
+    //             </DataTable>
+    //         </div>
+    //     );
+    // };
+    const rowExpandCity = (e) => {
+
+        if (e.data.userControllers)
+            return
+        getService("criteria/get").then((result) => {
+            e.data.userControllers = result.content || []
+            setList([...list])
+        })
+    }
+
+    const expandedCity = (e) => {
+        setExpandedRows(e.data)
+    };
+
     return (
-        <>
-        <HeaderWrapper>
-            <Row>           
-                <Col xs={24} md={12} lg={9}>
-                    <p className="title" style={{marginLeft: "45px"}}>Зөвлөх байгууллага</p>
-                </Col>
-                <Col xs={24} md={12} lg={15} >
-                </Col>      
-            </Row>
-            <Row>
-                <Col>
-
-                </Col>
-            </Row>
-        </HeaderWrapper>
-
-      <ContentWrapper>
-        <Row gutter={[72]}>
-            <Col  xs={24} md={24} lg={4}>
-                <Dragger {...props} style={{}}>
-                    <p className="ant-upload-drag-icon">
-                    <InboxOutlined />
-                    </p>
-                   
-                    <p className="ant-upload-hint">
-                    Зураг оруулах
-                    </p>
-                </Dragger>
-              
-            </Col>
-            <Col  xs={24} md={24} lg={10}>
-                  <h2 className="title"> Байгууллагын мэдээлэл</h2>
-                  <Row gutter={32}>
-                      <Col xs={24} md={24} lg={12}>
-                        <Form layout="vertical">
-                            <Form.Item label="Байгууллагын нэр:">                              
-                                <Input />
-                            </Form.Item>
-                        </Form>
-                      </Col>
-                      <Col xs={24} md={24} lg={12}>
-                        <Form layout="vertical">
-                            <Form.Item label="Регистрийн дугаар:">                              
-                                <Input />
-                            </Form.Item>
-                        </Form> 
-                      </Col>
-                  </Row>
-                  <Row gutter={32}>
-                      <Col xs={24} md={24} lg={12}>
-                        <Form layout="vertical">
-                            <Form.Item label="Банкны нэр:">                              
-                                <Input />
-                            </Form.Item>
-                        </Form>
-                      </Col>
-                      <Col xs={24} md={24} lg={12}>
-                        <Form layout="vertical">
-                            <Form.Item label="Дансны нэр:">                              
-                                <Input />
-                            </Form.Item>
-                        </Form> 
-                      </Col>
-                  </Row>
-                  <Row gutter={32}> 
-                      <Col xs={24} md={24} lg={12}>
-                        <Form layout="vertical">
-                            <Form.Item label="Дансны дугаар:">                              
-                                <Input />
-                            </Form.Item>
-                        </Form>
-                      </Col>
-                      <Col xs={24} md={24} lg={12}>
-                        <Form layout="vertical">
-                            <Form.Item label="Дансны вальют:">                              
-                                <Select
-                                placeholder="Вальют"
-                                allowClear
-                                >
-                                    <Option value="tugrug">Төгрөг</Option>
-                                    <Option value="dollar">$</Option>
-                                    <Option value="other">other</Option>
-                                </Select>
-                            </Form.Item>
-                        </Form> 
-                      </Col>
-                  </Row>
-
-                  <h2 className="title">Холбоо барих мэдээлэл</h2>
-                  <Row gutter={32}>
-                      <Col xs={24} md={24} lg={12}>
-                        <Form layout="vertical">
-                            <Form.Item label="Аймаг, хот:">                              
-                                <Select
-                                    placeholder="Аймаг, хот"
-                                    allowClear
-   
-                                    >
-                                        <Option value="Ulaanbaatar">Улаанбаатар</Option>
-                                        <Option value="Arkhangai">Архангай</Option>
-                                        <Option value="other">other</Option>
-                                </Select>
-                            </Form.Item>
-                        </Form>
-                      </Col>
-                      <Col xs={24} md={24} lg={12}>
-                        <Form layout="vertical">
-                            <Form.Item label="Сум, дүүрэг:">                              
-                                <Select
-                                        placeholder="Сум, дүүрэг"
-                                        allowClear
-       
-                                        >
-                                            <Option value="Sukhbaatar">Сүхбаатар дүүрэг</Option>
-                                            <Option value="Bayangol">Баянгол</Option>
-                                            <Option value="other">other</Option>
-                                </Select>
-                            </Form.Item>
-                        </Form> 
-                      </Col>
-                  </Row>
-                  <Row gutter={32}>
-                      <Col xs={24} md={24} lg={12}>
-                        <Form layout="vertical">
-                            <Form.Item label="Баг, хороо:">                              
-                                <Select
-                                        placeholder="Баг, хороо"
-                                        allowClear
-       
-                                        >
-                                            <Option value="1khoroo">1-р хороо</Option>
-                                            <Option value="2khoroo">2-р хороо</Option>
-                                            <Option value="other">other</Option>
-                                </Select>
-                            </Form.Item>
-                        </Form>
-                      </Col>
-                      <Col xs={24} md={24} lg={12}>
-                        <Form layout="vertical">
-                            <Form.Item label="Утас:">                              
-                                <Input />
-                            </Form.Item>
-                        </Form> 
-                      </Col>
-                  </Row>
-                  <Row gutter={32}>
-                      <Col xs={24} md={24} lg={12}>
-                        <Form layout="vertical">
-                            <Form.Item label="Е-майл хаяг:">                              
-                                <Input />
-                            </Form.Item>
-                        </Form>
-                      </Col>
-                      <Col xs={24} md={24} lg={12}>
-                        <Form layout="vertical">
-                            <Form.Item label="Веб хаяг:">                              
-                                <Input />
-                            </Form.Item>
-                        </Form> 
-                      </Col>
-                  </Row>
-                  <Row>
-                      <Col xs={24} md={24} lg={24}>
-                        <Form layout="vertical">
-                            <Form.Item label="Хаяг:"> 
-                                <Input.TextArea 
-                                    style={{
-                                        width: "100%",
-                                        height: "110px"
-                                    }}
-                                />
-                            </Form.Item>
-                        </Form>
-                      </Col>
-                  </Row>
-            </Col>
-            <Col  xs={24} md={24} lg={10}>
-                <h2 className="title">Хариуцсан ажилтан:</h2>
+        <ContentWrapper>
+        <div>
+            <Layout className="btn-layout">
+                <Content>
+                <Row>
+        <Col>
+          <h2 className="title">Зөвлөх байгууллага</h2>
+        </Col></Row>
                     <Row>
-                        <Col xs={24} md={24} lg={12}>
-                            <Form layout="vertical">
-                                <Form.Item label="Овог:">                              
-                                    <Input />
-                                </Form.Item>
-                            </Form>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={24} md={24} lg={12}>
-                            <Form layout="vertical">
-                                <Form.Item label="Нэр:">                              
-                                    <Input />
-                                </Form.Item>
-                            </Form>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={24} md={24} lg={12}>
-                            <Form layout="vertical">
-                                <Form.Item label="Регистрийн дугаар:">                              
-                                    <Input />
-                                </Form.Item>
-                            </Form>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={24} md={24} lg={12}>
-                            <Form layout="vertical">
-                                <Form.Item label="Албан тушаал:">                              
-                                    <Input />
-                                </Form.Item>
-                            </Form>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={24} md={24} lg={12}>
-                            <Form layout="vertical">
-                                <Form.Item label="Утасны дугаар:">                              
-                                    <Input />
-                                </Form.Item>
-                            </Form>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={24} md={24} lg={12}>
-                            <Form layout="vertical">
-                                <Form.Item label="Е-майл хаяг:">                              
-                                    <Input />
-                                </Form.Item>
-                            </Form>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={24} md={24} lg={12}>
-                            <Form layout="vertical">
-                                <Form.Item label="Танилцуулга оруулах:">                              
-                                <Upload {...props}>
-                                    <Button icon={<UploadOutlined />}  style={{height: "40px"}}>Танилцуулга оруулах</Button>
-                                </Upload>
-                                </Form.Item>
-                            </Form>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={24} md={24} lg={12}>
-                            <Form layout="vertical">
-                                <Form.Item>                              
-                                    <Checkbox onChange={onChange}>Оруулсан мэдээлэл үнэн болно.</Checkbox>
-                                </Form.Item>
-                            </Form>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={24} md={24} lg={12}>
-                        <Form.Item layout="vertical">
-                            <Button type="primary" htmlType="submit" className="button">
-                            Хадгалах
+                        <Col span={2}>
+                            <Button onClick={add} type="link" icon={<SaveIcon />}>
+                                Нэмэх
                             </Button>
-                        </Form.Item>
+                        </Col>
+                        <Col span={2}>
+                            <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
+                                Устгах
+                            </Button>
+                        </Col>
+                        <Col span={2}>
+                            <DatePicker onChange={onChange} picker="year" />
+                        </Col>
+                        <Col span={18} style={{ textAlign: "right" }}>
+                            <div style={{ marginRight: "5px" }}>
+                                <Dropdown.Button
+                                    overlay={menu}
+                                    placement="bottomCenter"
+                                    icon={
+                                        <SettingFilled
+                                            style={{ marginLeft: "8px", color: "#45629c" }}
+                                        />
+                                    }
+                                ></Dropdown.Button>
+                            </div>
                         </Col>
                     </Row>
-            </Col>
-        </Row>
+                </Content>
+            </Layout>
+            <DataTable
+                ref={dt}
+                value={list}
+                lazy
+                paginator
+                first={lazyParams.first}
+                rows={25}
+                totalRecords={totalRecords}
+                onPage={onPage}
+                onSort={onSort}
+                sortField={lazyParams.sortField}
+                sortOrder={lazyParams.sortOrder}
+                onFilter={onFilter}
+                filters={lazyParams.filters}
+                emptyMessage="Өгөгдөл олдсонгүй..."
+                className="p-datatable-gridlines"
+                selection={selectedRows}
+                onSelectionChange={(e) => {
+                    setSelectedRows(e.value);
+                }}
+                dataKey="id"
+                onRowToggle={expandedCity}
+                className="p-datatable-gridlines"
+            >
+                <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
+                <Column field="index" header="№" style={{ width: "50px" }} />
+                <Column field="code" header="Код"/>
+                <Column field="name" header="Шалгуур үзүүлэлтийн нэр"/>
+                <Column field="indicatorProcess" header="Хүрэх үр дүн"/>
+                <Column field="upIndicator" header="Үр дүнгийн биелэлт"/>
+                <Column field="" header="Шалгуур үзүүлэлтийн төрөл"/>
+            </DataTable>
+            {isModalVisible && (
+                <OrganizationModal
+                    Usercontroller={editRow}
+                    isModalVisible={isModalVisible}
+                    close={closeModal}
+                    isEditMode={isEditMode}
+                />
+            )}
+        </div>
         </ContentWrapper>
-        </>
-    )
+    );
+    function confirm() {
+        Modal.confirm({
+            title: "Та устгахдаа итгэлтэй байна уу ?",
+            icon: <ExclamationCircleOutlined />,
+            okButtonProps: {},
+            okText: "Устгах",
+            cancelText: "Буцах",
+            onOk() {
+                handleDeleted();
+                onInit();
+            },
+            onCancel() { },
+        });
+    }
 }
-
-export default Orgoanization;
+export default Organization;
