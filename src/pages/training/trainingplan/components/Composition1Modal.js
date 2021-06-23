@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Form, Input } from "antd";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
-import AutocompleteSelect from "../../../components/Autocomplete"
+import AutocompleteSelect from "../../../components/Autocomplete";
 const layout = {
     labelCol: {
         span: 7,
@@ -73,6 +73,7 @@ export default function Composition1Modal(props) {
             });
     };
     return (
+
         <div>
             <Modal
                 title="Шалгуур үзүүлэлт бүртгэх"

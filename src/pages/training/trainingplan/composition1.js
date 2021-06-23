@@ -2,7 +2,7 @@ import {
   ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled
 } from "@ant-design/icons";
 import SaveIcon from "@material-ui/icons/Save";
-import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row } from "antd";
+import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker } from "antd";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import React, { useEffect, useRef, useState } from "react";
@@ -11,6 +11,7 @@ import { getService, putService } from "../../../service/service";
 import { PAGESIZE } from "../../../tools/Constant";
 import { errorCatch } from "../../../tools/Tools";
 import Composition1Modal from "../trainingplan/components/Composition1Modal"
+import ContentWrapper from "./components/composition.style";
 const { Content } = Layout;
 function handleMenuClick(e) { console.log("click", e.key[0]); }
 const menu = (
@@ -66,7 +67,7 @@ function Composition1() {
       if (loadLazyTimeout) {
           clearTimeout(loadLazyTimeout);
       }
-      getService("criteria/get")
+      getService("composition1/get")
           .then((result) => {
               let list = result.content || [];
               list.map(
@@ -84,7 +85,9 @@ function Composition1() {
               isShowLoading(false);
           });
   };
-
+  function onChange(date, dateString) {
+    console.log(date, dateString);
+  }
   const onPage = (event) => {
       let _lazyParams = { ...lazyParams, ...event };
       setLazyParams(_lazyParams);
@@ -117,7 +120,7 @@ function Composition1() {
           return;
       }
       debugger
-      putService("criteria/delete/" + selectedRows[0].id)
+      putService("composition1/delete/" + selectedRows[0].id)
           .then((result) => {
               message.success("Амжилттай устлаа");
               onInit();
@@ -143,7 +146,7 @@ function Composition1() {
   //                 onSelectionChange={(e) => {
   //                     setSelectedRows(e.value);
   //                 }}
-  //                 value={data.criteriaIndicator.filter((z) => z.status === true)}
+  //                 value={data.composition1Indicator.filter((z) => z.status === true)}
   //                 onRowClick={edit}
   //             >
   //                 <Column
@@ -162,7 +165,7 @@ function Composition1() {
 
       if (e.data.userControllers)
           return
-      getService("criteria/get").then((result) => {
+      getService("composition1/get").then((result) => {
           e.data.userControllers = result.content || []
           setList([...list])
       })
@@ -173,6 +176,7 @@ function Composition1() {
   };
 
   return (
+      <ContentWrapper>
       <div>
           <Layout className="btn-layout">
               <Content>
@@ -192,9 +196,7 @@ function Composition1() {
                           </Button>
                       </Col>
                       <Col span={2}>
-                      <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
-                              Устгах
-                          </Button>
+                            
                       </Col>
                       <Col span={18} style={{ textAlign: "right" }}>
                           <div style={{ marginRight: "5px" }}>
@@ -237,12 +239,16 @@ function Composition1() {
               className="p-datatable-gridlines"
           >
               <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
-              <Column field="index" header="№" style={{ width: "50px" }} />
-              <Column field="code" header="Код"/>
-              <Column field="name" header="Шалгуур үзүүлэлтийн нэр"/>
-              <Column field="indicatorProcess" header="Хүрэх үр дүн"/>
-              <Column field="upIndicator" header="Үр дүнгийн биелэлт"/>
-              <Column field="" header="Шалгуур үзүүлэлтийн төрөл"/>
+              <Column field="code" header="№" style={{ width: "50px" }} />
+              <Column field="name" header="Сургалтын агууллага"/>
+              <Column field="" header="Зорилтот үр дүн"/>
+              <Column field="" header="Шалгуур үзүүлэлт"/>
+              <Column field="" header="I улирал"/>
+              <Column field="" header="II улирал"/>
+              <Column field="" header="III улирал"/>
+              <Column field="" header="IV улирал"/>
+              <Column field="" header="Нийт"/>
+              <Column field="" header="Үр дүнгийн биелэлт"/>
           </DataTable>
           {isModalVisible && (
               <Composition1Modal
@@ -253,6 +259,7 @@ function Composition1() {
               />
           )}
       </div>
+      </ContentWrapper>
   );
   function confirm() {
       Modal.confirm({
