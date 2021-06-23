@@ -1,0 +1,43 @@
+@import './mixins';
+
+$amount: 10px;
+$primary-color: #103154 !default;
+$ball-size: 12px !default;
+$margin: 2px !default;
+$line-height: 35px !default;
+$line-width: 4px !default;
+
+@function delay($interval, $count, $index) {
+    @return ($index * $interval) - ($interval * $count);
+}
+
+@keyframes ball-pulse-sync {
+  33% {
+    transform: translateY($amount);
+  }
+  66% {
+    transform: translateY(-$amount);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@mixin ball-pulse-sync($n:3, $start:0) {
+  @for $i from $start through $n {
+    > div:nth-child(#{$i}) {
+      animation: ball-pulse-sync 0.7s delay(0.07s, $n, $i) infinite ease-in-out;
+    }
+  }
+}
+
+.ball-pulse-sync {
+  @include ball-pulse-sync();
+
+  > div {
+    @include balls();
+    @include global-animation();
+
+    display: inline-block;
+  }
+}

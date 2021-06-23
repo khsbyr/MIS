@@ -3,9 +3,12 @@ import "antd/dist/antd.css";
 import { Button, Row, Col, Form, Input, Carousel } from "antd";
 import TextWrapper, { LogIn } from "./Login.style";
 import { useHistory } from "react-router-dom";
+import {useTranslation} from 'react-i18next';
+import i18n from "../../i18n"
 
 function Register() {
   const history = useHistory();
+  const {t, i18} = useTranslation();
   function moveToRegister() {
     history.push("/register");
   }
@@ -35,27 +38,21 @@ function Register() {
         >
           <TextWrapper>
             <h2 className="title">
-              МАЛ АЖ АХУЙН ЭДИЙН ЗАСГИЙН <br /> ЭРГЭЛТИЙГ НЭМЭГДҮҮЛЭХ ТӨСӨЛ
+              {t("login_title")}  
             </h2>
-            <h3 className="subTitle">МЭДЭЭЛЭЛИЙН УДИРДЛАГЫН СИСТЕМ</h3>
+            <h3 className="subTitle">{t("login_subtitle")}</h3>
             <h2 className="title" style={{ marginTop: "50px" }}>
-              Төслийн зорилго:
+            {t("project_background")}
             </h2>
             <Carousel auto afterChange={onChange}  style={{height:"160px", width:"510px"}}>
               <div>           
                 <p style={contentStyle}>
-                  Lorem Ipsum is simply dummy text of the printing and typesetting
-                  industry. Lorem Ipsum has been the industry's standard dummy text
-                  ever since  the 1500s Lorem Ipsum has been the industry's standard
-                  dummy text ever since the 1500s
+                {t("background_content")}
                 </p>             
               </div>
               <div>
                 <p style={contentStyle}>
-                It is a long established fact that a reader will be distracted by the 
-                readable content of a page when looking at its layout. The point of using Lorem 
-                Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 
-                'Content here, content here', making it look like readable English. Many desktop publishing 
+                {t("background_content")}
                 </p>  
               </div>
               <div>
@@ -63,7 +60,7 @@ function Register() {
               </div>
           </Carousel> 
             <h2 className="title" style={{ marginTop: "80px", marginBottom: "30px" }}>
-              Хамтран ажиллагч байгууллагууд:
+            {t("partner")}
             </h2>
             <Row gutter={[32,32]}>
               <Col >
@@ -110,10 +107,10 @@ function Register() {
               onFinish={onFinish}
             >
               <Form.Item>
-                <p className="title">СИСТЕМД БҮРТГҮҮЛЭХ</p>
+                <p className="title">{t('register_system')}</p>
               </Form.Item>
               <Form.Item>
-                <p className="subTitle">И-Мэйл хаяг:</p>
+                <p className="subTitle">{t('email')}</p>
               </Form.Item>
               <Form.Item
                 name="email"
@@ -125,10 +122,10 @@ function Register() {
                   },
                 ]}
               >
-              <Input placeholder="И-Мэйл хаяг" bordered={false} />
+              <Input placeholder={t('email')} bordered={false} />
               </Form.Item>
               <Form.Item>
-                <p className="subTitle">Хэрэглэгчийн нэр</p>
+                <p className="subTitle">{t('username')}</p>
               </Form.Item>
               <Form.Item
                 name="username"
@@ -140,10 +137,10 @@ function Register() {
                   },
                 ]}
               >
-              <Input placeholder="Хэрэглэгчийн нэр" bordered={false} />
+              <Input placeholder={t('username')} bordered={false} />
               </Form.Item>
               <Form.Item>
-                <p className="subTitle">Нууц үг</p>
+                <p className="subTitle">{t('password')}</p>
               </Form.Item>
               <Form.Item
                 name="password"
@@ -162,7 +159,7 @@ function Register() {
                 />
               </Form.Item>
               <Form.Item>
-                <p className="subTitle">Нууц үг давтах</p>
+                <p className="subTitle">{t('confirm_pass')}</p>
               </Form.Item>
               <Form.Item
                 name="password1"
@@ -182,7 +179,7 @@ function Register() {
               </Form.Item>
               <Form.Item>
                 <a className="login-form-forgot" href="/">
-                  Нууц үг мартсан
+                {t('forgot_pass')}
                 </a>
               </Form.Item>
 
@@ -193,14 +190,13 @@ function Register() {
                   className="login-form-button"
                   onClick={moveToRegister}
                 >
-                  Бүртгүүлэх
+                  {t('register')}
                 </Button>
               </Form.Item>
 
               <Form.Item>
                 <p className="copyright">
-                  ©2021 Мал аж ахуйн эдийн засгийн эргэлтийг нэмэгдүүлэх төсөл.
-                  Бүх эрх хуулиар хамгаалагдсан
+                {t('rights_reserved')}
                 </p>
               </Form.Item>
             </Form>

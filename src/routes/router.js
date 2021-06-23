@@ -16,7 +16,7 @@ const routes = [
     path: LOGIN_PAGE,
     component: Loadable({
       loader: () =>
-        import(/* webpackChunkName: "Home" */ "../pages/login"),
+        import(/* webpackChunkName: "Home" */ "../pages/auth/login"),
       loading: Loading,
       modules: ["Home"],
     }),
@@ -26,7 +26,7 @@ const routes = [
     path: REGISTER,
     component: Loadable({
       loader: () =>
-        import(/* webpackChunkName: "Home" */ "../pages/Register"),
+        import(/* webpackChunkName: "Home" */ "../pages/auth/Register"),
       loading: Loading,
       modules: ["Register"],
     }),

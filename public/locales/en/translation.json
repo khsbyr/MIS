@@ -1,6 +1,9 @@
 {
     "checkEmail": "Check Email",
-    "login_system": "LOGIN SYSTEM",
+    "login_system": "LOGIN",
+    "register_system": "REGISTER",
+    "confirm_pass": "Confirm password",
+    "email": "Email address",
     "user": "User",
         "user_role": "User Role",
     "login_title": "LIVESTOCK COMMERCIALIZATION PROJECT",

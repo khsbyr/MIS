@@ -1,39 +1,12 @@
-import React from "react";
-import HeaderWrapper from "./plan.styled"
-import ContentWrapper  from "./cv.styled";
+import React, { useEffect, useState } from "react";
+import { Modal, Form, Input , Table, Button, DatePicker} from "antd";
+import { getService, postService, putService } from "../../../../service/service";
+import { errorCatch } from "../../../../tools/Tools";
 import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined , UserOutlined } from "@ant-design/icons";
-import { Row, Col, DatePicker, Input, Button, Upload, message, Form, Select, InputNumber, Checkbox, Table } from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-// import Pageheader from "../container/Layout/component/Pageheader";
 import { faCalendarAlt, faEnvelope, faHome, faPhone, faUser, faUserEdit } from "@fortawesome/free-solid-svg-icons";
-function onChange(date, dateString) {
-    console.log(date, dateString);
-  }
-const onSearch = (value) => console.log(value);
-const { Dragger } = Upload;
-const { Option } = Select;
-
-const props = {
-  name: 'file',
-  multiple: true,
-  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-  onChange(info) {
-    const { status } = info.file;
-    if (status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
-    if (status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully.`);
-    } else if (status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-  onDrop(e) {
-    console.log('Dropped files', e.dataTransfer.files);
-  },
-};
-
+import { Row, Col, Select, Option,Upload } from "antd";
+import AutocompleteSelect from "../../../components/Autocomplete";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const dataSource = [
     {
       key: '1',
@@ -67,22 +40,92 @@ const dataSource = [
     },
   ];
 
-const CV = () => {
-    return (
-        <>
-        <HeaderWrapper>
-            <Row>           
-                <Col xs={24} md={24} lg={9}>
-                    <p className="title" style={{marginLeft: "45px"}}>Сургагч байгшийн CV</p>
-                </Col>
-                <Col xs={24} md={12} lg={15} >
-                </Col>      
-            </Row>
-        </HeaderWrapper>
+const { Dragger } = Upload;
+const layout = {
+    labelCol: {
+        span: 10,
+    },
+    wrapperCol: {
+        span: 14,
+    },
+};
+const validateMessages = {
+    required: "${label} хоосон байна!",
+    types: {
+        email: "${label} is not a valid email!",
+        number: "${label} is not a valid number!",
+    },
+    number: {
+        range: "${label} must be between ${min} and ${max}",
+    },
+};
+export default function CvModal(props) {
+    const { Usercontroller, isModalVisible, isEditMode } = props;
+    const [stateController, setStateController] = useState([]);
+    const [form] = Form.useForm();
+    const { Option } = Select;
+    const { RangePicker } = DatePicker;
+    useEffect(() => {
+        getService("criteria/get", {
+            search: "status:true",
+        }).then((result) => {
+            if (result) {
+                setStateController(result.content || []);
+            }
+        });
 
-        <ContentWrapper>
-            <h1 className="title">1. Хувь хүний мэдээлэл</h1>
-            <Row>
+        if (isEditMode) {
+            getService("criteria/get" + Usercontroller.id).then((result) => {
+                Usercontroller.userServiceId = result.userService.id
+                form.setFieldsValue({ ...Usercontroller });
+            })
+
+        }
+    }, []);
+    const save = () => {
+        form
+            .validateFields()
+            .then((values) => {
+                values.userService = { id: values.userServiceId }
+                if (isEditMode) {
+                    putService(
+                        "criteria/put" + Usercontroller.id,
+                        values
+                    )
+                        .then((result) => {
+                            props.close(true);
+                        })
+                        .catch((error) => {
+                            errorCatch(error);
+                        })
+                } else {
+                    postService("criteria/post", values)
+                        .then((result) => {
+                            props.close(true);
+                        })
+                        .catch((error) => {
+                            errorCatch(error);
+                        });
+                }
+            })
+            .catch((info) => {
+                console.log("Validate Failed:", info);
+            });
+    };
+    return (
+        <div>
+            <Modal
+                title="Сургагч багшийн CV бүртгэх"
+                okText="Хадгалах"
+                cancelText="Буцах"
+                width={1200}
+                alignItems="center"
+                visible={isModalVisible}
+                onOk={save}
+                onCancel={() => props.close()}
+            >
+          <h2 className="title">1. Хувь хүний мэдээлэл</h2>
+            <Row gutter={[30,30]}>
                 
                 <Col xs={24} md={24} lg={4}>
                     <Dragger {...props} style={{}}>
@@ -133,7 +176,7 @@ const CV = () => {
                 </Col>
             </Row>
 
-            <h1 className="title">2. Ажлын зорилго</h1>
+            <h2 className="title">2. Ажлын зорилго</h2>
             <Row>
                 <Col xs={24} md={24} lg={22}>
                     <Form layout="vertical">
@@ -150,35 +193,35 @@ const CV = () => {
                 </Col>
             </Row>
 
-            <h1 className="title">3. Боловсрол</h1>
+            <h2 className="title">3. Боловсрол</h2>
             <Row >
                 <Col xs={24} md={24} lg={22}>
                     <Table dataSource={dataSource} columns={columns} />
                 </Col>
             </Row>
 
-            <h1 className="title">4. Ажлын туршлага</h1>
+            <h2 className="title">4. Ажлын туршлага</h2>
             <Row >
                 <Col xs={24} md={24} lg={22}>
                     <Table dataSource={dataSource} columns={columns} />
                 </Col>
             </Row>
 
-            <h1 className="title">5. Зөвлөх үйлчилгээний ажлын туршлага</h1>
+            <h2 className="title">5. Зөвлөх үйлчилгээний ажлын туршлага</h2>
             <Row >
                 <Col xs={24} md={24} lg={22}>
                     <Table dataSource={dataSource} columns={columns} />
                 </Col>
             </Row>
 
-            <h1 className="title">6. Башгийн ажлын туршлага</h1>
+            <h2 className="title">6. Башгийн ажлын туршлага</h2>
             <Row >
                 <Col xs={24} md={24} lg={22}>
                     <Table dataSource={dataSource} columns={columns} />
                 </Col>
             </Row>
 
-            <h1 className="title">10. Ур чадвар</h1>
+            <h2 className="title">10. Ур чадвар</h2>
             <Row >
                 <Col xs={24} md={24} lg={22}>
                     <Input.TextArea 
@@ -199,9 +242,7 @@ const CV = () => {
                     </Form.Item>
                 </Col>
             </Row>
-        </ContentWrapper>
-        </>
-    )
+            </Modal>
+        </div >
+    );
 }
-
-export default CV;

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import HeaderWrapper from "./plan.styled";
+import HeaderWrapper from "../plan.styled";
 import ContentWrapper  from "./criteria.style";
 import CriteriaModal from "./criteriaModal";
 import {
@@ -8,10 +8,10 @@ import {
   CopyOutlined,
 } from "@ant-design/icons";
 import { Row, Col, DatePicker, Input, Button, Table, Modal, Form, InputNumber } from "antd";
-import PageHeaderWrapper from "../container/Layout/component/Pageheader.style";
+import PageHeaderWrapper from "../../container/Layout/component/Pageheader.style";
 import { useTranslation } from 'react-i18next';
-import i18n from "../i18n";
-import { getService } from "../service/service";
+import i18n from "../../i18n";
+import { getService } from "../../service/service";
 
 
 function onChange(date, dateString) {
@@ -30,32 +30,34 @@ export default function Criteria() {
   
   const columns = [
     {
-      title: 'Код / Дугаар/',
-      dataIndex: 'code',
-      key: 'code',
-      code:"code"
-      
+      title: "Код / Дугаар/ sadsa",
+      dataIndex: "code",
+      key: "code",
+      code: "code",
     },
     {
-      title: 'Шалгуур үзүүлэлтийн нэр',
-      dataIndex: 'name',
-      key: 'name',
-      name:"name"
+      title: "Шалгуур үзүүлэлтийн нэр",
+      dataIndex: "name",
+      key: "name",
+      name: "name",
     },
     {
-      title: 'Хүрэх үр дүн',
-      dataIndex: 'urDun',
-      key: 'urDun',
+      title: "Хүрэх үр дүн",
+      dataIndex: "indicatorProcess",
+      key: "indicatorProcess",
+      indicatorProcess: "indicatorProcess",
     },
     {
-      title: 'Үр дүнгийн биелэлт',
-      dataIndex: 'biylelt',
-      key: 'biylelt',
+      title: "Үр дүнгийн биелэлт",
+      dataIndex: "upIndicator",
+      key: "upIndicator",
+      upIndicator: "upIndicator",
     },
     {
-      title: 'Шалгуур үзүүлэлтийн төрөл',
-      dataIndex: 'indicators',
-      key: 'indicators',
+      title: "Шалгуур үзүүлэлтийн төрөл",
+      dataIndex: "criteriaIndicator",
+      key: "criteriaIndicator",
+      criteriaIndicator: "criteriaIndicator",
     },
   ];
 

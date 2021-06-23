@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
-
-const ContentWrapper = styled.div `
+const ContentWrapper = styled.div`
     margin-left: 45px;
     margin-right: 45px;
+    margin-top: 30px;
     .ant-upload.ant-upload-drag {
         width: 100%;
         height: 200px;
@@ -12,9 +12,10 @@ const ContentWrapper = styled.div `
     }
 
     .title {
-        font-size: 16px;
+        font-size: 14px;
         font-weight: bold;
-        color: #103154;
+        color: #0D0D0D;
+        margin: 20px 0px 20px 0px;
     }
 
     label {
@@ -22,10 +23,14 @@ const ContentWrapper = styled.div `
         font-size: 13px;
     }
 
-    Input {
-        width: 100%;
+    .FormItem {
+        width: 60%;
         height: 40px;
-        border-radius: 3px;
+        border:none;
+        border-bottom: 1px solid #103154;
+        @media (max-width: 991px) {
+            width: 100%;
+        }
     }
 
     Select {
@@ -35,6 +40,7 @@ const ContentWrapper = styled.div `
     .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
         height: 40px;
         padding-top: 4px;
+        border: none;
     }
 
     .button {
@@ -53,10 +59,19 @@ const ContentWrapper = styled.div `
         background-color: #fff;
     }
 
-    .ant-form-item-control-input-content {
-        max-width: 50%  ;
+    .ant-input-prefix {
+        color: #103154;
+        margin-right: 25px;
     }
-    
+    .ant-form-item .ant-select, .ant-form-item .ant-cascader-picker {
+        width: 60%;
+        border-bottom: 1px solid #103154;
+    }
+    .ant-input-number {
+        border: none;
+        width: 60%;
+        border-bottom: 1px solid #103154;
+    }
 `;
 
 export default ContentWrapper;

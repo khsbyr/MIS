@@ -1,29 +1,28 @@
-import React from "react";
-import "antd/dist/antd.css";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Divider, Layout, Menu } from "antd";
-import { Row, Col, Avatar, Dropdown } from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import {
-  MenuOutlined,
-  UserOutlined,
-  LaptopOutlined,
-  NotificationOutlined,
-  CaretDownOutlined,
-  PoweroffOutlined,
+  CaretDownOutlined, MenuOutlined, PoweroffOutlined
 } from "@ant-design/icons";
+import { faClipboardCheck, faFileSignature, faHandsHelping, faLayerGroup, faList, faListAlt, faProjectDiagram, faUserAlt, faUserCog } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Avatar, Col, Divider, Dropdown, Layout, Menu, Row } from "antd";
+import "antd/dist/antd.css";
+import React from "react";
 import { useTranslation } from 'react-i18next';
+import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 import i18n from "../i18n";
-import Criteria from "./criteria";
-import Plan from "./plan";
+import Attendance from "./training/training/attendance";
+import Composition1 from "./training/trainingplan/composition1";
+import Composition2 from "./training/trainingplan/composition2";
+import Composition3 from "./training/trainingplan/composition3";
+import Composition4 from "./training/trainingplan/composition4";
+import Criteria from "./criteria/criteria";
+import CV from "./training/training/cv";
+import Guidelines from "./training/training/guidelines";
+import Organization from "./training/training/organization";
+import Plan from "./training/training/plan";
+import TrainingProgram from "./training/training/trainingProgram";
+import TrainingReport from "./training/training/trainingReport";
 import Tunshlel from "./tunshlel";
-import Organization from "./organization";
-import Guidelines from "./guidelines";
-import CV from "./cv";
-import Composition1 from "./composition1";
-import TrainingReport from "./trainingReport";
-import { faClipboardCheck, faFileSignature, faHandsHelping, faLayerGroup, faList, faListAlt, faProjectDiagram, faUser, faUserAlt, faUserAltSlash, faUserCheck, faUserCircle, faUserCog, faUserGraduate, faUserSecret } from "@fortawesome/free-solid-svg-icons";
+
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -118,9 +117,9 @@ const Admin = () => {
                     title={t("training_plan")}
                   >
                     <Menu.Item key="4"><Link to="/composition1">{t("composition1")}</Link></Menu.Item>
-                    <Menu.Item key="5">{t("composition2")}</Menu.Item>
-                    <Menu.Item key="6">{t("composition3")}</Menu.Item>
-                    <Menu.Item key="7">{t("composition4")}</Menu.Item>
+                    <Menu.Item key="5"><Link to="/composition2">{t("composition2")}</Link></Menu.Item>
+                    <Menu.Item key="6"><Link to="/composition3">{t("composition3")}</Link></Menu.Item>
+                    <Menu.Item key="7"><Link to="/composition4">{t("composition4")}</Link></Menu.Item>
                   </SubMenu>
                   <SubMenu
                     key="sub5"
@@ -140,9 +139,9 @@ const Admin = () => {
                       <Link to="/cv">{t("cv_teachers")}</Link>
                     </Menu.Item>
                     <Menu.Item key="12">
-                      <Link to="#">{t("training_program")}</Link>
+                      <Link to="/training_program">{t("training_program")}</Link>
                     </Menu.Item>
-                    <Menu.Item key="13">{t("attendance_registration")}</Menu.Item>
+                    <Menu.Item key="13"><Link to="/attendance">{t("attendance_registration")}</Link></Menu.Item>
                     <Menu.Item key="14">{t("test_aggregation")}</Menu.Item>
                     <Menu.Item key="15"><Link to="/training_report">{t("training_report")}</Link></Menu.Item>
                     <Menu.Item key="16">{t("training_budget")}</Menu.Item>
@@ -327,6 +326,21 @@ const Admin = () => {
                   </Route>
                   <Route path="/composition1">
                     <Composition1 />
+                  </Route>
+                  <Route path="/composition2">
+                    <Composition2 />
+                  </Route>
+                  <Route path="/composition3">
+                    <Composition3 />
+                  </Route>
+                  <Route path="/composition4">
+                    <Composition4 />
+                  </Route>
+                  <Route path="/training_program">
+                    <TrainingProgram />
+                  </Route>
+                  <Route path="/attendance">
+                    <Attendance />
                   </Route>
                 </Switch>{" "}
               </Content>

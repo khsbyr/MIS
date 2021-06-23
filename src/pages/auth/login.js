@@ -4,7 +4,7 @@ import { Button, Row, Col, Form, Input, Carousel } from "antd";
 import TextWrapper, { LogIn } from "./Login.style";
 import { useHistory } from "react-router-dom";
 import {useTranslation} from 'react-i18next';
-import i18n from "../i18n"
+import i18n from "../../i18n"
 
 function Login() {
   const {t, i18} = useTranslation();
