@@ -10,9 +10,6 @@ const ContentWrapper = styled.div `
         height: 15px !important;
         border: 1px solid;
     }
-    /* .p-checkbox .p-checkbox-box:active {
-    background-color: red;   
-    } */
     .p-checkbox .p-checkbox-box:focus {
     background-color: #103154;   
     }

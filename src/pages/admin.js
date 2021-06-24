@@ -22,7 +22,8 @@ import Plan from "./training/training/plan";
 import TrainingProgram from "./training/training/trainingProgram";
 import TrainingReport from "./training/training/trainingReport";
 import Tunshlel from "./tunshlel";
-
+import Test from "./training/training/test";
+import Budget from "./training/training/budget";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -142,9 +143,9 @@ const Admin = () => {
                       <Link to="/training_program">{t("training_program")}</Link>
                     </Menu.Item>
                     <Menu.Item key="13"><Link to="/attendance">{t("attendance_registration")}</Link></Menu.Item>
-                    <Menu.Item key="14">{t("test_aggregation")}</Menu.Item>
+                    <Menu.Item key="14"><Link to="test">{t("test_aggregation")}</Link></Menu.Item>
                     <Menu.Item key="15"><Link to="/training_report">{t("training_report")}</Link></Menu.Item>
-                    <Menu.Item key="16">{t("training_budget")}</Menu.Item>
+                    <Menu.Item key="16"><Link to="/budget">{t("training_budget")}</Link></Menu.Item>
                   </SubMenu>
                 </SubMenu>
                 <SubMenu
@@ -341,6 +342,12 @@ const Admin = () => {
                   </Route>
                   <Route path="/attendance">
                     <Attendance />
+                  </Route>
+                  <Route path="/test">
+                    <Test />
+                  </Route>
+                  <Route path="/budget">
+                    <Budget />
                   </Route>
                 </Switch>{" "}
               </Content>

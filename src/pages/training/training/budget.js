@@ -10,7 +10,7 @@ import {
   import { getService, putService } from "../../../service/service";
   import { PAGESIZE } from "../../../tools/Constant";
   import { errorCatch } from "../../../tools/Tools";
-  import TrainingReportModal from "../training/components/trainingReportModal";
+  import AttendanceModal from "../training/components/attendanceModal";
   import ContentWrapper from "../training/components/attendance.style";
   const { Content } = Layout;
   function handleMenuClick(e) { console.log("click", e.key[0]); }
@@ -45,7 +45,7 @@ import {
   );
   var isEditMode;
   var editRow
-  function TrainingReport() {
+  function Budget() {
     let loadLazyTimeout = null;
     const dt = useRef(null);
     const [list, setList] = useState([]);
@@ -179,79 +179,7 @@ import {
   
     return (
         <ContentWrapper>
-          <h2 className="title">Сургалтын тайлан</h2>
-          <Row >
-  <Col xs={24} md={24} lg={8}>
-      <Form>
-          <Form.Item>                   
-              <Input className="FormItem" placeholder="Сургалтын нэр"/>
-          </Form.Item>
-      </Form>
-      <Form>
-          <Form.Item>                   
-              <DatePicker
-              bordered={false}
-              placeholder="Огноо"
-              suffixIcon={<DownOutlined />}
-              className="DatePicker"
-              style={{
-              width: "60%",
-              color: "black",
-              cursor: "pointer",
-              }}
-              />
-          </Form.Item>
-      </Form>
-  </Col>
-  <Col xs={24} md={24} lg={8}>
-   <Form>
-      <Form.Item>                              
-          <Select
-              placeholder="Аймаг:"
-              allowClear
-              >
-                  <Option value="Ulaanbaatar">Улаанбаатар</Option>
-                  <Option value="Arkhangai">Архангай</Option>
-                  <Option value="other">other</Option>
-          </Select>
-      </Form.Item>
-      <Form.Item>                              
-          <Select
-              placeholder="Сум:"
-              allowClear
-              >
-                  <Option value="Darkhan">Дархан</Option>
-                  <Option value="Erdenet">Эрдэнэт</Option>
-                  <Option value="other">other</Option>
-          </Select>
-      </Form.Item>
-   </Form>
-  </Col>
-  <Col xs={24} md={24} lg={4}>
-      <Form>
-          <Form.Item>
-              <InputNumber 
-                  placeholder="Эр"
-              />
-          </Form.Item>
-          <Form.Item>
-              <InputNumber 
-                  placeholder="Эм"
-              />
-          </Form.Item>
-      </Form>
-  </Col>
-  <Col xs={24} md={24} lg={4}>
-      <Form>
-          <Form.Item>
-              <InputNumber 
-                  placeholder="Нийт"
-              />
-          </Form.Item>
-      </Form>
-  </Col>
-  </Row>
-  
+          <h2 className="title">Сургалтын төсөв</h2>
   
         <div>
             <Layout className="btn-layout">
@@ -290,6 +218,7 @@ import {
                     </Row>
                 </Content>
             </Layout>
+                    <h3>1. Бичгийн хэрэгсэл</h3>
             <DataTable
                 ref={dt}
                 value={list}
@@ -315,21 +244,88 @@ import {
                 className="p-datatable-gridlines"
             >
                 <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
-                <Column field="index" header="№" style={{ width: "50px" }} />
-                <Column field="" header="Сургалтын нэр"/>
-                <Column field="" header="Огноо"/>
-                <Column field="" header="Сургалт явагдсан газар"/>
-                <Column field="" header="Сургалт явуулсан байгууллага, хүний нэр"/>
-                <Column field="" header="Сургагч багшийн нэр"/>
+                <Column field="" header="Зардлын нэр"/>
+                <Column field="" header="Нэгж үнэ /₮/"/>
+                <Column field="" header="Тоо ширхэг"/>
+                <Column field="" header="Хүний тоо"/>
+                <Column field="" header="Дүн /₮/"/>
             </DataTable>
             {isModalVisible && (
-                <TrainingReportModal
+                <AttendanceModal
                     Usercontroller={editRow}
                     isModalVisible={isModalVisible}
                     close={closeModal}
                     isEditMode={isEditMode}
                 />
             )}
+                        <h3>2. Зам хоног, буудлын зардал</h3>
+            <DataTable
+                ref={dt}
+                value={list}
+                lazy
+                paginator
+                first={lazyParams.first}
+                rows={25}
+                totalRecords={totalRecords}
+                onPage={onPage}
+                onSort={onSort}
+                sortField={lazyParams.sortField}
+                sortOrder={lazyParams.sortOrder}
+                onFilter={onFilter}
+                filters={lazyParams.filters}
+                emptyMessage="Өгөгдөл олдсонгүй..."
+                className="p-datatable-gridlines"
+                selection={selectedRows}
+                onSelectionChange={(e) => {
+                    setSelectedRows(e.value);
+                }}
+                dataKey="id"
+                onRowToggle={expandedCity}
+                className="p-datatable-gridlines"
+            >
+                <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
+                <Column field="" header="Зардлын нэр"/>
+                <Column field="" header="Зардлын төрөл"/>
+                <Column field="" header="МЗҮБ хүний тоо"/>
+                <Column field="" header="Хоногт /₮/"/>
+                <Column field="" header="Хоног"/>
+                <Column field="" header="Нийт /₮/"/>
+
+            </DataTable>
+            <h3>3. Шатахууны зардал /маршрутаар/</h3>
+            <DataTable
+                ref={dt}
+                value={list}
+                lazy
+                paginator
+                first={lazyParams.first}
+                rows={25}
+                totalRecords={totalRecords}
+                onPage={onPage}
+                onSort={onSort}
+                sortField={lazyParams.sortField}
+                sortOrder={lazyParams.sortOrder}
+                onFilter={onFilter}
+                filters={lazyParams.filters}
+                emptyMessage="Өгөгдөл олдсонгүй..."
+                className="p-datatable-gridlines"
+                selection={selectedRows}
+                onSelectionChange={(e) => {
+                    setSelectedRows(e.value);
+                }}
+                dataKey="id"
+                onRowToggle={expandedCity}
+                className="p-datatable-gridlines"
+            >
+                <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
+                <Column field="" header="Маршрут"/>
+                <Column field="" header="Замын урт /км/"/>
+                <Column field="" header="Бүсийн нэмэгдэл /%/"/>
+                <Column field="" header="Зарцуулах шатахуун /л/"/>
+                <Column field="" header="Шатахууны үнэ /₮/ A92"/>
+                <Column field="" header="Нийт /₮/"/>
+
+            </DataTable>
         </div>
         </ContentWrapper>
     );
@@ -348,10 +344,9 @@ import {
         });
     }
   }
-  export default TrainingReport;
+  export default Budget;
   
   
   
   
   
-

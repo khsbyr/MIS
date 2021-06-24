@@ -1,244 +1,355 @@
-import { RepeatRounded } from "@material-ui/icons";
-import React, {useState, useEffect} from "react";
-import { Row, Col, DatePicker, Input, Button, Table, Modal, Form, InputNumber, Select } from "antd";
-import PageHeaderWrapper from "../../../container/Layout/component/Pageheader.style";
-import HeaderWrapper from "../training/components/plan.styled";
-import ContentWrapper from "./components/attendance.style";
-import CriteriaModal from "../../criteria/components/CriteriaModal";
-import { useTranslation } from 'react-i18next';
-import i18n from "../../../i18n";
-import { getService } from "../../../service/service";
 import {
-    DownOutlined,
-    SearchOutlined,
-    CopyOutlined,
-  } from "@ant-design/icons";
-  
-  function onChange(date, dateString) {
-    console.log(date, dateString);
-  }
-  const onSearch = (value) => console.log(value);
-
-  const columns = [
-    {
-      title: 'Код / Дугаар/',
-      dataIndex: 'code',
-      key: 'code',    
-    },
-    {
-      title: 'Суралцагчийн нэр',
-    },
-    {
-      title: 'Ажил эрхлэлт',
-    },
-    {
-      title: 'Холбогдох утас, мэйл, хаяг',
-    },
-    {
-      title: 'Регистерийн дугаар',
-    },
-  ];
-
-  const data = [
-      {
-          key: "1",
-          code: "adasd"
-      }
-  ]
-
-const Attendance = () => {
-    const [visible, setVisible] = useState(false);
-    const [list, setList] = useState([]);
-    const { Option } = Select;
-    useEffect(()=>{
-        getService("criteria/get").then(result=>{
-          let list  = result.content || []
-          setList(list)
-    
-        })
-        },[])
-    return(
-        <HeaderWrapper>
-        <Row>
-          <Col xs={24} md={24} lg={10}>
-            <p className="title">Ирцийн бүртгэл</p>
-          </Col>
-          <Col xs={24} md={24} lg={14}>
-            <PageHeaderWrapper>
-              <Row>
-                <Col xs={8} md={8} lg={6}>
-                  <DatePicker
-                    onChange={onChange}
-                    bordered={false}
-                    suffixIcon={<DownOutlined />}
-                    placeholder="Select year"
-                    picker="year"
-                    className="DatePicker"
-                    style={{
-                      width: "120px",
-                      color: "black",
-                      cursor: "pointer",
-                    }}
-                  />
-                </Col>
-                <Col xs={8} md={8} lg={6}>
-                  <Input
-                    placeholder="Хайлт хийх"
-                    allowClear
-                    prefix={<SearchOutlined />}
-                    bordered={false}
-                    onSearch={onSearch}
-                    style={{
-                      width: 150,
-                      borderBottom: "1px solid #103154",
-                    }}
-                  />
-                </Col>
-                <Col xs={8} md={8} lg={4}>
-                  <Button icon={<CopyOutlined />}>Хэвлэх</Button>
-                </Col>
-                <Col xs={8} md={8} lg={4}>
-                  <Button className="export" icon={<CopyOutlined />}>
-                    Экспорт
-                  </Button>
-                </Col>
-                <Col xs={8} md={8} lg={4}>
-                <Button className="export" icon={<CopyOutlined />} onClick={() => setVisible(true)}>
-                    Нэмэх
-                  </Button>
-                <CriteriaModal/>
-                <Modal
-                    title="Сургалтын хөтөлбөр бүртгэх "
-                    centered
-                    visible={visible}
-                    onOk={() => setVisible(false)}
-                    onCancel={() => setVisible(false)}
-                    width={1000}
-                >
-                    <Row gutter={[50]}>
-                    <Col span={12}>
-                        <Form layout="vertical">
-                            <Form.Item label="Код /Дугаар/:" >                    
-                                <Input placeholder="Код /Дугаар/"/>
-                            </Form.Item>
-                        </Form>
-                        <Form layout="vertical">
-                            <Form.Item label="Үйл ажиллагаа" >                    
-                                <Input placeholder="Үйл ажиллагаа"/>
-                            </Form.Item>
-                        </Form>
-                        <Form layout="vertical">
-                            <Form.Item label="Хэрэгжих хуагацаа" >                    
-                                <DatePicker
-                                bordered={false}
-                                suffixIcon={<DownOutlined />}
-                                className="DatePicker"
-                                style={{
-                                width: "100%",
-                                color: "black",
-                                cursor: "pointer",
-                                }}
-                                />
-                            </Form.Item>
-                        </Form>
-                    </Col>
-                    <Col span={12}>
-                        <Form layout="vertical">
-                            <Form.Item label="Хариуцах эзэн:" >                    
-                                <Input placeholder="Хариуцах эзэн"/>
-                            </Form.Item>
-                        </Form>
-                        <Form layout="vertical">
-                            <Form.Item label="Сургалтын материал:" >                    
-                                <Input placeholder="Сургалтын материал"/>
-                            </Form.Item>
-                        </Form>
-                    </Col>
-                    </Row>
-                </Modal>
-                </Col>
-              </Row>
-            </PageHeaderWrapper>{" "}
-          </Col>
-        </Row>
-        <ContentWrapper>
-        <Row >
-            <Col xs={24} md={24} lg={8}>
-                <Form>
-                    <Form.Item>                   
-                        <Input className="FormItem" placeholder="Сургалтын нэр"/>
-                    </Form.Item>
-                </Form>
-                <Form>
-                    <Form.Item>                   
-                        <DatePicker
-                        bordered={false}
-                        placeholder="Огноо"
-                        suffixIcon={<DownOutlined />}
-                        className="DatePicker"
-                        style={{
-                        width: "60%",
-                        color: "black",
-                        cursor: "pointer",
-                        }}
-                        />
-                    </Form.Item>
-                </Form>
-            </Col>
-            <Col xs={24} md={24} lg={8}>
-             <Form>
-                <Form.Item>                              
-                    <Select
-                        placeholder="Аймаг:"
-                        allowClear
-                        >
-                            <Option value="Ulaanbaatar">Улаанбаатар</Option>
-                            <Option value="Arkhangai">Архангай</Option>
-                            <Option value="other">other</Option>
-                    </Select>
-                </Form.Item>
-                <Form.Item>                              
-                    <Select
-                        placeholder="Сум:"
-                        allowClear
-                        >
-                            <Option value="Darkhan">Дархан</Option>
-                            <Option value="Erdenet">Эрдэнэт</Option>
-                            <Option value="other">other</Option>
-                    </Select>
-                </Form.Item>
-             </Form>
-            </Col>
-            <Col xs={24} md={24} lg={4}>
-                <Form>
-                    <Form.Item>
-                        <InputNumber 
-                            placeholder="Эр"
-                        />
-                    </Form.Item>
-                    <Form.Item>
-                        <InputNumber 
-                            placeholder="Эм"
-                        />
-                    </Form.Item>
-                </Form>
-            </Col>
-            <Col xs={24} md={24} lg={4}>
-                <Form>
-                    <Form.Item>
-                        <InputNumber 
-                            placeholder="Нийт"
-                        />
-                    </Form.Item>
-                </Form>
-            </Col>
-        </Row>
-
-
-        <Table dataSource={data} columns={columns} bordered />
-        </ContentWrapper>
-      </HeaderWrapper>
-    )
+  ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled, DownOutlined
+} from "@ant-design/icons";
+import SaveIcon from "@material-ui/icons/Save";
+import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker, Select, Input, InputNumber } from "antd";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import React, { useEffect, useRef, useState } from "react";
+import { isShowLoading } from "../../../context/Tools";
+import { getService, putService } from "../../../service/service";
+import { PAGESIZE } from "../../../tools/Constant";
+import { errorCatch } from "../../../tools/Tools";
+import AttendanceModal from "../training/components/attendanceModal";
+import ContentWrapper from "../training/components/attendance.style";
+const { Content } = Layout;
+function handleMenuClick(e) { console.log("click", e.key[0]); }
+function onChange(date, dateString) {
+  console.log(date, dateString);
 }
+const menu = (
+  <Menu onClick={handleMenuClick}>
+      <Menu.Item
+          key="1"
+          icon={<FileSyncOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
+      >
 
+          Импорт
+      </Menu.Item>
+      <Menu.Item
+          key="2"
+          icon={<FileOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
+      >
+          Экспорт
+      </Menu.Item>
+
+      <Menu.Item
+          key="3"
+          icon={<PrinterOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
+      >
+
+          Хэвлэх
+      </Menu.Item>
+
+  </Menu>
+);
+var isEditMode;
+var editRow
+function Attendance() {
+  let loadLazyTimeout = null;
+  const dt = useRef(null);
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [form] = Form.useForm();
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [expandedRows, setExpandedRows] = useState([]);
+  const { Option } = Select;
+  const [lazyParams, setLazyParams] = useState({
+      first: 0,
+      rows: 25,
+      page: 0,
+  });
+
+  useEffect(() => {
+      onInit();
+  }, [lazyParams])
+
+  const onInit = () => {
+      setLoading(true);
+      if (loadLazyTimeout) {
+          clearTimeout(loadLazyTimeout);
+      }
+      getService("guidelines/get")
+          .then((result) => {
+              let list = result.content || [];
+              list.map(
+                  (item, index) =>
+                      (item.index = lazyParams.page * PAGESIZE + index + 1)
+              );
+              setLoading(false);
+              setTotalRecords(result.totalElements);
+              setList(list);
+              setSelectedRows([]);
+              setExpandedRows();
+          })
+          .catch((error) => {
+              errorCatch(error);
+              isShowLoading(false);
+          });
+  };
+
+  const onPage = (event) => {
+      let _lazyParams = { ...lazyParams, ...event };
+      setLazyParams(_lazyParams);
+  };
+  const onSort = (event) => {
+      let _lazyParams = { ...lazyParams, ...event };
+      setLazyParams(_lazyParams);
+  };
+  const onFilter = (event) => {
+      let _lazyParams = { ...lazyParams, ...event };
+      _lazyParams["first"] = 0;
+      setLazyParams(_lazyParams);
+  };
+  const add = () => {
+      setIsModalVisible(true);
+      isEditMode = false;
+  };
+  const edit = (row) => {
+      editRow = row.data
+      isEditMode = true
+      setIsModalVisible(true)
+  }
+  const closeModal = (isSuccess = false) => {
+      setIsModalVisible(false);
+      if (isSuccess) onInit();
+  };
+  const handleDeleted = () => {
+      if (selectedRows.length === 0) {
+          message.warning("Устгах өгөгдлөө сонгоно уу");
+          return;
+      }
+      debugger
+      putService("guidelines/delete/" + selectedRows[0].id)
+          .then((result) => {
+              message.success("Амжилттай устлаа");
+              onInit();
+          })
+          .catch((error) => {
+              errorCatch(error);
+          });
+  };
+  const pop = () => {
+      if (selectedRows.length === 0) {
+          message.warning("Устгах өгөгдлөө сонгоно уу");
+          return;
+      } else {
+          confirm();
+      }
+  };
+  // const rowExpansionTemplate = (data) => {
+  //     return (
+  //         <div className="orders-subtable">
+  //             <span>{data.name}</span>
+  //             <DataTable
+  //                 selection={selectedRows}
+  //                 onSelectionChange={(e) => {
+  //                     setSelectedRows(e.value);
+  //                 }}
+  //                 value={data.criteriaIndicator.filter((z) => z.status === true)}
+  //                 onRowClick={edit}
+  //             >
+  //                 <Column
+  //                     selectionMode="multiple"
+  //                     headerStyle={{ width: "53px", padding: "0px" }}
+  //                 ></Column>
+  //                 <Column field="id" header="Id" style={{ width: "50px" }}></Column>
+  //                 <Column field="name" header="Нэр" />
+  //                 <Column field="path" header="Зам" />
+  //                 <Column headerStyle={{ width: "4rem" }}></Column>
+  //             </DataTable>
+  //         </div>
+  //     );
+  // };
+  const rowExpandCity = (e) => {
+
+      if (e.data.userControllers)
+          return
+      getService("guidelines/get").then((result) => {
+          e.data.userControllers = result.content || []
+          setList([...list])
+      })
+  }
+
+  const expandedCity = (e) => {
+      setExpandedRows(e.data)
+  };
+
+  return (
+      <ContentWrapper>
+        <h2 className="title">Ирцийн бүртгэл</h2>
+        <Row >
+<Col xs={24} md={24} lg={8}>
+    <Form>
+        <Form.Item>                   
+            <Input className="FormItem" placeholder="Сургалтын нэр"/>
+        </Form.Item>
+    </Form>
+    <Form>
+        <Form.Item>                   
+            <DatePicker
+            bordered={false}
+            placeholder="Огноо"
+            suffixIcon={<DownOutlined />}
+            className="DatePicker"
+            style={{
+            width: "60%",
+            color: "black",
+            cursor: "pointer",
+            }}
+            />
+        </Form.Item>
+    </Form>
+</Col>
+<Col xs={24} md={24} lg={8}>
+ <Form>
+    <Form.Item>                              
+        <Select
+            placeholder="Аймаг:"
+            allowClear
+            >
+                <Option value="Ulaanbaatar">Улаанбаатар</Option>
+                <Option value="Arkhangai">Архангай</Option>
+                <Option value="other">other</Option>
+        </Select>
+    </Form.Item>
+    <Form.Item>                              
+        <Select
+            placeholder="Сум:"
+            allowClear
+            >
+                <Option value="Darkhan">Дархан</Option>
+                <Option value="Erdenet">Эрдэнэт</Option>
+                <Option value="other">other</Option>
+        </Select>
+    </Form.Item>
+ </Form>
+</Col>
+<Col xs={24} md={24} lg={4}>
+    <Form>
+        <Form.Item>
+            <InputNumber 
+                placeholder="Эр"
+            />
+        </Form.Item>
+        <Form.Item>
+            <InputNumber 
+                placeholder="Эм"
+            />
+        </Form.Item>
+    </Form>
+</Col>
+<Col xs={24} md={24} lg={4}>
+    <Form>
+        <Form.Item>
+            <InputNumber 
+                placeholder="Нийт"
+            />
+        </Form.Item>
+    </Form>
+</Col>
+</Row>
+
+
+      <div>
+          <Layout className="btn-layout">
+              <Content>
+              <Row>
+      <Col>
+        
+      </Col></Row>
+                  <Row>
+                      <Col span={2}>
+                          <Button onClick={add} type="link" icon={<SaveIcon />}>
+                              Нэмэх
+                          </Button>
+                      </Col>
+                      <Col span={2}>
+                          <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
+                              Устгах
+                          </Button>
+                      </Col>
+                      <Col span={2}>
+                          <DatePicker onChange={onChange} picker="year" />
+                      </Col>
+                      <Col span={18} style={{ textAlign: "right" }}>
+                          <div style={{ marginRight: "5px" }}>
+                              <Dropdown.Button
+                                  overlay={menu}
+                                  placement="bottomCenter"
+                                  icon={
+                                      <SettingFilled
+                                          style={{ marginLeft: "8px", color: "#45629c" }}
+                                      />
+                                  }
+                              ></Dropdown.Button>
+                          </div>
+                      </Col>
+                  </Row>
+              </Content>
+          </Layout>
+          <DataTable
+              ref={dt}
+              value={list}
+              lazy
+              paginator
+              first={lazyParams.first}
+              rows={25}
+              totalRecords={totalRecords}
+              onPage={onPage}
+              onSort={onSort}
+              sortField={lazyParams.sortField}
+              sortOrder={lazyParams.sortOrder}
+              onFilter={onFilter}
+              filters={lazyParams.filters}
+              emptyMessage="Өгөгдөл олдсонгүй..."
+              className="p-datatable-gridlines"
+              selection={selectedRows}
+              onSelectionChange={(e) => {
+                  setSelectedRows(e.value);
+              }}
+              dataKey="id"
+              onRowToggle={expandedCity}
+              className="p-datatable-gridlines"
+          >
+              <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
+              <Column field="index" header="№" style={{ width: "50px" }} />
+              <Column field="" header="Суралцагчийн нэр"/>
+              <Column expander style={{ width: '3em' }} />
+              <Column field="" header="Ажил эрхлэлт"/>
+              <Column field="" header="Холбогдох утас, мэйл, хаяг"/>
+              <Column field="" header="Регистрийн дугаар"/>
+          </DataTable>
+          {isModalVisible && (
+              <AttendanceModal
+                  Usercontroller={editRow}
+                  isModalVisible={isModalVisible}
+                  close={closeModal}
+                  isEditMode={isEditMode}
+              />
+          )}
+      </div>
+      </ContentWrapper>
+  );
+  function confirm() {
+      Modal.confirm({
+          title: "Та устгахдаа итгэлтэй байна уу ?",
+          icon: <ExclamationCircleOutlined />,
+          okButtonProps: {},
+          okText: "Устгах",
+          cancelText: "Буцах",
+          onOk() {
+              handleDeleted();
+              onInit();
+          },
+          onCancel() { },
+      });
+  }
+}
 export default Attendance;
+
+
+
+

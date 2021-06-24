@@ -220,6 +220,7 @@ function CV() {
                 value={list}
                 lazy
                 paginator
+
                 first={lazyParams.first}
                 rows={25}
                 totalRecords={totalRecords}
