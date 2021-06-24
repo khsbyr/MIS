@@ -34,7 +34,7 @@ const menu = (
   <Menu>
     <Menu.Item key="0">
       <PoweroffOutlined />
-      <a style={{ color: "black", paddingLeft: "0px" }}>Ð“Ð°Ñ€Ð°Ñ…</a>
+      <a style={{ color: "black", paddingLeft: "0px" }}>Logout</a>
     </Menu.Item>
   </Menu>
 );
@@ -289,7 +289,7 @@ const Admin = () => {
                           href="#"
                           style={{ color: "#103154", marginRight: "5px" }}
                         >
-                          ÐÐ¹Ñ‚Ð¼ÑƒÑ…Ð°Ð¼ÐµÐ´
+                          user
                           <CaretDownOutlined />
                         </a>
                       </Dropdown>
