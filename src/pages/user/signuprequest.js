@@ -10,9 +10,9 @@ import { isShowLoading } from "../../context/Tools";
 import { getService, putService } from "../../service/service";
 import { PAGESIZE } from "../../tools/Constant";
 import { errorCatch } from "../../tools/Tools";
-import CriteriaModal from "../criteria/components/CriteriaModal";
-import "./criteria.style"
-import ContentWrapper from "./criteria.style";
+import "../criteria/criteria.style";
+import ContentWrapper from "../criteria/criteria.style";
+import SignuprequestModal from "./components/SignuprequestModal";
 const { Content } = Layout;
 function handleMenuClick(e) { console.log("click", e.key[0]); }
 function onChange(date, dateString) {
@@ -46,7 +46,7 @@ const menu = (
 );
 var isEditMode;
 var editRow
-function Criteria() {
+function Signuprequest() {
     let loadLazyTimeout = null;
     const dt = useRef(null);
     const [list, setList] = useState([]);
@@ -249,7 +249,7 @@ function Criteria() {
                 <Column field="" header="Шалгуур үзүүлэлтийн төрөл"/>
             </DataTable>
             {isModalVisible && (
-                <CriteriaModal
+                <SignuprequestModal
                     Usercontroller={editRow}
                     isModalVisible={isModalVisible}
                     close={closeModal}
@@ -274,4 +274,4 @@ function Criteria() {
         });
     }
 }
-export default Criteria;
+export default Signuprequest;

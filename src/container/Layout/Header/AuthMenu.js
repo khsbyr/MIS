@@ -1,13 +1,10 @@
+import { Menu, Select } from "antd";
 import React from "react";
-import { NavLink, withRouter } from "react-router-dom";
-import { Select, Dropdown, Menu, Button, Popconfirm } from "antd";
+import { useTranslation } from "react-i18next";
 import { FaCheck } from "react-icons/fa";
 import { TiArrowSortedDown } from "react-icons/ti";
-import { ComponentWrapper } from "../../Search/Flight/FlightSearch.style";
-import { useTranslation } from "react-i18next";
+import { withRouter } from "react-router-dom";
 
-import { LOGIN } from "settings/constantRoutes";
-import { propTypes } from "react-currency-format";
 
 const { Option } = Select;
 
@@ -23,8 +20,6 @@ const AuthMenu = ({ location, className }) => {
     if (lang) return lang;
     return "mn";
   };
-
-
 
   return (
     <Menu className={className}>
