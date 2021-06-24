@@ -9,8 +9,8 @@ import i18n from "../../i18n"
 function Register() {
   const history = useHistory();
   const {t, i18} = useTranslation();
-  function moveToRegister() {
-    history.push("/register");
+  function moveToLogin() {
+    history.push("/login");
   }
   function moveToAdmin() {
     history.push("/admin");
@@ -188,7 +188,7 @@ function Register() {
                   type="ghost"
                   htmlType="submit"
                   className="login-form-button"
-                  onClick={moveToRegister}
+                  onClick={moveToLogin}
                 >
                   {t('register')}
                 </Button>

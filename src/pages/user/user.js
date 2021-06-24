@@ -6,12 +6,13 @@ import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePic
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import React, { useEffect, useRef, useState } from "react";
-import { isShowLoading } from "../../../context/Tools";
-import { getService, putService } from "../../../service/service";
-import { PAGESIZE } from "../../../tools/Constant";
-import { errorCatch } from "../../../tools/Tools";
-import GuidelinesModal from "../training/components/GuidelinesModal";
-import ContentWrapper from "../../criteria/criteria.style";
+import { isShowLoading } from "../../context/Tools";
+import { getService, putService } from "../../service/service";
+import { PAGESIZE } from "../../tools/Constant";
+import { errorCatch } from "../../tools/Tools";
+import CriteriaModal from "../criteria/components/CriteriaModal";
+import "./criteria.style"
+import ContentWrapper from "./criteria.style";
 const { Content } = Layout;
 function handleMenuClick(e) { console.log("click", e.key[0]); }
 function onChange(date, dateString) {
@@ -45,7 +46,7 @@ const menu = (
 );
 var isEditMode;
 var editRow
-function Guidelines() {
+function Criteria() {
     let loadLazyTimeout = null;
     const dt = useRef(null);
     const [list, setList] = useState([]);
@@ -70,7 +71,7 @@ function Guidelines() {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("training/get")
+        getService("criteria/get")
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -121,7 +122,7 @@ function Guidelines() {
             return;
         }
         debugger
-        putService("training/put/" + selectedRows[0].id)
+        putService("criteria/delete/" + selectedRows[0].id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -166,7 +167,7 @@ function Guidelines() {
 
         if (e.data.userControllers)
             return
-        getService("training/get").then((result) => {
+        getService("criteria/get").then((result) => {
             e.data.userControllers = result.content || []
             setList([...list])
         })
@@ -183,7 +184,7 @@ function Guidelines() {
                 <Content>
                 <Row>
         <Col>
-          <h2 className="title">Сургалтын удирдамж</h2>
+          <h2 className="title">Шалгуур үзүүлэлт</h2>
         </Col></Row>
                     <Row>
                         <Col span={2}>
@@ -241,13 +242,14 @@ function Guidelines() {
             >
                 <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
                 <Column field="index" header="№" style={{ width: "50px" }} />
-                <Column field="name" header="Сургалтын сэдэв"/>
-                <Column field="" header="Сургалт зохион байгуулах үндэслэл"/>
-                <Column field="" header="Сургалтын зорилго"/>
-                <Column field="" header="Хэрэгжүүлэх үйл ажиллагаа"/>
+                <Column field="code" header="Код"/>
+                <Column field="name" header="Шалгуур үзүүлэлтийн нэр"/>
+                <Column field="indicatorProcess" header="Хүрэх үр дүн"/>
+                <Column field="upIndicator" header="Үр дүнгийн биелэлт"/>
+                <Column field="" header="Шалгуур үзүүлэлтийн төрөл"/>
             </DataTable>
             {isModalVisible && (
-                <GuidelinesModal
+                <CriteriaModal
                     Usercontroller={editRow}
                     isModalVisible={isModalVisible}
                     close={closeModal}
@@ -272,4 +274,4 @@ function Guidelines() {
         });
     }
 }
-export default Guidelines;
+export default Criteria;

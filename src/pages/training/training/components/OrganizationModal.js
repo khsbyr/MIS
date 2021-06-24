@@ -125,6 +125,8 @@ export default function OrganizationModal(props) {
             <h2 className="title"> Байгууллагын мэдээлэл</h2>
             <Row gutter={32}>
               <Col xs={24} md={24} lg={12}>
+              <Form layout="vertical">
+
                 <Form.Item
                 layout="vertical"
                         name="name"
@@ -137,6 +139,7 @@ export default function OrganizationModal(props) {
                     >
                         <Input />
                     </Form.Item>
+                    </Form>
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Form layout="vertical">
