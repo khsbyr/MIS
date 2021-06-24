@@ -64,11 +64,38 @@ function Login() {
                 <h3 style={contentStyle}>3</h3>
               </div>
           </Carousel> 
-            <h2 className="title" style={{ marginTop: "80px", marginBottom: "30px" }}>
+          <Row gutter={[32]}>
+            <Col>
+            <h2 style={{ marginTop: "80px", marginBottom: "30px", color: "#103154", fontSize: "20px" }}>
             {t("partner")}
             </h2>
             <Row gutter={[32,32]}>
-              <Col >
+              <Col>
+                <img
+                  src="/images/svg/logo3.svg"
+                  className="icon"
+                  alt="card-icon"
+                  />
+                </Col>
+                <Col>
+                <img
+                  src="/images/svg/logo4.svg"
+                  className="icon"
+                  alt="card-icon"
+                  style={{
+                    height: "80%"
+                  }}
+                  />
+                </Col>
+            </Row>
+            </Col>
+
+            <Col>
+            <h2 className="title" style={{ marginTop: "80px", marginBottom: "30px",  color: "#103154", fontSize: "20px"  }}>
+            {t("investor")}
+            </h2>
+            <Row gutter={[32,32]}>
+            <Col >
                 <img
                   src="/images/svg/logo2.svg"
                   className="icon"
@@ -83,21 +110,9 @@ function Login() {
                   alt="card-icon"
                 />
               </Col>
-              <Col>
-                <img
-                  src="/images/svg/logo3.svg"
-                  className="icon"
-                  alt="card-icon"
-                  />
-                </Col>
-                <Col>
-                <img
-                  src="/images/svg/logo4.svg"
-                  className="icon"
-                  alt="card-icon"
-                  />
-                </Col>
-              </Row>
+            </Row>
+            </Col>
+          </Row>
           </TextWrapper>
         </Col>
 

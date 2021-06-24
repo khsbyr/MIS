@@ -241,11 +241,8 @@ function Plan() {
           >
               <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
               <Column field="index" header="№" style={{ width: "50px" }} />
-              <Column field="" header="Сургалтын сэдэв"/>
-              <Column field="" header="Сургалт зохион байгуулах үндэслэл"/>
-              <Column field="" header="Сургалтын зорилго"/>
-              <Column field="" header="Хэрэгжүүлэх үйл ажиллагаа"/>
-              <Column field="" header="Хүлээгдэж буй үр дүн"/>
+              <Column field="" header="Хичээлийн сэдэв"/>
+              <Column field="" header="Сургагч багшийн нэр"/>
           </DataTable>
           {isModalVisible && (
               <GuidelinesModal

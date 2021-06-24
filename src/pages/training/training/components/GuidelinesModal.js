@@ -133,7 +133,7 @@ export default function GuidelinesModal(props) {
     return (
         <div>
             <Modal
-                title="Сургалтын төлөвлөгөө бүртгэх"
+                title="Сургалтын удирдамж бүртгэх"
                 okText="Хадгалах"
                 cancelText="Буцах"
                 width={1200}
