@@ -1,4 +1,5 @@
 import { Col, Form, Input, Modal, Row, Select } from "antd";
+import { List } from "antd/lib/form/Form";
 import React, { useEffect, useState } from "react";
 import { getService, postService, putService } from "../../../service/service";
 import { errorCatch } from "../../../tools/Tools";
@@ -21,13 +22,14 @@ const validateMessages = {
   },
 };
 export default function UserModal(props) {
+  const [list, setList] = useState([]);
   const { Usercontroller, isModalVisible, isEditMode } = props;
   const [stateController, setStateController] = useState([]);
   const [form] = Form.useForm();
   const { Option } = Select;
 
   useEffect(() => {
-    getService("criteria/get", {
+    getService("user/get", {
       search: "status:true",
     }).then((result) => {
       if (result) {
@@ -36,19 +38,25 @@ export default function UserModal(props) {
     });
 
     if (isEditMode) {
-      getService("criteria/get" + Usercontroller.id).then((result) => {
+      getService("user/get" + Usercontroller.id).then((result) => {
         Usercontroller.userServiceId = result.userService.id;
         form.setFieldsValue({ ...Usercontroller });
       });
     }
   }, []);
+  getService("country/get").then((result) => {
+    console.log(result);
+    let content = result.content;
+}).catch((error) => {
+    console.log(error);
+});
   const save = () => {
     form
       .validateFields()
       .then((values) => {
         values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService("criteria/put" + Usercontroller.id, values)
+          putService("user/update" + Usercontroller.id, values)
             .then((result) => {
               props.close(true);
             })
@@ -56,7 +64,8 @@ export default function UserModal(props) {
               errorCatch(error);
             });
         } else {
-          postService("criteria/post", values)
+            debugger
+          postService("user/saveByAdmin/", values)
             .then((result) => {
               props.close(true);
             })
@@ -118,13 +127,13 @@ export default function UserModal(props) {
               </Form>
             </Col> */}
             <Col xs={24} md={24} lg={8}>
-              <Form.Item label="Нас:" name="Нас">
+              <Form.Item label="Нас:" name="age">
                 <Input type="number" placeholder="Нас..." />
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={8}>
               <Form layout="vertical">
-                <Form.Item label="Хүйс:">
+                <Form.Item label="Хүйс:" name="gender">
                   <Select placeholder="Хүйс..." allowClear>
                     <Option value="1">Эрэгтэй</Option>
                     <Option value="2">Эмэгтэй</Option>
@@ -134,9 +143,9 @@ export default function UserModal(props) {
             </Col>
             <Col xs={24} md={24} lg={8}>
               <Form layout="vertical">
-                <Form.Item label="Улс:">
+                <Form.Item label="Улс:" name="Country">
                   <Select placeholder="Улс..." allowClear>
-                    <Option value="tugrug">uls</Option>
+                    <Option value="name">uls</Option>
                   </Select>
                 </Form.Item>
               </Form>
@@ -145,7 +154,7 @@ export default function UserModal(props) {
           <Row gutter={32}>
             <Col xs={24} md={24} lg={8}>
               <Form layout="vertical">
-                <Form.Item label="Харьяа байгууллагын нэр:">
+                <Form.Item label="Харьяа байгууллагын нэр:" name="organiztaion">
                   <Select placeholder="Харьяа байгууллагын нэр..." allowClear>
                     <Option value="Харьяа байгууллагын нэр">uls</Option>
                   </Select>
@@ -155,7 +164,7 @@ export default function UserModal(props) {
             <Col xs={24} md={24} lg={8}>
               <Form.Item
                 label="Албан тушаал:"
-                name="lastname"
+                name="position"
               >
                 <Input
                   placeholder="Албан тушаал..."
@@ -163,7 +172,7 @@ export default function UserModal(props) {
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={8}>
-              <Form.Item label="Утасны дугаар:" name="">
+              <Form.Item label="Утасны дугаар:" name="phoneNumber">
                 <Input placeholder="Утасны дугаар..."/>
               </Form.Item>
             </Col>
@@ -171,7 +180,7 @@ export default function UserModal(props) {
           <Row gutter={32}>
             <Col xs={24} md={24} lg={8}>
             <Form layout="vertical">
-                <Form.Item label="Аймаг, Нийслэл:">
+                <Form.Item label="Аймаг, Нийслэл:" name="Aimag">
                   <Select placeholder="Аймаг, Нийслэл:..." allowClear>
                     <Option value=""></Option>
                   </Select>
@@ -199,12 +208,17 @@ export default function UserModal(props) {
           </Row>
           <Row gutter={32}>
             <Col xs={24} md={24} lg={16}>
-              <Form.Item label="Хаяг:" name="">
+              <Form.Item label="Хаяг:" name="hayg">
                 <Input type="text" />
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={8}>
-              <Form.Item label="Оруулсан мэдээлэл үнэн болно." name="">
+              <Form.Item label="Password" name="password">
+                <Input type="password" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={24} lg={8}>
+              <Form.Item label="Оруулсан мэдээлэл үнэн болно." name="check">
                 <Input type="checkbox" />
               </Form.Item>
             </Col>

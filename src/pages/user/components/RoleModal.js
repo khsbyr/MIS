@@ -1,137 +1,67 @@
-import { Form, Input, Modal } from "antd";
-import React, { useEffect, useState } from "react";
-import { getService, postService, putService } from "../../../service/service";
-import { errorCatch } from "../../../tools/Tools";
-const layout = {
-  labelCol: {
-    span: 10,
-  },
-  wrapperCol: {
-    span: 14,
-  },
-};
-const validateMessages = {
-  required: "${label} хоосон байна!",
-  types: {
-    email: "${label} is not a valid email!",
-    number: "${label} is not a valid number!",
-  },
-  number: {
-    range: "${label} must be between ${min} and ${max}",
-  },
-};
-export default function RoleModal(props) {
-  const { Usercontroller, isModalVisible, isEditMode } = props;
-  const [stateController, setStateController] = useState([]);
-  const [form] = Form.useForm();
-  useEffect(() => {
-    getService("criteria/get", {
-      search: "status:true",
-    }).then((result) => {
-      if (result) {
-        setStateController(result.content || []);
-      }
-    });
+import React from 'react';
+import { Modal, Button, Form, Input, Checkbox } from 'antd';
+import { requireFieldFocus } from '../../../tools/Tools';
 
-    if (isEditMode) {
-      getService("criteria/get" + Usercontroller.id).then((result) => {
-        Usercontroller.userServiceId = result.userService.id;
-        form.setFieldsValue({ ...Usercontroller });
-      });
-    }
-  }, []);
-  const save = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        values.userService = { id: values.userServiceId };
+const layout = {
+    labelCol: {
+        span: 8,
+    },
+    wrapperCol: {
+        span: 16,
+    },
+};
+const tailLayout = {
+    wrapperCol: {
+        offset: 8,
+        span: 16,
+    },
+};
+
+export default function RoleModal(props) {
+    const { visible, isEditMode, editValue } = props
+    const [form] = Form.useForm();
+
+    React.useEffect(() => {
         if (isEditMode) {
-          putService("criteria/put" + Usercontroller.id, values)
-            .then((result) => {
-              props.close(true);
-            })
-            .catch((error) => {
-              errorCatch(error);
-            });
-        } else {
-          postService("criteria/post", values)
-            .then((result) => {
-              props.close(true);
-            })
-            .catch((error) => {
-              errorCatch(error);
-            });
+            form.setFieldsValue(editValue)
         }
-      })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
-      });
-  };
-  return (
-    <div>
-      <Modal
-        title="Шалгуур үзүүлэлт бүртгэх"
-        okText="Хадгалах"
-        cancelText="Буцах"
-        width={600}
-        alignItems="center"
-        visible={isModalVisible}
-        onOk={save}
-        onCancel={() => props.close()}
-      >
-        <Form
-          form={form}
-          labelAlign={"left"}
-          {...layout}
-          name="nest-messages"
-          validateMessages={validateMessages}
+    }, [isEditMode, editValue])
+
+    return (
+        <Modal
+            title="Хэрэглэгчйн дүр бүртгэх"
+            visible={visible}
+            footer={false}
+            onCancel={() => props.close(false)}
+            width={450}
         >
-          <Form.Item
-            name="name"
-            label="Шалгуур үзүүлэлтийн нэр:"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="code"
-            label="Код:"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="indicatorProcess"
-            label="Хүрэх үр дүн:"
-            rules={[
-              {
-                required: false,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="upIndicator"
-            label="Үр дүнгийн биелэлт"
-            rules={[
-              {
-                required: false,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-        </Form>
-      </Modal>
-    </div>
-  );
+            <Form
+                {...layout}
+                form={form}
+                name="user"
+                initialValues={{
+                    isActive: true,
+                }}
+                onFinish={(values) => {
+                    const formData = form.getFieldValue()
+                    props.save({ ...values, id: formData.id })
+                }}
+                onFinishFailed={requireFieldFocus}
+            >
+                <Form.Item label="Дүрийн код" name="code" rules={[{ required: true, message: '' }]}>
+                    <Input />
+                </Form.Item>
+                <Form.Item label="Дүрийн нэр" name="name" rules={[{ required: true, message: '' }]}>
+                    <Input />
+                </Form.Item>
+                <Form.Item {...tailLayout} name="isActive" valuePropName="checked">
+                    <Checkbox>Идэвхтэй эсэх</Checkbox>
+                </Form.Item>
+                <div style={{ textAlign: 'right' }}>
+                    <Button htmlType="button" style={{ marginRight: 8 }} onClick={() => props.close()}>Болих</Button>
+                    <Button type="primary" htmlType="submit" >Хадгалах</Button>
+                </div>
+            </Form>
+        </Modal>
+    )
 }

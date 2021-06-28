@@ -71,7 +71,7 @@ function Signuprequest() {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("criteria/get")
+        getService("signUpRequest/get")
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -122,7 +122,7 @@ function Signuprequest() {
             return;
         }
         debugger
-        putService("criteria/delete/" + selectedRows[0].id)
+        putService("signUpRequest/delete/" + selectedRows[0].id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -167,7 +167,7 @@ function Signuprequest() {
 
         if (e.data.userControllers)
             return
-        getService("criteria/get").then((result) => {
+        getService("signUpRequest/get").then((result) => {
             e.data.userControllers = result.content || []
             setList([...list])
         })
@@ -184,7 +184,7 @@ function Signuprequest() {
                 <Content>
                 <Row>
         <Col>
-          <h2 className="title">Шалгуур үзүүлэлт</h2>
+          <h2 className="title">Хүсэлт илгээсэн хэрэглэгч</h2>
         </Col></Row>
                     <Row>
                         <Col span={2}>
@@ -196,9 +196,6 @@ function Signuprequest() {
                             <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
                                 Устгах
                             </Button>
-                        </Col>
-                        <Col span={2}>
-                            <DatePicker onChange={onChange} picker="year" />
                         </Col>
                         <Col span={18} style={{ textAlign: "right" }}>
                             <div style={{ marginRight: "5px" }}>
@@ -242,11 +239,9 @@ function Signuprequest() {
             >
                 <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
                 <Column field="index" header="№" style={{ width: "50px" }} />
-                <Column field="code" header="Код"/>
-                <Column field="name" header="Шалгуур үзүүлэлтийн нэр"/>
-                <Column field="indicatorProcess" header="Хүрэх үр дүн"/>
-                <Column field="upIndicator" header="Үр дүнгийн биелэлт"/>
-                <Column field="" header="Шалгуур үзүүлэлтийн төрөл"/>
+                <Column field="email" header="email"/>
+                <Column field="name" header="Хүсэлт илгээсэн хэрэглэгч"/>
+                <Column field="status" header="Хүрэх үр дүн"/>
             </DataTable>
             {isModalVisible && (
                 <SignuprequestModal
