@@ -216,6 +216,7 @@ function Criteria() {
                     </Row>
                 </Content>
             </Layout>
+            
             <DataTable
                 ref={dt}
                 value={list}
@@ -243,8 +244,8 @@ function Criteria() {
                 <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
                 <Column field="index" header="№" style={{ width: "50px" }} />
                 <Column field="code" header="Код"/>
-                <Column field="name" header="Шалгуур үзүүлэлтийн нэр"/>
-                <Column field="indicatorProcess" header="Хүрэх үр дүн"/>
+                <Column field="name" header="Шалгуур үзүүлэлтийн нэр" style={{textAlign: "left"}} filters sortable/>
+                <Column field="indicatorProcess" header="Хүрэх үр дүн" filter/>
                 <Column field="upIndicator" header="Үр дүнгийн биелэлт"/>
                 <Column field="" header="Шалгуур үзүүлэлтийн төрөл"/>
             </DataTable>
