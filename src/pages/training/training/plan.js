@@ -70,7 +70,7 @@ function Plan() {
       if (loadLazyTimeout) {
           clearTimeout(loadLazyTimeout);
       }
-      getService("guidelines/get")
+      getService("plan/get")
           .then((result) => {
               let list = result.content || [];
               list.map(
@@ -121,7 +121,7 @@ function Plan() {
           return;
       }
       debugger
-      putService("guidelines/delete/" + selectedRows[0].id)
+      putService("plan/delete/" + selectedRows[0].id)
           .then((result) => {
               message.success("Амжилттай устлаа");
               onInit();
@@ -166,7 +166,7 @@ function Plan() {
 
       if (e.data.userControllers)
           return
-      getService("guidelines/get").then((result) => {
+      getService("plan/get").then((result) => {
           e.data.userControllers = result.content || []
           setList([...list])
       })

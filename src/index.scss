@@ -62,7 +62,7 @@ code {
   font-size: 1rem;
 }
 .ant-menu-inline.ant-menu-root .ant-menu-item > .ant-menu-title-content, .ant-menu-inline.ant-menu-root .ant-menu-submenu-title > .ant-menu-title-content {
-  // color: #103154;
+  color: #103154;
   font-size: 14px;
 }
 .ant-menu-submenu-arrow::before, .ant-menu-submenu-arrow::after {
@@ -86,8 +86,8 @@ position: none;
     padding-bottom: 0 !important;
     text-align: center !important;
     padding: 6px 6px 6px !important;
-    background-color: #103154;
-    color: #fff;
+    background-color: #ebeef0;
+    color: black;
 
   }
   .p-datatable-tbody > tr > td,
@@ -111,6 +111,7 @@ position: none;
 .p-checkbox .p-checkbox-box {
   width: 15px !important;
   height: 15px !important;
+  margin-left: -5px;
 }
 .DataTable table > thead > tr > th,
 .DataTable table > tbody,
@@ -119,7 +120,7 @@ position: none;
     border: none !important;
 }
 .p-datatable {
-    font-size: 12px !important;
+    font-size: 13px !important;
     text-align: center !important;
     tr:nth-child(odd) {
       background: #f8f9fa !important;
@@ -129,23 +130,23 @@ position: none;
       padding-bottom: 0 !important;
       text-align: center !important;
       border: 1px solid #ebeef0 !important;
-      padding: 10px 10px 10px !important;
+      padding: 15px 15px 15px !important;
     }
   }
   .p-datatable .p-datatable-thead > tr > th{
-text-align: center !important;
+  text-align: center !important;
   border-width: 0 1px 0px 0 !important;
   }
 
   .ant-input:hover {
     border-right-width: 1px !important;
   }
-  
+
   /* input radius */
   .ant-input-group > .ant-input:first-child,
   .ant-input-group-addon:first-child {
     border-bottom-left-radius: 10px !important;
-    height: 27px !important;
+    height: 207px !important;
     border-top-left-radius: 10px !important;
   }
   /* button radius */
@@ -195,4 +196,50 @@ text-align: center !important;
       }
     }
   }
+
+.p-column-filter {
+  border: none;
+  padding: 8px;
+  width: 99%;
+  float: left;
+}
+
+
+.p-inputtext {
+  padding: 0px;
+  color: blue;
+}
+
   
+
+.datatable-responsive-demo .p-datatable-responsive-demo .p-datatable-tbody > tr > td .p-column-title {
+  display: none;
+}
+
+@media screen and (max-width: 40em) {
+  .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-thead > tr > th,
+  .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tfoot > tr > td {
+      display: none !important;
+  }
+
+  .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tbody > tr > td {
+      text-align: left;
+      display: block;
+      width: 100%;
+      float: left;
+      clear: left;
+      border: 0 none;
+  }
+
+  .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tbody > tr > td .p-column-title {
+      padding: .4rem;
+      min-width: 30%;
+      display: inline-block;
+      margin: -.4em 1em -.4em -.4rem;
+      font-weight: bold;
+  }
+
+  .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tbody > tr > td:last-child {
+      border-bottom: 1px solid var(--surface-d);
+  }
+}

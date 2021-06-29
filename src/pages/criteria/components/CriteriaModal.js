@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Modal, Form, Input } from "antd";
 import { getService, postService, putService } from "../../../service/service";
 import { errorCatch } from "../../../tools/Tools";
-import AutocompleteSelect from "../../components/Autocomplete"
 const layout = {
     labelCol: {
         span: 10,
@@ -22,25 +21,17 @@ const validateMessages = {
     },
 };
 export default function CriteriaModal(props) {
-    const { Usercontroller, isModalVisible, isEditMode } = props;
-    const [stateController, setStateController] = useState([]);
+    const { Criteriacontroller, isModalVisible, isEditMode } = props;
     const [form] = Form.useForm();
     useEffect(() => {
-        getService("criteria/get", {
-            search: "status:true",
-        }).then((result) => {
-            if (result) {
-                setStateController(result.content || []);
-            }
-        });
+
 
         if (isEditMode) {
-            getService("criteria/get" + Usercontroller.id).then((result) => {
-                Usercontroller.userServiceId = result.userService.id
-                form.setFieldsValue({ ...Usercontroller });
-            })
+  
+                form.setFieldsValue({ ...Criteriacontroller });
+            }
 
-        }
+        
     }, []);
     const save = () => {
         form
@@ -49,7 +40,7 @@ export default function CriteriaModal(props) {
                 values.userService = { id: values.userServiceId }
                 if (isEditMode) {
                     putService(
-                        "criteria/put" + Usercontroller.id,
+                        "criteria/put" + Criteriacontroller.id,
                         values
                     )
                         .then((result) => {
