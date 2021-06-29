@@ -12,11 +12,13 @@ import { PAGESIZE } from "../../../tools/Constant";
 import { errorCatch } from "../../../tools/Tools";
 import GuidelinesModal from "../training/components/GuidelinesModal";
 import ContentWrapper from "../../criteria/criteria.style";
-const { Content } = Layout;
+
 function handleMenuClick(e) { console.log("click", e.key[0]); }
 function onChange(date, dateString) {
     console.log(date, dateString);
-  }
+}
+
+const { Content } = Layout;
 const menu = (
     <Menu onClick={handleMenuClick}>
         <Menu.Item
@@ -43,23 +45,21 @@ const menu = (
 
     </Menu>
 );
-var isEditMode;
+
 var editRow
-function Guidelines() {
+var isEditMode;
+const Guidelines = () => {
+    const [products, setProducts] = useState([]);
+    const [multiSortMeta, setMultiSortMeta] = useState([{ field: 'category', order: -1 }]);
     let loadLazyTimeout = null;
-    const dt = useRef(null);
     const [list, setList] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [totalRecords, setTotalRecords] = useState(0);
-    const [form] = Form.useForm();
-    const [selectedRows, setSelectedRows] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [expandedRows, setExpandedRows] = useState([]);
     const [lazyParams, setLazyParams] = useState({
-        first: 0,
-        rows: 25,
         page: 0,
     });
+    const [loading, setLoading] = useState(false);
+    const PAGESIZE = 20;
+    const [selectedRows, setSelectedRows] = useState([]);
 
     useEffect(() => {
         onInit();
@@ -70,38 +70,23 @@ function Guidelines() {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("training/get")
+        getService("organiztion/get", list)
             .then((result) => {
                 let list = result.content || [];
                 list.map(
                     (item, index) =>
                         (item.index = lazyParams.page * PAGESIZE + index + 1)
                 );
-                setLoading(false);
-                setTotalRecords(result.totalElements);
                 setList(list);
                 setSelectedRows([]);
-                setExpandedRows();
+
             })
             .catch((error) => {
                 errorCatch(error);
                 isShowLoading(false);
-            });
+            })
     };
 
-    const onPage = (event) => {
-        let _lazyParams = { ...lazyParams, ...event };
-        setLazyParams(_lazyParams);
-    };
-    const onSort = (event) => {
-        let _lazyParams = { ...lazyParams, ...event };
-        setLazyParams(_lazyParams);
-    };
-    const onFilter = (event) => {
-        let _lazyParams = { ...lazyParams, ...event };
-        _lazyParams["first"] = 0;
-        setLazyParams(_lazyParams);
-    };
     const add = () => {
         setIsModalVisible(true);
         isEditMode = false;
@@ -111,17 +96,14 @@ function Guidelines() {
         isEditMode = true
         setIsModalVisible(true)
     }
-    const closeModal = (isSuccess = false) => {
-        setIsModalVisible(false);
-        if (isSuccess) onInit();
-    };
+
     const handleDeleted = () => {
         if (selectedRows.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         }
         debugger
-        putService("training/put/" + selectedRows[0].id)
+        putService("organiztion/delete/" + selectedRows[0].id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -129,6 +111,10 @@ function Guidelines() {
             .catch((error) => {
                 errorCatch(error);
             });
+    };
+    const closeModal = (isSuccess = false) => {
+        setIsModalVisible(false);
+        if (isSuccess) onInit();
     };
     const pop = () => {
         if (selectedRows.length === 0) {
@@ -138,123 +124,75 @@ function Guidelines() {
             confirm();
         }
     };
-    // const rowExpansionTemplate = (data) => {
-    //     return (
-    //         <div className="orders-subtable">
-    //             <span>{data.name}</span>
-    //             <DataTable
-    //                 selection={selectedRows}
-    //                 onSelectionChange={(e) => {
-    //                     setSelectedRows(e.value);
-    //                 }}
-    //                 value={data.criteriaIndicator.filter((z) => z.status === true)}
-    //                 onRowClick={edit}
-    //             >
-    //                 <Column
-    //                     selectionMode="multiple"
-    //                     headerStyle={{ width: "53px", padding: "0px" }}
-    //                 ></Column>
-    //                 <Column field="id" header="Id" style={{ width: "50px" }}></Column>
-    //                 <Column field="name" header="Нэр" />
-    //                 <Column field="path" header="Зам" />
-    //                 <Column headerStyle={{ width: "4rem" }}></Column>
-    //             </DataTable>
-    //         </div>
-    //     );
-    // };
-    const rowExpandCity = (e) => {
-
-        if (e.data.userControllers)
-            return
-        getService("training/get").then((result) => {
-            e.data.userControllers = result.content || []
-            setList([...list])
-        })
-    }
-
-    const expandedCity = (e) => {
-        setExpandedRows(e.data)
-    };
-
+    const [selectedProducts, setSelectedProducts] = useState(null);
     return (
         <ContentWrapper>
-        <div>
-            <Layout className="btn-layout">
-                <Content>
-                <Row>
-        <Col>
-          <h2 className="title">Сургалтын удирдамж</h2>
-        </Col></Row>
-                    <Row>
-                        <Col span={2}>
-                            <Button onClick={add} type="link" icon={<SaveIcon />}>
-                                Нэмэх
-                            </Button>
-                        </Col>
-                        <Col span={2}>
-                            <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
-                                Устгах
-                            </Button>
-                        </Col>
-                        <Col span={2}>
-                            <DatePicker onChange={onChange} picker="year" />
-                        </Col>
-                        <Col span={18} style={{ textAlign: "right" }}>
-                            <div style={{ marginRight: "5px" }}>
-                                <Dropdown.Button
-                                    overlay={menu}
-                                    placement="bottomCenter"
-                                    icon={
-                                        <SettingFilled
-                                            style={{ marginLeft: "8px", color: "#45629c" }}
-                                        />
-                                    }
-                                ></Dropdown.Button>
-                            </div>
-                        </Col>
-                    </Row>
-                </Content>
-            </Layout>
-            <DataTable
-                ref={dt}
-                value={list}
-                lazy
-                paginator
-                first={lazyParams.first}
-                rows={25}
-                totalRecords={totalRecords}
-                onPage={onPage}
-                onSort={onSort}
-                sortField={lazyParams.sortField}
-                sortOrder={lazyParams.sortOrder}
-                onFilter={onFilter}
-                filters={lazyParams.filters}
-                emptyMessage="Өгөгдөл олдсонгүй..."
-                className="p-datatable-gridlines"
-                selection={selectedRows}
-                onSelectionChange={(e) => {
-                    setSelectedRows(e.value);
-                }}
-                dataKey="id"
-                onRowToggle={expandedCity}
-                className="p-datatable-gridlines"
-            >
-                <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
-                <Column field="index" header="№" style={{ width: "50px" }} />
-                <Column field="name" header="Сургалтын сэдэв"/>
-                <Column field="" header="Сургалт зохион байгуулах үндэслэл"/>
-                <Column field="" header="Сургалтын зорилго"/>
-                <Column field="" header="Хэрэгжүүлэх үйл ажиллагаа"/>
-            </DataTable>
-            {isModalVisible && (
-                <GuidelinesModal
-                    Usercontroller={editRow}
-                    isModalVisible={isModalVisible}
-                    close={closeModal}
-                    isEditMode={isEditMode}
-                />
-            )}
-        </div>
+            <div className="button-demo">
+                <Layout className="btn-layout">
+                    <Content>
+                        <Row>
+                            <Col>
+                                <h2 className="title">Сургалтын удирдамж</h2>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={2}>
+                                <Button onClick={add} type="link" icon={<SaveIcon />}>
+                                    Нэмэх
+                                </Button>
+                            </Col>
+                            <Col span={2}>
+                                <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
+                                    Устгах
+                                </Button>
+                            </Col>
+                            <Col span={18} style={{ textAlign: "right" }}>
+                                <div style={{ marginRight: "5px" }}>
+                                    <Dropdown.Button
+                                        overlay={menu}
+                                        placement="bottomCenter"
+                                        icon={
+                                            <SettingFilled
+                                                style={{ marginLeft: "8px", color: "#45629c" }}
+                                            />
+                                        }
+                                    ></Dropdown.Button>
+                                </div>
+                            </Col>
+                        </Row>
+                    </Content>
+                </Layout>
+                <div className="datatable-responsive-demo">
+                    <DataTable
+                        value={list}
+                        removableSort
+                        paginator
+                        rows={10}
+                        className="p-datatable-responsive-demo"
+                        selectionMode="checkbox"
+                        selection={selectedRows}
+                        onRowClick={edit}
+                        onSelectionChange={(e) => {
+                            setSelectedRows(e.value);
+                        }}
+                        dataKey="id">
+                        <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
+                        <Column field="index" header="№" style={{ width: "50px" }} />
+                        <Column field="name" header="Сургалтын сэдэв" filter />
+                        <Column field="" header="Сургалт зохион байгуулах үндэслэл" />
+                        <Column field="" header="Сургалтын зорилго" />
+                        <Column field="" header="Хэрэгжүүлэх үйл ажиллагаа" />
+                    </DataTable>
+                    {isModalVisible && (
+                        <GuidelinesModal
+                            Criteriacontroller={editRow}
+                            isModalVisible={isModalVisible}
+                            close={closeModal}
+                            isEditMode={isEditMode}
+                        />
+                    )}
+                </div>
+            </div>
         </ContentWrapper>
     );
     function confirm() {
@@ -272,4 +210,5 @@ function Guidelines() {
         });
     }
 }
+
 export default Guidelines;

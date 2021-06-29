@@ -48,19 +48,11 @@ export default function OrganizationModal(props) {
   const { Option } = Select;
 
   useEffect(() => {
-    getService("organization/get", {
-      search: "status:true",
-    }).then((result) => {
-      if (result) {
-        setStateController(result.content || []);
-      }
-    });
 
     if (isEditMode) {
-      getService("organization/get" + Usercontroller.id).then((result) => {
-        Usercontroller.userServiceId = result.userService.id;
+     
         form.setFieldsValue({ ...Usercontroller });
-      });
+     
     }
   }, []);
   const save = () => {

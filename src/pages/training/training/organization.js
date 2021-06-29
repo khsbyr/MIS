@@ -12,11 +12,11 @@ import { PAGESIZE } from "../../../tools/Constant";
 import { errorCatch } from "../../../tools/Tools";
 import OrganizationModal from "../training/components/OrganizationModal";
 import ContentWrapper from "../../criteria/criteria.style";
-const { Content } = Layout;
 function handleMenuClick(e) { console.log("click", e.key[0]); }
 function onChange(date, dateString) {
     console.log(date, dateString);
-  }
+}
+const { Content } = Layout;
 const menu = (
     <Menu onClick={handleMenuClick}>
         <Menu.Item
@@ -43,6 +43,7 @@ const menu = (
 
     </Menu>
 );
+
 var editRow
 var isEditMode;
 const Organization = () => {
@@ -67,7 +68,7 @@ const Organization = () => {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("criteria/get", list)
+        getService("organization/get", list)
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -75,14 +76,24 @@ const Organization = () => {
                         (item.index = lazyParams.page * PAGESIZE + index + 1)
                 );
                 setList(list);
+                setSelectedRows([]);
+
             })
-        setSelectedRows([]);
+            .catch((error) => {
+                errorCatch(error);
+                isShowLoading(false);
+            })
     };
 
     const add = () => {
         setIsModalVisible(true);
         isEditMode = false;
     };
+    const edit = (row) => {
+        editRow = row.data
+        isEditMode = true
+        setIsModalVisible(true)
+    }
 
     const handleDeleted = () => {
         if (selectedRows.length === 0) {
@@ -90,7 +101,7 @@ const Organization = () => {
             return;
         }
         debugger
-        putService("criteria/delete/" + selectedRows[0].id)
+        putService("organization/delete/" + selectedRows[0].id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -133,9 +144,6 @@ const Organization = () => {
                                     Устгах
                                 </Button>
                             </Col>
-                            <Col span={2}>
-                                <DatePicker onChange={onChange} picker="year" />
-                            </Col>
                             <Col span={18} style={{ textAlign: "right" }}>
                                 <div style={{ marginRight: "5px" }}>
                                     <Dropdown.Button
@@ -153,30 +161,31 @@ const Organization = () => {
                     </Content>
                 </Layout>
                 <div className="datatable-responsive-demo">
-                    <DataTable 
-                        value={list} 
-                        removableSort 
-                        paginator 
+                    <DataTable
+                        value={list}
+                        removableSort
+                        paginator
                         rows={10}
                         className="p-datatable-responsive-demo"
                         selectionMode="checkbox"
                         selection={selectedRows}
+                        onRowClick={edit}
                         onSelectionChange={(e) => {
                             setSelectedRows(e.value);
                         }}
                         dataKey="id">
-      <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
-<Column field="index" header="№" style={{ width: "50px" }} />
-<Column field="name" header="Байгууллагын нэр"/>
-<Column field="" header="Регистрийн дугаар"/>
-<Column field="" header="Банкны нэр"/>
-<Column field="" header="Дансны нэр"/>
-<Column field="" header="Дансны дугаар"/>
 
+                        <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
+                        <Column field="index" header="№" style={{ width: "50px" }} />
+                        <Column field="name" header="Байгууллагын нэр" filter sortable />
+                        <Column field="" header="Регистрийн дугаар" />
+                        <Column field="" header="Банкны нэр" />
+                        <Column field="" header="Дансны нэр" />
+                        <Column field="" header="Дансны дугаар" />
                     </DataTable>
                     {isModalVisible && (
                         <OrganizationModal
-                            Usercontroller={editRow}
+                            Criteriacontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
                             isEditMode={isEditMode}

@@ -2,22 +2,23 @@ import {
     ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled
 } from "@ant-design/icons";
 import SaveIcon from "@material-ui/icons/Save";
-import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker } from "antd";
+import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker, Tabs } from "antd";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
+import Loader from "../../loader/Loader";
 import React, { useEffect, useRef, useState } from "react";
 import { isShowLoading } from "../../context/Tools";
 import { getService, putService } from "../../service/service";
 import { PAGESIZE } from "../../tools/Constant";
-import { errorCatch } from "../../tools/Tools";
+import { errorCatch, convertLazyParamsToObj } from "../../tools/Tools";
 import CriteriaModal from "../criteria/components/CriteriaModal";
 import "./criteria.style"
 import ContentWrapper from "./criteria.style";
-const { Content } = Layout;
 function handleMenuClick(e) { console.log("click", e.key[0]); }
 function onChange(date, dateString) {
     console.log(date, dateString);
-  }
+}
+const { Content } = Layout;
 const menu = (
     <Menu onClick={handleMenuClick}>
         <Menu.Item
@@ -44,23 +45,21 @@ const menu = (
 
     </Menu>
 );
-var isEditMode;
+
 var editRow
-function Criteria() {
+var isEditMode;
+const Criteria = () => {
+    const [products, setProducts] = useState([]);
+    const [multiSortMeta, setMultiSortMeta] = useState([{ field: 'category', order: -1 }]);
     let loadLazyTimeout = null;
-    const dt = useRef(null);
     const [list, setList] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [totalRecords, setTotalRecords] = useState(0);
-    const [form] = Form.useForm();
-    const [selectedRows, setSelectedRows] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [expandedRows, setExpandedRows] = useState([]);
     const [lazyParams, setLazyParams] = useState({
-        first: 0,
-        rows: 25,
         page: 0,
     });
+    const [loading, setLoading] = useState(false);
+    const PAGESIZE = 20;
+    const [selectedRows, setSelectedRows] = useState([]);
 
     useEffect(() => {
         onInit();
@@ -71,51 +70,33 @@ function Criteria() {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("criteria/get")
+        getService("criteria/get", list)
             .then((result) => {
                 let list = result.content || [];
                 list.map(
                     (item, index) =>
                         (item.index = lazyParams.page * PAGESIZE + index + 1)
                 );
-                setLoading(false);
-                setTotalRecords(result.totalElements);
                 setList(list);
                 setSelectedRows([]);
-                setExpandedRows();
+
             })
-            .catch((error) => {
+            .catch((error)=> {
                 errorCatch(error);
                 isShowLoading(false);
-            });
+            })
     };
 
-    const onPage = (event) => {
-        let _lazyParams = { ...lazyParams, ...event };
-        setLazyParams(_lazyParams);
-    };
-    const onSort = (event) => {
-        let _lazyParams = { ...lazyParams, ...event };
-        setLazyParams(_lazyParams);
-    };
-    const onFilter = (event) => {
-        let _lazyParams = { ...lazyParams, ...event };
-        _lazyParams["first"] = 0;
-        setLazyParams(_lazyParams);
-    };
     const add = () => {
         setIsModalVisible(true);
         isEditMode = false;
     };
-    const edit = (row) => {
+       const edit = (row) => {
         editRow = row.data
         isEditMode = true
         setIsModalVisible(true)
     }
-    const closeModal = (isSuccess = false) => {
-        setIsModalVisible(false);
-        if (isSuccess) onInit();
-    };
+
     const handleDeleted = () => {
         if (selectedRows.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
@@ -131,6 +112,10 @@ function Criteria() {
                 errorCatch(error);
             });
     };
+    const closeModal = (isSuccess = false) => {
+        setIsModalVisible(false);
+        if (isSuccess) onInit();
+    };
     const pop = () => {
         if (selectedRows.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
@@ -139,125 +124,79 @@ function Criteria() {
             confirm();
         }
     };
-    // const rowExpansionTemplate = (data) => {
-    //     return (
-    //         <div className="orders-subtable">
-    //             <span>{data.name}</span>
-    //             <DataTable
-    //                 selection={selectedRows}
-    //                 onSelectionChange={(e) => {
-    //                     setSelectedRows(e.value);
-    //                 }}
-    //                 value={data.criteriaIndicator.filter((z) => z.status === true)}
-    //                 onRowClick={edit}
-    //             >
-    //                 <Column
-    //                     selectionMode="multiple"
-    //                     headerStyle={{ width: "53px", padding: "0px" }}
-    //                 ></Column>
-    //                 <Column field="id" header="Id" style={{ width: "50px" }}></Column>
-    //                 <Column field="name" header="Нэр" />
-    //                 <Column field="path" header="Зам" />
-    //                 <Column headerStyle={{ width: "4rem" }}></Column>
-    //             </DataTable>
-    //         </div>
-    //     );
-    // };
-    const rowExpandCity = (e) => {
-
-        if (e.data.userControllers)
-            return
-        getService("criteria/get").then((result) => {
-            e.data.userControllers = result.content || []
-            setList([...list])
-        })
-    }
-
-    const expandedCity = (e) => {
-        setExpandedRows(e.data)
-    };
-
+    const [selectedProducts, setSelectedProducts] = useState(null);
     return (
         <ContentWrapper>
-        <div>
-            <Layout className="btn-layout">
-                <Content>
-                <Row>
-        <Col>
-          <h2 className="title">Шалгуур үзүүлэлт</h2>
-        </Col></Row>
-                    <Row>
-                        <Col span={2}>
-                            <Button onClick={add} type="link" icon={<SaveIcon />}>
-                                Нэмэх
-                            </Button>
-                        </Col>
-                        <Col span={2}>
-                            <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
-                                Устгах
-                            </Button>
-                        </Col>
-                        <Col span={2}>
-                            <DatePicker onChange={onChange} picker="year" />
-                        </Col>
-                        <Col span={18} style={{ textAlign: "right" }}>
-                            <div style={{ marginRight: "5px" }}>
-                                <Dropdown.Button
-                                    overlay={menu}
-                                    placement="bottomCenter"
-                                    icon={
-                                        <SettingFilled
-                                            style={{ marginLeft: "8px", color: "#45629c" }}
-                                        />
-                                    }
-                                ></Dropdown.Button>
-                            </div>
-                        </Col>
-                    </Row>
-                </Content>
-            </Layout>
-            
-            <DataTable
-                ref={dt}
-                value={list}
-                lazy
-                paginator
-                first={lazyParams.first}
-                rows={25}
-                totalRecords={totalRecords}
-                onPage={onPage}
-                onSort={onSort}
-                sortField={lazyParams.sortField}
-                sortOrder={lazyParams.sortOrder}
-                onFilter={onFilter}
-                filters={lazyParams.filters}
-                emptyMessage="Өгөгдөл олдсонгүй..."
-                className="p-datatable-gridlines"
-                selection={selectedRows}
-                onSelectionChange={(e) => {
-                    setSelectedRows(e.value);
-                }}
-                dataKey="id"
-                onRowToggle={expandedCity}
-                className="p-datatable-gridlines"
-            >
-                <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
-                <Column field="index" header="№" style={{ width: "50px" }} />
-                <Column field="code" header="Код"/>
-                <Column field="name" header="Шалгуур үзүүлэлтийн нэр" style={{textAlign: "left"}} filters sortable/>
-                <Column field="indicatorProcess" header="Хүрэх үр дүн" filter/>
-                <Column field="upIndicator" header="Үр дүнгийн биелэлт"/>
-                <Column field="" header="Шалгуур үзүүлэлтийн төрөл"/>
-            </DataTable>
-            {isModalVisible && (
-                <CriteriaModal
-                    Usercontroller={editRow}
-                    isModalVisible={isModalVisible}
-                    close={closeModal}
-                    isEditMode={isEditMode}
-                />
-            )}
-        </div>
+            <div className="button-demo">
+                <Layout className="btn-layout">
+                    <Content>
+                        <Row>
+                            <Col>
+                                <h2 className="title">Шалгуур үзүүлэлт</h2>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={2}>
+                                <Button onClick={add} type="link" icon={<SaveIcon />}>
+                                    Нэмэх
+                                </Button>
+                            </Col>
+                            <Col span={2}>
+                                <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
+                                    Устгах
+                                </Button>
+                            </Col>
+                            <Col span={2}>
+                                <DatePicker onChange={onChange} picker="year" />
+                            </Col>
+                            <Col span={18} style={{ textAlign: "right" }}>
+                                <div style={{ marginRight: "5px" }}>
+                                    <Dropdown.Button
+                                        overlay={menu}
+                                        placement="bottomCenter"
+                                        icon={
+                                            <SettingFilled
+                                                style={{ marginLeft: "8px", color: "#45629c" }}
+                                            />
+                                        }
+                                    ></Dropdown.Button>
+                                </div>
+                            </Col>
+                        </Row>
+                    </Content>
+                </Layout>
+                <div className="datatable-responsive-demo">
+                    <DataTable 
+                        value={list} 
+                        removableSort 
+                        paginator 
+                        rows={10}
+                        className="p-datatable-responsive-demo"
+                        selectionMode="checkbox"
+                        selection={selectedRows}
+                        onRowClick={edit}
+                        onSelectionChange={(e) => {
+                            setSelectedRows(e.value);
+                        }}
+                        dataKey="id">
+                        <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
+                        <Column field="index" header="№" sortable />
+                        <Column field="code" header="Код" sortable />
+                        <Column field="name" header="Шалгуур үзүүлэлтийн нэр" style={{ textAlign: "left" }} sortable filter filterPlaceholder="Хайх" />
+                        <Column field="indicatorProcess" header="Хүрэх үр дүн" sortable filter filterPlaceholder="Хайх" />
+                        <Column field="upIndicator" header="Үр дүнгийн биелэлт" sortable />
+                        <Column field="" header="Шалгуур үзүүлэлтийн төрөл" sortable />
+                    </DataTable>
+                    {isModalVisible && (
+                        <CriteriaModal
+                        Criteriacontroller={editRow}
+                            isModalVisible={isModalVisible}
+                            close={closeModal}
+                            isEditMode={isEditMode}
+                        />
+                    )}
+                </div>
+            </div>
         </ContentWrapper>
     );
     function confirm() {
@@ -275,4 +214,5 @@ function Criteria() {
         });
     }
 }
+
 export default Criteria;
