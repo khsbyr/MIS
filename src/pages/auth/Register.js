@@ -1,6 +1,6 @@
 import React from "react";
 import "antd/dist/antd.css";
-import { Button, Row, Col, Form, Input, Carousel } from "antd";
+import { Button, Row, Col, Form, Input, Carousel, Select } from "antd";
 import TextWrapper, { LogIn } from "./Login.style";
 import { useHistory } from "react-router-dom";
 import {useTranslation} from 'react-i18next';
@@ -9,8 +9,8 @@ import i18n from "../../i18n"
 function Register() {
   const history = useHistory();
   const {t, i18} = useTranslation();
-  function moveToRegister() {
-    history.push("/register");
+  function moveToLogin() {
+    history.push("/login");
   }
   function moveToAdmin() {
     history.push("/admin");
@@ -21,6 +21,12 @@ function Register() {
   function onChange(a, b, c) {
     console.log(a, b, c);
   }
+  const { Option } = Select;
+
+  function handleChange(value) {
+    console.log(`selected ${value}`);
+  }
+
   const contentStyle = {
     height: '180px',
     fontSize: '16px',
@@ -59,11 +65,38 @@ function Register() {
                 <h3 style={contentStyle}>3</h3>
               </div>
           </Carousel> 
-            <h2 className="title" style={{ marginTop: "80px", marginBottom: "30px" }}>
+          <Row gutter={[32]}>
+            <Col>
+            <h2 style={{ marginTop: "80px", marginBottom: "30px", color: "#103154", fontSize: "20px" }}>
             {t("partner")}
             </h2>
             <Row gutter={[32,32]}>
-              <Col >
+              <Col>
+                <img
+                  src="/images/svg/logo3.svg"
+                  className="icon"
+                  alt="card-icon"
+                  />
+                </Col>
+                <Col>
+                <img
+                  src="/images/svg/logo4.svg"
+                  className="icon"
+                  alt="card-icon"
+                  style={{
+                    height: "80%"
+                  }}
+                  />
+                </Col>
+            </Row>
+            </Col>
+
+            <Col>
+            <h2 className="title" style={{ marginTop: "80px", marginBottom: "30px",  color: "#103154", fontSize: "20px"  }}>
+            {t("sanhuujuulegch")}
+            </h2>
+            <Row gutter={[32,32]}>
+            <Col >
                 <img
                   src="/images/svg/logo2.svg"
                   className="icon"
@@ -78,21 +111,9 @@ function Register() {
                   alt="card-icon"
                 />
               </Col>
-              <Col>
-                <img
-                  src="/images/svg/logo3.svg"
-                  className="icon"
-                  alt="card-icon"
-                  />
-                </Col>
-                <Col>
-                <img
-                  src="/images/svg/logo4.svg"
-                  className="icon"
-                  alt="card-icon"
-                  />
-                </Col>
-              </Row>
+            </Row>
+            </Col>
+          </Row>
           </TextWrapper>
         </Col>
 
@@ -139,6 +160,27 @@ function Register() {
               >
               <Input placeholder={t('username')} bordered={false} />
               </Form.Item>
+              
+              <Form.Item>
+                <p className="subTitle">Сонго</p>
+              </Form.Item>
+              <Form.Item
+                name="asd"
+                className="underline"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your Username!",
+                  },
+                ]}
+              >
+                  <Select placeholder="songoh" style={{ width: "100%" }} onChange={handleChange} bordered={false} allowClear>
+                  <Option value="jack">Jack</Option>
+                  <Option value="lucy">Lucy</Option>
+                  <Option value="Yiminghe">yiminghe</Option>
+                </Select>
+              </Form.Item>
+
               <Form.Item>
                 <p className="subTitle">{t('password')}</p>
               </Form.Item>
@@ -188,7 +230,7 @@ function Register() {
                   type="ghost"
                   htmlType="submit"
                   className="login-form-button"
-                  onClick={moveToRegister}
+                  onClick={moveToLogin}
                 >
                   {t('register')}
                 </Button>

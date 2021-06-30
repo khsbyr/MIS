@@ -75,5 +75,3 @@ export const convertOrgWish = (wish) => {
             return wish;
     }
 }
-
-

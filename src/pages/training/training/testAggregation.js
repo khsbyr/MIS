@@ -1,19 +1,17 @@
-import {
-    ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled
-} from "@ant-design/icons";
+import { ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled } from "@ant-design/icons";
 import SaveIcon from "@material-ui/icons/Save";
-import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker, Tabs } from "antd";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import Loader from "../../loader/Loader";
-import React, { useEffect, useRef, useState } from "react";
-import { isShowLoading } from "../../context/Tools";
-import { getService, putService } from "../../service/service";
-import { PAGESIZE } from "../../tools/Constant";
-import { errorCatch, convertLazyParamsToObj } from "../../tools/Tools";
-import CriteriaModal from "../criteria/components/CriteriaModal";
-import "./criteria.style"
-import ContentWrapper from "./criteria.style";
+import { Button, Col, DatePicker, Dropdown, Layout, Menu, message, Modal, Row } from "antd";
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import React, { useEffect, useState } from 'react';
+import { isShowLoading } from "../../../context/Tools";
+import { getService, putService } from '../../../service/service';
+import { errorCatch } from "../../../tools/Tools";
+import CriteriaModal from "../../criteria/components/CriteriaModal";
+import ContentWrapper from "../../criteria/criteria.style";
+import { ColumnGroup } from 'primereact/columngroup';
+
+
 function handleMenuClick(e) { console.log("click", e.key[0]); }
 function onChange(date, dateString) {
     console.log(date, dateString);
@@ -48,7 +46,7 @@ const menu = (
 
 var editRow
 var isEditMode;
-const Criteria = () => {
+const TestAggregation = () => {
     const [products, setProducts] = useState([]);
     const [multiSortMeta, setMultiSortMeta] = useState([{ field: 'category', order: -1 }]);
     let loadLazyTimeout = null;
@@ -70,7 +68,7 @@ const Criteria = () => {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("criteria/get", list)
+        getService("casd/get", list)
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -103,7 +101,7 @@ const Criteria = () => {
             return;
         }
         debugger
-        putService("criteria/delete/" + selectedRows[0].id)
+        putService("casd/delete/" + selectedRows[0].id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -125,6 +123,25 @@ const Criteria = () => {
         }
     };
     const [selectedProducts, setSelectedProducts] = useState(null);
+    let headerGroup = <ColumnGroup>
+    <Row>
+        <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }} rowSpan={2}/>
+        <Column header="№" rowSpan={2}/>
+        <Column header="Оролцогчийн нэр" rowSpan={2} field="name"/> 
+        <Column header="Сорил №1" colSpan={2} />
+        <Column header="Сорил №2" colSpan={2} />
+        <Column header="Өсөлт бууралт" rowSpan={2}/>
+        <Column header="Тайлбар" rowSpan={2}/>
+
+    </Row>
+    <Row>
+        <Column header="Авбал зохих" sortable field="indicatorProcess"/>
+        <Column header="Авсан"  sortable/>
+        <Column header="Авбал зохих" sortable/>
+        <Column header="Авсан"  sortable/>
+    </Row>
+
+    </ColumnGroup>;
     return (
         <ContentWrapper>
             <div className="button-demo">
@@ -171,6 +188,7 @@ const Criteria = () => {
                         removableSort 
                         paginator 
                         rows={10}
+                        headerColumnGroup={headerGroup} 
                         className="p-datatable-responsive-demo"
                         selectionMode="checkbox"
                         selection={selectedRows}
@@ -180,13 +198,15 @@ const Criteria = () => {
                         }}
                         dataKey="id">
                         <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
-                        <Column field="index" header="№" sortable />
-                        <Column field="code" header="Код" sortable />
-                        <Column field="name" header="Шалгуур үзүүлэлтийн нэр" style={{ textAlign: "left" }} sortable filter filterPlaceholder="Хайх" />
-                        <Column field="indicatorProcess" header="Хүрэх үр дүн" sortable filter filterPlaceholder="Хайх" />
-                        <Column field="upIndicator" header="Үр дүнгийн биелэлт" sortable />
-                        <Column field="" header="Шалгуур үзүүлэлтийн төрөл" sortable />
-                    </DataTable>
+                        <Column field="index" sortable/>
+                        <Column field="name" style={{ textAlign: "left"}} sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="indicatorProcess" sortable />
+                        <Column field="upIndicator" sortable />
+                        <Column field="name" />
+                        <Column field="name" />
+                        <Column field="name" />
+                        <Column field="name" />
+                        </DataTable>
                     {isModalVisible && (
                         <CriteriaModal
                         Criteriacontroller={editRow}
@@ -215,4 +235,4 @@ const Criteria = () => {
     }
 }
 
-export default Criteria;
+export default TestAggregation;

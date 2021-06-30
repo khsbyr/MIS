@@ -42,25 +42,17 @@ const validateMessages = {
   },
 };
 export default function OrganizationModal(props) {
-  const { Usercontroller, isModalVisible, isEditMode } = props;
+  const { Orgcontroller, isModalVisible, isEditMode } = props;
   const [stateController, setStateController] = useState([]);
   const [form] = Form.useForm();
   const { Option } = Select;
 
   useEffect(() => {
-    getService("organization/get", {
-      search: "status:true",
-    }).then((result) => {
-      if (result) {
-        setStateController(result.content || []);
-      }
-    });
 
     if (isEditMode) {
-      getService("organization/get" + Usercontroller.id).then((result) => {
-        Usercontroller.userServiceId = result.userService.id;
-        form.setFieldsValue({ ...Usercontroller });
-      });
+     
+        form.setFieldsValue({ ...Orgcontroller });
+     
     }
   }, []);
   const save = () => {
@@ -69,7 +61,7 @@ export default function OrganizationModal(props) {
       .then((values) => {
         values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService("organization/put" + Usercontroller.id, values)
+          putService("organization/put" + Orgcontroller.id, values)
             .then((result) => {
               props.close(true);
             })
@@ -125,6 +117,8 @@ export default function OrganizationModal(props) {
             <h2 className="title"> Байгууллагын мэдээлэл</h2>
             <Row gutter={32}>
               <Col xs={24} md={24} lg={12}>
+              <Form layout="vertical">
+
                 <Form.Item
                 layout="vertical"
                         name="name"
@@ -137,10 +131,13 @@ export default function OrganizationModal(props) {
                     >
                         <Input />
                     </Form.Item>
+                    </Form>
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Form layout="vertical">
-                  <Form.Item label="Регистрийн дугаар:">
+                  <Form.Item label="Регистрийн дугаар:"                         name="name"
+                        name="register"
+                        >
                     <Input />
                   </Form.Item>
                 </Form>
@@ -149,7 +146,8 @@ export default function OrganizationModal(props) {
             <Row gutter={32}>
               <Col xs={24} md={24} lg={12}>
                 <Form layout="vertical">
-                  <Form.Item label="Банкны нэр:">
+                  <Form.Item label="Банкны нэр:"                        name="name"
+>
                     <Input />
                   </Form.Item>
                 </Form>

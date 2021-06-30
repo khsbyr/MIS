@@ -1,7 +1,7 @@
 import {
   CaretDownOutlined, MenuOutlined, PoweroffOutlined
 } from "@ant-design/icons";
-import { faClipboardCheck, faFileSignature, faHandsHelping, faLayerGroup, faList, faListAlt, faProjectDiagram, faUserAlt, faUserCog } from "@fortawesome/free-solid-svg-icons";
+import { faClipboardCheck, faFileSignature, faHandsHelping, faLayerGroup, faList, faListAlt, faProjectDiagram, faUserAlt, faUserCheck, faUserCog } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Avatar, Col, Divider, Dropdown, Layout, Menu, Row } from "antd";
 import "antd/dist/antd.css";
@@ -22,7 +22,11 @@ import Plan from "./training/training/plan";
 import TrainingProgram from "./training/training/trainingProgram";
 import TrainingReport from "./training/training/trainingReport";
 import Tunshlel from "./tunshlel";
-
+import TestAggregation from "./training/training/testAggregation";
+import Budget from "./training/training/budget";
+import User from "./user/user";
+import Role from "./user/role";
+import Signuprequest from "./user/signuprequest";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -30,7 +34,7 @@ const menu = (
   <Menu>
     <Menu.Item key="0">
       <PoweroffOutlined />
-      <a style={{ color: "black", paddingLeft: "0px" }}>Гарах</a>
+      <a style={{ color: "black", paddingLeft: "0px" }}>Logout</a>
     </Menu.Item>
   </Menu>
 );
@@ -86,15 +90,24 @@ const Admin = () => {
                 }}
               >
                 {" "}
-                <SubMenu key="sub1" icon={<FontAwesomeIcon icon={faUserAlt} />}
-                  title={t("user")}>
-                  <Menu.Item key="1" icon={<FontAwesomeIcon icon={faUserAlt} />}
-                  >
-                    {" "}
-                    <Link to="#">{t("user")}</Link>
-                  </Menu.Item>{" "}
-                  <Menu.Item key="2" icon={<FontAwesomeIcon icon={faUserCog} />}>{t("user_role")}</Menu.Item>
-                </SubMenu>
+                <SubMenu
+                key="sub1"
+                icon={<FontAwesomeIcon icon={faUserAlt} />}
+                title={t("user")}
+              >
+                <Menu.Item key="1" icon={<FontAwesomeIcon icon={faUserAlt} />}>
+                  {" "}
+                  <Link to="/user">{t("user")}</Link>
+                </Menu.Item>{" "}
+                <Menu.Item key="2" icon={<FontAwesomeIcon icon={faUserCog} />}>
+                  {" "}
+                  <Link to="/role">{t("user_role")}</Link>
+                </Menu.Item>
+                <Menu.Item key="52" icon={<FontAwesomeIcon icon={faUserCheck} />}>
+                  {" "}
+                  <Link to="/signuprequest">{t("signreq")}</Link>
+                </Menu.Item>
+              </SubMenu>
                 <SubMenu
                   key="sub2"
                   icon={<FontAwesomeIcon icon={faClipboardCheck} />}
@@ -142,9 +155,9 @@ const Admin = () => {
                       <Link to="/training_program">{t("training_program")}</Link>
                     </Menu.Item>
                     <Menu.Item key="13"><Link to="/attendance">{t("attendance_registration")}</Link></Menu.Item>
-                    <Menu.Item key="14">{t("test_aggregation")}</Menu.Item>
+                    <Menu.Item key="14"><Link to="/test_aggregation">{t("test_aggregation")}</Link></Menu.Item>
                     <Menu.Item key="15"><Link to="/training_report">{t("training_report")}</Link></Menu.Item>
-                    <Menu.Item key="16">{t("training_budget")}</Menu.Item>
+                    <Menu.Item key="16"><Link to="/budget">{t("training_budget")}</Link></Menu.Item>
                   </SubMenu>
                 </SubMenu>
                 <SubMenu
@@ -226,7 +239,7 @@ const Admin = () => {
                 </SubMenu>
               </Menu>
               {/* <LogoWrapper id="myDIV">
-                    <h2 className="title"> МЭДЭЭЛЛИЙН УДИРДЛАГЫН</h2>
+                    <h2 className="title"> ÐœÐ­Ð”Ð­Ð­Ð›Ð›Ð˜Ð™Ð Ð£Ð”Ð˜Ð Ð”Ð›ÐÐ“Ð«Ð</h2>
                     <img
                           src="/images/svg/logo-head.svg"
                           className="icon"
@@ -255,7 +268,7 @@ const Admin = () => {
                         }
                       )}
                       <a style={{ float: "right" }}>
-                        МЭДЭЭЛЛИЙН УДИРДЛАГЫН СИСТЕМ
+                        ÐœÐ­Ð”Ð­Ð­Ð›Ð›Ð˜Ð™Ð Ð£Ð”Ð˜Ð Ð”Ð›ÐÐ“Ð«Ð Ð¡Ð˜Ð¡Ð¢Ð•Ðœ
                       </a>
                     </Col> */}
                   <Col span={24} style={{ textAlign: "end " }}>
@@ -276,7 +289,7 @@ const Admin = () => {
                           href="#"
                           style={{ color: "#103154", marginRight: "5px" }}
                         >
-                          Айтмухамед
+                          user
                           <CaretDownOutlined />
                         </a>
                       </Dropdown>
@@ -303,6 +316,16 @@ const Admin = () => {
                 }}
               >
                 <Switch>
+                  {/* user */}
+                <Route exact path="/user">
+                  <User />
+                </Route>
+                <Route exact path="/role">
+                  <Role />
+                </Route>
+                <Route exact path="/signuprequest">
+                  <Signuprequest />
+                </Route>
                   <Route exact path="/criteria">
                     <Criteria />
                   </Route>
@@ -341,6 +364,12 @@ const Admin = () => {
                   </Route>
                   <Route path="/attendance">
                     <Attendance />
+                  </Route>
+                  <Route path="/test_aggregation">
+                    <TestAggregation />
+                  </Route>
+                  <Route path="/budget">
+                    <Budget />
                   </Route>
                 </Switch>{" "}
               </Content>

@@ -5,7 +5,7 @@ import { errorCatch } from "../../../../tools/Tools";
 import AutocompleteSelect from "../../../components/Autocomplete";
 const layout = {
     labelCol: {
-        span: 7,
+        span: 10,
     },
     wrapperCol: {
         span: 14,
@@ -76,7 +76,7 @@ export default function Composition1Modal(props) {
 
         <div>
             <Modal
-                title="Шалгуур үзүүлэлт бүртгэх"
+                title="Бүрэлдэхүүн бүртгэх"
                 okText="Хадгалах"
                 cancelText="Буцах"
                 width={600}
@@ -94,17 +94,6 @@ export default function Composition1Modal(props) {
                 >
                  
                     <Form.Item
-                        name="name"
-                        label="Шалгуур үзүүлэлтийн нэр:"
-                        rules={[
-                            {
-                                required: true,
-                            },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
                         name="code"
                         label="Код:"
                         rules={[
@@ -115,9 +104,20 @@ export default function Composition1Modal(props) {
                     >
                         <Input />
                     </Form.Item>
+                    <Form.Item
+                        name="name"
+                        label="Бүрэлдэхүүн нэр:"
+                        rules={[
+                            {
+                                required: true,
+                            },
+                        ]}
+                    >
+                        <Input />
+                    </Form.Item>
               <Form.Item
-                name="indicatorProcess"
-                label="Хүрэх үр дүн:"
+                name="name"
+                label="Шалгуур үзүүлэлтийн нэр:"
                 rules={[
                   {
                     required: false,

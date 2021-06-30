@@ -1,24 +1,23 @@
 import {
-    ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled
+    ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled, DownOutlined
 } from "@ant-design/icons";
 import SaveIcon from "@material-ui/icons/Save";
-import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker, Tabs } from "antd";
+import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker, Select, Input, InputNumber } from "antd";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import Loader from "../../loader/Loader";
 import React, { useEffect, useRef, useState } from "react";
-import { isShowLoading } from "../../context/Tools";
-import { getService, putService } from "../../service/service";
-import { PAGESIZE } from "../../tools/Constant";
-import { errorCatch, convertLazyParamsToObj } from "../../tools/Tools";
-import CriteriaModal from "../criteria/components/CriteriaModal";
-import "./criteria.style"
-import ContentWrapper from "./criteria.style";
+import { isShowLoading } from "../../../context/Tools";
+import { getService, putService } from "../../../service/service";
+import { PAGESIZE } from "../../../tools/Constant";
+import { errorCatch } from "../../../tools/Tools";
+import AttendanceModal from "../training/components/attendanceModal";
+import ContentWrapper from "../training/components/attendance.style";
 function handleMenuClick(e) { console.log("click", e.key[0]); }
 function onChange(date, dateString) {
     console.log(date, dateString);
 }
 const { Content } = Layout;
+const { Option } = Select;
 const menu = (
     <Menu onClick={handleMenuClick}>
         <Menu.Item
@@ -48,7 +47,7 @@ const menu = (
 
 var editRow
 var isEditMode;
-const Criteria = () => {
+const Budget = () => {
     const [products, setProducts] = useState([]);
     const [multiSortMeta, setMultiSortMeta] = useState([{ field: 'category', order: -1 }]);
     let loadLazyTimeout = null;
@@ -70,7 +69,7 @@ const Criteria = () => {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("criteria/get", list)
+        getService("trainingProgram/get", list)
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -81,7 +80,7 @@ const Criteria = () => {
                 setSelectedRows([]);
 
             })
-            .catch((error)=> {
+            .catch((error) => {
                 errorCatch(error);
                 isShowLoading(false);
             })
@@ -91,7 +90,7 @@ const Criteria = () => {
         setIsModalVisible(true);
         isEditMode = false;
     };
-       const edit = (row) => {
+    const edit = (row) => {
         editRow = row.data
         isEditMode = true
         setIsModalVisible(true)
@@ -103,7 +102,7 @@ const Criteria = () => {
             return;
         }
         debugger
-        putService("criteria/delete/" + selectedRows[0].id)
+        putService("trainingProgram/delete/" + selectedRows[0].id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -127,14 +126,11 @@ const Criteria = () => {
     const [selectedProducts, setSelectedProducts] = useState(null);
     return (
         <ContentWrapper>
+            <h2 className="title">Сургалтын төсөв</h2>
             <div className="button-demo">
                 <Layout className="btn-layout">
                     <Content>
-                        <Row>
-                            <Col>
-                                <h2 className="title">Шалгуур үзүүлэлт</h2>
-                            </Col>
-                        </Row>
+
                         <Row>
                             <Col span={2}>
                                 <Button onClick={add} type="link" icon={<SaveIcon />}>
@@ -145,9 +141,6 @@ const Criteria = () => {
                                 <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
                                     Устгах
                                 </Button>
-                            </Col>
-                            <Col span={2}>
-                                <DatePicker onChange={onChange} picker="year" />
                             </Col>
                             <Col span={18} style={{ textAlign: "right" }}>
                                 <div style={{ marginRight: "5px" }}>
@@ -166,10 +159,11 @@ const Criteria = () => {
                     </Content>
                 </Layout>
                 <div className="datatable-responsive-demo">
-                    <DataTable 
-                        value={list} 
-                        removableSort 
-                        paginator 
+                    <h3>1. Бичгийн хэрэгсэл</h3>
+                    <DataTable
+                        value={list}
+                        removableSort
+                        paginator
                         rows={10}
                         className="p-datatable-responsive-demo"
                         selectionMode="checkbox"
@@ -180,16 +174,85 @@ const Criteria = () => {
                         }}
                         dataKey="id">
                         <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
-                        <Column field="index" header="№" sortable />
-                        <Column field="code" header="Код" sortable />
-                        <Column field="name" header="Шалгуур үзүүлэлтийн нэр" style={{ textAlign: "left" }} sortable filter filterPlaceholder="Хайх" />
-                        <Column field="indicatorProcess" header="Хүрэх үр дүн" sortable filter filterPlaceholder="Хайх" />
-                        <Column field="upIndicator" header="Үр дүнгийн биелэлт" sortable />
-                        <Column field="" header="Шалгуур үзүүлэлтийн төрөл" sortable />
+                        <Column field="" header="Зардлын нэр" />
+                        <Column field="" header="Нэгж үнэ /₮/" />
+                        <Column field="" header="Тоо ширхэг" />
+                        <Column field="" header="Хүний тоо" />
+                        <Column field="" header="Дүн /₮/" />
+
                     </DataTable>
                     {isModalVisible && (
-                        <CriteriaModal
-                        Criteriacontroller={editRow}
+                        <AttendanceModal
+                            Criteriacontroller={editRow}
+                            isModalVisible={isModalVisible}
+                            close={closeModal}
+                            isEditMode={isEditMode}
+                        />
+                    )}
+                </div>
+
+                <div className="datatable-responsive-demo">
+                    <h3>2. Зам хоног, буудлын зардал</h3>
+                    <DataTable
+                        value={list}
+                        removableSort
+                        paginator
+                        rows={10}
+                        className="p-datatable-responsive-demo"
+                        selectionMode="checkbox"
+                        selection={selectedRows}
+                        onRowClick={edit}
+                        onSelectionChange={(e) => {
+                            setSelectedRows(e.value);
+                        }}
+                        dataKey="id">
+                        <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
+                        <Column field="" header="Зардлын нэр" />
+                        <Column field="" header="Зардлын төрөл" />
+                        <Column field="" header="МЗҮБ хүний тоо" />
+                        <Column field="" header="Хоногт /₮/" />
+                        <Column field="" header="Хоног" />
+                        <Column field="" header="Нийт /₮/" />
+
+                    </DataTable>
+                    {isModalVisible && (
+                        <AttendanceModal
+                            Criteriacontroller={editRow}
+                            isModalVisible={isModalVisible}
+                            close={closeModal}
+                            isEditMode={isEditMode}
+                        />
+                    )}
+                </div>
+
+                <div className="datatable-responsive-demo">
+                    <h3>3. Шатахууны зардал /маршрутаар/</h3>
+                    <DataTable
+                        value={list}
+                        removableSort
+                        paginator
+                        rows={10}
+                        className="p-datatable-responsive-demo"
+                        selectionMode="checkbox"
+                        selection={selectedRows}
+                        onRowClick={edit}
+                        onSelectionChange={(e) => {
+                            setSelectedRows(e.value);
+                        }}
+                        dataKey="id">
+                        <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
+                        <Column field="" header="Маршрут" />
+                        <Column field="" header="Замын урт /км/" />
+                        <Column field="" header="Бүсийн нэмэгдэл /%/" />
+                        <Column field="" header="Зарцуулах шатахуун /л/" />
+                        <Column field="" header="Шатахууны үнэ /₮/ A92" />
+                        <Column field="" header="Нийт /₮/" />
+
+
+                    </DataTable>
+                    {isModalVisible && (
+                        <AttendanceModal
+                            Criteriacontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
                             isEditMode={isEditMode}
@@ -214,5 +277,15 @@ const Criteria = () => {
         });
     }
 }
+export default Budget;
 
-export default Criteria;
+
+
+
+
+
+
+
+
+
+

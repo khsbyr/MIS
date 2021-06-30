@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input } from "antd";
-import { getService, postService, putService } from "../../../service/service";
-import { errorCatch } from "../../../tools/Tools";
+import { Modal, Form, Input, DatePicker } from "antd";
+import { getService, postService, putService } from "../../../../service/service";
+import { errorCatch } from "../../../../tools/Tools";
+import AutocompleteSelect from "../../../components/Autocomplete";
 const layout = {
     labelCol: {
         span: 10,
@@ -20,27 +21,35 @@ const validateMessages = {
         range: "${label} must be between ${min} and ${max}",
     },
 };
-export default function CriteriaModal(props) {
-    const { Criteriacontroller, isModalVisible, isEditMode } = props;
+export default function TrainingProgramModal(props) {
+    const { Attendancecontroller, isModalVisible, isEditMode } = props;
+    const [stateController, setStateController] = useState([]);
     const [form] = Form.useForm();
     useEffect(() => {
-
-            if (isEditMode) {
-                    form.setFieldsValue({ ...Criteriacontroller });
-                
-    
+        getService("criteria/get", {
+            search: "status:true",
+        }).then((result) => {
+            if (result) {
+                setStateController(result.content || []);
             }
-        
+        });
+
+        if (isEditMode) {
+            getService("criteria/get" + Attendancecontroller.id).then((result) => {
+                Attendancecontroller.userServiceId = result.userService.id
+                form.setFieldsValue({ ...Attendancecontroller });
+            })
+
+        }
     }, []);
     const save = () => {
         form
             .validateFields()
             .then((values) => {
-                debugger
-                console.log(values);
+                values.userService = { id: values.userServiceId }
                 if (isEditMode) {
                     putService(
-                        "criteria/update/" + Criteriacontroller.id,
+                        "criteria/put" + Attendancecontroller.id,
                         values
                     )
                         .then((result) => {
@@ -64,9 +73,10 @@ export default function CriteriaModal(props) {
             });
     };
     return (
+
         <div>
             <Modal
-                title="Шалгуур үзүүлэлт бүртгэх"
+                title="Ирцийн бүртгэл"
                 okText="Хадгалах"
                 cancelText="Буцах"
                 width={600}
@@ -85,7 +95,7 @@ export default function CriteriaModal(props) {
                  
                     <Form.Item
                         name="name"
-                        label="Шалгуур үзүүлэлтийн нэр:"
+                        label="Суралцагийн нэр:"
                         rules={[
                             {
                                 required: true,
@@ -95,8 +105,8 @@ export default function CriteriaModal(props) {
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="code"
-                        label="Код:"
+                        name="work"
+                        label="Ажил эрхлэлт:"
                         rules={[
                             {
                                 required: true,
@@ -106,22 +116,22 @@ export default function CriteriaModal(props) {
                         <Input />
                     </Form.Item>
               <Form.Item
-                name="indicatorProcess"
-                label="Хүрэх үр дүн:"
+                name="contact"
+                label="Холбогдох утас, мэйл, хаяг:"
                 rules={[
                   {
-                    required: false,
+                    required: true,
                   },
                 ]}
               >
                 <Input />
               </Form.Item>
               <Form.Item
-                name="upIndicator"
-                label="Үр дүнгийн биелэлт"
+                name="RD"
+                label="Регистрийн дугаар"
                 rules={[
                   {
-                    required: false,
+                    required: true,
                   },
                 ]}
               >
