@@ -232,7 +232,7 @@ const TrainingProgram = () => {
                     </DataTable>
                     {isModalVisible && (
                         <TrainingProgramModal
-                            Criteriacontroller={editRow}
+                            Trainingprogramcontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
                             isEditMode={isEditMode}

@@ -22,7 +22,7 @@ const validateMessages = {
     },
 };
 export default function TrainingProgramModal(props) {
-    const { Composition, isModalVisible, isEditMode } = props;
+    const { Trainingprogramcontroller, isModalVisible, isEditMode } = props;
     const [stateController, setStateController] = useState([]);
     const [form] = Form.useForm();
     useEffect(() => {
@@ -35,9 +35,8 @@ export default function TrainingProgramModal(props) {
         });
 
         if (isEditMode) {
-            getService("criteria/get" + Composition.id).then((result) => {
-                Composition.userServiceId = result.userService.id
-                form.setFieldsValue({ ...Composition });
+            getService("criteria/get" + Trainingprogramcontroller.id).then((result) => {
+                form.setFieldsValue({ ...Trainingprogramcontroller });
             })
 
         }
@@ -46,10 +45,9 @@ export default function TrainingProgramModal(props) {
         form
             .validateFields()
             .then((values) => {
-                values.userService = { id: values.userServiceId }
                 if (isEditMode) {
                     putService(
-                        "criteria/put" + Composition.id,
+                        "criteria/put" + Trainingprogramcontroller.id,
                         values
                     )
                         .then((result) => {

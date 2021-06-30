@@ -69,7 +69,7 @@ const Attendance = () => {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("trainingProgram/get", list)
+        getService("participants/get", list)
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -102,7 +102,7 @@ const Attendance = () => {
             return;
         }
         debugger
-        putService("trainingProgram/delete/" + selectedRows[0].id)
+        putService("participants/delete/" + selectedRows[0].id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -128,7 +128,7 @@ const Attendance = () => {
     return (
         <ContentWrapper>
             <h2 className="title">Ирцийн бүртгэл</h2>
-            <Row >
+            {/* <Row >
                 <Col xs={24} md={24} lg={8}>
                     <Form>
                         <Form.Item>
@@ -198,7 +198,7 @@ const Attendance = () => {
                         </Form.Item>
                     </Form>
                 </Col>
-            </Row>
+            </Row> */}
             <div className="button-demo">
                 <Layout className="btn-layout">
                     <Content>
@@ -246,16 +246,17 @@ const Attendance = () => {
                         dataKey="id">
                         <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
                         <Column field="index" header="№" style={{ width: "50px" }} />
-                        <Column field="" header="Суралцагчийн нэр" />
-                        <Column expander style={{ width: '3em' }} />
-                        <Column field="" header="Ажил эрхлэлт" />
-                        <Column field="" header="Холбогдох утас, мэйл, хаяг" />
-                        <Column field="" header="Регистрийн дугаар" />
+                        <Column field="name" header="Суралцагчийн нэр" sortable filter filterPlaceholder="Хайх"/>
+                        {/* <Column expander style={{ width: '3em' }} /> */}
+                        <Column field="jobDescription" header="Ажил эрхлэлт" sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="" header="Холбогдох утас, мэйл, хаяг" sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="" header="Регистрийн дугаар" sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="" header="Сургалтын нэр" sortable filter filterPlaceholder="Хайх"/>
 
                     </DataTable>
                     {isModalVisible && (
                         <AttendanceModal
-                            Criteriacontroller={editRow}
+                            Attendancecontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
                             isEditMode={isEditMode}
