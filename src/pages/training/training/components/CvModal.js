@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input , Table, Button, DatePicker} from "antd";
+import { Modal, Form, Input , Table, Button, DatePicker, message, Dropdown, Menu} from "antd";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
 import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined , UserOutlined } from "@ant-design/icons";
@@ -7,38 +7,20 @@ import { faCalendarAlt, faEnvelope, faHome, faPhone, faUser, faUserEdit } from "
 import { Row, Col, Select, Option,Upload } from "antd";
 import AutocompleteSelect from "../../../components/Autocomplete";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-const dataSource = [
-    {
-      key: '1',
-      name: 'Mike',
-      age: 32,
-      address: '10 Downing Street',
-    },
-    {
-      key: '2',
-      name: 'John',
-      age: 42,
-      address: '10 Downing Street',
-    },
-  ];
-  
-  const columns = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
-    },
-    {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-    },
-  ];
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import SaveIcon from "@material-ui/icons/Save";
+import { isShowLoading } from "../../../../context/Tools";
+
+import {
+    ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled
+} from "@ant-design/icons";
+import BolovsrolModal from "./BolovsrolModal";
+import AjliinTurshlagaModal from "./AjliinTurshlagaModal";
+function handleMenuClick(e) { console.log("click", e.key[0]); }
+function onChange(date, dateString) {
+    console.log(date, dateString);
+}
 
 const { Dragger } = Upload;
 const layout = {
@@ -59,29 +41,144 @@ const validateMessages = {
         range: "${label} must be between ${min} and ${max}",
     },
 };
+
+const menu = (
+    <Menu onClick={handleMenuClick}>
+        <Menu.Item
+            key="1"
+            icon={<FileSyncOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
+        >
+
+            Импорт
+        </Menu.Item>
+        <Menu.Item
+            key="2"
+            icon={<FileOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
+        >
+            Экспорт
+        </Menu.Item>
+
+        <Menu.Item
+            key="3"
+            icon={<PrinterOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
+        >
+
+            Хэвлэх
+        </Menu.Item>
+
+    </Menu>
+);
+
+var editRow;
+var editBolovsrolRow;
+var isEditMode;
 export default function CvModal(props) {
-    const { Usercontroller, isModalVisible, isEditMode } = props;
+    const { Usercontroller, isModalVisible } = props;
+    const [isModalVisiblee, setIsModalVisiblee] = useState(false);
+    const [isModalVisibleee, setIsModalVisibleee] = useState(false);
+
     const [stateController, setStateController] = useState([]);
     const [form] = Form.useForm();
     const { Option } = Select;
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [multiSortMeta, setMultiSortMeta] = useState([{ field: 'category', order: -1 }]);
+    let loadLazyTimeout = null;
+    const [list, setList] = useState([]);
+    const [lazyParams, setLazyParams] = useState({
+        page: 0,
+    });
+    const [loading, setLoading] = useState(false);
+    const PAGESIZE = 20;
     const { RangePicker } = DatePicker;
+    // useEffect(() => {
+    //     getService("criteria/get", {
+    //         search: "status:true",
+    //     }).then((result) => {
+    //         if (result) {
+    //             setStateController(result.content || []);
+    //         }
+    //     });
+
+    //     if (isEditMode) {
+    //         getService("criteria/get" + Usercontroller.id).then((result) => {
+    //             Usercontroller.userServiceId = result.userService.id
+    //             form.setFieldsValue({ ...Usercontroller });
+    //         })
+
+    //     }
+    // }, []);
+
     useEffect(() => {
-        getService("criteria/get", {
-            search: "status:true",
-        }).then((result) => {
-            if (result) {
-                setStateController(result.content || []);
-            }
-        });
+        onInit();
+    }, [lazyParams])
 
-        if (isEditMode) {
-            getService("criteria/get" + Usercontroller.id).then((result) => {
-                Usercontroller.userServiceId = result.userService.id
-                form.setFieldsValue({ ...Usercontroller });
-            })
-
+    const onInit = () => {
+        setLoading(true);
+        if (loadLazyTimeout) {
+            clearTimeout(loadLazyTimeout);
         }
-    }, []);
+        getService("criteriaa/get", list)
+            .then((result) => {
+                let list = result.content || [];
+                list.map(
+                    (item, index) =>
+                        (item.index = lazyParams.page * PAGESIZE + index + 1)
+                );
+                setList(list);
+                setSelectedRows([]);
+
+            })
+            .catch((error) => {
+                errorCatch(error);
+                isShowLoading(false);
+            })
+    };
+
+    const edit = (row) => {
+        editRow = row.data
+        isEditMode = true
+        setIsModalVisiblee(true)
+    }
+
+    
+    const add = () => {
+        setIsModalVisiblee(true);
+        isEditMode = false;
+    };
+
+    const pop = () => {
+        if (selectedRows.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        } else {
+            confirm();
+        }
+    };
+
+    
+
+    const closeModal = (isSuccess = false) => {
+        setIsModalVisiblee(false);
+        if (isSuccess) onInit();
+    };
+
+    const handleDeleted = () => {
+        if (selectedRows.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        }
+        debugger
+        putService("criteriaa/delete/" + selectedRows[0].id)
+            .then((result) => {
+                message.success("Амжилттай устлаа");
+                onInit();
+            })
+            .catch((error) => {
+                errorCatch(error);
+            });
+    };
+
     const save = () => {
         form
             .validateFields()
@@ -89,7 +186,7 @@ export default function CvModal(props) {
                 values.userService = { id: values.userServiceId }
                 if (isEditMode) {
                     putService(
-                        "criteria/put" + Usercontroller.id,
+                        "criteriaa/put" + Usercontroller.id,
                         values
                     )
                         .then((result) => {
@@ -99,7 +196,7 @@ export default function CvModal(props) {
                             errorCatch(error);
                         })
                 } else {
-                    postService("criteria/post", values)
+                    postService("criteriaa/post", values)
                         .then((result) => {
                             props.close(true);
                         })
@@ -194,33 +291,124 @@ export default function CvModal(props) {
             </Row>
 
             <h2 className="title">3. Боловсрол</h2>
+            
+            <Row>
+                            <Col span={2}>
+                                <Button onClick={add} type="link" icon={<SaveIcon />}>
+                                    Нэмэх
+                                </Button>
+                            </Col>
+                            <Col span={2}>
+                                <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
+                                    Устгах
+                                </Button>
+                            </Col>
+                            <Col span={18} style={{ textAlign: "right" }}>
+                                <div style={{ marginRight: "5px" }}>
+                                    <Dropdown.Button
+                                        overlay={menu}
+                                        placement="bottomCenter"
+                                        icon={
+                                            <SettingFilled
+                                                style={{ marginLeft: "8px", color: "#45629c" }}
+                                            />
+                                        }
+                                    ></Dropdown.Button>
+                                </div>
+                            </Col>
+                        </Row>
             <Row >
                 <Col xs={24} md={24} lg={22}>
-                    <Table dataSource={dataSource} columns={columns} />
+                    <DataTable
+                            value={list}
+                            removableSort
+                            paginator
+                            rows={10}
+                            className="p-datatable-responsive-demo"
+                            selectionMode="checkbox"
+                            selection={selectedRows}
+                            onRowClick={edit}
+                            onSelectionChange={(e) => {
+                                setSelectedRows(e.value);
+                            }}
+                            dataKey="id">
+                            <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
+                            <Column field="index" header="№" style={{ width: "50px" }} />
+                            <Column field="name" header="Зэрэг, цол" />
+                            <Column field="" header="Их дээд сургуулийн нэр" />
+                            <Column field="" header="Огноо" />
+                        </DataTable>
+                        {isModalVisiblee && (
+                        <BolovsrolModal
+                            Criteriacontroller={editRow}
+                            isModalVisible={isModalVisible}
+                            close={closeModal}
+                            isEditMode={isEditMode}
+                        />
+                    )}
                 </Col>
             </Row>
 
             <h2 className="title">4. Ажлын туршлага</h2>
+            
+            <Row>
+                            <Col span={2}>
+                                <Button onClick={add} type="link" icon={<SaveIcon />}>
+                                    Нэмэх
+                                </Button>
+                            </Col>
+                            <Col span={2}>
+                                <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
+                                    Устгах
+                                </Button>
+                            </Col>
+                            <Col span={18} style={{ textAlign: "right" }}>
+                                <div style={{ marginRight: "5px" }}>
+                                    <Dropdown.Button
+                                        overlay={menu}
+                                        placement="bottomCenter"
+                                        icon={
+                                            <SettingFilled
+                                                style={{ marginLeft: "8px", color: "#45629c" }}
+                                            />
+                                        }
+                                    ></Dropdown.Button>
+                                </div>
+                            </Col>
+                        </Row>
             <Row >
                 <Col xs={24} md={24} lg={22}>
-                    <Table dataSource={dataSource} columns={columns} />
+                    <DataTable
+                            value={list}
+                            removableSort
+                            paginator
+                            rows={10}
+                            className="p-datatable-responsive-demo"
+                            selectionMode="checkbox"
+                            selection={selectedRows}
+                            onRowClick={edit}
+                            onSelectionChange={(e) => {
+                                setSelectedRows(e.value);
+                            }}
+                            dataKey="id">
+                            <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
+                            <Column field="index" header="№" style={{ width: "50px" }} />
+                            <Column field="name" header="Албан тушаал" />
+                            <Column field="" header="Байгууллагын нэр" />
+                            <Column field="" header="Огноо" />
+                        </DataTable>
+                        {isModalVisiblee && (
+                        <AjliinTurshlagaModal
+                            Criteriacontroller={editRow}
+                            isModalVisible={isModalVisiblee}
+                            close={closeModal}
+                            isEditMode={isEditMode}
+                        />
+                    )}
                 </Col>
             </Row>
 
-            <h2 className="title">5. Зөвлөх үйлчилгээний ажлын туршлага</h2>
-            <Row >
-                <Col xs={24} md={24} lg={22}>
-                    <Table dataSource={dataSource} columns={columns} />
-                </Col>
-            </Row>
-
-            <h2 className="title">6. Башгийн ажлын туршлага</h2>
-            <Row >
-                <Col xs={24} md={24} lg={22}>
-                    <Table dataSource={dataSource} columns={columns} />
-                </Col>
-            </Row>
-
+        
             <h2 className="title">10. Ур чадвар</h2>
             <Row >
                 <Col xs={24} md={24} lg={22}>
@@ -245,4 +433,18 @@ export default function CvModal(props) {
             </Modal>
         </div >
     );
+    function confirm() {
+        Modal.confirm({
+            title: "Та устгахдаа итгэлтэй байна уу ?",
+            icon: <ExclamationCircleOutlined />,
+            okButtonProps: {},
+            okText: "Устгах",
+            cancelText: "Буцах",
+            onOk() {
+                handleDeleted();
+                onInit();
+            },
+            onCancel() { },
+        });
+    }
 }
