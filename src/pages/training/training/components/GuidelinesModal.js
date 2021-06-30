@@ -1,70 +1,70 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input , Table, Button, DatePicker} from "antd";
+import { Modal, Form, Input, Table, Button, DatePicker } from "antd";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
-import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined  } from "@ant-design/icons";
-import { Row, Col, Select, Option,Upload } from "antd";
+import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined } from "@ant-design/icons";
+import { Row, Col, Select, Option, Upload } from "antd";
 import AutocompleteSelect from "../../../components/Autocomplete";
 const columns = [
     {
-      title: '№',
-      dataIndex: 'code',
-      key: 'code',    
+        title: '№',
+        dataIndex: 'code',
+        key: 'code',
     },
     {
-      title: 'Нэрс',
-      dataIndex: 'name',
-      key: 'name',   
+        title: 'Нэрс',
+        dataIndex: 'name',
+        key: 'name',
     },
     {
-      title: 'Сургалтын үйл ажиллагаанд гүйцэтгэх үүрэг',
-      dataIndex: 'uureg',
-      key: 'uureg',   
+        title: 'Сургалтын үйл ажиллагаанд гүйцэтгэх үүрэг',
+        dataIndex: 'uureg',
+        key: 'uureg',
     }
-  ];
+];
 
-  const data = [
-      {
-          key: "1",
-          code: "1",
-          name: "Болд",
-          uureg: "Илтгэгч"
-      }
-  ]
-
-  const column = [
+const data = [
     {
-      title: '№',
-      dataIndex: 'code',
-      key: 'code',    
-    },
-    {
-      title: 'Суралцагчийн нэрс',
-      dataIndex: 'name',
-      key: 'name',   
-    },
-    {
-      title: 'Байгууллага, албан тушаал, ажил эрхлэлт',
-      dataIndex: 'uureg',
-      key: 'uureg',   
+        key: "1",
+        code: "1",
+        name: "Болд",
+        uureg: "Илтгэгч"
     }
-  ];
+]
 
-  const dataa = [
-      {
-          key: "1",
-          code: "1",
-          name: "Сувд",
-          uureg: "Албан тушаал"
-      }
-  ]
+const column = [
+    {
+        title: '№',
+        dataIndex: 'code',
+        key: 'code',
+    },
+    {
+        title: 'Суралцагчийн нэрс',
+        dataIndex: 'name',
+        key: 'name',
+    },
+    {
+        title: 'Байгууллага, албан тушаал, ажил эрхлэлт',
+        dataIndex: 'uureg',
+        key: 'uureg',
+    }
+];
+
+const dataa = [
+    {
+        key: "1",
+        code: "1",
+        name: "Сувд",
+        uureg: "Албан тушаал"
+    }
+]
 const { Dragger } = Upload;
 const layout = {
     labelCol: {
-        span: 10,
+        span: 20,
     },
     wrapperCol: {
-        span: 14,
+        span: 22,
     },
 };
 const validateMessages = {
@@ -93,8 +93,8 @@ export default function GuidelinesModal(props) {
         // });
 
         if (isEditMode) {
-  
-                form.setFieldsValue({ ...Guidelinescontroller });
+
+            form.setFieldsValue({ ...Guidelinescontroller });
 
 
         }
@@ -134,7 +134,7 @@ export default function GuidelinesModal(props) {
                 title="Сургалтын удирдамж бүртгэх"
                 okText="Хадгалах"
                 cancelText="Буцах"
-                width={1000}
+                width={1200}
                 alignItems="center"
                 visible={isModalVisible}
                 onOk={save}
@@ -148,147 +148,161 @@ export default function GuidelinesModal(props) {
                     name="nest-messages"
                     validateMessages={validateMessages}
                 >
-          <Row>
-            <Col  xs={24} md={24} lg={14}>
-                        <Row>
-                            <Col xs={24} md={24} lg={24}>
+                    <Row >
+                        <Col xs={24} md={24} lg={12}>
+                            <Row>
+                                <Col xs={24} md={24} lg={24}>
                                     <Form.Item label="Сургалтын сэдэв:" name="subject" rules={[
-                            {
-                                required: true,
-                            },
-                        ]}>                              
+                                        {
+                                            required: true,
+                                        },
+                                    ]}>
                                         <Input />
                                     </Form.Item>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={24} md={24} lg={24}>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={24} md={24} lg={24}>
                                     <Form.Item label="Сургалт зохион байгуулах үндэслэл:" name="reason" rules={[
-                            {
-                                required: true,
-                            },
-                        ]}>                              
+                                        {
+                                            required: true,
+                                        },
+                                    ]}>
                                         <Input />
                                     </Form.Item>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={24} md={24} lg={24}>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={24} md={24} lg={24}>
                                     <Form.Item label="Сургалтын зорилго:" name="aim" rules={[
-                            {
-                                required: true,
-                            },
-                        ]}>                              
+                                        {
+                                            required: true,
+                                        },
+                                    ]}>
                                         <Input />
                                     </Form.Item>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={24} md={24} lg={24}>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={24} md={24} lg={24}>
                                     <Form.Item label="Хэрэгжүүлэх үйл ажиллагаа:" name="operation" rules={[
-                            {
-                                required: true,
-                            },
-                        ]}>                              
+                                        {
+                                            required: true,
+                                        },
+                                    ]}>
                                         <Input />
                                     </Form.Item>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={24} md={24} lg={24}>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={24} md={24} lg={24}>
                                     <Form.Item label="Хүлээгдэж буй үр дүн:" name="result" rules={[
-                            {
-                                required: true,
-                            },
-                        ]}>                              
+                                        {
+                                            required: true,
+                                        },
+                                    ]}>
                                         <Input />
                                     </Form.Item>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={24} md={24} lg={24}>
-                                    <p style={{color: "#7d7d7d", fontSize: "13px"}}>Сургалт зохион байгуулагдах газар:</p>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={24} md={24} lg={24}>
-                                    <Form.Item label="Аймаг, хот:">                              
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={24} md={24} lg={24}>
+                                    <p style={{ color: "#7d7d7d", fontSize: "13px" }}>Сургалт зохион байгуулагдах газар:</p>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={24} md={24} lg={24}>
+                                    <Form.Item label="Аймаг, хот:">
                                         <Select
-                                        placeholder="Аймаг, хот"
-                                        allowClear 
+                                            placeholder="Аймаг, хот"
+                                            allowClear
                                         >
                                             <Option value="Ulaanbaatar">Улаанбаатар</Option>
                                             <Option value="Arkhangai">Архангай</Option>
                                             <Option value="other">other</Option>
                                         </Select>
                                     </Form.Item>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={24} md={24} lg={24}>
-                                    <Form.Item label="Сум, дүүрэг:">                              
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={24} md={24} lg={24}>
+                                    <Form.Item label="Сум, дүүрэг:">
                                         <Select
-                                                placeholder="Сум, дүүрэг"
-                                                allowClear         
-                                                >
-                                                    <Option value="Sukhbaatar">Сүхбаатар дүүрэг</Option>
-                                                    <Option value="Bayangol">Баянгол</Option>
-                                                    <Option value="other">other</Option>
+                                            placeholder="Сум, дүүрэг"
+                                            allowClear
+                                        >
+                                            <Option value="Sukhbaatar">Сүхбаатар дүүрэг</Option>
+                                            <Option value="Bayangol">Баянгол</Option>
+                                            <Option value="other">other</Option>
                                         </Select>
                                     </Form.Item>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={24} md={24} lg={24}>
-                                    <Form.Item label="Хаяг:"> 
-                                        <Input.TextArea 
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={24} md={24} lg={24}>
+                                    <Form.Item label="Баг, хороо:">
+                                        <Select
+                                            placeholder="Баг, хороо"
+                                            allowClear
+                                        >
+                                            <Option value="Sukhbaatar">Сүхбаатар дүүрэг</Option>
+                                            <Option value="Bayangol">Баянгол</Option>
+                                            <Option value="other">other</Option>
+                                        </Select>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={24} md={24} lg={24}>
+                                    <Form.Item label="Хаяг:">
+                                        <Input.TextArea
                                             style={{
                                                 width: "100%",
                                                 height: "110px"
                                             }}
                                         />
                                     </Form.Item>
-                            </Col>
-                        </Row>
-                </Col>
-                <Col xs={24} md={24} lg={10}>
-                    <Row>
-                        <Col xs={24} md={24} lg={24}>
-                                <Form.Item label="Сургалтын оролцогчид:"> 
-                                    <Input.TextArea 
-                                        style={{
-                                            width: "100%",
-                                            height: "110px"
-                                        }}
-                                    />
-                                </Form.Item>
+                                </Col>
+                            </Row>
                         </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={24} md={24} lg={24}>
-                                <Form.Item label="Сургалтын оролцогчид:">                              
-                                    <Table dataSource={data} columns={columns} />
-                                </Form.Item>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={24} md={24} lg={24}>
-                                <Form.Item label="Суралцагч:">                              
-                                    <Table dataSource={dataa} columns={column} />
-                                </Form.Item>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={24} md={24} lg={24}>
-                                <Form.Item label="Сургалтын хугацаа:">                              
-                                    <RangePicker/>
-                                </Form.Item>
-                        </Col>
-                    </Row>
+                        <Col xs={24} md={24} lg={12}>
+                            <Row>
+                                <Col xs={24} md={24} lg={24}>
+                                    <Form.Item label="Сургалтын оролцогчид:">
+                                        <Input.TextArea
+                                            style={{
+                                                width: "100%",
+                                                height: "110px"
+                                            }}
+                                        />
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={24} md={24} lg={24}>
+                                    <Form.Item label="Сургалтын оролцогчид:">
+                                        <Table dataSource={data} columns={columns} />
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={24} md={24} lg={24}>
+                                    <Form.Item label="Суралцагч:">
+                                        <Table dataSource={dataa} columns={column} />
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={24} md={24} lg={24}>
+                                    <Form.Item label="Сургалтын хугацаа:">
+                                        <RangePicker />
+                                    </Form.Item>
+                                </Col>
+                            </Row>
 
-                </Col>
-            </Row>
-            </Form>
+                        </Col>
+                    </Row>
+                </Form>
             </Modal>
         </div >
     );

@@ -22,7 +22,7 @@ import Plan from "./training/training/plan";
 import TrainingProgram from "./training/training/trainingProgram";
 import TrainingReport from "./training/training/trainingReport";
 import Tunshlel from "./tunshlel";
-import Test from "./training/training/test";
+import TestAggregation from "./training/training/testAggregation";
 import Budget from "./training/training/budget";
 import User from "./user/user";
 import Role from "./user/role";
@@ -155,7 +155,7 @@ const Admin = () => {
                       <Link to="/training_program">{t("training_program")}</Link>
                     </Menu.Item>
                     <Menu.Item key="13"><Link to="/attendance">{t("attendance_registration")}</Link></Menu.Item>
-                    <Menu.Item key="14"><Link to="test">{t("test_aggregation")}</Link></Menu.Item>
+                    <Menu.Item key="14"><Link to="/test_aggregation">{t("test_aggregation")}</Link></Menu.Item>
                     <Menu.Item key="15"><Link to="/training_report">{t("training_report")}</Link></Menu.Item>
                     <Menu.Item key="16"><Link to="/budget">{t("training_budget")}</Link></Menu.Item>
                   </SubMenu>
@@ -365,8 +365,8 @@ const Admin = () => {
                   <Route path="/attendance">
                     <Attendance />
                   </Route>
-                  <Route path="/test">
-                    <Test />
+                  <Route path="/test_aggregation">
+                    <TestAggregation />
                   </Route>
                   <Route path="/budget">
                     <Budget />
