@@ -27,5 +27,5 @@ export async function postService(serviceName, data) {
 // }
 
 export async function putService(serviceName, data) {
-  return await axios.put(serviceName, { data }, config);
+  return await axios.put(serviceName, data , config);
 }

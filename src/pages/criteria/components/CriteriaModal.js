@@ -36,6 +36,8 @@ export default function CriteriaModal(props) {
         form
             .validateFields()
             .then((values) => {
+                debugger
+                console.log(values);
                 if (isEditMode) {
                     putService(
                         "criteria/update/" + Criteriacontroller.id,

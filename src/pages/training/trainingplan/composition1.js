@@ -87,17 +87,7 @@ const Composition1 = () => {
                 setSelectedRows([]);
 
             })
-            getService("trainingPlan/getChildren/1", listchild)
-            .then((result) => {
-                let listchild = result.content || [];
-                listchild.map(
-                    (item, index) =>
-                        (item.index = lazyParams.page * PAGESIZE + index + 1)
-                );
-                setListchild(listchild);
-                setSelectedRows([]);
 
-            })
             .catch((error) => {
                 errorCatch(error);
                 isShowLoading(false);
@@ -151,6 +141,23 @@ const Composition1 = () => {
     // }
 
     const rowExpansionTemplate = (data) => {
+if (!data.id)
+return
+        getService(`trainingPlan/getChildren/${data.id}`)
+        .then((result) => {
+            let listchild = result.content || [];
+            listchild.map(
+                (item, index) =>
+                    (item.index = lazyParams.page * PAGESIZE + index + 1)
+            );
+            setListchild(listchild);
+            setSelectedRows([]);
+
+        })  .catch((error) => {
+            errorCatch(error);
+            isShowLoading(false);
+        })
+        debugger
         return (
             <div className="orders-subtable">
                 <DataTable                         
