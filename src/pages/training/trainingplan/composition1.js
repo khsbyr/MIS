@@ -10,6 +10,7 @@ import { isShowLoading } from "../../../context/Tools";
 import { getService, putService } from "../../../service/service";
 import { PAGESIZE } from "../../../tools/Constant";
 import { errorCatch } from "../../../tools/Tools";
+import { Toast } from 'primereact/toast';
 import Composition1Modal from "../trainingplan/components/Composition1Modal"
 import ContentWrapper from "./components/composition.style";
 function handleMenuClick(e) { console.log("click", e.key[0]); }
@@ -48,9 +49,14 @@ var editRow
 var isEditMode;
 const Composition1 = () => {
     const [products, setProducts] = useState([]);
+    const toast = useRef(null);
+    const isMounted = useRef(false);
+
     const [multiSortMeta, setMultiSortMeta] = useState([{ field: 'category', order: -1 }]);
     let loadLazyTimeout = null;
     const [list, setList] = useState([]);
+    const [listchild, setListchild] = useState([]);
+
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [lazyParams, setLazyParams] = useState({
         page: 0,
@@ -58,6 +64,8 @@ const Composition1 = () => {
     const [loading, setLoading] = useState(false);
     const PAGESIZE = 20;
     const [selectedRows, setSelectedRows] = useState([]);
+    const [expandedRows, setExpandedRows] = useState(null);
+
 
     useEffect(() => {
         onInit();
@@ -68,7 +76,7 @@ const Composition1 = () => {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("organization/get", list)
+        getService("trainingPlan/getParents/1", list)
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -76,6 +84,17 @@ const Composition1 = () => {
                         (item.index = lazyParams.page * PAGESIZE + index + 1)
                 );
                 setList(list);
+                setSelectedRows([]);
+
+            })
+            getService("trainingPlan/getChildren/1", listchild)
+            .then((result) => {
+                let listchild = result.content || [];
+                listchild.map(
+                    (item, index) =>
+                        (item.index = lazyParams.page * PAGESIZE + index + 1)
+                );
+                setListchild(listchild);
                 setSelectedRows([]);
 
             })
@@ -122,6 +141,49 @@ const Composition1 = () => {
             confirm();
         }
     };
+
+    // const onRowExpand = (event) => {
+    //     toast.current.show({severity: 'info', summary: 'Product Expanded', detail: event.data.name, life: 3000});
+    // }
+
+    // const onRowCollapse = (event) => {
+    //     toast.current.show({severity: 'success', summary: 'Product Collapsed', detail: event.data.name, life: 3000});
+    // }
+
+    const rowExpansionTemplate = (data) => {
+        return (
+            <div className="orders-subtable">
+                <DataTable                         
+                        value={listchild}
+                        removableSort
+                        paginator
+                        rows={10}
+                        className="p-datatable-responsive-demo"
+                        selectionMode="checkbox"
+                        selection={selectedRows}
+                        onRowClick={edit}
+                        onSelectionChange={(e) => {
+                            setSelectedRows(e.value);
+                        }}>
+                    <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
+                    
+                    <Column field="index" header="Id" sortable></Column>
+                    <Column field="name" header="Name" sortable></Column>
+                    <Column field="upIndicator" header="Үр дүн" sortable></Column>
+                    <Column field="amount" header="Amount" sortable></Column>
+                    <Column field="status" header="Status"  sortable></Column>
+                    <Column field="index" header="Id" sortable></Column>
+                    <Column field="index" header="Id" sortable></Column>
+                    <Column field="index" header="Id" sortable></Column>
+                    <Column field="index" header="Id" sortable></Column>
+
+                    <Column field="index" header="Id" sortable></Column>
+
+
+                </DataTable>
+            </div>
+        );
+    }
     const [selectedProducts, setSelectedProducts] = useState(null);
     return (
         <ContentWrapper>
@@ -173,8 +235,14 @@ const Composition1 = () => {
                         onSelectionChange={(e) => {
                             setSelectedRows(e.value);
                         }}
+
+                        expandedRows={expandedRows} onRowToggle={(e) => setExpandedRows(e.data)}
+                        // onRowExpand={onRowExpand} onRowCollapse={onRowCollapse}
+                        rowExpansionTemplate={rowExpansionTemplate}
+
                         dataKey="id">
                             <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
+                            <Column expander style={{ width: '3em' }} />
                             <Column field="code" header="№" style={{ width: "50px" }} />
                             <Column field="name" header="Сургалтын агууллага" filter/>
                             <Column field="" header="Зорилтот үр дүн"/>
