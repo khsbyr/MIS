@@ -25,22 +25,20 @@ export default function CriteriaModal(props) {
     const [form] = Form.useForm();
     useEffect(() => {
 
-
-        if (isEditMode) {
-  
-                form.setFieldsValue({ ...Criteriacontroller });
+            if (isEditMode) {
+                    form.setFieldsValue({ ...Criteriacontroller });
+                
+    
             }
-
         
     }, []);
     const save = () => {
         form
             .validateFields()
             .then((values) => {
-                values.userService = { id: values.userServiceId }
                 if (isEditMode) {
                     putService(
-                        "criteria/put" + Criteriacontroller.id,
+                        "criteria/update/" + Criteriacontroller.id,
                         values
                     )
                         .then((result) => {

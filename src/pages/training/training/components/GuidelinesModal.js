@@ -78,25 +78,24 @@ const validateMessages = {
     },
 };
 export default function GuidelinesModal(props) {
-    const { Usercontroller, isModalVisible, isEditMode } = props;
+    const { Guidelinescontroller, isModalVisible, isEditMode } = props;
     const [stateController, setStateController] = useState([]);
     const [form] = Form.useForm();
     const { Option } = Select;
     const { RangePicker } = DatePicker;
     useEffect(() => {
-        getService("criteria/get", {
-            search: "status:true",
-        }).then((result) => {
-            if (result) {
-                setStateController(result.content || []);
-            }
-        });
+        // getService("trainingGuidelines/get", {
+        //     search: "status:true",
+        // }).then((result) => {
+        //     if (result) {
+        //         setStateController(result.content || []);
+        //     }
+        // });
 
         if (isEditMode) {
-            getService("criteria/get" + Usercontroller.id).then((result) => {
-                Usercontroller.userServiceId = result.userService.id
-                form.setFieldsValue({ ...Usercontroller });
-            })
+  
+                form.setFieldsValue({ ...Guidelinescontroller });
+
 
         }
     }, []);
@@ -104,10 +103,9 @@ export default function GuidelinesModal(props) {
         form
             .validateFields()
             .then((values) => {
-                values.userService = { id: values.userServiceId }
                 if (isEditMode) {
                     putService(
-                        "criteria/put" + Usercontroller.id,
+                        "trainingGuidelines/put" + Guidelinescontroller.id,
                         values
                     )
                         .then((result) => {
@@ -117,7 +115,7 @@ export default function GuidelinesModal(props) {
                             errorCatch(error);
                         })
                 } else {
-                    postService("criteria/post", values)
+                    postService("trainingGuidelines/post", values)
                         .then((result) => {
                             props.close(true);
                         })
@@ -136,69 +134,84 @@ export default function GuidelinesModal(props) {
                 title="Сургалтын удирдамж бүртгэх"
                 okText="Хадгалах"
                 cancelText="Буцах"
-                width={1200}
+                width={1000}
                 alignItems="center"
                 visible={isModalVisible}
                 onOk={save}
                 onCancel={() => props.close()}
             >
+                <Form
+                    form={form}
+                    labelAlign={"left"}
+                    {...layout}
+                    layout="vertical"
+                    name="nest-messages"
+                    validateMessages={validateMessages}
+                >
           <Row>
-            <Col  xs={24} md={24} lg={10}>
+            <Col  xs={24} md={24} lg={14}>
                         <Row>
-                            <Col xs={24} md={24} lg={15}>
-                                <Form layout="vertical">
-                                    <Form.Item label="Сургалтын сэдэв:">                              
+                            <Col xs={24} md={24} lg={24}>
+                                    <Form.Item label="Сургалтын сэдэв:" name="subject" rules={[
+                            {
+                                required: true,
+                            },
+                        ]}>                              
                                         <Input />
                                     </Form.Item>
-                                </Form>
                             </Col>
                         </Row>
                         <Row>
-                            <Col xs={24} md={24} lg={15}>
-                                <Form layout="vertical">
-                                    <Form.Item label="Сургалт зохион байгуулах үндэслэл:">                              
+                            <Col xs={24} md={24} lg={24}>
+                                    <Form.Item label="Сургалт зохион байгуулах үндэслэл:" name="reason" rules={[
+                            {
+                                required: true,
+                            },
+                        ]}>                              
                                         <Input />
                                     </Form.Item>
-                                </Form>
                             </Col>
                         </Row>
                         <Row>
-                            <Col xs={24} md={24} lg={15}>
-                                <Form layout="vertical">
-                                    <Form.Item label="Сургалтын зорилго:">                              
+                            <Col xs={24} md={24} lg={24}>
+                                    <Form.Item label="Сургалтын зорилго:" name="aim" rules={[
+                            {
+                                required: true,
+                            },
+                        ]}>                              
                                         <Input />
                                     </Form.Item>
-                                </Form>
                             </Col>
                         </Row>
                         <Row>
-                            <Col xs={24} md={24} lg={15}>
-                                <Form layout="vertical">
-                                    <Form.Item label="Хэрэгжүүлэх үйл ажиллагаа:">                              
+                            <Col xs={24} md={24} lg={24}>
+                                    <Form.Item label="Хэрэгжүүлэх үйл ажиллагаа:" name="operation" rules={[
+                            {
+                                required: true,
+                            },
+                        ]}>                              
                                         <Input />
                                     </Form.Item>
-                                </Form>
                             </Col>
                         </Row>
                         <Row>
-                            <Col xs={24} md={24} lg={15}>
-                                <Form layout="vertical">
-                                    <Form.Item label="Хүлээгдэж буй үр дүн:">                              
+                            <Col xs={24} md={24} lg={24}>
+                                    <Form.Item label="Хүлээгдэж буй үр дүн:" name="result" rules={[
+                            {
+                                required: true,
+                            },
+                        ]}>                              
                                         <Input />
                                     </Form.Item>
-                                </Form>
                             </Col>
                         </Row>
                         <Row>
-                            <Col xs={24} md={24} lg={15}>
-                                <Form layout="vertical">
+                            <Col xs={24} md={24} lg={24}>
                                     <p style={{color: "#7d7d7d", fontSize: "13px"}}>Сургалт зохион байгуулагдах газар:</p>
-                                </Form>
                             </Col>
                         </Row>
                         <Row>
-                            <Col xs={24} md={24} lg={15}>
-                                <Form layout="vertical">
+                            <Col xs={24} md={24} lg={24}>
                                     <Form.Item label="Аймаг, хот:">                              
                                         <Select
                                         placeholder="Аймаг, хот"
@@ -209,12 +222,10 @@ export default function GuidelinesModal(props) {
                                             <Option value="other">other</Option>
                                         </Select>
                                     </Form.Item>
-                                </Form>
                             </Col>
                         </Row>
                         <Row>
-                            <Col xs={24} md={24} lg={15}>
-                                <Form layout="vertical">
+                            <Col xs={24} md={24} lg={24}>
                                     <Form.Item label="Сум, дүүрэг:">                              
                                         <Select
                                                 placeholder="Сум, дүүрэг"
@@ -225,12 +236,10 @@ export default function GuidelinesModal(props) {
                                                     <Option value="other">other</Option>
                                         </Select>
                                     </Form.Item>
-                                </Form>
                             </Col>
                         </Row>
                         <Row>
-                            <Col xs={24} md={24} lg={15}>
-                                <Form layout="vertical">
+                            <Col xs={24} md={24} lg={24}>
                                     <Form.Item label="Хаяг:"> 
                                         <Input.TextArea 
                                             style={{
@@ -239,14 +248,12 @@ export default function GuidelinesModal(props) {
                                             }}
                                         />
                                     </Form.Item>
-                                </Form>
                             </Col>
                         </Row>
                 </Col>
-                <Col xs={24} md={24} lg={14}>
+                <Col xs={24} md={24} lg={10}>
                     <Row>
-                        <Col xs={24} md={24} lg={20}>
-                            <Form layout="vertical">
+                        <Col xs={24} md={24} lg={24}>
                                 <Form.Item label="Сургалтын оролцогчид:"> 
                                     <Input.TextArea 
                                         style={{
@@ -255,39 +262,33 @@ export default function GuidelinesModal(props) {
                                         }}
                                     />
                                 </Form.Item>
-                            </Form>
                         </Col>
                     </Row>
                     <Row>
-                        <Col xs={24} md={24} lg={20}>
-                            <Form layout="vertical">
+                        <Col xs={24} md={24} lg={24}>
                                 <Form.Item label="Сургалтын оролцогчид:">                              
                                     <Table dataSource={data} columns={columns} />
                                 </Form.Item>
-                            </Form>
                         </Col>
                     </Row>
                     <Row>
-                        <Col xs={24} md={24} lg={20}>
-                            <Form layout="vertical">
+                        <Col xs={24} md={24} lg={24}>
                                 <Form.Item label="Суралцагч:">                              
                                     <Table dataSource={dataa} columns={column} />
                                 </Form.Item>
-                            </Form>
                         </Col>
                     </Row>
                     <Row>
-                        <Col xs={24} md={24} lg={20}>
-                            <Form layout="vertical">
+                        <Col xs={24} md={24} lg={24}>
                                 <Form.Item label="Сургалтын хугацаа:">                              
                                     <RangePicker/>
                                 </Form.Item>
-                            </Form>
                         </Col>
                     </Row>
 
                 </Col>
             </Row>
+            </Form>
             </Modal>
         </div >
     );
