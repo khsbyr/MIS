@@ -35,7 +35,7 @@ export default function Composition1Modal(props) {
         });
 
         if (isEditMode) {
-            getService("criteria/get" + Composition.id).then((result) => {
+            getService("" + Composition.id).then((result) => {
                 Composition.userServiceId = result.userService.id
                 form.setFieldsValue({ ...Composition });
             })
@@ -49,7 +49,7 @@ export default function Composition1Modal(props) {
                 values.userService = { id: values.userServiceId }
                 if (isEditMode) {
                     putService(
-                        "criteria/put" + Composition.id,
+                        "" + Composition.id,
                         values
                     )
                         .then((result) => {
@@ -59,7 +59,7 @@ export default function Composition1Modal(props) {
                             errorCatch(error);
                         })
                 } else {
-                    postService("criteria/post", values)
+                    postService("", values)
                         .then((result) => {
                             props.close(true);
                         })
