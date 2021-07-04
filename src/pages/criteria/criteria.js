@@ -105,14 +105,14 @@ const Criteria = () => {
         isEditMode = false;
     };
 
-    const action = () => {
-        return (   
-            <React.Fragment>
-                <Button type="text" icon={ <FontAwesomeIcon icon={faPen}/>} onClick={edit} />
-                <Button type="text" icon={ <FontAwesomeIcon icon={faTrash}/>} onClick={pop} />
-            </React.Fragment>
-        );
-    }
+    // const action = () => {
+    //     return (   
+    //         <React.Fragment>
+    //             <Button type="text" icon={ <FontAwesomeIcon icon={faPen}/>} onClick={edit} />
+    //             <Button type="text" icon={ <FontAwesomeIcon icon={faTrash}/>} onClick={pop} />
+    //         </React.Fragment>
+    //     );
+    // }
 
     const edit = (row) => {
         editRow = row.data
@@ -157,8 +157,8 @@ const Criteria = () => {
                                 <p className="title">Сургалтын хөтөлбөр</p>
                             </Col>
                             <Col xs={24} md={24} lg={10}>
-                                <Row>
-                                    <Col xs={8} md={8} lg={6}>
+                                <Row gutter={[0, 15]}>
+                                    <Col xs={8} md={8} lg={5}>
                                         <DatePicker
                                             onChange={onChange}
                                             bordered={false}
@@ -186,17 +186,22 @@ const Criteria = () => {
                                             }}
                                         />
                                     </Col> */}
-                                    <Col xs={8} md={8} lg={6}>
+                                    <Col xs={8} md={8} lg={5}>
                                         <Button type="text" icon={ <FontAwesomeIcon icon={faPrint}/>} >Хэвлэх </Button>
                                     </Col>
-                                    <Col xs={8} md={8} lg={6}>
+                                    <Col xs={8} md={8} lg={5}>
                                         <Button type="text" className="export" icon={ <FontAwesomeIcon icon={faFileExcel}/>} >
                                             Экспорт
                                         </Button>
                                     </Col>
-                                    <Col xs={8} md={8} lg={6}>
+                                    <Col xs={8} md={8} lg={5}>
                                         <Button type="text" className="export" icon={ <FontAwesomeIcon icon={faPlus}/>} onClick={add}>
                                             Нэмэх
+                                        </Button>
+                                    </Col>
+                                    <Col xs={8} md={8} lg={4}>
+                                        <Button type="text" className="export" icon={ <FontAwesomeIcon icon={faTrash}/>} onClick={pop}>
+                                            Устгах
                                         </Button>
                                     </Col>
                                 </Row>
@@ -212,22 +217,22 @@ const Criteria = () => {
                         paginator 
                         rows={10}
                         className="p-datatable-responsive-demo"
-                        // selectionMode="checkbox"
+                        selectionMode="checkbox"
                         selection={selectedRows}
-                        // onRowClick={edit}
+                        onRowClick={edit}
                         // editMode="row"
                         onSelectionChange={(e) => {
                             setSelectedRows(e.value);
                         }}
                         dataKey="id">
-                        {/* <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column> */}
-                        <Column field="index" header="№" sortable headerStyle={{ width: '5rem' }} bodyStyle={{ textAlign: 'center' }}/>
-                        <Column field="code" header="Код" sortable headerStyle={{ width: '5rem' }} bodyStyle={{ textAlign: 'center' }}/>
-                        <Column field="name" header="Шалгуур үзүүлэлтийн нэр" headerStyle={{ width: '40rem' }}  style={{ textAlign: "left" }} sortable filter filterPlaceholder="Хайх" />
-                        <Column field="indicatorProcess" header="Хүрэх үр дүн" sortable headerStyle={{ width: '9rem' }} bodyStyle={{ textAlign: 'center' }} filter filterPlaceholder="Хайх" />
-                        <Column field="upIndicator" header="Үр дүнгийн биелэлт" sortable headerStyle={{ width: '11rem' }} bodyStyle={{ textAlign: 'center' }}/>
-                        <Column field="" header="Шалгуур үзүүлэлтийн төрөл" sortable headerStyle={{ width: '14rem' }} bodyStyle={{ textAlign: 'center' }}/>
-                        <Column headerStyle={{ width: '7rem' }} body={action}></Column>
+                        <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
+                        <Column field="index" header="№" sortable bodyStyle={{ textAlign: 'center' }}/>
+                        <Column field="code" header="Код" sortable bodyStyle={{ textAlign: 'center' }}/>
+                        <Column field="name" header="Шалгуур үзүүлэлтийн нэр"  style={{ textAlign: "left" }} sortable filter filterPlaceholder="Хайх" />
+                        <Column field="indicatorProcess" header="Хүрэх үр дүн" sortable  bodyStyle={{ textAlign: 'center' }} filter filterPlaceholder="Хайх" />
+                        <Column field="upIndicator" header="Үр дүнгийн биелэлт" sortable  bodyStyle={{ textAlign: 'center' }}/>
+                        <Column field="" header="Шалгуур үзүүлэлтийн төрөл" sortable bodyStyle={{ textAlign: 'center' }}/>
+                        {/* <Column headerStyle={{ width: '7rem' }} body={action}></Column> */}
                     </DataTable>
                     {isModalVisible && (
                         <CriteriaModal
