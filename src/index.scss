@@ -119,6 +119,7 @@ position: none;
 .DataTable table > tbody > tr > td {
     border: none !important;
 }
+
 .p-datatable {
     font-size: 13px !important;
     text-align: center !important;
@@ -131,12 +132,16 @@ position: none;
       text-align: center !important;
       border: 1px solid #ebeef0 !important;
       padding: 15px 15px 15px !important;
+      background-color: #103154;
+      color: white;
     }
+
   }
   .p-datatable .p-datatable-thead > tr > th{
   text-align: center !important;
   border-width: 0 1px 0px 0 !important;
   }
+
 
   .ant-input:hover {
     border-right-width: 1px !important;
@@ -210,7 +215,7 @@ position: none;
   color: blue;
 }
 
-  
+
 
 .datatable-responsive-demo .p-datatable-responsive-demo .p-datatable-tbody > tr > td .p-column-title {
   display: none;

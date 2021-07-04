@@ -110,7 +110,7 @@ const Composition1 = () => {
             return;
         }
         debugger
-        putService("organization/delete/" + selectedRows[0].id)
+        putService("trainingPlan/delete/" + selectedRows[0].id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -157,7 +157,6 @@ return
             errorCatch(error);
             isShowLoading(false);
         })
-        debugger
         return (
             <div className="orders-subtable">
                 <DataTable                         
@@ -174,17 +173,17 @@ return
                         }}>
                     <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
                     
-                    <Column field="index" header="Id" sortable></Column>
-                    <Column field="name" header="Name" sortable></Column>
-                    <Column field="upIndicator" header="Үр дүн" sortable></Column>
-                    <Column field="amount" header="Amount" sortable></Column>
-                    <Column field="status" header="Status"  sortable></Column>
-                    <Column field="index" header="Id" sortable></Column>
-                    <Column field="index" header="Id" sortable></Column>
-                    <Column field="index" header="Id" sortable></Column>
-                    <Column field="index" header="Id" sortable></Column>
+                    <Column field="index" header="Id" sortable headerStyle={{ width: '5em', padding: "0px" }}></Column>
+                    <Column field="name" header="" sortable filter style={{width: "30%"}}></Column>
+                    <Column field="code" header="" sortable filter></Column>
+                    <Column field="name" header="" sortable filter></Column>
+                    <Column field="gender" header=""  sortable filter></Column>
+                    <Column field="upIndicator" header="" sortable filter></Column>
+                    <Column field=" " header="" sortable filter></Column>
+                    <Column field="index" header="" sortable filter></Column>
+                    <Column field="index" header="" sortable filter></Column>
 
-                    <Column field="index" header="Id" sortable></Column>
+                    <Column field="index" header="Id" sortable filter></Column>
 
 
                 </DataTable>
@@ -251,7 +250,7 @@ return
                             <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
                             <Column expander style={{ width: '3em' }} />
                             <Column field="code" header="№" style={{ width: "50px" }} />
-                            <Column field="name" header="Сургалтын агууллага" filter/>
+                            <Column field="name" header="Сургалтын агууллага" filter style={{width: "30%"}}/>
                             <Column field="" header="Зорилтот үр дүн"/>
                             <Column field="" header="Шалгуур үзүүлэлт"/>
                             <Column field="" header="I улирал"/>

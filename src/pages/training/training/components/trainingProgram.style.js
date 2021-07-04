@@ -4,14 +4,7 @@ const ContentWrapper = styled.div`
     margin-left: 45px;
     margin-right: 45px;
     margin-top: 30px;
-    .p-checkbox .p-checkbox-box {
-        width: 15px !important;
-        height: 15px !important;
-        border: 1px solid;
-    }
-    .p-checkbox .p-checkbox-box:focus {
-    background-color: #103154;   
-    }
+
     .ant-upload.ant-upload-drag {
         width: 100%;
         height: 200px;
