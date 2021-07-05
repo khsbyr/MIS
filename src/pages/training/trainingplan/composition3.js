@@ -192,7 +192,7 @@ import {
                       <Content>
                           <Row>
                               <Col>
-                                  <h2 className="title">Бүрэлдэхүүн 1</h2>
+                                  <h2 className="title">Бүрэлдэхүүн 3</h2>
                               </Col>
                           </Row>
                           <Row>

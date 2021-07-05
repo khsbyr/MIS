@@ -10,8 +10,10 @@ import { isShowLoading } from "../../../context/Tools";
 import { getService, putService } from "../../../service/service";
 import { PAGESIZE } from "../../../tools/Constant";
 import { errorCatch } from "../../../tools/Tools";
-import AttendanceModal from "../training/components/attendanceModal";
+import HonogBuudliinZardalModal from "../training/components/HonogBuudliinZardalModal";
 import ContentWrapper from "../training/components/attendance.style";
+import BichgiinHeregselModal from "./components/BichgiinHeregselModal";
+import ShathuuniiZardalModal from "./components/ShathuuniiZardalModal";
 function handleMenuClick(e) { console.log("click", e.key[0]); }
 function onChange(date, dateString) {
     console.log(date, dateString);
@@ -53,6 +55,8 @@ const Budget = () => {
     let loadLazyTimeout = null;
     const [list, setList] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isModalVisibleBichigHeregsel, setIsModalVisibleBichigHeregsel] = useState(false);
+    const [isModalVisibleShathuuniiZardal, setIsModalVisibleShathuuniiZardal] = useState(false);
     const [lazyParams, setLazyParams] = useState({
         page: 0,
     });
@@ -123,6 +127,43 @@ const Budget = () => {
             confirm();
         }
     };
+
+    const addBichigHeregsel = () => {
+        setIsModalVisibleBichigHeregsel(true);
+        isEditMode = false;
+    };
+
+    const popBichigHeregsel = () => {
+        if (selectedRows.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        } else {
+            confirm();
+        }
+    };
+    const closeModalBichigHeregsel = (isSuccess = false) => {
+        setIsModalVisibleBichigHeregsel(false);
+        if (isSuccess) onInit();
+    };
+
+    const addShathuuniiZardal = () => {
+        setIsModalVisibleShathuuniiZardal(true);
+        isEditMode = false;
+    };
+
+    const popShathuuniiZardal = () => {
+        if (selectedRows.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        } else {
+            confirm();
+        }
+    };
+    const closeModalShathuuniiZardal = (isSuccess = false) => {
+        setIsModalVisibleShathuuniiZardal(false);
+        if (isSuccess) onInit();
+    };
+
     const [selectedProducts, setSelectedProducts] = useState(null);
     return (
         <ContentWrapper>
@@ -133,16 +174,16 @@ const Budget = () => {
 
                         <Row>
                             <Col span={2}>
-                                <Button onClick={add} type="link" icon={<SaveIcon />}>
+                                <Button onClick={addBichigHeregsel} type="link" icon={<SaveIcon />}>
                                     Нэмэх
                                 </Button>
                             </Col>
                             <Col span={2}>
-                                <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
+                                <Button onClick={popBichigHeregsel} type="link" icon={<FolderAddFilled />}>
                                     Устгах
                                 </Button>
                             </Col>
-                            <Col span={18} style={{ textAlign: "right" }}>
+                            <Col span={20} style={{ textAlign: "right" }}>
                                 <div style={{ marginRight: "5px" }}>
                                     <Dropdown.Button
                                         overlay={menu}
@@ -181,16 +222,46 @@ const Budget = () => {
                         <Column field="" header="Дүн /₮/" />
 
                     </DataTable>
-                    {isModalVisible && (
-                        <AttendanceModal
+                    {isModalVisibleBichigHeregsel && (
+                        <BichgiinHeregselModal
                             Criteriacontroller={editRow}
-                            isModalVisible={isModalVisible}
-                            close={closeModal}
+                            isModalVisible={isModalVisibleBichigHeregsel}
+                            close={closeModalBichigHeregsel}
                             isEditMode={isEditMode}
                         />
                     )}
                 </div>
 
+                <Layout className="btn-layout">
+                    <Content>
+
+                        <Row>
+                            <Col span={2}>
+                                <Button onClick={add} type="link" icon={<SaveIcon />}>
+                                    Нэмэх
+                                </Button>
+                            </Col>
+                            <Col span={2}>
+                                <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
+                                    Устгах
+                                </Button>
+                            </Col>
+                            <Col span={20} style={{ textAlign: "right" }}>
+                                <div style={{ marginRight: "5px" }}>
+                                    <Dropdown.Button
+                                        overlay={menu}
+                                        placement="bottomCenter"
+                                        icon={
+                                            <SettingFilled
+                                                style={{ marginLeft: "8px", color: "#45629c" }}
+                                            />
+                                        }
+                                    ></Dropdown.Button>
+                                </div>
+                            </Col>
+                        </Row>
+                    </Content>
+                </Layout>
                 <div className="datatable-responsive-demo">
                     <h3>2. Зам хоног, буудлын зардал</h3>
                     <DataTable
@@ -216,7 +287,7 @@ const Budget = () => {
 
                     </DataTable>
                     {isModalVisible && (
-                        <AttendanceModal
+                        <HonogBuudliinZardalModal
                             Criteriacontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
@@ -224,6 +295,37 @@ const Budget = () => {
                         />
                     )}
                 </div>
+
+                <Layout className="btn-layout">
+                    <Content>
+
+                        <Row>
+                            <Col span={2}>
+                                <Button onClick={addShathuuniiZardal} type="link" icon={<SaveIcon />}>
+                                    Нэмэх
+                                </Button>
+                            </Col>
+                            <Col span={2}>
+                                <Button onClick={popShathuuniiZardal} type="link" icon={<FolderAddFilled />}>
+                                    Устгах
+                                </Button>
+                            </Col>
+                            <Col span={20} style={{ textAlign: "right" }}>
+                                <div style={{ marginRight: "5px" }}>
+                                    <Dropdown.Button
+                                        overlay={menu}
+                                        placement="bottomCenter"
+                                        icon={
+                                            <SettingFilled
+                                                style={{ marginLeft: "8px", color: "#45629c" }}
+                                            />
+                                        }
+                                    ></Dropdown.Button>
+                                </div>
+                            </Col>
+                        </Row>
+                    </Content>
+                </Layout>
 
                 <div className="datatable-responsive-demo">
                     <h3>3. Шатахууны зардал /маршрутаар/</h3>
@@ -250,11 +352,11 @@ const Budget = () => {
 
 
                     </DataTable>
-                    {isModalVisible && (
-                        <AttendanceModal
+                    {isModalVisibleShathuuniiZardal && (
+                        <ShathuuniiZardalModal
                             Criteriacontroller={editRow}
-                            isModalVisible={isModalVisible}
-                            close={closeModal}
+                            isModalVisible={isModalVisibleShathuuniiZardal}
+                            close={closeModalShathuuniiZardal}
                             isEditMode={isEditMode}
                         />
                     )}
@@ -278,14 +380,3 @@ const Budget = () => {
     }
 }
 export default Budget;
-
-
-
-
-
-
-
-
-
-
-

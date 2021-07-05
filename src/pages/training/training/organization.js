@@ -2,7 +2,7 @@ import {
     ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled
 } from "@ant-design/icons";
 import SaveIcon from "@material-ui/icons/Save";
-import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker } from "antd";
+import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker, AutoComplete } from "antd";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import React, { useEffect, useRef, useState } from "react";
@@ -144,6 +144,11 @@ const Organization = () => {
                                     Устгах
                                 </Button>
                             </Col>
+                            <Col span={2}>
+                                <AutoComplete style={{
+      width: 200,
+    }}/>
+                            </Col>
                             <Col span={18} style={{ textAlign: "right" }}>
                                 <div style={{ marginRight: "5px" }}>
                                     <Dropdown.Button
@@ -178,10 +183,10 @@ const Organization = () => {
                         <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
                         <Column field="index" header="№" style={{ width: "50px" }} />
                         <Column field="name" header="Байгууллагын нэр" filter sortable />
-                        <Column field="" header="Регистрийн дугаар" />
+                        <Column field="registerNumber" header="Регистрийн дугаар" />
                         <Column field="" header="Банкны нэр" />
-                        <Column field="" header="Дансны нэр" />
-                        <Column field="" header="Дансны дугаар" />
+                        <Column field="accountName" header="Дансны нэр" />
+                        <Column field="accountNumber" header="Дансны дугаар" />
                     </DataTable>
                     {isModalVisible && (
                         <OrganizationModal
