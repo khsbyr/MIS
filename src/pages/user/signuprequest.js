@@ -78,11 +78,7 @@ function Signuprequest() {
                     (item, index) =>
                         (item.index = lazyParams.page * PAGESIZE + index + 1)
                 );
-                setLoading(false);
-                setTotalRecords(result.totalElements);
-                setList(list);
-                setSelectedRows([]);
-                setExpandedRows();
+
             })
             .catch((error) => {
                 errorCatch(error);
@@ -234,7 +230,6 @@ function Signuprequest() {
                     setSelectedRows(e.value);
                 }}
                 dataKey="id"
-                onRowToggle={expandedCity}
                 className="p-datatable-gridlines"
             >
                 <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
