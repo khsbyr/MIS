@@ -24,6 +24,8 @@ import { errorCatch } from "../../tools/Tools";
 import "../criteria/criteria.style";
 import ContentWrapper from "../criteria/criteria.style";
 import UserModal from "../user/components/UserModal";
+import { faFileExcel, faPen, faPlus, faPrint, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const { Content } = Layout;
 function handleMenuClick(e) {
   console.log("click", e.key[0]);
@@ -109,7 +111,6 @@ const User = () => {
           message.warning("Устгах өгөгдлөө сонгоно уу");
           return;
       }
-      debugger
       putService("user/delete/" + selectedRows[0].id)
           .then((result) => {
               message.success("Амжилттай устлаа");
@@ -131,6 +132,15 @@ const User = () => {
           confirm();
       }
   };
+  const action = (rowData) => {
+    return (
+        <React.Fragment>
+            <Button icon={<FontAwesomeIcon icon={faPen} />} onClick={() => edit(rowData)} />
+            {/* <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => delete(rowData)} /> */}
+        </React.Fragment>
+    );
+}
+
   return (
       <ContentWrapper>
           <div className="button-demo">
@@ -173,20 +183,21 @@ const User = () => {
                       paginator 
                       rows={10}
                       className="p-datatable-responsive-demo"
-                      selectionMode="checkbox"
-                      selection={selectedRows}
-                      onRowClick={edit}
+                    //   selectionMode="checkbox"
+                    //   selection={selectedRows}
+                    //   onRowClick={edit}
                       onSelectionChange={(e) => {
                           setSelectedRows(e.value);
                       }}
                       dataKey="id">
-                      <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
+                      {/* <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column> */}
                       <Column field="index" header="№" sortable />
                       <Column field="firstname" header="Нэр" sortable filter filterPlaceholder="Хайх" />
                       <Column field="lastname" header="Овог" style={{ textAlign: "left" }} sortable filter filterPlaceholder="Хайх" />
                       <Column field="register" header="Регистрийн дугаар" sortable filter filterPlaceholder="Хайх" />
                       <Column field="email" header="Й-мэйл" sortable />
                       <Column field="" header="Статус" sortable />
+                      <Column headerStyle={{ width: '7rem' }} body={action}></Column>
                   </DataTable>
                   {isModalVisible && (
                       <UserModal

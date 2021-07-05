@@ -24,7 +24,7 @@ export default function AutocompleteSelect(props) {
       filterOption={(input, option) =>
         option.children?.toLowerCase().indexOf(input.toLowerCase()) >= 0
       }
-      // onChange={onChange}
+      onChange={props.onChange}
     >
       {data &&
         data.map((z, index) => (
