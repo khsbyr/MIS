@@ -65,26 +65,25 @@ const Criteria = () => {
     const action = (row) => {
         return (
             <React.Fragment>
-                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />} onClick={edit} />
-                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={pop} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />}  onClick={() => edit(row)} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={() => pop(row)} />
             </React.Fragment>
         );
     }
 
     const edit = (row) => {
-        editRow = row.data
+        editRow = row
         isEditMode = true
         setIsModalVisible(true)
-        
     }
 
-    const handleDeleted = () => {
-        if (selectedRows.length === 0) {
+    const handleDeleted = (row) => {
+        if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         }
         debugger
-        putService("criteria/delete/" + selectedRows[0].id)
+        putService("criteria/delete/" + row.id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -97,12 +96,13 @@ const Criteria = () => {
         setIsModalVisible(false);
         if (isSuccess) onInit();
     };
-    const pop = () => {
-        if (selectedRows.length === 0) {
+    debugger
+    const pop = (row) => {
+        if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         } else {
-            confirm();
+            confirm(row);
         }
     };
 
@@ -149,7 +149,7 @@ const Criteria = () => {
                     <Content>
                         <Row>
                             <Col xs={24} md={24} lg={14}>
-                                <p className="title">Сургалтын хөтөлбөр</p>
+                                <p className="title">Шалгуур үзүүлэлтийн бүртгэл</p>
                             </Col>
                             <Col xs={24} md={24} lg={10}>
                                 <Row gutter={[0, 15]}>
@@ -207,19 +207,16 @@ const Criteria = () => {
                         paginator
                         rows={10}
                         className="p-datatable-responsive-demo"
-                        // selectionMode="checkbox"
                         selection={selectedRows}
                         // onRowClick={edit}
-                        // editMode="row"
                         onSelectionChange={(e) => {
                             setSelectedRows(e.value);
                         }}
                         dataKey="id">
-                        {/* <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column> */}
                         <Column field="index" header="№" body={indexBodyTemplate} sortable />
-                        <Column field="name" header="Шалгуур үзүүлэлтийн нэр" body={nameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
-                        <Column field="indicatorProcess" header="Хүрэх үр дүн" body={indicatorProcessBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
-                        <Column field="upIndicator" header="Үр дүнгийн биелэлт" body={upIndicatorBodyTemplate} sortable/>
+                        <Column field="name" header="Шалгуур үзүүлэлтийн нэр" body={nameBodyTemplate} sortable filter filterPlaceholder="Хайх" />
+                        <Column field="indicatorProcess" header="Хүрэх үр дүн" body={indicatorProcessBodyTemplate} sortable filter filterPlaceholder="Хайх" />
+                        <Column field="upIndicator" header="Үр дүнгийн биелэлт" body={upIndicatorBodyTemplate} sortable />
                         <Column field="" header="Шалгуур үзүүлэлтийн төрөл" sortable />
                         <Column headerStyle={{ width: '7rem' }} body={action}></Column>
                     </DataTable>
@@ -235,15 +232,15 @@ const Criteria = () => {
             </div>
         </ContentWrapper>
     );
-    function confirm() {
-        Modal.confirm({    
+    function confirm(row) {
+        Modal.confirm({
             title: "Та устгахдаа итгэлтэй байна уу ?",
             icon: <ExclamationCircleOutlined />,
             okButtonProps: {},
             okText: "Устгах",
             cancelText: "Буцах",
             onOk() {
-                handleDeleted();
+                handleDeleted(row);
                 onInit();
             },
             onCancel() { },
