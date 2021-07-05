@@ -1,4 +1,4 @@
-import { Col, Form, Input, Modal, Row, Select } from "antd";
+import { Col, Form, Input, Modal, Row, Select, Radio } from "antd";
 import React, { useEffect, useState } from "react";
 import { getService, postService, putService } from "../../../service/service";
 import { errorCatch } from "../../../tools/Tools";
@@ -23,32 +23,19 @@ const validateMessages = {
 };
 export default function UserModal(props) {
   const { Usercontroller, isModalVisible, isEditMode } = props;
-  const [ setStateController ] = useState([]);
+  const [setStateController] = useState([]);
   const [form] = Form.useForm();
   const { Option } = Select;
-  const [ stateCountry, setStateCountry] = useState([]);
+  const [stateCountry, setStateCountry] = useState([]);
   const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
-  // const [stateBag, setStateBag] = useState([]);
+  const [stateGender, setStateGender] = useState([]);
+  const [stateBag, setStateBag] = useState([]);
+  const [stateOrg, setStateOrg] = useState([]);
+  const [value, setValue] = React.useState(1);
 
   useEffect(() => {
-    // getService("user/get", {
-    // }).then((result) => {
-    //   if (result) {
-    //     setStateController(result.content || []);
-    //   }
-    // });
-
-    if (isEditMode) {
-      // getService("user/get" + Usercontroller.id).then((result) => {
-      //   Usercontroller.userServiceId = result.userService.id;
-        form.setFieldsValue({ ...Usercontroller });
-      // });
-    }
-  }, []);
-  useEffect(() => {
-    getService("country/get")
-    .then((result) => {
+    getService("country/get").then((result) => {
       if (result) {
         setStateCountry(result || []);
       }
@@ -56,11 +43,14 @@ export default function UserModal(props) {
     if (isEditMode) {
       form.setFieldsValue({ ...Usercontroller });
     }
-
   }, []);
-  useEffect(() => {
-    getService("aimag/getList/107", {})
-    .then((result) => {
+
+  const selectCountry = (value) => {
+    getAimag(value);
+  };
+
+  const getAimag = (countryId) => {
+    getService(`aimag/getList/${countryId}`, {}).then((result) => {
       if (result) {
         setStateAimag(result || []);
       }
@@ -68,15 +58,38 @@ export default function UserModal(props) {
     if (isEditMode) {
       form.setFieldsValue({ ...Usercontroller });
     }
-  }, []);
-  // useEffect(() => {
-  //   if (Usercontroller.id) onChangeCountry(Usercontroller.id);
-  // }, [stateCountry, Usercontroller.id]);
-
-  // const onChangeCountry = () => {
-  //   getService('aimag/get').then((result) => {
-  //   })
-  // };
+  };
+  const selectAimag = (value) => {
+    getSum(value);
+  };
+  const getSum = (aimagId) => {
+    getService(`soum/getList/${aimagId}`, {}).then((result) => {
+      if (result) {
+        setStateSum(result || []);
+      }
+    });
+    if (isEditMode) {
+      form.setFieldsValue({ ...Usercontroller });
+    }
+  };
+  const selectSum = (value) => {
+    getBag(value);
+  };
+  const getBag = (sumID) => {
+    getService(`bag/getList/${sumID}`, {}).then((result) => {
+      if (result) {
+        setStateBag(result || []);
+      }
+    });
+    if (isEditMode) {
+      form.setFieldsValue({ ...Usercontroller });
+    }
+  };
+  const onChange = (e) => {
+    getService(`gender/get/${e.target.value}`);
+    console.log("radio checked", e.target.value);
+    setValue(e.target.value);
+  };
   const save = () => {
     form
       .validateFields()
@@ -90,7 +103,7 @@ export default function UserModal(props) {
               errorCatch(error);
             });
         } else {
-            debugger
+          debugger;
           postService("user/saveByAdmin/", values)
             .then((result) => {
               props.close(true);
@@ -124,7 +137,7 @@ export default function UserModal(props) {
           validateMessages={validateMessages}
         >
           <Row gutter={32}>
-          <Col xs={24} md={24} lg={6}>
+            <Col xs={24} md={24} lg={6}>
               <Form.Item label="Нэр:" name="firstname">
                 <Input placeholder="Нэр..." />
               </Form.Item>
@@ -148,106 +161,102 @@ export default function UserModal(props) {
           <Row gutter={32}>
             <Col xs={24} md={24} lg={6}>
               <Form layout="vertical">
-                <Form.Item label="Хүйс:" name="gender">
-                  <Select placeholder="Хүйс..." allowClear>
-                    <Option value="1">Эрэгтэй</Option>
-                    <Option value="2">Эмэгтэй</Option>
-                  </Select>
+                <Form.Item name="name" layout="vertical" label="Хүйс:">
+                  <Radio.Group onChange={onChange} value={value}>
+                    <Radio value={1}>эр</Radio>
+                    <Radio value={2}>эм</Radio>
+                  </Radio.Group>
+                </Form.Item>
+              </Form>
+            </Col>
+
+            <Col xs={24} md={24} lg={6}>
+              <Form layout="vertical">
+                <Form.Item
+                  name="name"
+                  layout="vertical"
+                  label="Харьяа байгууллагын нэр:"
+                >
+                  <AutocompleteSelect
+                    valueField="id"
+                    data={stateOrg}
+                  />
+                </Form.Item>
+              </Form>
+            </Col>
+            <Col xs={24} md={24} lg={6}>
+              <Form.Item label="Албан тушаал:" name="position">
+                <Input placeholder="Албан тушаал..." />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={24} lg={6}>
+              <Form.Item label="Утасны дугаар:" name="phoneNumber">
+                <Input placeholder="Утасны дугаар..." />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={32}>
+            <Col xs={24} md={24} lg={6}>
+              <Form layout="vertical">
+                <Form.Item name="name" layout="vertical" label="Улс:">
+                  <AutocompleteSelect
+                    valueField="id"
+                    data={stateCountry}
+                    onChange={(value) => selectCountry(value)}
+                  />
                 </Form.Item>
               </Form>
             </Col>
             <Col xs={24} md={24} lg={6}>
               <Form layout="vertical">
-                <Form.Item label="Харьяа байгууллагын нэр:" name="organiztaion">
-                  <Select placeholder="Харьяа байгууллагын нэр..." allowClear>
-                    <Option value="Харьяа байгууллагын нэр">uls</Option>
-                  </Select>
+                <Form.Item
+                  name="name"
+                  layout="vertical"
+                  label="Аймаг, Нийслэл:"
+                >
+                  <AutocompleteSelect
+                    valueField="id"
+                    data={stateAimag}
+                    onChange={(value) => selectAimag(value)}
+                  />
                 </Form.Item>
               </Form>
             </Col>
             <Col xs={24} md={24} lg={6}>
-              <Form.Item
-                label="Албан тушаал:"
-                name="position"
-              >
-                <Input
-                  placeholder="Албан тушаал..."
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} md={24} lg={6}>
-              <Form.Item label="Утасны дугаар:" name="phoneNumber">
-                <Input placeholder="Утасны дугаар..."/>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={32}>
-          <Col xs={24} md={24} lg={6}>
-            <Form layout="vertical">
-                <Form.Item
-                name="name"
-                layout="vertical"
-                label="Улс:"
-
-              >
-                <AutocompleteSelect
-                  valueField="code"
-                  data={stateCountry}
-                  // onChange={onChangeCountry}
-                />
-              </Form.Item>
-              </Form>
-            </Col>
-            <Col xs={24} md={24} lg={6}>
-            <Form layout="vertical">
-                <Form.Item
-                name="name"
-                layout="vertical"
-                label="Аймаг, Нийслэл:"
-
-              >
-                <AutocompleteSelect
-                  valueField="code"
-                  data={stateAimag}
-                  // onChange={onChangeCountry}
-                />
-              </Form.Item>
-              </Form>
-            </Col>
-            <Col xs={24} md={24} lg={6}>
-            <Form layout="vertical">
-                <Form.Item label="Сум, Дүүрэг:">
-                  <Select placeholder="Сум, Дүүрэг:..." allowClear>
-                    <Option value=""></Option>
-                  </Select>
+              <Form layout="vertical">
+                <Form.Item name="name" layout="vertical" label="Сум, Дүүрэг:">
+                  <AutocompleteSelect
+                    valueField="id"
+                    data={stateSum}
+                    onChange={(value) => selectSum(value)}
+                  />
                 </Form.Item>
               </Form>
             </Col>
             <Col xs={24} md={24} lg={6}>
-            <Form layout="vertical">
-                <Form.Item label="Баг, Хороо:">
-                  <Select placeholder="Баг, Хороо:..." allowClear>
-                    <Option value=""></Option>
-                  </Select>
+              <Form layout="vertical">
+                <Form.Item name="name" layout="vertical" label="Баг, Хороо:">
+                  <AutocompleteSelect valueField="id" data={stateBag} />
                 </Form.Item>
               </Form>
             </Col>
           </Row>
           <Row gutter={32}>
             <Col xs={24} md={24} lg={6}>
-              <Form.Item label="Хаяг:" name="hayg">
+              <Form.Item label="Хаяг:" name="address">
                 <Input type="text" />
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
               <Form.Item label="Эрх" name="role">
-              <Select placeholder="Эрх:..." allowClear>
-                    <Option value=""></Option>
-                  </Select>              </Form.Item>
+                <Select placeholder="Эрх:..." allowClear>
+                  <Option value=""></Option>
+                </Select>{" "}
+              </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
               <Form.Item label="Password" name="password">
-              <Input.Password />
+                <Input.Password />
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
@@ -257,26 +266,13 @@ export default function UserModal(props) {
             </Col>
           </Row>
           <Row gutter={32}>
-
-          <Col xs={24} md={24} lg={6}>
+            <Col xs={24} md={24} lg={6}>
               <Form.Item label="Нэвтрэх нэр:" name="username">
                 <Input placeholder="Нэвтрэх нэр..." />
               </Form.Item>
             </Col>
-            </Row>
+          </Row>
         </Form>
-
-        {/* <Form.Item
-            name="upIndicator"
-            label="Нас"
-            rules={[
-              {
-                required: false,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item> */}
       </Modal>
     </div>
   );
