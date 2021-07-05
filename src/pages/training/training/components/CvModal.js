@@ -5,7 +5,7 @@ import { errorCatch } from "../../../../tools/Tools";
 import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined , UserOutlined } from "@ant-design/icons";
 import { faCalendarAlt, faEnvelope, faHome, faPhone, faUser, faUserEdit } from "@fortawesome/free-solid-svg-icons";
 import { Row, Col, Select, Option,Upload } from "antd";
-import AutocompleteSelect from "../../../components/Autocomplete";
+import AutocompleteSelect from "../../../../components/Autocomplete";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";

@@ -41,17 +41,6 @@ const routes = [
     }),
   },
 ];
-/**
- *
- * Not Found Route Component
- *
- */
-// const NotFound = Loadable({
-//   loader: () =>
-//     import(/* webpackChunkName: "NotFound" */ "./container/404/404"),
-//   loading: Loading,
-//   modules: ["NotFound"],
-// });
 
 /**
  *
@@ -67,7 +56,6 @@ class Routes extends Component {
           {routes.map(({ path, component, exact = false }) => (
             <Route key={path} path={path} exact={exact} component={component} />
           ))}
-          {/* <Route component={NotFound} /> */}
         </Switch>
         </Layouts>
     );
@@ -75,3 +63,4 @@ class Routes extends Component {
 }
 
 export default Routes;
+

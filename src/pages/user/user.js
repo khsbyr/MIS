@@ -23,7 +23,7 @@ import { DataTable } from "primereact/datatable";
 import React, { useEffect, useRef, useState } from "react";
 import { isShowLoading } from "../../context/Tools";
 import { getService, putService } from "../../service/service";
-import { PAGESIZE } from "../../tools/Constant";
+import { PAGESIZE } from "../../constants/Constant";
 import { errorCatch } from "../../tools/Tools";
 import "../criteria/criteria.style";
 import ContentWrapper from "../criteria/criteria.style";

@@ -4,7 +4,7 @@ import { getService, postService, putService } from "../../../../service/service
 import { errorCatch } from "../../../../tools/Tools";
 import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined } from "@ant-design/icons";
 import { Row, Col, Select, Option, Upload } from "antd";
-import AutocompleteSelect from "../../../components/Autocomplete";
+import AutocompleteSelect from "../../../../components/Autocomplete";
 const columns = [
     {
         title: '№',

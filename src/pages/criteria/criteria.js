@@ -9,7 +9,7 @@ import Loader from "../../loader/Loader";
 import React, { useEffect, useRef, useState } from "react";
 import { isShowLoading } from "../../context/Tools";
 import { getService, putService } from "../../service/service";
-import { PAGESIZE } from "../../tools/Constant";
+import { PAGESIZE } from "../../constants/Constant";
 import { errorCatch, convertLazyParamsToObj } from "../../tools/Tools";
 import CriteriaModal from "../criteria/components/CriteriaModal";
 import "./criteria.style"
