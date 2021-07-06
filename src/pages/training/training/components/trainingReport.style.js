@@ -19,7 +19,6 @@ const ContentWrapper = styled.div`
         font-size: 14px;
         font-weight: bold;
         color: #0D0D0D;
-        margin: 20px 0px 20px 0px;
     }
 
     label {

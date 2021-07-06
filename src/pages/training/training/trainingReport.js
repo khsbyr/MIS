@@ -78,7 +78,7 @@ const TrainingReport = () => {
         editRow = row.data
         isEditMode = true
         setIsModalVisible(true)
-        
+
     }
 
     const handleDeleted = () => {
@@ -141,77 +141,6 @@ const TrainingReport = () => {
             <div className="button-demo">
                 <Layout className="btn-layout">
                     <Content>
-                    <Row >
-                <Col xs={24} md={24} lg={8}>
-                    <Form>
-                        <Form.Item>
-                            <Input className="FormItem" placeholder="Сургалтын нэр" />
-                        </Form.Item>
-                    </Form>
-                    <Form>
-                        <Form.Item>
-                            <DatePicker
-                                bordered={false}
-                                placeholder="Огноо"
-                                suffixIcon={<DownOutlined />}
-                                className="DatePicker"
-                                style={{
-                                    width: "60%",
-                                    color: "black",
-                                    cursor: "pointer",
-                                }}
-                            />
-                        </Form.Item>
-                    </Form>
-                </Col>
-                <Col xs={24} md={24} lg={8}>
-                    <Form>
-                        <Form.Item>
-                            <Select
-                                placeholder="Аймаг:"
-                                allowClear
-                            >
-                                <Option value="Ulaanbaatar">Улаанбаатар</Option>
-                                <Option value="Arkhangai">Архангай</Option>
-                                <Option value="other">other</Option>
-                            </Select>
-                        </Form.Item>
-                        <Form.Item>
-                            <Select
-                                placeholder="Сум:"
-                                allowClear
-                            >
-                                <Option value="Darkhan">Дархан</Option>
-                                <Option value="Erdenet">Эрдэнэт</Option>
-                                <Option value="other">other</Option>
-                            </Select>
-                        </Form.Item>
-                    </Form>
-                </Col>
-                <Col xs={24} md={24} lg={4}>
-                    <Form>
-                        <Form.Item>
-                            <InputNumber
-                                placeholder="Эр"
-                            />
-                        </Form.Item>
-                        <Form.Item>
-                            <InputNumber
-                                placeholder="Эм"
-                            />
-                        </Form.Item>
-                    </Form>
-                </Col>
-                <Col xs={24} md={24} lg={4}>
-                    <Form>
-                        <Form.Item>
-                            <InputNumber
-                                placeholder="Нийт"
-                            />
-                        </Form.Item>
-                    </Form>
-                </Col>
-            </Row>
                         <Row>
                             <Col xs={24} md={24} lg={14}>
                                 <p className="title">Сургалтын тайлан</p>
@@ -262,7 +191,77 @@ const TrainingReport = () => {
                                 </Row>
                             </Col>
                         </Row>
-
+                        <Row >
+                            <Col xs={24} md={24} lg={8}>
+                                <Form>
+                                    <Form.Item>
+                                        <Input className="FormItem" placeholder="Сургалтын нэр" />
+                                    </Form.Item>
+                                </Form>
+                                <Form>
+                                    <Form.Item>
+                                        <DatePicker
+                                            bordered={false}
+                                            placeholder="Огноо"
+                                            suffixIcon={<DownOutlined />}
+                                            className="DatePicker"
+                                            style={{
+                                                width: "60%",
+                                                color: "black",
+                                                cursor: "pointer",
+                                            }}
+                                        />
+                                    </Form.Item>
+                                </Form>
+                            </Col>
+                            <Col xs={24} md={24} lg={8}>
+                                <Form>
+                                    <Form.Item>
+                                        <Select
+                                            placeholder="Аймаг:"
+                                            allowClear
+                                        >
+                                            <Option value="Ulaanbaatar">Улаанбаатар</Option>
+                                            <Option value="Arkhangai">Архангай</Option>
+                                            <Option value="other">other</Option>
+                                        </Select>
+                                    </Form.Item>
+                                    <Form.Item>
+                                        <Select
+                                            placeholder="Сум:"
+                                            allowClear
+                                        >
+                                            <Option value="Darkhan">Дархан</Option>
+                                            <Option value="Erdenet">Эрдэнэт</Option>
+                                            <Option value="other">other</Option>
+                                        </Select>
+                                    </Form.Item>
+                                </Form>
+                            </Col>
+                            <Col xs={24} md={24} lg={4}>
+                                <Form>
+                                    <Form.Item>
+                                        <InputNumber
+                                            placeholder="Эр"
+                                        />
+                                    </Form.Item>
+                                    <Form.Item>
+                                        <InputNumber
+                                            placeholder="Эм"
+                                        />
+                                    </Form.Item>
+                                </Form>
+                            </Col>
+                            <Col xs={24} md={24} lg={4}>
+                                <Form>
+                                    <Form.Item>
+                                        <InputNumber
+                                            placeholder="Нийт"
+                                        />
+                                    </Form.Item>
+                                </Form>
+                            </Col>
+                        </Row>
                     </Content>
                 </Layout>
                 <div className="datatable-responsive-demo">
@@ -282,8 +281,8 @@ const TrainingReport = () => {
                         dataKey="id">
                         {/* <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column> */}
                         <Column field="index" header="№" body={indexBodyTemplate} sortable />
-                        <Column field="trainerFor" header="Сургалтын нэр" body={trainingnameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
-                        <Column field="registerNumber" header="Огноо" body={teacherBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="trainerFor" header="Сургалтын нэр" body={trainingnameBodyTemplate} sortable filter filterPlaceholder="Хайх" />
+                        <Column field="registerNumber" header="Огноо" body={teacherBodyTemplate} sortable filter filterPlaceholder="Хайх" />
                         <Column field="" header="Сургалт явагдсан газар" />
                         <Column field="" header="Сургалт явуулсан байгууллага, хүний нэр" />
                         <Column field="" header="Сургагч багшийн нэр" />
@@ -292,7 +291,7 @@ const TrainingReport = () => {
                     </DataTable>
                     {isModalVisible && (
                         <TrainingReportModal
-                        Criteriacontroller={editRow}
+                            Criteriacontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
                             isEditMode={isEditMode}
@@ -303,7 +302,7 @@ const TrainingReport = () => {
         </ContentWrapper>
     );
     function confirm() {
-        Modal.confirm({    
+        Modal.confirm({
             title: "Та устгахдаа итгэлтэй байна уу ?",
             icon: <ExclamationCircleOutlined />,
             okButtonProps: {},
