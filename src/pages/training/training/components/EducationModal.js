@@ -3,6 +3,7 @@ import { Modal, Form, Input, DatePicker } from "antd";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
 import AutocompleteSelect from "../../../components/Autocomplete";
+import ContentWrapper from "./cv.styled";
 const layout = {
     labelCol: {
         span: 10,
@@ -85,6 +86,7 @@ export default function EducationModal(props) {
                 onOk={save}
                 onCancel={() => props.close()}
             >
+                            <ContentWrapper>
                 <Form
                     form={form}
                     labelAlign={"left"}
@@ -124,6 +126,7 @@ export default function EducationModal(props) {
                   <DatePicker/>
               </Form.Item>
                 </Form>
+                </ContentWrapper>
             </Modal>
         </div >
     );

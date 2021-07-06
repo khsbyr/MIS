@@ -21,12 +21,18 @@ import Organization from "./training/training/organization";
 import Plan from "./training/training/plan";
 import TrainingProgram from "./training/training/trainingProgram";
 import TrainingReport from "./training/training/trainingReport";
-import Tunshlel from "./tunshlel";
+import Partnership from "./partnership/partnership";
 import TestAggregation from "./training/training/testAggregation";
 import Budget from "./training/training/budget";
 import User from "./user/user";
 import Role from "./user/role";
 import Signuprequest from "./user/signuprequest";
+import Projectsummary from "./project/projectsummary";
+import Briefdraft from "./project/briefdraft";
+import Investment from "./project/investment";
+import IncomeExpenses from "./project/incomeexpenses";
+import Consultinorg from "./project/consultingorgs";
+import Detailedproject from "./project/detailedproject";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -174,8 +180,9 @@ const Admin = () => {
                     {" "}
                     <Menu.Item key="17">
                       {" "}
-                      <Link to="/tunshlel">{t("consulting_orga")}</Link>
+                      <Link to="/partnership">{t("consulting_orga")}</Link>
                     </Menu.Item>
+                    
                   </SubMenu>
                 </SubMenu>
                 <SubMenu
@@ -188,25 +195,29 @@ const Admin = () => {
                     title={t("productive_project")}
                   >
                     {" "}
+                    <Menu.Item key="110">
+                      {" "}
+                      <Link to="/projectsummary">{t("project_summary")}</Link>
+                    </Menu.Item>
                     <Menu.Item key="18">
                       {" "}
-                      <Link to="/tunshlel">{t("brief_draft")}</Link>
+                      <Link to="/briefdraft">{t("brief_draft")}</Link>
                     </Menu.Item>
                     <Menu.Item key="19">
                       {" "}
-                      <Link to="/tunshlel">{t("investment")}</Link>
+                      <Link to="/investment">{t("investment")}</Link>
                     </Menu.Item>
                     <Menu.Item key="20">
                       {" "}
-                      <Link to="/tunshlel">{t("income_expenses")}</Link>
+                      <Link to="/incomeexpenses">{t("income_expenses")}</Link>
                     </Menu.Item>
                     <Menu.Item key="21">
                       {" "}
-                      <Link to="/tunshlel">{t("consulting_orga")}</Link>
+                      <Link to="/consultingorgs">{t("consulting_orga")}</Link>
                     </Menu.Item>
                     <Menu.Item key="22">
                       {" "}
-                      <Link to="/tunshlel">{t("detailed_project")}</Link>
+                      <Link to="/detailedproject">{t("detailed_project")}</Link>
                     </Menu.Item>
                   </SubMenu>
                 </SubMenu>
@@ -335,8 +346,26 @@ const Admin = () => {
                   <Route path="/plan">
                     <Plan />
                   </Route>
-                  <Route path="/tunshlel">
-                    <Tunshlel />
+                  <Route path="/partnership">
+                    <Partnership />
+                  </Route>
+                  <Route path="/projectsummary">
+                    <Projectsummary />
+                  </Route>
+                  <Route path="/briefdraft">
+                    <Briefdraft />
+                  </Route>
+                  <Route path="/investment">
+                    <Investment />
+                  </Route>
+                  <Route path="/incomeexpenses">
+                    <IncomeExpenses />
+                  </Route>
+                  <Route path="/consultingorgs">
+                    <Consultinorg />
+                  </Route>
+                  <Route path="/detailedproject">
+                    <Detailedproject />
                   </Route>
                   <Route path="/organization">
                     <Organization />

@@ -1,22 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { Modal, Form, Input , Table, Button, DatePicker, message, Dropdown, Menu} from "antd";
-import { getService, postService, putService } from "../../../../service/service";
-import { errorCatch } from "../../../../tools/Tools";
-import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined , UserOutlined } from "@ant-design/icons";
+import { ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, InboxOutlined, PrinterOutlined, SettingFilled } from "@ant-design/icons";
 import { faCalendarAlt, faEnvelope, faHome, faPhone, faUser, faUserEdit } from "@fortawesome/free-solid-svg-icons";
-import { Row, Col, Select, Option,Upload } from "antd";
-import AutocompleteSelect from "../../../components/Autocomplete";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import SaveIcon from "@material-ui/icons/Save";
+import { Button, Col, DatePicker, Dropdown, Form, Input, Menu, message, Modal, Row, Select, Upload } from "antd";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import SaveIcon from "@material-ui/icons/Save";
+import React, { useEffect, useState } from "react";
 import { isShowLoading } from "../../../../context/Tools";
-
-import {
-    ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled
-} from "@ant-design/icons";
+import { getService, postService, putService } from "../../../../service/service";
+import { errorCatch } from "../../../../tools/Tools";
 import EducationModal from "./EducationModal";
 import WorkExperienceModal from "./WorkExperienceModal";
+import ContentWrapper from "./cv.styled"
+
 function handleMenuClick(e) { console.log("click", e.key[0]); }
 function onChange(date, dateString) {
     console.log(date, dateString);
@@ -221,6 +217,7 @@ export default function CvModal(props) {
                 onOk={save}
                 onCancel={() => props.close()}
             >
+            <ContentWrapper>
           <h2 className="title">1. Хувь хүний мэдээлэл</h2>
             <Row gutter={[30,30]}>
                 
@@ -430,6 +427,7 @@ export default function CvModal(props) {
                     </Form.Item>
                 </Col>
             </Row>
+            </ContentWrapper>
             </Modal>
         </div >
     );
