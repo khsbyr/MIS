@@ -21,7 +21,7 @@ const validateMessages = {
         range: "${label} must be between ${min} and ${max}",
     },
 };
-export default function BolovsrolModal(props) {
+export default function EducationModal(props) {
     const { Composition, isModalVisible, isEditMode } = props;
     const [stateController, setStateController] = useState([]);
     const [form] = Form.useForm();

@@ -1,8 +1,7 @@
+import { DatePicker, Form, Input, Modal } from "antd";
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input, DatePicker } from "antd";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
-import AutocompleteSelect from "../../../components/Autocomplete";
 const layout = {
     labelCol: {
         span: 10,
@@ -21,8 +20,8 @@ const validateMessages = {
         range: "${label} must be between ${min} and ${max}",
     },
 };
-export default function ShathuuniiZardalModal(props) {
-    const { Attendancecontroller, isModalVisible, isEditMode } = props;
+export default function WorkExperienceModal(props) {
+    const { Composition, isModalVisible, isEditMode } = props;
     const [stateController, setStateController] = useState([]);
     const [form] = Form.useForm();
     useEffect(() => {
@@ -35,9 +34,9 @@ export default function ShathuuniiZardalModal(props) {
         });
 
         if (isEditMode) {
-            getService("criteria/get" + Attendancecontroller.id).then((result) => {
-                Attendancecontroller.userServiceId = result.userService.id
-                form.setFieldsValue({ ...Attendancecontroller });
+            getService("criteria/get" + Composition.id).then((result) => {
+                Composition.userServiceId = result.userService.id
+                form.setFieldsValue({ ...Composition });
             })
 
         }
@@ -49,7 +48,7 @@ export default function ShathuuniiZardalModal(props) {
                 values.userService = { id: values.userServiceId }
                 if (isEditMode) {
                     putService(
-                        "criteria/put" + Attendancecontroller.id,
+                        "criteria/put" + Composition.id,
                         values
                     )
                         .then((result) => {
@@ -76,7 +75,7 @@ export default function ShathuuniiZardalModal(props) {
 
         <div>
             <Modal
-                title="Шатахууны зардал /маршрутаар/"
+                title="Ажлын туршлага"
                 okText="Хадгалах"
                 cancelText="Буцах"
                 width={600}
@@ -94,8 +93,8 @@ export default function ShathuuniiZardalModal(props) {
                 >
                  
                     <Form.Item
-                        name="marshrut"
-                        label="Маршрут:"
+                        name="name"
+                        label="Албан тушаал:"
                         rules={[
                             {
                                 required: true,
@@ -105,62 +104,24 @@ export default function ShathuuniiZardalModal(props) {
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="zamiinUrt"
-                        label="Замын урт /км/:"
-                        rules={[
-                            {
-                                required: true,
-                            },
-                        ]}
+                        name="work"
+                        label="Байгууллагын нэр:"
+
                     >
                         <Input />
                     </Form.Item>
               <Form.Item
-                name="busiinMedeelel"
-                label="Бүсийн нэмэгдэл /%/:"
+                name="code"
+                label="Огноо:"
                 rules={[
-                  {
-                    required: true,
-                  },
+                    {
+                        required: true,
+                    },
                 ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                name="zartsuulahShathuun"
-                label="Зарцуулах шатахуун /л/"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                name="shathuuniiUne"
-                label="Шатахууны үнэ /₮/ A92"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
 
-              <Form.Item
-                name="niit"
-                label="Нийт /₮/"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
               >
-                <Input />
+                  <DatePicker/>
               </Form.Item>
-            
                 </Form>
             </Modal>
         </div >

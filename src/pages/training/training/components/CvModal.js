@@ -15,8 +15,8 @@ import { isShowLoading } from "../../../../context/Tools";
 import {
     ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled
 } from "@ant-design/icons";
-import BolovsrolModal from "./BolovsrolModal";
-import AjliinTurshlagaModal from "./AjliinTurshlagaModal";
+import EducationModal from "./EducationModal";
+import WorkExperienceModal from "./WorkExperienceModal";
 function handleMenuClick(e) { console.log("click", e.key[0]); }
 function onChange(date, dateString) {
     console.log(date, dateString);
@@ -339,7 +339,7 @@ export default function CvModal(props) {
                             <Column field="" header="Огноо" />
                         </DataTable>
                         {isModalVisiblee && (
-                        <BolovsrolModal
+                        <EducationModal
                             Criteriacontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
@@ -398,7 +398,7 @@ export default function CvModal(props) {
                             <Column field="" header="Огноо" />
                         </DataTable>
                         {isModalVisiblee && (
-                        <AjliinTurshlagaModal
+                        <WorkExperienceModal
                             Criteriacontroller={editRow}
                             isModalVisible={isModalVisiblee}
                             close={closeModal}

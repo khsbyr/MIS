@@ -1,7 +1,8 @@
-import { DatePicker, Form, Input, Modal } from "antd";
 import React, { useEffect, useState } from "react";
+import { Modal, Form, Input, DatePicker } from "antd";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
+import AutocompleteSelect from "../../../components/Autocomplete";
 const layout = {
     labelCol: {
         span: 10,
@@ -20,8 +21,8 @@ const validateMessages = {
         range: "${label} must be between ${min} and ${max}",
     },
 };
-export default function AjliinTurshlagaModal(props) {
-    const { Composition, isModalVisible, isEditMode } = props;
+export default function RoadModal(props) {
+    const { Attendancecontroller, isModalVisible, isEditMode } = props;
     const [stateController, setStateController] = useState([]);
     const [form] = Form.useForm();
     useEffect(() => {
@@ -34,9 +35,9 @@ export default function AjliinTurshlagaModal(props) {
         });
 
         if (isEditMode) {
-            getService("criteria/get" + Composition.id).then((result) => {
-                Composition.userServiceId = result.userService.id
-                form.setFieldsValue({ ...Composition });
+            getService("criteria/get" + Attendancecontroller.id).then((result) => {
+                Attendancecontroller.userServiceId = result.userService.id
+                form.setFieldsValue({ ...Attendancecontroller });
             })
 
         }
@@ -48,7 +49,7 @@ export default function AjliinTurshlagaModal(props) {
                 values.userService = { id: values.userServiceId }
                 if (isEditMode) {
                     putService(
-                        "criteria/put" + Composition.id,
+                        "criteria/put" + Attendancecontroller.id,
                         values
                     )
                         .then((result) => {
@@ -75,7 +76,7 @@ export default function AjliinTurshlagaModal(props) {
 
         <div>
             <Modal
-                title="Ажлын туршлага"
+                title="Зам хоног, буудлын зардал"
                 okText="Хадгалах"
                 cancelText="Буцах"
                 width={600}
@@ -94,7 +95,7 @@ export default function AjliinTurshlagaModal(props) {
                  
                     <Form.Item
                         name="name"
-                        label="Албан тушаал:"
+                        label="Зардлын нэр:"
                         rules={[
                             {
                                 required: true,
@@ -104,24 +105,62 @@ export default function AjliinTurshlagaModal(props) {
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="work"
-                        label="Байгууллагын нэр:"
-
+                        name="turul"
+                        label="Зардлын төрөл:"
+                        rules={[
+                            {
+                                required: true,
+                            },
+                        ]}
                     >
                         <Input />
                     </Form.Item>
               <Form.Item
-                name="code"
-                label="Огноо:"
+                name="hiniiToo"
+                label="МЗҮБ хүний тоо:"
                 rules={[
-                    {
-                        required: true,
-                    },
+                  {
+                    required: true,
+                  },
                 ]}
-
               >
-                  <DatePicker/>
+                <Input />
               </Form.Item>
+              <Form.Item
+                name="honogt"
+                label="Хоногт"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="honog"
+                label="Хоног"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                name="niit"
+                label="Нийт"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            
                 </Form>
             </Modal>
         </div >
