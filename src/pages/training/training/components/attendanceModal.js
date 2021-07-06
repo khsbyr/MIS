@@ -1,8 +1,9 @@
+import { Form, Input, Modal } from "antd";
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input, DatePicker } from "antd";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
-import AutocompleteSelect from "../../../components/Autocomplete";
+import ContentWrapper from "./attendance.style";
+
 const layout = {
     labelCol: {
         span: 10,
@@ -85,60 +86,62 @@ export default function TrainingProgramModal(props) {
                 onOk={save}
                 onCancel={() => props.close()}
             >
-                <Form
-                    form={form}
-                    labelAlign={"left"}
-                    {...layout}
-                    name="nest-messages"
-                    validateMessages={validateMessages}
-                >
-                 
-                    <Form.Item
-                        name="name"
-                        label="Суралцагийн нэр:"
-                        rules={[
-                            {
-                                required: true,
-                            },
-                        ]}
+                <ContentWrapper>
+                    <Form
+                        form={form}
+                        labelAlign={"left"}
+                        {...layout}
+                        name="nest-messages"
+                        validateMessages={validateMessages}
                     >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        name="work"
-                        label="Ажил эрхлэлт:"
-                        rules={[
-                            {
-                                required: true,
-                            },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-              <Form.Item
-                name="contact"
-                label="Холбогдох утас, мэйл, хаяг:"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                name="RD"
-                label="Регистрийн дугаар"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            
-                </Form>
+
+                        <Form.Item
+                            name="name"
+                            label="Суралцагийн нэр:"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="work"
+                            label="Ажил эрхлэлт:"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="contact"
+                            label="Холбогдох утас, мэйл, хаяг:"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="RD"
+                            label="Регистрийн дугаар"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+
+                    </Form>
+                </ContentWrapper>
             </Modal>
         </div >
     );
