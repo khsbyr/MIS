@@ -9,11 +9,7 @@ const { Content } = LayoutWrapper;
 export default withRouter(function Layout({ children }) {
   return (
     <Fragment>
-      <Headers />
-      {/* <Pageheader /> */}
-      {/* {routes.map(({ path, component, exact = false }) => (
-            <Route key={path} path={path} exact={exact} component={component} />
-          ))} */}
+      <Headers/>
       <Content>{children}</Content>
     </Fragment>
   );

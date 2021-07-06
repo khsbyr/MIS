@@ -3,7 +3,12 @@ import { MSG } from "../constants/Constant";
 import { errorCatch } from "../tools/Tools";
 import axios from "./axios";
 
-const config = () => ({ headers: { "Authorization": `Bearer ${localStorage.getItem('token')}` } })
+const config = () => ({ 
+  headers: { 
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "*"
+  } 
+})
 
 export async function getService(serviceName, param = null, isShowErrorMessage = true) {
   let params = "?search=status:true";
@@ -43,11 +48,10 @@ export async function postService(serviceName, data) {
   const response = await axios
     .post(serviceName, data, config())
     .catch(error => {
-      errorCatch(error)
       throw error
     });
   if (response.status === 200) console.log(MSG.SUCCESS);
-  else message.warning("АМЖИЛТГҮЙ:", response.statusText);
+  else console.log("АМЖИЛТГҮЙ:", response.statusText);
   return response;
 }
 

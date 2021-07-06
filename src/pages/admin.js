@@ -27,45 +27,25 @@ import Budget from "./training/training/budget";
 import User from "./user/user";
 import Role from "./user/role";
 import Signuprequest from "./user/signuprequest";
+import { useHistory } from "react-router-dom";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
-const menu = (
-  <Menu>
-    <Menu.Item key="0">
-      <PoweroffOutlined />
-      <a style={{ color: "black", paddingLeft: "0px" }}>Logout</a>
-    </Menu.Item>
-  </Menu>
-);
-
-
 
 const Admin = () => {
   const { t, i18 } = useTranslation();
 
-  function handleClick(lang) {
-    i18n.changeLanguage(lang)
-  }
-  // state = {
-  //   collapsed: false,
-  // };
+  const history = useHistory();
 
-  // toggle = () => {
-  //   this.setState({
-  //     collapsed: !this.state.collapsed,
-  //   });
-  // };
+  function handleLogout() {
+     history.push("/login");
+  }
+
   return (
-    
       <Router>
         <Layout>
-          <Layout>
             <Sider
               className="site-layout-background"
-              // trigger={null}
-              // collapsible
-              // collapsed={this.state.collapsed}
               style={{ background: "#fff" }}
               breakpoint="lg"
               width="300px"
@@ -81,7 +61,6 @@ const Admin = () => {
               <Menu
                 className="menu"
                 mode="inline"
-                // defaultSelectedKeys={["1"]}
                 style={{
                   height: "100%",
                   borderRight: 0,
@@ -163,7 +142,6 @@ const Admin = () => {
                 <SubMenu
                   key="sub6"
                   icon={<FontAwesomeIcon icon={faHandsHelping} />}
-
                   title={t("partnership")}
                 >
                   <SubMenu
@@ -238,14 +216,6 @@ const Admin = () => {
                   </Menu.Item>
                 </SubMenu>
               </Menu>
-              {/* <LogoWrapper id="myDIV">
-                    <h2 className="title"> ÐœÐ­Ð”Ð­Ð­Ð›Ð›Ð˜Ð™Ð Ð£Ð”Ð˜Ð Ð”Ð›ÐÐ“Ð«Ð</h2>
-                    <img
-                          src="/images/svg/logo-head.svg"
-                          className="icon"
-                          alt="card-icon"
-                    />
-                </LogoWrapper> */}
             </Sider>
             <Layout className="site-layout">
               <Header
@@ -257,20 +227,6 @@ const Admin = () => {
                 }}
               >
                 <Row>
-                  {/* <Col span={20}>
-                      {React.createElement(
-                        this.state.collapsed
-                          ? MenuUnfoldOutlined
-                          : MenuFoldOutlined,
-                        {
-                          className: "trigger",
-                          onClick: this.toggle,
-                        }
-                      )}
-                      <a style={{ float: "right" }}>
-                        ÐœÐ­Ð”Ð­Ð­Ð›Ð›Ð˜Ð™Ð Ð£Ð”Ð˜Ð Ð”Ð›ÐÐ“Ð«Ð Ð¡Ð˜Ð¡Ð¢Ð•Ðœ
-                      </a>
-                    </Col> */}
                   <Col span={24} style={{ textAlign: "end " }}>
                     <div>
                       <Avatar
@@ -283,10 +239,19 @@ const Admin = () => {
                       >
                         A
                       </Avatar>
-                      <Dropdown overlay={menu} trigger={["click"]}>
+                      <Dropdown 
+                          overlay={
+                         <Menu>
+                          <Menu.Item key="0" 
+                            onClick={e => {
+                              handleLogout()
+                            }}>
+                              <PoweroffOutlined />
+                              <a style={{ color: "black", paddingLeft: "0px" }}>Logout</a>
+                            </Menu.Item>
+                          </Menu>} trigger={["click"]}>
                         <a
                           className="ant-dropdown-link"
-                          href="#"
                           style={{ color: "#103154", marginRight: "5px" }}
                         >
                           user
@@ -374,7 +339,6 @@ const Admin = () => {
                 </Switch>{" "}
               </Content>
             </Layout>
-          </Layout>
         </Layout>
       </Router>
     

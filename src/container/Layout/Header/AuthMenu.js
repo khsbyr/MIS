@@ -37,10 +37,6 @@ const AuthMenu = ({ location, className }) => {
           <Option value="en">ENG</Option>
         </Select>
       </Menu.Item>
-
-      {/* <Menu.Item key="2">
-        <NavLink to={LOGIN}>Нэвтрэх</NavLink>
-      </Menu.Item> */}
     </Menu>
   );
 };
