@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Form, Input, Radio, Space, InputNumber } from "antd";
+import { RadioButton } from 'primereact/radiobutton';
 import { getService, postService, putService } from "../../../service/service";
 import { errorCatch } from "../../../tools/Tools";
 const layout = {
@@ -34,7 +35,7 @@ export default function CriteriaModal(props) {
     const onChange = e => {
         console.log('radio checked', e.target.value);
         setValue(e.target.value);
-      };
+    };
 
     const save = () => {
         form
@@ -107,7 +108,8 @@ export default function CriteriaModal(props) {
                             },
                         ]}
                     >
-                        <Input />
+                        <InputNumber style={{ width: "100%" }} />
+
                     </Form.Item>
                     <Form.Item
                         name="indicatorProcess"
@@ -118,7 +120,8 @@ export default function CriteriaModal(props) {
                             },
                         ]}
                     >
-                        <Input />
+                        <InputNumber style={{ width: "100%" }} />
+
                     </Form.Item>
                     <Form.Item
                         name="upIndicator"
@@ -129,7 +132,7 @@ export default function CriteriaModal(props) {
                             },
                         ]}
                     >
-                        <Input />
+                        <InputNumber style={{ width: "100%" }} />
                     </Form.Item>
                     <Form.Item
                         name="indicatorType"
@@ -140,7 +143,7 @@ export default function CriteriaModal(props) {
                             },
                         ]}
                     >
-                         <Radio.Group value={value} onChange={onChange} >
+                        <Radio.Group value={value} onChange={onChange} className="radioButton">
                             <Space direction="vertical">
                                 <Radio value={1} >
                                     Тоо
@@ -153,7 +156,6 @@ export default function CriteriaModal(props) {
                                 <Radio value={3}>Томъё</Radio>
                             </Space>
                         </Radio.Group>
-                        
                     </Form.Item>
                 </Form>
             </Modal>

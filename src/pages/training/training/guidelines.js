@@ -73,6 +73,7 @@ const Guidelines = () => {
 
  
   const edit = (row) => {
+    console.log(row)
     editRow = row
     isEditMode = true
     setIsModalVisible(true)

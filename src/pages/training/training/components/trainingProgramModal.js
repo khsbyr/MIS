@@ -1,8 +1,9 @@
+import { DatePicker, Form, Input, Modal } from "antd";
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input, DatePicker } from "antd";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
-import AutocompleteSelect from "../../../components/Autocomplete";
+import ContentWrapper from "./trainingProgram.style";
+
 const layout = {
     labelCol: {
         span: 10,
@@ -83,6 +84,7 @@ export default function TrainingProgramModal(props) {
                 onOk={save}
                 onCancel={() => props.close()}
             >
+                <ContentWrapper>
                 <Form
                     form={form}
                     labelAlign={"left"}
@@ -137,6 +139,7 @@ export default function TrainingProgramModal(props) {
               </Form.Item>
             
                 </Form>
+                </ContentWrapper>
             </Modal>
         </div >
     );
