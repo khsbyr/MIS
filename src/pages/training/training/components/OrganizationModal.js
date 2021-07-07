@@ -43,15 +43,11 @@ export default function OrganizationModal(props) {
   const [stateCurrency, setStateCurrency] = useState([]);
   const [form] = Form.useForm();
   const { Option } = Select;
+  const [stateAimag, setStateAimag] = useState([]);
+  const [stateSum, setStateSum] = useState([]);
+  const [stateCountry, setStateCountry] = useState([]);
+  const [stateBag, setStateBag] = useState([]);
 
-  useEffect(() => {
-    if (isEditMode) {
-      form.setFieldsValue({ ...Orgcontroller , 
-        bankName : Orgcontroller.bank.name,
-        Currency : Orgcontroller.currency.name
-      });
-    }
-  }, []);
 
   useEffect(() => {
     getService("bank/get").then((result) => {
@@ -65,22 +61,69 @@ export default function OrganizationModal(props) {
         setStateCurrency(result.content || []);
       }
     });
+    getService("country/get").then((result) => {
+      if (result) {
+        setStateCountry(result || []);
+      }
+    });
+    getService("aimag/get").then((result) => {
+      if (result) {
+        setStateAimag(result || []);
+      }
+    });
     if (isEditMode) {
-      form.setFieldsValue({ ...Orgcontroller });
+      form.setFieldsValue({ ...Orgcontroller , 
+        bankName : Orgcontroller.bank.name,
+        Currency : Orgcontroller.currency.name,
+        CountryName : Orgcontroller.address.country.name,
+        AimagName : Orgcontroller.address.aimag.name,
+        SoumName : Orgcontroller.address.soum.name,
+        BagName : Orgcontroller.address.bag.name,
+      });
     }
     
   }, []);
 
-  // useEffect(() => {
-  //   getService("currency/get").then((result) => {
-  //     if (result) {
-  //       setStateCurrency(result || []);
-  //     }
-  //   });
-  //   if (isEditMode) {
-  //     form.setFieldsValue({ ...Orgcontroller });
-  //   }
-  // }, []);
+  const selectCountry = (value) => {
+    getAimag(value);
+  };
+
+  const getAimag = (countryId) => {
+    getService(`aimag/getList/${countryId}`, {}).then((result) => {
+      if (result) {
+        setStateAimag(result || []);
+      }
+    });
+    if (isEditMode) {
+      form.setFieldsValue({ ...Orgcontroller });
+    }
+  };
+  const selectAimag = (value) => {
+    getSum(value);
+  };
+  const getSum = (aimagId) => {
+    getService(`soum/getList/${aimagId}`, {}).then((result) => {
+      if (result) {
+        setStateSum(result || []);
+      }
+    });
+    if (isEditMode) {
+      form.setFieldsValue({ ...Orgcontroller });
+    }
+  };
+  const selectSum = (value) => {
+    getBag(value);
+  };
+  const getBag = (sumID) => {
+    getService(`bag/getList/${sumID}`, {}).then((result) => {
+      if (result) {
+        setStateBag(result || []);
+      }
+    });
+    if (isEditMode) {
+      form.setFieldsValue({ ...Orgcontroller });
+    }
+  };
 
   const save = () => {
     form
@@ -88,7 +131,7 @@ export default function OrganizationModal(props) {
       .then((values) => {
         values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService("organization/put" + Orgcontroller.id, values)
+          putService("organization/update/" + Orgcontroller.id, values)
             .then((result) => {
               props.close(true);
             })
@@ -200,34 +243,39 @@ export default function OrganizationModal(props) {
 
               <h2 className="title">Холбоо барих мэдээлэл</h2>
               <Row gutter={32}>
-                <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Аймаг, хот:">
-                      <Select placeholder="Аймаг, хот" allowClear>
-                        <Option value="Ulaanbaatar">Улаанбаатар</Option>
-                        <Option value="Arkhangai">Архангай</Option>
-                        <Option value="other">other</Option>
-                      </Select>
+              <Col xs={24} md={24} lg={12}>
+                    <Form.Item label="Улс:" name="CountryName">
+                      <AutoCompleteSelect
+                        valueField="id"
+                        data={stateCountry}
+                    onChange={(value) => selectCountry(value)}
+                      />
+                    </Form.Item>
+                </Col>
+              <Col xs={24} md={24} lg={12}>
+                    <Form.Item label="Аймаг, хот:" name="AimagName">
+                      <AutoCompleteSelect
+                        valueField="id"
+                        data={stateAimag}
+                    onChange={(value) => selectAimag(value)}
+                      />
                     </Form.Item>
                 </Col>
                 <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Сум, дүүрэг:">
-                      <Select placeholder="Сум, дүүрэг" allowClear>
-                        <Option value="Sukhbaatar">Сүхбаатар дүүрэг</Option>
-                        <Option value="Bayangol">Баянгол</Option>
-                        <Option value="other">other</Option>
-                      </Select>
-                    </Form.Item>
+                <Form.Item name="SoumName" layout="vertical" label="Сум, Дүүрэг:">
+                  <AutoCompleteSelect
+                    valueField="id"
+                    data={stateSum}
+                    onChange={(value) => selectSum(value)}
+                  />
+                </Form.Item>
                 </Col>
               </Row>
               <Row gutter={32}>
                 <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Баг, хороо:">
-                      <Select placeholder="Баг, хороо" allowClear>
-                        <Option value="1khoroo">1-р хороо</Option>
-                        <Option value="2khoroo">2-р хороо</Option>
-                        <Option value="other">other</Option>
-                      </Select>
-                    </Form.Item>
+                <Form.Item name="BagName" layout="vertical" label="Баг, Хороо:">
+                  <AutoCompleteSelect valueField="id" data={stateBag} />
+                </Form.Item>
                 </Col>
                 <Col xs={24} md={24} lg={12}>
                     <Form.Item label="Утас:">
