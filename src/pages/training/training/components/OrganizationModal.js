@@ -19,7 +19,7 @@ import {
 import { errorCatch } from "../../../../tools/Tools";
 import "./organization.style";
 import ContentWrapper from "./organization.style";
-import styled from 'styled-components';
+import AutoCompleteSelect from "../../../components/Autocomplete";
 
 const { Dragger } = Upload;
 
@@ -39,15 +39,49 @@ const validateMessages = {
 export default function OrganizationModal(props) {
   console.log(props);
   const { Orgcontroller, isModalVisible, isEditMode } = props;
-  const [stateController, setStateController] = useState([]);
+  const [stateBank, setStateBank] = useState([]);
+  const [stateCurrency, setStateCurrency] = useState([]);
   const [form] = Form.useForm();
   const { Option } = Select;
 
   useEffect(() => {
     if (isEditMode) {
-      form.setFieldsValue({ ...Orgcontroller });
+      form.setFieldsValue({ ...Orgcontroller , 
+        bankName : Orgcontroller.bank.name,
+        Currency : Orgcontroller.currency.name
+      });
     }
   }, []);
+
+  useEffect(() => {
+    getService("bank/get").then((result) => {
+      if (result) {
+        setStateBank(result || []);
+      }
+    });
+
+    getService("currency/get").then((result) => {
+      if (result) {
+        setStateCurrency(result.content || []);
+      }
+    });
+    if (isEditMode) {
+      form.setFieldsValue({ ...Orgcontroller });
+    }
+    
+  }, []);
+
+  // useEffect(() => {
+  //   getService("currency/get").then((result) => {
+  //     if (result) {
+  //       setStateCurrency(result || []);
+  //     }
+  //   });
+  //   if (isEditMode) {
+  //     form.setFieldsValue({ ...Orgcontroller });
+  //   }
+  // }, []);
+
   const save = () => {
     form
       .validateFields()
@@ -77,6 +111,7 @@ export default function OrganizationModal(props) {
         console.log("Validate Failed:", info);
       });
   };
+
   return (
     <div>
       
@@ -134,10 +169,12 @@ export default function OrganizationModal(props) {
               </Row>
               <Row gutter={32}>
                 <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Банкны нэр:" name="bank.name">
-                      <Input />
+                    <Form.Item label="Банкны нэр:" name="bankName">
+                      <AutoCompleteSelect
+                        valueField="id"
+                        data={stateBank}
+                      />
                     </Form.Item>
-                    
                 </Col>
                 <Col xs={24} md={24} lg={12}>
                     <Form.Item label="Дансны нэр:" name="accountName">
@@ -152,12 +189,11 @@ export default function OrganizationModal(props) {
                     </Form.Item>
                 </Col>
                 <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Дансны вальют:">
-                      <Select placeholder="Вальют" allowClear>
-                        <Option value="tugrug">Төгрөг</Option>
-                        <Option value="dollar">$</Option>
-                        <Option value="other">other</Option>
-                      </Select>
+                    <Form.Item label="Дансны вальют:" name="Currency">
+                      <AutoCompleteSelect
+                        valueField="id"
+                        data={stateCurrency}
+                      />
                     </Form.Item>
                 </Col>
               </Row>

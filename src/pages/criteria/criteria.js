@@ -139,7 +139,7 @@ const Criteria = () => {
     return (
       <React.Fragment>
         <span className="p-column-title">Хүрэх үр дүн</span>
-        {row.indicatorProcess}
+        {row.upIndicator}
       </React.Fragment>
     );
   };
@@ -148,7 +148,7 @@ const Criteria = () => {
     return (
       <React.Fragment>
         <span className="p-column-title">Үр дүнгийн биелэлт</span>
-        {row.upIndicator}
+        {row.indicatorProcess}
       </React.Fragment>
     );
   };
