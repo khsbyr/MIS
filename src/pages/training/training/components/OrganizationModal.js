@@ -1,4 +1,4 @@
-import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
+import { BankFilled, InboxOutlined, UploadOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -22,14 +22,7 @@ import ContentWrapper from "./organization.style";
 import styled from 'styled-components';
 
 const { Dragger } = Upload;
-const layout = {
-  labelCol: {
-    span: 10,
-  },
-  wrapperCol: {
-    span: 14,
-  },
-};
+
 function onChange(date, dateString) {
   console.log(date, dateString);
 }
@@ -44,18 +37,15 @@ const validateMessages = {
   },
 };
 export default function OrganizationModal(props) {
+  console.log(props);
   const { Orgcontroller, isModalVisible, isEditMode } = props;
   const [stateController, setStateController] = useState([]);
   const [form] = Form.useForm();
   const { Option } = Select;
 
-
   useEffect(() => {
-
     if (isEditMode) {
-
       form.setFieldsValue({ ...Orgcontroller });
-
     }
   }, []);
   const save = () => {
@@ -103,8 +93,8 @@ export default function OrganizationModal(props) {
         <ContentWrapper>
         <Form
           form={form}
+          layout="vertical"
           labelAlign={"left"}
-          {...layout}
           name="nest-messages"
           validateMessages={validateMessages}
         >
@@ -122,7 +112,6 @@ export default function OrganizationModal(props) {
               <h2 className="title"> Байгууллагын мэдээлэл</h2>
               <Row gutter={32}>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
 
                     <Form.Item
                       layout="vertical"
@@ -136,45 +125,33 @@ export default function OrganizationModal(props) {
                     >
                       <Input />
                     </Form.Item>
-                  </Form>
                 </Col>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
-                    <Form.Item label="Регистрийн дугаар:" name="name"
-                      name="register"
-                    >
+                    <Form.Item label="Регистрийн дугаар:" name="registerNumber" >
                       <Input />
                     </Form.Item>
-                  </Form>
                 </Col>
               </Row>
               <Row gutter={32}>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
-                    <Form.Item label="Банкны нэр:" name="name"
-                    >
+                    <Form.Item label="Банкны нэр:" name="bank.name">
                       <Input />
                     </Form.Item>
-                  </Form>
+                    
                 </Col>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
-                    <Form.Item label="Дансны нэр:">
+                    <Form.Item label="Дансны нэр:" name="accountName">
                       <Input />
                     </Form.Item>
-                  </Form>
                 </Col>
               </Row>
               <Row gutter={32}>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
-                    <Form.Item label="Дансны дугаар:">
+                    <Form.Item label="Дансны дугаар:" name="accountNumber">
                       <Input />
                     </Form.Item>
-                  </Form>
                 </Col>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
                     <Form.Item label="Дансны вальют:">
                       <Select placeholder="Вальют" allowClear>
                         <Option value="tugrug">Төгрөг</Option>
@@ -182,14 +159,12 @@ export default function OrganizationModal(props) {
                         <Option value="other">other</Option>
                       </Select>
                     </Form.Item>
-                  </Form>
                 </Col>
               </Row>
 
               <h2 className="title">Холбоо барих мэдээлэл</h2>
               <Row gutter={32}>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
                     <Form.Item label="Аймаг, хот:">
                       <Select placeholder="Аймаг, хот" allowClear>
                         <Option value="Ulaanbaatar">Улаанбаатар</Option>
@@ -197,10 +172,8 @@ export default function OrganizationModal(props) {
                         <Option value="other">other</Option>
                       </Select>
                     </Form.Item>
-                  </Form>
                 </Col>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
                     <Form.Item label="Сум, дүүрэг:">
                       <Select placeholder="Сум, дүүрэг" allowClear>
                         <Option value="Sukhbaatar">Сүхбаатар дүүрэг</Option>
@@ -208,12 +181,10 @@ export default function OrganizationModal(props) {
                         <Option value="other">other</Option>
                       </Select>
                     </Form.Item>
-                  </Form>
                 </Col>
               </Row>
               <Row gutter={32}>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
                     <Form.Item label="Баг, хороо:">
                       <Select placeholder="Баг, хороо" allowClear>
                         <Option value="1khoroo">1-р хороо</Option>
@@ -221,35 +192,27 @@ export default function OrganizationModal(props) {
                         <Option value="other">other</Option>
                       </Select>
                     </Form.Item>
-                  </Form>
                 </Col>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
                     <Form.Item label="Утас:">
                       <Input />
                     </Form.Item>
-                  </Form>
                 </Col>
               </Row>
               <Row gutter={32}>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
                     <Form.Item label="Е-майл хаяг:">
                       <Input />
                     </Form.Item>
-                  </Form>
                 </Col>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
                     <Form.Item label="Веб хаяг:">
                       <Input />
                     </Form.Item>
-                  </Form>
                 </Col>
               </Row>
               <Row>
                 <Col xs={24} md={24} lg={24}>
-                  <Form layout="vertical">
                     <Form.Item label="Хаяг:">
                       <Input.TextArea
                         style={{
@@ -258,7 +221,6 @@ export default function OrganizationModal(props) {
                         }}
                       />
                     </Form.Item>
-                  </Form>
                 </Col>
               </Row>
             </Col>
@@ -266,61 +228,48 @@ export default function OrganizationModal(props) {
               <h2 className="title">Хариуцсан ажилтан:</h2>
               <Row>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
                     <Form.Item label="Овог:">
                       <Input />
                     </Form.Item>
-                  </Form>
                 </Col>
               </Row>
               <Row>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
                     <Form.Item label="Нэр:">
                       <Input />
                     </Form.Item>
-                  </Form>
                 </Col>
               </Row>
               <Row>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
                     <Form.Item label="Регистрийн дугаар:">
                       <Input />
                     </Form.Item>
-                  </Form>
                 </Col>
               </Row>
               <Row>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
                     <Form.Item label="Албан тушаал:">
                       <Input />
                     </Form.Item>
-                  </Form>
                 </Col>
               </Row>
               <Row>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
                     <Form.Item label="Утасны дугаар:">
                       <Input />
                     </Form.Item>
-                  </Form>
                 </Col>
               </Row>
               <Row>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
                     <Form.Item label="Е-майл хаяг:">
                       <Input />
                     </Form.Item>
-                  </Form>
                 </Col>
               </Row>
               <Row>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
                     <Form.Item label="Танилцуулга оруулах:">
                       <Upload {...props}>
                         <Button
@@ -331,18 +280,15 @@ export default function OrganizationModal(props) {
                         </Button>
                       </Upload>
                     </Form.Item>
-                  </Form>
                 </Col>
               </Row>
               <Row>
                 <Col xs={24} md={24} lg={12}>
-                  <Form layout="vertical">
                     <Form.Item>
                       <Checkbox onChange={onChange}>
                         Оруулсан мэдээлэл үнэн болно.
                       </Checkbox>
                     </Form.Item>
-                  </Form>
                 </Col>
               </Row>
             </Col>
