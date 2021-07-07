@@ -256,7 +256,7 @@ const pop = (row) => {
           </DataTable>
           {isModalVisible && (
             <GuidelinesModal
-              Criteriacontroller={editRow}
+              Guidelinescontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}

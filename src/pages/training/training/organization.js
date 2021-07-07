@@ -22,6 +22,7 @@ const Organization = () => {
 
     let loadLazyTimeout = null;
     const [list, setList] = useState([]);
+    const [listBank, setListBank] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [lazyParams, setLazyParams] = useState({
         page: 0,
@@ -54,6 +55,7 @@ const Organization = () => {
                 errorCatch(error);
                 isShowLoading(false);
             })
+
     };
 
     const add = () => {
@@ -64,26 +66,27 @@ const Organization = () => {
     const action = (row) => {
         return (
             <React.Fragment>
-                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />} onClick={edit} />
-                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={pop} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />} onClick={() => edit(row)} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={() => pop(row)} />
             </React.Fragment>
         );
     }
 
     const edit = (row) => {
-        editRow = row.data
+        console.log(row)
+        editRow = row
         isEditMode = true
         setIsModalVisible(true)
 
     }
 
-    const handleDeleted = () => {
-        if (selectedRows.length === 0) {
+    const handleDeleted = (row) => {
+        if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         }
         debugger
-        putService("organization/delete/" + selectedRows[0].id)
+        putService("organization/delete/" + row.id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -96,12 +99,12 @@ const Organization = () => {
         setIsModalVisible(false);
         if (isSuccess) onInit();
     };
-    const pop = () => {
-        if (selectedRows.length === 0) {
+    const pop = (row) => {
+        if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         } else {
-            confirm();
+            confirm(row);
         }
     };
 
@@ -132,11 +135,20 @@ const Organization = () => {
         );
     }
 
-    const accountNameBodyTemplate = (row) => {
+    const bankNameBodyTemplate = (row) => {
         return (
             <React.Fragment>
                 <span className="p-column-title">Банкны нэр</span>
-                {row.accountname}
+                {row.bank.name}
+            </React.Fragment>
+        );
+    }
+
+    const accountNameBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Дансны нэр</span>
+                {row.accountName}
             </React.Fragment>
         );
     }
@@ -144,11 +156,13 @@ const Organization = () => {
     const accountNumberBodyTemplate = (row) => {
         return (
             <React.Fragment>
-                <span className="p-column-title">Үр дүнгийн биелэлт</span>
+                <span className="p-column-title">Дансны дугаар</span>
                 {row.accountNumber}
             </React.Fragment>
         );
     }
+
+
 
     return (
         <ContentWrapper>
@@ -221,17 +235,17 @@ const Organization = () => {
                             setSelectedRows(e.value);
                         }}
                         dataKey="id">
-                            <Column field="index" header="№"  body={indexBodyTemplate}/>
-                            <Column field="name" header="Байгууллагын нэр"  body={nameBodyTemplate} filter sortable />
-                            <Column field="registerNumber" header="Регистрийн дугаар"  body={registerNumberBodyTemplate}/>
-                            <Column field="" header="Банкны нэр" />
-                            <Column field="accountName" header="Дансны нэр" body={accountNameBodyTemplate} />
-                            <Column field="accountNumber" header="Дансны дугаар" body={accountNumberBodyTemplate}/>
-                            <Column headerStyle={{ width: '7rem' }} body={action}></Column>
+                            <Column  header="№"  body={indexBodyTemplate}/>
+                            <Column  header="Байгууллагын нэр"  body={nameBodyTemplate} filter sortable />
+                            <Column  header="Регистрийн дугаар"  body={registerNumberBodyTemplate}/>
+                            <Column  header="Банкны нэр" body={bankNameBodyTemplate}/>
+                            <Column  header="Дансны нэр" body={accountNameBodyTemplate} />
+                            <Column  header="Дансны дугаар" body={accountNumberBodyTemplate}/>
+                            <Column  headerStyle={{ width: '7rem' }} body={action}></Column>
                     </DataTable>
                     {isModalVisible && (
                         <OrganizationModal
-                            Criteriacontroller={editRow}
+                            Orgcontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
                             isEditMode={isEditMode}
@@ -241,7 +255,7 @@ const Organization = () => {
             </div>
         </ContentWrapper>
     );
-    function confirm() {
+    function confirm(row) {
         Modal.confirm({
             title: "Та устгахдаа итгэлтэй байна уу ?",
             icon: <ExclamationCircleOutlined />,
@@ -249,7 +263,7 @@ const Organization = () => {
             okText: "Устгах",
             cancelText: "Буцах",
             onOk() {
-                handleDeleted();
+                handleDeleted(row);
                 onInit();
             },
             onCancel() { },
