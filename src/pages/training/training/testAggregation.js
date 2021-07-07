@@ -42,7 +42,7 @@ const TestAggregation = () => {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("criteria/get", list)
+        getService("testAggregation/get", list)
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -85,7 +85,7 @@ const TestAggregation = () => {
             return;
         }
         debugger
-        putService("criteria/delete/" + row.id)
+        putService("testAggregation/delete/" + row.id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();

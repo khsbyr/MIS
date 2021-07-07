@@ -39,7 +39,7 @@ const TrainingProgram = () => {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("aa/get", list)
+        getService("trainingProgram/get/1", list)
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -82,8 +82,7 @@ const TrainingProgram = () => {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         }
-        debugger
-        putService("aa/delete/" + row.id)
+        putService("trainingProgram/delete/" + row.id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -96,7 +95,7 @@ const TrainingProgram = () => {
         setIsModalVisible(false);
         if (isSuccess) onInit();
     };
-    debugger
+    
     const pop = (row) => {
         if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");

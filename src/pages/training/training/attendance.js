@@ -80,7 +80,6 @@ const Attendance = () => {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         }
-        debugger
         putService("participants/delete/" + row.id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
@@ -94,7 +93,6 @@ const Attendance = () => {
         setIsModalVisible(false);
         if (isSuccess) onInit();
     };
-    debugger
     const pop = (row) => {
         if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
@@ -135,7 +133,6 @@ const Attendance = () => {
         return (
             <React.Fragment>
                 <span className="p-column-title">Холбогдох утас, мэйл, хаяг</span>
-                {row.asd}
             </React.Fragment>
         );
     }
@@ -153,7 +150,7 @@ const Attendance = () => {
         return (
             <React.Fragment>
                 <span className="p-column-title">Сургалтын нэр</span>
-                {row.asd}
+                {row.training.training_plan.name}
             </React.Fragment>
         );
     }
@@ -234,12 +231,12 @@ const Attendance = () => {
                         <Column field="jobDescription" header="Ажил эрхлэлт" sortable filter filterPlaceholder="Хайх" body={jobDescBodyTemplate}/>
                         <Column field="" header="Холбогдох утас, мэйл, хаяг" sortable filter filterPlaceholder="Хайх" body={contactBodyTemplate}/>
                         <Column field="" header="Регистрийн дугаар" sortable filter filterPlaceholder="Хайх" body={registerNumberBodyTemplate}/>
-                        <Column field="" header="Сургалтын нэр" sortable filter filterPlaceholder="Хайх" body={trainingNameBodyTemplate}/>
+                        <Column field="training.training_plan.name" header="Сургалтын нэр" sortable filter filterPlaceholder="Хайх" body={trainingNameBodyTemplate}/>
                         <Column headerStyle={{ width: '7rem' }} body={action}></Column>
                     </DataTable>
                     {isModalVisible && (
                         <AttendanceModal
-                            Criteriacontroller={editRow}
+                        Attendancecontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
                             isEditMode={isEditMode}

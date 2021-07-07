@@ -23,7 +23,14 @@ const validateMessages = {
         range: "${label} must be between ${min} and ${max}",
     },
 };
-
+const layout = {
+    labelCol: {
+        span: 20,
+    },
+    wrapperCol: {
+        span: 22,
+    },
+};
 
 var editRow;
 var isEditMode;
@@ -68,7 +75,7 @@ export default function CvModal(props) {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("criteriaa/get", list)
+        getService("trainers/get", list)
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -178,7 +185,7 @@ export default function CvModal(props) {
                 values.userService = { id: values.userServiceId }
                 if (isEditMode) {
                     putService(
-                        "criteriaa/put" + Usercontroller.id,
+                        "trainers/put" + Usercontroller.id,
                         values
                     )
                         .then((result) => {
@@ -188,7 +195,7 @@ export default function CvModal(props) {
                             errorCatch(error);
                         })
                 } else {
-                    postService("criteriaa/post", values)
+                    postService("trainers/post", values)
                         .then((result) => {
                             props.close(true);
                         })
@@ -214,6 +221,14 @@ export default function CvModal(props) {
                 onCancel={() => props.close()}
             >
                 <ContentWrapper>
+                <Form
+                        form={form}
+                        labelAlign={"left"}
+                        {...layout}
+                        layout="vertical"
+                        name="nest-messages"
+                        validateMessages={validateMessages}
+                    >
                     <h2 className="title">1. Хувь хүний мэдээлэл</h2>
                     <Row gutter={[30, 30]}>
 
@@ -230,46 +245,36 @@ export default function CvModal(props) {
                         <Col xs={24} md={24} lg={2}>
                         </Col>
                         <Col xs={24} md={24} lg={9}>
-                            <Form>
                                 <Form.Item>
                                     <Input className="FormItem" placeholder="Овог, нэр:" prefix={<FontAwesomeIcon icon={faUser} />} />
                                 </Form.Item>
-                            </Form>
-                            <Form>
+                      
                                 <Form.Item>
                                     <Input className="FormItem" placeholder="Төрсөн огноо:" prefix={<FontAwesomeIcon icon={faCalendarAlt} />} />
                                 </Form.Item>
-                            </Form>
-                            <Form>
+                  
                                 <Form.Item>
                                     <Input className="FormItem" placeholder="Регистрийн дугаар:" prefix={<FontAwesomeIcon icon={faUserEdit} />} />
                                 </Form.Item>
-                            </Form>
                         </Col>
 
                         <Col xs={24} md={24} lg={9}>
-                            <Form>
                                 <Form.Item>
                                     <Input className="FormItem" placeholder="Хаяг:" prefix={<FontAwesomeIcon icon={faHome} />} />
                                 </Form.Item>
-                            </Form>
-                            <Form>
                                 <Form.Item>
                                     <Input className="FormItem" placeholder="Утас, факс:" prefix={<FontAwesomeIcon icon={faPhone} />} />
                                 </Form.Item>
-                            </Form>
-                            <Form>
+                        
                                 <Form.Item>
                                     <Input className="FormItem" placeholder="И-мэйл хаяг:" prefix={<FontAwesomeIcon icon={faEnvelope} />} />
                                 </Form.Item>
-                            </Form>
                         </Col>
                     </Row>
 
                     <h2 className="title">2. Ажлын зорилго</h2>
                     <Row>
                         <Col xs={24} md={24} lg={24}>
-                            <Form layout="vertical">
                                 <Form.Item>
                                     <Input.TextArea
                                         placeholder="(Горилж буй ажлын зорилгоо товч бичнэ үү)"
@@ -279,7 +284,6 @@ export default function CvModal(props) {
                                         }}
                                     />
                                 </Form.Item>
-                            </Form>
                         </Col>
                     </Row>
 
@@ -380,6 +384,7 @@ export default function CvModal(props) {
                             </Form.Item>
                         </Col>
                     </Row>
+                    </Form>
                 </ContentWrapper>
             </Modal>
         </div >

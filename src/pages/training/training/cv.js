@@ -134,7 +134,14 @@ const CV = () => {
             </React.Fragment>
         );
     }
-
+    const addressBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Сургагч багшийн нэр</span>
+                {row.address.country.name}
+            </React.Fragment>
+        );
+    }
     return (
         <ContentWrapper>
             <div className="button-demo">
@@ -211,7 +218,12 @@ const CV = () => {
                         {/* <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column> */}
                         <Column field="index" header="№" body={indexBodyTemplate} sortable />
                         <Column field="trainerFor" header="Сургагч багш" body={trainingnameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="firstName" header="Нэр" body={teacherBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="lastName" header="Овог" body={trainingnameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
                         <Column field="registerNumber" header="Сургагч багшийн регистер" body={teacherBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="imageFilePath" header="Сургагч багшийн зураг" body={teacherBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="address.country.name" header="address" body={addressBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+
                         <Column headerStyle={{ width: '7rem' }} body={action}></Column>
                     </DataTable>
                     {isModalVisible && (
