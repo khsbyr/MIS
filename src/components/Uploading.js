@@ -11,6 +11,7 @@ class Uploading extends React.Component {
     }
     this.handleChange = this.handleChange.bind(this)
   }
+  
   handleChange(event) {
     if (!event.target?.files?.length)
       return
@@ -18,6 +19,7 @@ class Uploading extends React.Component {
       file: URL.createObjectURL(event.target.files[0])
     })
   }
+
   render() {
     return (
       <div className="upload-div" >

@@ -38,6 +38,8 @@ const Admin = () => {
   const history = useHistory();
 
   function handleLogout() {
+     localStorage.removeItem('token');
+     localStorage.removeItem('user');
      history.push("/login");
   }
 

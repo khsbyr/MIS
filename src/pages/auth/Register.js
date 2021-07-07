@@ -1,122 +1,31 @@
 import React from "react";
 import "antd/dist/antd.css";
-import { Button, Row, Col, Form, Input, Carousel, Select } from "antd";
-import TextWrapper, { LogIn } from "./Login.style";
+import { Button, Row, Col, Form, Input, Select } from "antd";
+import { LogIn } from "./Login.style";
 import { useHistory } from "react-router-dom";
 import {useTranslation} from 'react-i18next';
-import i18n from "../../i18n"
+import Partner from "./components/Partner";
 
 function Register() {
+
   const history = useHistory();
-  const {t, i18} = useTranslation();
+  const {t} = useTranslation();
   function moveToLogin() {
     history.push("/login");
-  }
-  function moveToAdmin() {
-    history.push("/admin");
   }
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
   };
-  function onChange(a, b, c) {
-    console.log(a, b, c);
-  }
+
   const { Option } = Select;
 
   function handleChange(value) {
     console.log(`selected ${value}`);
   }
 
-  const contentStyle = {
-    height: '180px',
-    fontSize: '16px',
-    color: '#103154',
-    textAlign: 'left',
-  };
-
   return (
       <Row>
-        <Col
-          xs={0}
-          md={0}
-          lg={15}
-          style={{ backgroundColor: "white", height: "100vh" }}
-        >
-          <TextWrapper>
-            <h2 className="title">
-              {t("login_title")}  
-            </h2>
-            <h3 className="subTitle">{t("login_subtitle")}</h3>
-            <h2 className="title" style={{ marginTop: "50px" }}>
-            {t("project_background")}
-            </h2>
-            <Carousel auto afterChange={onChange}  style={{height:"160px", width:"510px"}}>
-              <div>           
-                <p style={contentStyle}>
-                {t("background_content")}
-                </p>             
-              </div>
-              <div>
-                <p style={contentStyle}>
-                {t("background_content")}
-                </p>  
-              </div>
-              <div>
-                <h3 style={contentStyle}>3</h3>
-              </div>
-          </Carousel> 
-          <Row gutter={[32]}>
-            <Col>
-            <h2 style={{ marginTop: "80px", marginBottom: "30px", color: "#103154", fontSize: "20px" }}>
-            {t("partner")}
-            </h2>
-            <Row gutter={[32,32]}>
-              <Col>
-                <img
-                  src="/images/svg/logo3.svg"
-                  className="icon"
-                  alt="card-icon"
-                  />
-                </Col>
-                <Col>
-                <img
-                  src="/images/svg/logo4.svg"
-                  className="icon"
-                  alt="card-icon"
-                  style={{
-                    height: "80%"
-                  }}
-                  />
-                </Col>
-            </Row>
-            </Col>
-
-            <Col>
-            <h2 className="title" style={{ marginTop: "80px", marginBottom: "30px",  color: "#103154", fontSize: "20px"  }}>
-            {t("sanhuujuulegch")}
-            </h2>
-            <Row gutter={[32,32]}>
-            <Col >
-                <img
-                  src="/images/svg/logo2.svg"
-                  className="icon"
-                  alt="card-icon"
-                
-                />
-                </Col>
-                <Col>
-                <img
-                  src="/images/svg/logo1.svg"
-                  className="icon"
-                  alt="card-icon"
-                />
-              </Col>
-            </Row>
-            </Col>
-          </Row>
-          </TextWrapper>
-        </Col>
-
+        <Partner></Partner>
         <Col xs={24} md={24} lg={9} style={{ backgroundColor: "#F8F8F8" }}>
           <LogIn>
             <Form
