@@ -142,7 +142,7 @@ const CV = () => {
                     <Content>
                         <Row>
                             <Col xs={24} md={24} lg={14}>
-                                <p className="title">Сургалтын төлөвлөгөө</p>
+                                <p className="title">Сургагч багшийн CV</p>
                             </Col>
                             <Col xs={24} md={24} lg={10}>
                                 <Row gutter={[0, 15]}>

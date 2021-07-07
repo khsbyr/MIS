@@ -6,7 +6,7 @@ const ContentWrapper = styled.div`
     margin-right: 45px;
     .ant-upload.ant-upload-drag {
         width: 100%;
-        height: 200px;
+        height: 160px;
         //margin: 50px 20px 20px 40px;
        
         /* top: 10%;
