@@ -73,7 +73,7 @@ function Partner() {
 
         <Col>
         <h2 className="title" style={{ marginTop: "80px", marginBottom: "30px",  color: "#103154", fontSize: "20px"  }}>
-        {t("sanhuujuulegch")}
+        {t("investor")}
         </h2>
         <Row gutter={[32,32]}>
         <Col >
