@@ -49,5 +49,7 @@
     "scope": "Scope",
     "address": "Address",
     "contact_side": "Contact side",
-    "criteria_type": "Types of indicators"
+    "criteria_type": "Types of indicators",
+    "role_permission": "Types of indicators",
+    "organization": "Organizations"
 }

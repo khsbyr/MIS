@@ -82,7 +82,7 @@ function Login() {
                   },
                 ]}
               >
-              <Input placeholder={t('username')} {...username}bordered={false} />
+              <Input placeholder={t('username')} {...username} bordered={false} />
               </Form.Item>
               <Form.Item>
                 <p className="subTitle">{t('password')}</p>
