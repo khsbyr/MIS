@@ -1,6 +1,5 @@
-import {
-    ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled
-} from "@ant-design/icons";
+import { DownOutlined, ExclamationCircleOutlined, FileOutlined, PrinterOutlined } from "@ant-design/icons";
+import { faFileExcel, faPen, faPlus, faPrint, faTrash } from "@fortawesome/free-solid-svg-icons";
 import SaveIcon from "@material-ui/icons/Save";
 import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker } from "antd";
 import { Column } from "primereact/column";
@@ -12,43 +11,18 @@ import { PAGESIZE } from "../../../tools/Constant";
 import { errorCatch } from "../../../tools/Tools";
 import CvModal from "../training/components/CvModal";
 import ContentWrapper from "../../criteria/criteria.style";
-function handleMenuClick(e) { console.log("click", e.key[0]); }
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+
 function onChange(date, dateString) {
     console.log(date, dateString);
 }
 const { Content } = Layout;
-const menu = (
-    <Menu onClick={handleMenuClick}>
-        <Menu.Item
-            key="1"
-            icon={<FileSyncOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-
-            Импорт
-        </Menu.Item>
-        <Menu.Item
-            key="2"
-            icon={<FileOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-            Экспорт
-        </Menu.Item>
-
-        <Menu.Item
-            key="3"
-            icon={<PrinterOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-
-            Хэвлэх
-        </Menu.Item>
-
-    </Menu>
-);
 
 var editRow
 var isEditMode;
 const CV = () => {
-    const [products, setProducts] = useState([]);
-    const [multiSortMeta, setMultiSortMeta] = useState([{ field: 'category', order: -1 }]);
+
     let loadLazyTimeout = null;
     const [list, setList] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -68,7 +42,7 @@ const CV = () => {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("organization/get", list)
+        getService("trainers/get", list)
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -89,10 +63,21 @@ const CV = () => {
         setIsModalVisible(true);
         isEditMode = false;
     };
+
+    const action = (row) => {
+        return (
+            <React.Fragment>
+                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />} onClick={edit} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={pop} />
+            </React.Fragment>
+        );
+    }
+
     const edit = (row) => {
         editRow = row.data
         isEditMode = true
         setIsModalVisible(true)
+        
     }
 
     const handleDeleted = () => {
@@ -101,7 +86,7 @@ const CV = () => {
             return;
         }
         debugger
-        putService("organization/delete/" + selectedRows[0].id)
+        putService("trainers/delete/" + selectedRows[0].id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -122,42 +107,97 @@ const CV = () => {
             confirm();
         }
     };
-    const [selectedProducts, setSelectedProducts] = useState(null);
+
+    const indexBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">№</span>
+                {row.index}
+            </React.Fragment>
+        );
+    }
+
+    const trainingnameBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Хичээлийн сэдэв</span>
+                {row.trainerFor}
+            </React.Fragment>
+        );
+    }
+
+    const teacherBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Сургагч багшийн нэр</span>
+                {row.registerNumber}
+            </React.Fragment>
+        );
+    }
+    const addressBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Сургагч багшийн нэр</span>
+                {row.address.country.name}
+            </React.Fragment>
+        );
+    }
     return (
         <ContentWrapper>
             <div className="button-demo">
                 <Layout className="btn-layout">
                     <Content>
                         <Row>
-                            <Col>
-                                <h2 className="title">Сургагч багшийн CV</h2>
+                            <Col xs={24} md={24} lg={14}>
+                                <p className="title">Сургагч багшийн CV</p>
+                            </Col>
+                            <Col xs={24} md={24} lg={10}>
+                                <Row gutter={[0, 15]}>
+                                    <Col xs={8} md={8} lg={6}>
+                                        <DatePicker
+                                            onChange={onChange}
+                                            bordered={false}
+                                            suffixIcon={<DownOutlined />}
+                                            placeholder="Select year"
+                                            picker="year"
+                                            className="DatePicker"
+                                            style={{
+                                                width: "120px",
+                                                color: "black",
+                                                cursor: "pointer",
+                                            }}
+                                        />
+                                    </Col>
+                                    {/* <Col xs={8} md={8} lg={6}>
+                                        <Input
+                                            placeholder="Хайлт хийх"
+                                            allowClear
+                                            prefix={<SearchOutlined />}
+                                            bordered={false}
+                                            onSearch={onSearch}
+                                            style={{
+                                                width: 150,
+                                                borderBottom: "1px solid #103154",
+                                            }}
+                                        />
+                                    </Col> */}
+                                    <Col xs={8} md={8} lg={6}>
+                                        <Button type="text" icon={<FontAwesomeIcon icon={faPrint} />} >Хэвлэх </Button>
+                                    </Col>
+                                    <Col xs={8} md={8} lg={6}>
+                                        <Button type="text" className="export" icon={<FontAwesomeIcon icon={faFileExcel} />} >
+                                            Экспорт
+                                        </Button>
+                                    </Col>
+                                    <Col xs={8} md={8} lg={6}>
+                                        <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={add}>
+                                            Нэмэх
+                                        </Button>
+                                    </Col>
+                                </Row>
                             </Col>
                         </Row>
-                        <Row>
-                            <Col span={2}>
-                                <Button onClick={add} type="link" icon={<SaveIcon />}>
-                                    Нэмэх
-                                </Button>
-                            </Col>
-                            <Col span={2}>
-                                <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
-                                    Устгах
-                                </Button>
-                            </Col>
-                            <Col span={18} style={{ textAlign: "right" }}>
-                                <div style={{ marginRight: "5px" }}>
-                                    <Dropdown.Button
-                                        overlay={menu}
-                                        placement="bottomCenter"
-                                        icon={
-                                            <SettingFilled
-                                                style={{ marginLeft: "8px", color: "#45629c" }}
-                                            />
-                                        }
-                                    ></Dropdown.Button>
-                                </div>
-                            </Col>
-                        </Row>
+
                     </Content>
                 </Layout>
                 <div className="datatable-responsive-demo">
@@ -167,22 +207,28 @@ const CV = () => {
                         paginator
                         rows={10}
                         className="p-datatable-responsive-demo"
-                        selectionMode="checkbox"
+                        // selectionMode="checkbox"
                         selection={selectedRows}
-                        onRowClick={edit}
+                        // onRowClick={edit}
+                        // editMode="row"
                         onSelectionChange={(e) => {
                             setSelectedRows(e.value);
                         }}
                         dataKey="id">
-                        <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
-                        <Column field="index" header="№" style={{ width: "50px" }} />
-                        <Column field="" header="Овог, нэр" />
-                        <Column field="" header="Боловсрол" />
-                        <Column field="" header="Ажлын туршлага" />
+                        {/* <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column> */}
+                        <Column field="index" header="№" body={indexBodyTemplate} sortable />
+                        <Column field="trainerFor" header="Сургагч багш" body={trainingnameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="firstName" header="Нэр" body={teacherBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="lastName" header="Овог" body={trainingnameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="registerNumber" header="Сургагч багшийн регистер" body={teacherBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="imageFilePath" header="Сургагч багшийн зураг" body={teacherBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="address.country.name" header="address" body={addressBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+
+                        <Column headerStyle={{ width: '7rem' }} body={action}></Column>
                     </DataTable>
                     {isModalVisible && (
                         <CvModal
-                            Criteriacontroller={editRow}
+                        Usercontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
                             isEditMode={isEditMode}
@@ -193,7 +239,7 @@ const CV = () => {
         </ContentWrapper>
     );
     function confirm() {
-        Modal.confirm({
+        Modal.confirm({    
             title: "Та устгахдаа итгэлтэй байна уу ?",
             icon: <ExclamationCircleOutlined />,
             okButtonProps: {},

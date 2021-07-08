@@ -21,7 +21,7 @@ const validateMessages = {
         range: "${label} must be between ${min} and ${max}",
     },
 };
-export default function HonogBuudliinZardalModal(props) {
+export default function FuelModal(props) {
     const { Attendancecontroller, isModalVisible, isEditMode } = props;
     const [stateController, setStateController] = useState([]);
     const [form] = Form.useForm();
@@ -76,7 +76,7 @@ export default function HonogBuudliinZardalModal(props) {
 
         <div>
             <Modal
-                title="Зам хоног, буудлын зардал"
+                title="Шатахууны зардал /маршрутаар/"
                 okText="Хадгалах"
                 cancelText="Буцах"
                 width={600}
@@ -94,8 +94,8 @@ export default function HonogBuudliinZardalModal(props) {
                 >
                  
                     <Form.Item
-                        name="name"
-                        label="Зардлын нэр:"
+                        name="marshrut"
+                        label="Маршрут:"
                         rules={[
                             {
                                 required: true,
@@ -105,8 +105,8 @@ export default function HonogBuudliinZardalModal(props) {
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="turul"
-                        label="Зардлын төрөл:"
+                        name="zamiinUrt"
+                        label="Замын урт /км/:"
                         rules={[
                             {
                                 required: true,
@@ -116,8 +116,8 @@ export default function HonogBuudliinZardalModal(props) {
                         <Input />
                     </Form.Item>
               <Form.Item
-                name="hiniiToo"
-                label="МЗҮБ хүний тоо:"
+                name="busiinMedeelel"
+                label="Бүсийн нэмэгдэл /%/:"
                 rules={[
                   {
                     required: true,
@@ -127,8 +127,8 @@ export default function HonogBuudliinZardalModal(props) {
                 <Input />
               </Form.Item>
               <Form.Item
-                name="honogt"
-                label="Хоногт"
+                name="zartsuulahShathuun"
+                label="Зарцуулах шатахуун /л/"
                 rules={[
                   {
                     required: true,
@@ -138,8 +138,8 @@ export default function HonogBuudliinZardalModal(props) {
                 <Input />
               </Form.Item>
               <Form.Item
-                name="honog"
-                label="Хоног"
+                name="shathuuniiUne"
+                label="Шатахууны үнэ /₮/ A92"
                 rules={[
                   {
                     required: true,
@@ -151,7 +151,7 @@ export default function HonogBuudliinZardalModal(props) {
 
               <Form.Item
                 name="niit"
-                label="Нийт"
+                label="Нийт /₮/"
                 rules={[
                   {
                     required: true,

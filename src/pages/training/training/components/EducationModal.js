@@ -3,6 +3,7 @@ import { Modal, Form, Input, DatePicker } from "antd";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
 import AutocompleteSelect from "../../../components/Autocomplete";
+import ContentWrapper from "./cv.styled";
 const layout = {
     labelCol: {
         span: 10,
@@ -21,8 +22,8 @@ const validateMessages = {
         range: "${label} must be between ${min} and ${max}",
     },
 };
-export default function BichgiinHeregselModal(props) {
-    const { Attendancecontroller, isModalVisible, isEditMode } = props;
+export default function EducationModal(props) {
+    const { Composition, isModalVisible, isEditMode } = props;
     const [stateController, setStateController] = useState([]);
     const [form] = Form.useForm();
     useEffect(() => {
@@ -35,9 +36,9 @@ export default function BichgiinHeregselModal(props) {
         });
 
         if (isEditMode) {
-            getService("criteria/get" + Attendancecontroller.id).then((result) => {
-                Attendancecontroller.userServiceId = result.userService.id
-                form.setFieldsValue({ ...Attendancecontroller });
+            getService("criteria/get" + Composition.id).then((result) => {
+                Composition.userServiceId = result.userService.id
+                form.setFieldsValue({ ...Composition });
             })
 
         }
@@ -49,7 +50,7 @@ export default function BichgiinHeregselModal(props) {
                 values.userService = { id: values.userServiceId }
                 if (isEditMode) {
                     putService(
-                        "criteria/put" + Attendancecontroller.id,
+                        "criteria/put" + Composition.id,
                         values
                     )
                         .then((result) => {
@@ -76,7 +77,7 @@ export default function BichgiinHeregselModal(props) {
 
         <div>
             <Modal
-                title="Бичгийн хэрэгсэл"
+                title="Боловсрол"
                 okText="Хадгалах"
                 cancelText="Буцах"
                 width={600}
@@ -85,6 +86,7 @@ export default function BichgiinHeregselModal(props) {
                 onOk={save}
                 onCancel={() => props.close()}
             >
+                            <ContentWrapper>
                 <Form
                     form={form}
                     labelAlign={"left"}
@@ -95,7 +97,7 @@ export default function BichgiinHeregselModal(props) {
                  
                     <Form.Item
                         name="name"
-                        label="Зардлын нэр:"
+                        label="Зэрэг, цол:"
                         rules={[
                             {
                                 required: true,
@@ -105,51 +107,26 @@ export default function BichgiinHeregselModal(props) {
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="une"
-                        label="Нэгж үнэ:"
-                        rules={[
-                            {
-                                required: true,
-                            },
-                        ]}
+                        name="work"
+                        label="Их дээд сургуулийн нэр:"
+
                     >
                         <Input />
                     </Form.Item>
               <Form.Item
-                name="too"
-                label="Тоо ширхэг:"
+                name="code"
+                label="Огноо:"
                 rules={[
-                  {
-                    required: true,
-                  },
+                    {
+                        required: true,
+                    },
                 ]}
+
               >
-                <Input />
+                  <DatePicker/>
               </Form.Item>
-              <Form.Item
-                name="huniiToo"
-                label="Хүний тоо"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                name="Dun"
-                label="Дүн"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            
                 </Form>
+                </ContentWrapper>
             </Modal>
         </div >
     );

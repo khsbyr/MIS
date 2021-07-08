@@ -5,11 +5,12 @@ import { Button, Col, DatePicker, Layout, message, Modal, Row } from "antd";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import React, { useEffect, useState } from "react";
-import { isShowLoading } from "../../../context/Tools";
-import { getService, putService } from "../../../service/service";
-import { errorCatch } from "../../../tools/Tools";
-import ContentWrapper from "../training/components/attendance.style";
-import AttendanceModal from "../training/components/attendanceModal";
+import { isShowLoading } from "../../context/Tools";
+import ContentWrapper from "../criteria/criteria.style";
+import { getService, putService } from "../../service/service";
+import { errorCatch } from "../../tools/Tools";
+import ProjectSummaryModal from "../project/components/ProjectSummaryModal";
+
 function onChange(date, dateString) {
     console.log(date, dateString);
 }
@@ -17,7 +18,7 @@ const { Content } = Layout;
 
 var editRow
 var isEditMode;
-const Attendance = () => {
+const IncomeExpenses = () => {
 
     let loadLazyTimeout = null;
     const [list, setList] = useState([]);
@@ -38,7 +39,7 @@ const Attendance = () => {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("participants/get", list)
+        getService("organization/get", list)
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -63,24 +64,26 @@ const Attendance = () => {
     const action = (row) => {
         return (
             <React.Fragment>
-                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />}  onClick={() => edit(row)} />
-                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={() => pop(row)} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />} onClick={edit} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={pop} />
             </React.Fragment>
         );
     }
 
     const edit = (row) => {
-        editRow = row
+        editRow = row.data
         isEditMode = true
         setIsModalVisible(true)
+        
     }
 
-    const handleDeleted = (row) => {
-        if (row.length === 0) {
+    const handleDeleted = () => {
+        if (selectedRows.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         }
-        putService("participants/delete/" + row.id)
+        debugger
+        putService("organization/delete/" + selectedRows[0].id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -93,12 +96,12 @@ const Attendance = () => {
         setIsModalVisible(false);
         if (isSuccess) onInit();
     };
-    const pop = (row) => {
-        if (row.length === 0) {
+    const pop = () => {
+        if (selectedRows.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         } else {
-            confirm(row);
+            confirm();
         }
     };
 
@@ -111,46 +114,20 @@ const Attendance = () => {
         );
     }
 
-    const nameBodyTemplate = (row) => {
+    const trainingnameBodyTemplate = (row) => {
         return (
             <React.Fragment>
-                <span className="p-column-title">Суралцагчийн нэр</span>
+                <span className="p-column-title">Хичээлийн сэдэв</span>
                 {row.name}
             </React.Fragment>
         );
     }
 
-    const jobDescBodyTemplate = (row) => {
+    const teacherBodyTemplate = (row) => {
         return (
             <React.Fragment>
-                <span className="p-column-title">Ажил эрхлэлт</span>
-                {row.jobDescription}
-            </React.Fragment>
-        );
-    }
-    
-    const contactBodyTemplate = (row) => {
-        return (
-            <React.Fragment>
-                <span className="p-column-title">Холбогдох утас, мэйл, хаяг</span>
-            </React.Fragment>
-        );
-    }
-    
-    const registerNumberBodyTemplate = (row) => {
-        return (
-            <React.Fragment>
-                <span className="p-column-title">Регистрийн дугаар</span>
-                {row.asd}
-            </React.Fragment>
-        );
-    }
-
-    const trainingNameBodyTemplate = (row) => {
-        return (
-            <React.Fragment>
-                <span className="p-column-title">Сургалтын нэр</span>
-                {row.training.training_plan.name}
+                <span className="p-column-title">Сургагч багшийн нэр</span>
+                {row.indicatorProcess}
             </React.Fragment>
         );
     }
@@ -162,7 +139,7 @@ const Attendance = () => {
                     <Content>
                         <Row>
                             <Col xs={24} md={24} lg={14}>
-                                <p className="title">Ирцийн бүртгэл</p>
+                                <p className="title">Төслийн хураангуй</p>
                             </Col>
                             <Col xs={24} md={24} lg={10}>
                                 <Row gutter={[0, 15]}>
@@ -220,23 +197,23 @@ const Attendance = () => {
                         paginator
                         rows={10}
                         className="p-datatable-responsive-demo"
+                        // selectionMode="checkbox"
                         selection={selectedRows}
                         // onRowClick={edit}
+                        // editMode="row"
                         onSelectionChange={(e) => {
                             setSelectedRows(e.value);
                         }}
                         dataKey="id">
-                        <Column field="index" header="№" body={indexBodyTemplate}/>
-                        <Column field="name" header="Суралцагчийн нэр" sortable filter filterPlaceholder="Хайх" body={nameBodyTemplate}/>
-                        <Column field="jobDescription" header="Ажил эрхлэлт" sortable filter filterPlaceholder="Хайх" body={jobDescBodyTemplate}/>
-                        <Column field="" header="Холбогдох утас, мэйл, хаяг" sortable filter filterPlaceholder="Хайх" body={contactBodyTemplate}/>
-                        <Column field="" header="Регистрийн дугаар" sortable filter filterPlaceholder="Хайх" body={registerNumberBodyTemplate}/>
-                        <Column field="training.training_plan.name" header="Сургалтын нэр" sortable filter filterPlaceholder="Хайх" body={trainingNameBodyTemplate}/>
+                        {/* <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column> */}
+                        <Column field="index" header="№" body={indexBodyTemplate} sortable />
+                        <Column field="name" header="Хичээлийн сэдэв" body={trainingnameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="indicatorProcess" header="Сургагч багшийн нэр" body={teacherBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
                         <Column headerStyle={{ width: '7rem' }} body={action}></Column>
                     </DataTable>
                     {isModalVisible && (
-                        <AttendanceModal
-                        Attendancecontroller={editRow}
+                        <ProjectSummaryModal
+                        Guidelinescontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
                             isEditMode={isEditMode}
@@ -246,27 +223,19 @@ const Attendance = () => {
             </div>
         </ContentWrapper>
     );
-    function confirm(row) {
-        Modal.confirm({
+    function confirm() {
+        Modal.confirm({    
             title: "Та устгахдаа итгэлтэй байна уу ?",
             icon: <ExclamationCircleOutlined />,
             okButtonProps: {},
             okText: "Устгах",
             cancelText: "Буцах",
             onOk() {
-                handleDeleted(row);
+                handleDeleted();
                 onInit();
             },
             onCancel() { },
         });
     }
 }
-
-export default Attendance;
-
-
-
-
-
-
-
+export default IncomeExpenses;

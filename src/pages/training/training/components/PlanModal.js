@@ -76,8 +76,8 @@ const validateMessages = {
         range: "${label} must be between ${min} and ${max}",
     },
 };
-export default function GuidelinesModal(props) {
-    const { Guidelinescontroller, isModalVisible, isEditMode } = props;
+export default function PlanModal(props) {
+    const { Plancontroller, isModalVisible, isEditMode } = props;
     const [stateController, setStateController] = useState([]);
     const [form] = Form.useForm();
     const { Option } = Select;
@@ -93,7 +93,7 @@ export default function GuidelinesModal(props) {
 
         if (isEditMode) {
 
-            form.setFieldsValue({ ...Guidelinescontroller });
+            form.setFieldsValue({ ...Plancontroller });
 
 
         }
@@ -104,7 +104,7 @@ export default function GuidelinesModal(props) {
             .then((values) => {
                 if (isEditMode) {
                     putService(
-                        "trainingGuidelines/put" + Guidelinescontroller.id,
+                        "trainingTeam/put" + Plancontroller.id,
                         values
                     )
                         .then((result) => {
@@ -114,7 +114,7 @@ export default function GuidelinesModal(props) {
                             errorCatch(error);
                         })
                 } else {
-                    postService("trainingGuidelines/post", values)
+                    postService("trainingTeam/post", values)
                         .then((result) => {
                             props.close(true);
                         })
@@ -152,7 +152,7 @@ export default function GuidelinesModal(props) {
                             <Col xs={24} md={24} lg={12}>
                                 <Row>
                                     <Col xs={24} md={24} lg={24}>
-                                        <Form.Item label="Сургалтын сэдэв:" name="subject" rules={[
+                                        <Form.Item label="Сургалтын сэдэв:" name="mission" rules={[
                                             {
                                                 required: true,
                                             },

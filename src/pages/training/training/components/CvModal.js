@@ -1,36 +1,18 @@
+import { ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, InboxOutlined, PrinterOutlined } from "@ant-design/icons";
+import { faCalendarAlt, faEnvelope, faHome, faPen, faPhone, faTrash, faUser, faUserEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button, Col, DatePicker, Form, Input, Menu, message, Modal, Row, Select, Upload } from "antd";
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input , Table, Button, DatePicker, message, Dropdown, Menu} from "antd";
+import { isShowLoading } from "../../../../context/Tools";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
-import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined , UserOutlined } from "@ant-design/icons";
-import { faCalendarAlt, faEnvelope, faHome, faPhone, faUser, faUserEdit } from "@fortawesome/free-solid-svg-icons";
-import { Row, Col, Select, Option,Upload } from "antd";
-import AutocompleteSelect from "../../../components/Autocomplete";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ContentWrapper from "./cv.styled";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import SaveIcon from "@material-ui/icons/Save";
-import { isShowLoading } from "../../../../context/Tools";
-
-import {
-    ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled
-} from "@ant-design/icons";
-import BolovsrolModal from "./BolovsrolModal";
-import AjliinTurshlagaModal from "./AjliinTurshlagaModal";
-function handleMenuClick(e) { console.log("click", e.key[0]); }
-function onChange(date, dateString) {
-    console.log(date, dateString);
-}
+import EducationModal from "./EducationModal";
+import ExperienceModal from "./ExperienceModal";
 
 const { Dragger } = Upload;
-const layout = {
-    labelCol: {
-        span: 10,
-    },
-    wrapperCol: {
-        span: 14,
-    },
-};
 const validateMessages = {
     required: "${label} хоосон байна!",
     types: {
@@ -41,48 +23,23 @@ const validateMessages = {
         range: "${label} must be between ${min} and ${max}",
     },
 };
-
-const menu = (
-    <Menu onClick={handleMenuClick}>
-        <Menu.Item
-            key="1"
-            icon={<FileSyncOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-
-            Импорт
-        </Menu.Item>
-        <Menu.Item
-            key="2"
-            icon={<FileOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-            Экспорт
-        </Menu.Item>
-
-        <Menu.Item
-            key="3"
-            icon={<PrinterOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-
-            Хэвлэх
-        </Menu.Item>
-
-    </Menu>
-);
+const layout = {
+    labelCol: {
+        span: 20,
+    },
+    wrapperCol: {
+        span: 22,
+    },
+};
 
 var editRow;
-var editBolovsrolRow;
 var isEditMode;
 export default function CvModal(props) {
     const { Usercontroller, isModalVisible } = props;
-    const [isModalVisiblee, setIsModalVisiblee] = useState(false);
-    const [isModalVisibleee, setIsModalVisibleee] = useState(false);
-
-    const [stateController, setStateController] = useState([]);
+    const [isModalVisibleEducation, setIsModalVisibleEducation] = useState(false);
+    const [isModalVisibleExperience, setIsModalVisibleExperience] = useState(false);
     const [form] = Form.useForm();
-    const { Option } = Select;
     const [selectedRows, setSelectedRows] = useState([]);
-    const [products, setProducts] = useState([]);
-    const [multiSortMeta, setMultiSortMeta] = useState([{ field: 'category', order: -1 }]);
     let loadLazyTimeout = null;
     const [list, setList] = useState([]);
     const [lazyParams, setLazyParams] = useState({
@@ -118,7 +75,7 @@ export default function CvModal(props) {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("criteriaa/get", list)
+        getService("trainers/get", list)
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -135,16 +92,30 @@ export default function CvModal(props) {
             })
     };
 
+    const action = (row) => {
+        return (
+            <React.Fragment>
+                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />} onClick={() => edit(row)} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={() => pop(row)} />
+            </React.Fragment>
+        );
+    }
+
     const edit = (row) => {
         editRow = row.data
         isEditMode = true
-        setIsModalVisiblee(true)
+        setIsModalVisibleEducation(true)
     }
 
-    
+
     const add = () => {
-        setIsModalVisiblee(true);
+        setIsModalVisibleEducation(true);
         isEditMode = false;
+    };
+
+    const closeModal = (isSuccess = false) => {
+        setIsModalVisibleEducation(false);
+        if (isSuccess) onInit();
     };
 
     const pop = () => {
@@ -156,12 +127,40 @@ export default function CvModal(props) {
         }
     };
 
-    
+    const actionExperience = (row) => {
+        return (
+            <React.Fragment>
+                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />} onClick={() => editExperience(row)} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={() => popExperience(row)} />
+            </React.Fragment>
+        );
+    }
 
-    const closeModal = (isSuccess = false) => {
-        setIsModalVisiblee(false);
+    const editExperience = (row) => {
+        editRow = row.data
+        isEditMode = true
+        setIsModalVisibleExperience(true)
+    }
+
+    const addExperience = () => {
+        setIsModalVisibleExperience(true);
+        isEditMode = false;
+    };
+
+    const closeModalExperience = (isSuccess = false) => {
+        setIsModalVisibleExperience(false);
         if (isSuccess) onInit();
     };
+
+    const popExperience = () => {
+        if (selectedRows.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        } else {
+            confirm();
+        }
+    };
+
 
     const handleDeleted = () => {
         if (selectedRows.length === 0) {
@@ -186,7 +185,7 @@ export default function CvModal(props) {
                 values.userService = { id: values.userServiceId }
                 if (isEditMode) {
                     putService(
-                        "criteriaa/put" + Usercontroller.id,
+                        "trainers/put" + Usercontroller.id,
                         values
                     )
                         .then((result) => {
@@ -196,7 +195,7 @@ export default function CvModal(props) {
                             errorCatch(error);
                         })
                 } else {
-                    postService("criteriaa/post", values)
+                    postService("trainers/post", values)
                         .then((result) => {
                             props.close(true);
                         })
@@ -221,215 +220,172 @@ export default function CvModal(props) {
                 onOk={save}
                 onCancel={() => props.close()}
             >
-          <h2 className="title">1. Хувь хүний мэдээлэл</h2>
-            <Row gutter={[30,30]}>
-                
-                <Col xs={24} md={24} lg={4}>
-                    <Dragger {...props} style={{}}>
-                        <p className="ant-upload-drag-icon">
-                        <InboxOutlined />
-                        </p>
-                        <p className="ant-upload-hint">
-                        Зураг оруулах
-                        </p>
-                    </Dragger>            
-                </Col>
-                <Col xs={24} md={24} lg={2}>
-                </Col>
-                <Col xs={24} md={24} lg={9}>
-                    <Form>
-                        <Form.Item>                   
-                            <Input className="FormItem" placeholder="Овог, нэр:" prefix={<FontAwesomeIcon icon={faUser}/>}/>
-                        </Form.Item>
-                    </Form>
-                    <Form>
-                        <Form.Item>
-                            <Input className="FormItem" placeholder="Төрсөн огноо:" prefix={<FontAwesomeIcon icon={faCalendarAlt}/>}/>
-                        </Form.Item>
-                    </Form>
-                    <Form>
-                        <Form.Item>
-                            <Input className="FormItem"placeholder="Регистрийн дугаар:" prefix={<FontAwesomeIcon icon={faUserEdit}/>}/>
-                        </Form.Item>
-                    </Form>
-                </Col>
+                <ContentWrapper>
+                <Form
+                        form={form}
+                        labelAlign={"left"}
+                        {...layout}
+                        layout="vertical"
+                        name="nest-messages"
+                        validateMessages={validateMessages}
+                    >
+                    <h2 className="title">1. Хувь хүний мэдээлэл</h2>
+                    <Row gutter={[30, 30]}>
 
-                <Col xs={24} md={24} lg={9}>
-                <Form>
-                    <Form.Item>
-                            <Input className="FormItem"placeholder="Хаяг:" prefix={<FontAwesomeIcon icon={faHome}/>}/>
-                    </Form.Item>
-                    </Form>
-                    <Form>
-                        <Form.Item>
-                            <Input className="FormItem" placeholder="Утас, факс:" prefix={<FontAwesomeIcon icon={faPhone}/>}/>
-                        </Form.Item>
-                    </Form>
-                    <Form>
-                        <Form.Item>
-                            <Input className="FormItem" placeholder="И-мэйл хаяг:" prefix={<FontAwesomeIcon icon={faEnvelope}/>}/>
-                        </Form.Item>
-                    </Form>
-                </Col>
-            </Row>
+                        <Col xs={24} md={24} lg={4}>
+                            <Dragger {...props} style={{}}>
+                                <p className="ant-upload-drag-icon">
+                                    <InboxOutlined />
+                                </p>
+                                <p className="ant-upload-hint">
+                                    Зураг оруулах
+                                </p>
+                            </Dragger>
+                        </Col>
+                        <Col xs={24} md={24} lg={2}>
+                        </Col>
+                        <Col xs={24} md={24} lg={9}>
+                                <Form.Item>
+                                    <Input className="FormItem" placeholder="Овог, нэр:" prefix={<FontAwesomeIcon icon={faUser} />} />
+                                </Form.Item>
+                      
+                                <Form.Item>
+                                    <Input className="FormItem" placeholder="Төрсөн огноо:" prefix={<FontAwesomeIcon icon={faCalendarAlt} />} />
+                                </Form.Item>
+                  
+                                <Form.Item>
+                                    <Input className="FormItem" placeholder="Регистрийн дугаар:" prefix={<FontAwesomeIcon icon={faUserEdit} />} />
+                                </Form.Item>
+                        </Col>
 
-            <h2 className="title">2. Ажлын зорилго</h2>
-            <Row>
-                <Col xs={24} md={24} lg={22}>
-                    <Form layout="vertical">
-                        <Form.Item> 
-                            <Input.TextArea 
-                                placeholder="(Горилж буй ажлын зорилгоо товч бичнэ үү)"
+                        <Col xs={24} md={24} lg={9}>
+                                <Form.Item>
+                                    <Input className="FormItem" placeholder="Хаяг:" prefix={<FontAwesomeIcon icon={faHome} />} />
+                                </Form.Item>
+                                <Form.Item>
+                                    <Input className="FormItem" placeholder="Утас, факс:" prefix={<FontAwesomeIcon icon={faPhone} />} />
+                                </Form.Item>
+                        
+                                <Form.Item>
+                                    <Input className="FormItem" placeholder="И-мэйл хаяг:" prefix={<FontAwesomeIcon icon={faEnvelope} />} />
+                                </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <h2 className="title">2. Ажлын зорилго</h2>
+                    <Row>
+                        <Col xs={24} md={24} lg={24}>
+                                <Form.Item>
+                                    <Input.TextArea
+                                        placeholder="(Горилж буй ажлын зорилгоо товч бичнэ үү)"
+                                        style={{
+                                            width: "100%",
+                                            height: "110px",
+                                        }}
+                                    />
+                                </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <h2 className="title">
+                        3. Боловсрол {" "}
+                        <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={add} style={{float: "right"}}>
+                            Нэмэх
+                        </Button>
+                    </h2>
+                    <Row>
+                        <Col xs={24} md={24} lg={24}>
+                            <DataTable
+                                value={list}
+                                removableSort
+                                paginator
+                                rows={10}
+                                className="p-datatable-responsive-demo"
+                                selection={selectedRows}
+                                // onRowClick={edit}
+                                onSelectionChange={(e) => {
+                                    setSelectedRows(e.value);
+                                }}
+                                dataKey="id"
+                                >
+                                <Column field="index" header="№" style={{ width: "50px" }} />
+                                <Column field="name" header="Зэрэг, цол" />
+                                <Column field="" header="Их дээд сургуулийн нэр" />
+                                <Column field="" header="Огноо" />
+                                <Column headerStyle={{ width: '7rem' }} body={action}></Column>
+                            </DataTable>
+                            {isModalVisibleEducation && (
+                                <EducationModal
+                                    Criteriacontroller={editRow}
+                                    isModalVisible={isModalVisibleEducation}
+                                    close={closeModal}
+                                    isEditMode={isEditMode}
+                                />
+                            )}
+                        </Col>
+                    </Row>
+
+                    <h2 className="title">
+                        4. Ажлын туршлага {" "}
+                        <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={addExperience} style={{float: "right"}}>
+                            Нэмэх
+                        </Button>
+                    </h2>
+                    <Row>
+                        <Col xs={24} md={24} lg={24}>
+                            <DataTable
+                                value={list}
+                                removableSort
+                                paginator
+                                rows={10}
+                                className="p-datatable-responsive-demo"
+                                selection={selectedRows}
+                                // onRowClick={edit}
+                                onSelectionChange={(e) => {
+                                    setSelectedRows(e.value);
+                                }}
+                                dataKey="id"
+                                >
+                                <Column field="index" header="№" style={{ width: "50px" }} />
+                                <Column field="name" header="Албан тушаал" />
+                                <Column field="" header="Байгууллагын нэр" />
+                                <Column field="" header="Огноо" />
+                                <Column headerStyle={{ width: '7rem' }} body={actionExperience}></Column>
+                            </DataTable>
+                            {isModalVisibleExperience && (
+                                <ExperienceModal
+                                    Criteriacontroller={editRow}
+                                    isModalVisible={isModalVisibleExperience}
+                                    close={closeModalExperience}
+                                    isEditMode={isEditMode}
+                                />
+                            )}
+                        </Col>
+                    </Row>
+
+                    <h2 className="title">10. Ур чадвар</h2>
+                    <Row >
+                        <Col xs={24} md={24} lg={24}>
+                            <Input.TextArea
+                                placeholder="(Өөрийн давуу тал, ур чадвараа нэрлэнэ үү)"
                                 style={{
                                     width: "100%",
-                                    height: "110px",                                  
+                                    height: "140px"
                                 }}
                             />
-                        </Form.Item>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={24} md={24} lg={22}>
+                            <Form.Item style={{ marginTop: "20px" }}>
+                                <Button type="primary" htmlType="submit" className="button">
+                                    Хадгалах
+                                </Button>
+                            </Form.Item>
+                        </Col>
+                    </Row>
                     </Form>
-                </Col>
-            </Row>
-
-            <h2 className="title">3. Боловсрол</h2>
-            
-            <Row>
-                            <Col span={2}>
-                                <Button onClick={add} type="link" icon={<SaveIcon />}>
-                                    Нэмэх
-                                </Button>
-                            </Col>
-                            <Col span={2}>
-                                <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
-                                    Устгах
-                                </Button>
-                            </Col>
-                            <Col span={18} style={{ textAlign: "right" }}>
-                                <div style={{ marginRight: "5px" }}>
-                                    <Dropdown.Button
-                                        overlay={menu}
-                                        placement="bottomCenter"
-                                        icon={
-                                            <SettingFilled
-                                                style={{ marginLeft: "8px", color: "#45629c" }}
-                                            />
-                                        }
-                                    ></Dropdown.Button>
-                                </div>
-                            </Col>
-                        </Row>
-            <Row >
-                <Col xs={24} md={24} lg={22}>
-                    <DataTable
-                            value={list}
-                            removableSort
-                            paginator
-                            rows={10}
-                            className="p-datatable-responsive-demo"
-                            selectionMode="checkbox"
-                            selection={selectedRows}
-                            onRowClick={edit}
-                            onSelectionChange={(e) => {
-                                setSelectedRows(e.value);
-                            }}
-                            dataKey="id">
-                            <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
-                            <Column field="index" header="№" style={{ width: "50px" }} />
-                            <Column field="name" header="Зэрэг, цол" />
-                            <Column field="" header="Их дээд сургуулийн нэр" />
-                            <Column field="" header="Огноо" />
-                        </DataTable>
-                        {isModalVisiblee && (
-                        <BolovsrolModal
-                            Criteriacontroller={editRow}
-                            isModalVisible={isModalVisible}
-                            close={closeModal}
-                            isEditMode={isEditMode}
-                        />
-                    )}
-                </Col>
-            </Row>
-
-            <h2 className="title">4. Ажлын туршлага</h2>
-            
-            <Row>
-                            <Col span={2}>
-                                <Button onClick={add} type="link" icon={<SaveIcon />}>
-                                    Нэмэх
-                                </Button>
-                            </Col>
-                            <Col span={2}>
-                                <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
-                                    Устгах
-                                </Button>
-                            </Col>
-                            <Col span={18} style={{ textAlign: "right" }}>
-                                <div style={{ marginRight: "5px" }}>
-                                    <Dropdown.Button
-                                        overlay={menu}
-                                        placement="bottomCenter"
-                                        icon={
-                                            <SettingFilled
-                                                style={{ marginLeft: "8px", color: "#45629c" }}
-                                            />
-                                        }
-                                    ></Dropdown.Button>
-                                </div>
-                            </Col>
-                        </Row>
-            <Row >
-                <Col xs={24} md={24} lg={22}>
-                    <DataTable
-                            value={list}
-                            removableSort
-                            paginator
-                            rows={10}
-                            className="p-datatable-responsive-demo"
-                            selectionMode="checkbox"
-                            selection={selectedRows}
-                            onRowClick={edit}
-                            onSelectionChange={(e) => {
-                                setSelectedRows(e.value);
-                            }}
-                            dataKey="id">
-                            <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
-                            <Column field="index" header="№" style={{ width: "50px" }} />
-                            <Column field="name" header="Албан тушаал" />
-                            <Column field="" header="Байгууллагын нэр" />
-                            <Column field="" header="Огноо" />
-                        </DataTable>
-                        {isModalVisiblee && (
-                        <AjliinTurshlagaModal
-                            Criteriacontroller={editRow}
-                            isModalVisible={isModalVisiblee}
-                            close={closeModal}
-                            isEditMode={isEditMode}
-                        />
-                    )}
-                </Col>
-            </Row>
-
-        
-            <h2 className="title">10. Ур чадвар</h2>
-            <Row >
-                <Col xs={24} md={24} lg={22}>
-                    <Input.TextArea 
-                        placeholder="(Өөрийн давуу тал, ур чадвараа нэрлэнэ үү)"
-                        style={{
-                            width: "100%",
-                            height: "140px"
-                        }}
-                    />
-                </Col>
-            </Row>
-            <Row>
-                <Col xs={24} md={24} lg={22}>
-                    <Form.Item style={{marginTop: "20px"}}>
-                        <Button type="primary" htmlType="submit" className="button">
-                        Хадгалах
-                        </Button>
-                    </Form.Item>
-                </Col>
-            </Row>
+                </ContentWrapper>
             </Modal>
         </div >
     );
@@ -448,3 +404,4 @@ export default function CvModal(props) {
         });
     }
 }
+
