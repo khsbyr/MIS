@@ -359,7 +359,7 @@ const Budget = () => {
                             close={closeModalShathuuniiZardal}
                             isEditMode={isEditMode}
                         />
-                    )}ө
+                    )}
                 </div>
             </div>
         </ContentWrapper>

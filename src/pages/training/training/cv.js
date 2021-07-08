@@ -116,21 +116,29 @@ const CV = () => {
             </React.Fragment>
         );
     }
-
-    const trainingnameBodyTemplate = (row) => {
+    const trainerForBodyTemplate = (row) => {
         return (
             <React.Fragment>
-                <span className="p-column-title">Хичээлийн сэдэв</span>
+                <span className="p-column-title">Сургагч багш</span>
                 {row.trainerFor}
             </React.Fragment>
         );
     }
 
-    const teacherBodyTemplate = (row) => {
+    const FirstNameBodyTemplate = (row) => {
         return (
             <React.Fragment>
-                <span className="p-column-title">Сургагч багшийн нэр</span>
-                {row.registerNumber}
+                <span className="p-column-title">Нэр</span>
+                {row.firstname}
+            </React.Fragment>
+        );
+    }
+
+    const LastNameBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Овог</span>
+                {row.lastname}
             </React.Fragment>
         );
     }
@@ -217,11 +225,11 @@ const CV = () => {
                         dataKey="id">
                         {/* <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column> */}
                         <Column field="index" header="№" body={indexBodyTemplate} sortable />
-                        <Column field="trainerFor" header="Сургагч багш" body={trainingnameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
-                        <Column field="firstName" header="Нэр" body={teacherBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
-                        <Column field="lastName" header="Овог" body={trainingnameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
-                        <Column field="registerNumber" header="Сургагч багшийн регистер" body={teacherBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
-                        <Column field="imageFilePath" header="Сургагч багшийн зураг" body={teacherBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column header="Сургагч багш" body={trainerForBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column header="Нэр" body={FirstNameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column header="Овог" body={LastNameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="registerNumber" header="Сургагч багшийн регистер" sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="imageFilePath" header="Сургагч багшийн зураг" sortable filter filterPlaceholder="Хайх"/>
                         <Column field="address.country.name" header="address" body={addressBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
 
                         <Column headerStyle={{ width: '7rem' }} body={action}></Column>

@@ -71,14 +71,31 @@ export default function OrganizationModal(props) {
         setStateAimag(result || []);
       }
     });
+    getService(`soum/getList/${Orgcontroller.address.aimag.id}`).then((result) => {
+      if (result) {
+        setStateSum(result || []);
+      }
+    });
+    getService(`bag/getList/${Orgcontroller.address.soum.id}`).then((result) => {
+      if (result) {
+        setStateBag(result || []);
+      }
+    });
     if (isEditMode) {
       form.setFieldsValue({ ...Orgcontroller , 
-        bankName : Orgcontroller.bank.name,
-        Currency : Orgcontroller.currency.name,
-        CountryName : Orgcontroller.address.country.name,
-        AimagName : Orgcontroller.address.aimag.name,
-        SoumName : Orgcontroller.address.soum.name,
-        BagName : Orgcontroller.address.bag.name,
+        bankID : Orgcontroller.bank.id,
+        Currency : Orgcontroller.currency.id,
+        CountryID : Orgcontroller.address.country.id,
+        AimagID : Orgcontroller.address.aimag.id,
+        SoumID : Orgcontroller.address.soum.id,
+        BagID : Orgcontroller.address.bag.id,
+        AddressDetail : Orgcontroller.address.addressDetail,
+        RespoUserFirstName : Orgcontroller.responsibleUser.firstname,
+        RespoUserLastName : Orgcontroller.responsibleUser.lastname,
+        RespoUserRegister : Orgcontroller.responsibleUser.register,
+        RespoUserPosition : Orgcontroller.responsibleUser.position,
+        RespoUserPhone: Orgcontroller.responsibleUser.phoneNumber,
+        RespoUserEmail: Orgcontroller.responsibleUser.email,
       });
     }
     
@@ -94,22 +111,18 @@ export default function OrganizationModal(props) {
         setStateAimag(result || []);
       }
     });
-    if (isEditMode) {
-      form.setFieldsValue({ ...Orgcontroller });
-    }
   };
   const selectAimag = (value) => {
     getSum(value);
   };
   const getSum = (aimagId) => {
+    console.log('aimagId'+ aimagId);
     getService(`soum/getList/${aimagId}`, {}).then((result) => {
       if (result) {
+        console.log('asd'+ result);
         setStateSum(result || []);
       }
     });
-    if (isEditMode) {
-      form.setFieldsValue({ ...Orgcontroller });
-    }
   };
   const selectSum = (value) => {
     getBag(value);
@@ -120,16 +133,40 @@ export default function OrganizationModal(props) {
         setStateBag(result || []);
       }
     });
-    if (isEditMode) {
-      form.setFieldsValue({ ...Orgcontroller });
-    }
   };
 
   const save = () => {
     form
+    
       .validateFields()
       .then((values) => {
-        values.userService = { id: values.userServiceId };
+        console.log(values)
+        values.bank = {id: values.bankID};
+        values.currency = {id: values.Currency}; 
+        values.address = {
+          addressDetail: values.AddressDetail,
+          country: {
+            id: values.CountryID,
+          },
+          aimag: {
+            id: values.AimagID,
+          },
+          soum: {
+            id: values.SoumID,
+          },
+          bag: {
+            id: values.BagID,
+          }
+        };
+        values.responsibleUser = {
+          firstname: values.RespoUserFirstName, 
+          lastname: values.RespoUserLastName, 
+          register: values.RespoUserRegister,
+          position: values.RespoUserPosition,
+          phoneNumber: values.RespoUserPhone,
+          email: values.RespoUserEmail
+        };
+        
         if (isEditMode) {
           putService("organization/update/" + Orgcontroller.id, values)
             .then((result) => {
@@ -139,7 +176,6 @@ export default function OrganizationModal(props) {
               errorCatch(error);
             });
         } else {
-          debugger
           console.log(values);
           postService("organization/post", values)
             .then((result) => {
@@ -212,7 +248,7 @@ export default function OrganizationModal(props) {
               </Row>
               <Row gutter={32}>
                 <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Банкны нэр:" name="bankName">
+                    <Form.Item label="Банкны нэр:" name="bankID">
                       <AutoCompleteSelect
                         valueField="id"
                         data={stateBank}
@@ -244,16 +280,17 @@ export default function OrganizationModal(props) {
               <h2 className="title">Холбоо барих мэдээлэл</h2>
               <Row gutter={32}>
               <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Улс:" name="CountryName">
+                    <Form.Item label="Улс:" name="CountryID">
                       <AutoCompleteSelect
                         valueField="id"
                         data={stateCountry}
-                    onChange={(value) => selectCountry(value)}
+                        onChange={(value) => selectCountry(value)}
                       />
+                      
                     </Form.Item>
                 </Col>
               <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Аймаг, хот:" name="AimagName">
+                    <Form.Item label="Аймаг, хот:" name="AimagID">
                       <AutoCompleteSelect
                         valueField="id"
                         data={stateAimag}
@@ -262,7 +299,7 @@ export default function OrganizationModal(props) {
                     </Form.Item>
                 </Col>
                 <Col xs={24} md={24} lg={12}>
-                <Form.Item name="SoumName" layout="vertical" label="Сум, Дүүрэг:">
+                <Form.Item name="SoumID" layout="vertical" label="Сум, Дүүрэг:">
                   <AutoCompleteSelect
                     valueField="id"
                     data={stateSum}
@@ -270,34 +307,28 @@ export default function OrganizationModal(props) {
                   />
                 </Form.Item>
                 </Col>
-              </Row>
-              <Row gutter={32}>
                 <Col xs={24} md={24} lg={12}>
-                <Form.Item name="BagName" layout="vertical" label="Баг, Хороо:">
+                <Form.Item name="BagID" layout="vertical" label="Баг, Хороо:">
                   <AutoCompleteSelect valueField="id" data={stateBag} />
                 </Form.Item>
                 </Col>
                 <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Утас:">
-                      <Input />
-                    </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={32}>
-                <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Е-майл хаяг:">
+                    <Form.Item label="Утас:" name="phone">
                       <Input />
                     </Form.Item>
                 </Col>
                 <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Веб хаяг:">
+                    <Form.Item label="Е-майл хаяг:" name="email">
                       <Input />
                     </Form.Item>
                 </Col>
-              </Row>
-              <Row>
+                <Col xs={24} md={24} lg={12}>
+                    <Form.Item label="Веб хаяг:" name="web">
+                      <Input />
+                    </Form.Item>
+                </Col>
                 <Col xs={24} md={24} lg={24}>
-                    <Form.Item label="Хаяг:">
+                    <Form.Item label="Хаяг:" name="AddressDetail">
                       <Input.TextArea
                         style={{
                           width: "100%",
@@ -307,47 +338,48 @@ export default function OrganizationModal(props) {
                     </Form.Item>
                 </Col>
               </Row>
+                      
             </Col>
             <Col xs={24} md={24} lg={10}>
               <h2 className="title">Хариуцсан ажилтан:</h2>
               <Row>
                 <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Овог:">
+                    <Form.Item label="Овог:" name="RespoUserLastName">
                       <Input />
                     </Form.Item>
                 </Col>
               </Row>
               <Row>
                 <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Нэр:">
+                    <Form.Item label="Нэр:" name="RespoUserFirstName">
                       <Input />
                     </Form.Item>
                 </Col>
               </Row>
               <Row>
                 <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Регистрийн дугаар:">
+                    <Form.Item label="Регистрийн дугаар:" name="RespoUserRegister">
                       <Input />
                     </Form.Item>
                 </Col>
               </Row>
               <Row>
                 <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Албан тушаал:">
+                    <Form.Item label="Албан тушаал:" name="RespoUserPosition">
                       <Input />
                     </Form.Item>
                 </Col>
               </Row>
               <Row>
                 <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Утасны дугаар:">
+                    <Form.Item label="Утасны дугаар:" name="RespoUserPhone">
                       <Input />
                     </Form.Item>
                 </Col>
               </Row>
               <Row>
                 <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Е-майл хаяг:">
+                    <Form.Item label="Е-майл хаяг:" name="RespoUserEmail">
                       <Input />
                     </Form.Item>
                 </Col>

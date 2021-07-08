@@ -83,6 +83,7 @@ const Criteria = () => {
   };
 
   const edit = (row) => {
+    console.log(row)
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
@@ -251,6 +252,7 @@ const Criteria = () => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              style={{widht: "60%"}}
             />
             <Column
               field="indicatorProcess"

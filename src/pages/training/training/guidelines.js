@@ -84,7 +84,7 @@ const handleDeleted = (row) => {
         message.warning("Устгах өгөгдлөө сонгоно уу");
         return;
     }
-    debugger
+    
     putService("trainingGuidelines/delete/" + row.id)
         .then((result) => {
             message.success("Амжилттай устлаа");
@@ -98,7 +98,7 @@ const closeModal = (isSuccess = false) => {
     setIsModalVisible(false);
     if (isSuccess) onInit();
 };
-debugger
+
 const pop = (row) => {
     if (row.length === 0) {
         message.warning("Устгах өгөгдлөө сонгоно уу");
