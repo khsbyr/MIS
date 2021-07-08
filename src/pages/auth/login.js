@@ -26,8 +26,9 @@ function Login() {
       isShowLoading(true);
       postService("user/login", {username:username.value, password:password.value})
       .then((result) => {
-        localStorage.setItem('token', result.data);
-        localStorage.setItem('user', username.value);
+        console.log(result.data);
+        localStorage.setItem('token', result.data.token);
+        localStorage.setItem('myHID', result.data.userId);
         history.push("/admin");
       })
       .finally(() => {

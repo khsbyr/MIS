@@ -5,7 +5,7 @@ import { LogIn } from "./Login.style";
 import { useHistory } from "react-router-dom";
 import {useTranslation} from 'react-i18next';
 import Partner from "./components/Partner";
-
+import { putService, getService } from "../../service/service";
 function Register() {
 
   const history = useHistory();

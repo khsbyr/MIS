@@ -3,14 +3,18 @@ import { MSG } from "../constants/Constant";
 import { errorCatch } from "../tools/Tools";
 import axios from "./axios";
 
-const config = () => ({ 
-  headers: { 
+const config = () => ({
+  headers: {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "*"
-  } 
-})
+    "Access-Control-Allow-Headers": "*",
+  },
+});
 
-export async function getService(serviceName, param = null, isShowErrorMessage = true) {
+export async function getService(
+  serviceName,
+  param = null,
+  isShowErrorMessage = true
+) {
   let params = "?search=status:true";
   let isSeparate = false;
   if (param) {
@@ -36,19 +40,18 @@ export async function getService(serviceName, param = null, isShowErrorMessage =
   }
   const response = await axios
     .get(serviceName + params, config())
-    .catch(error => {
-      if (isShowErrorMessage)
-        errorCatch(error)
-      throw error
-    })
+    .catch((error) => {
+      if (isShowErrorMessage) errorCatch(error);
+      throw error;
+    });
   return response?.data;
 }
 
 export async function postService(serviceName, data) {
   const response = await axios
     .post(serviceName, data, config())
-    .catch(error => {
-      throw error
+    .catch((error) => {
+      throw error;
     });
   if (response.status === 200) console.log(MSG.SUCCESS);
   else console.log("АМЖИЛТГҮЙ:", response.statusText);
@@ -58,9 +61,9 @@ export async function postService(serviceName, data) {
 export async function putService(serviceName, data = null) {
   const response = await axios
     .put(serviceName, data, config())
-    .catch(error => {
-      errorCatch(error)
-      throw error
+    .catch((error) => {
+      errorCatch(error);
+      throw error;
     });
   if (response.status === 200) console.log(MSG.SUCCESS);
   else message.warning("АМЖИЛТГҮЙ:", response.statusText);
@@ -70,19 +73,17 @@ export async function putService(serviceName, data = null) {
 export async function deleteService(serviceName, data) {
   return await axios
     .delete(serviceName, { data, ...config() })
-    .catch(error => {
-      errorCatch(error)
-      throw error
-    });;
+    .catch((error) => {
+      errorCatch(error);
+      throw error;
+    });
 }
 
 export async function patchService(serviceName, data = null) {
-  return await axios
-    .patch(serviceName, data, config())
-    .catch(error => {
-      errorCatch(error)
-      throw error
-    });
+  return await axios.patch(serviceName, data, config()).catch((error) => {
+    errorCatch(error);
+    throw error;
+  });
 }
 
 export async function getGenerateUuid() {
@@ -98,7 +99,7 @@ export function writeFileServer(selectedFile, generateUuid) {
       console.log(res.statusText);
     })
     .catch((error) => {
-      errorCatch(error)
-      throw error
+      errorCatch(error);
+      throw error;
     });
 }
