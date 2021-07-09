@@ -2,68 +2,8 @@ import { Col, DatePicker, Form, Input, Modal, Row, Select, Table, Upload } from 
 import React, { useEffect, useState } from "react";
 import { postService, putService, getService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
-<<<<<<< HEAD
-import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined } from "@ant-design/icons";
-import { Row, Col, Select, Option, Upload } from "antd";
-import AutocompleteSelect from "../../../../components/Autocomplete";
-const columns = [
-    {
-        title: '№',
-        dataIndex: 'code',
-        key: 'code',
-    },
-    {
-        title: 'Нэрс',
-        dataIndex: 'name',
-        key: 'name',
-    },
-    {
-        title: 'Сургалтын үйл ажиллагаанд гүйцэтгэх үүрэг',
-        dataIndex: 'uureg',
-        key: 'uureg',
-    }
-];
-
-const data = [
-    {
-        key: "1",
-        code: "1",
-        name: "Болд",
-        uureg: "Илтгэгч"
-    }
-]
-
-const column = [
-    {
-        title: '№',
-        dataIndex: 'code',
-        key: 'code',
-    },
-    {
-        title: 'Суралцагчийн нэрс',
-        dataIndex: 'name',
-        key: 'name',
-    },
-    {
-        title: 'Байгууллага, албан тушаал, ажил эрхлэлт',
-        dataIndex: 'uureg',
-        key: 'uureg',
-    }
-];
-
-const dataa = [
-    {
-        key: "1",
-        code: "1",
-        name: "Сувд",
-        uureg: "Албан тушаал"
-    }
-]
-const { Dragger } = Upload;
-=======
 import ContentWrapper from "./guidelines.style";
-import AutoCompleteSelect from "../../../components/Autocomplete";
->>>>>>> 180b04277efd1db52bd08ea25f215bf6723c0149
+import AutoCompleteSelect from "../../../../components/Autocomplete";
 const layout = {
     labelCol: {
         span: 20,

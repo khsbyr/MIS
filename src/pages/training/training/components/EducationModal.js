@@ -2,12 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Modal, Form, Input, DatePicker } from "antd";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
-<<<<<<< HEAD:src/pages/training/training/components/BolovsrolModal.js
 import AutocompleteSelect from "../../../../components/Autocomplete";
-=======
-import AutocompleteSelect from "../../../components/Autocomplete";
 import ContentWrapper from "./cv.styled";
->>>>>>> 180b04277efd1db52bd08ea25f215bf6723c0149:src/pages/training/training/components/EducationModal.js
 const layout = {
     labelCol: {
         span: 10,

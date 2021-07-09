@@ -19,7 +19,7 @@ import {
 import { errorCatch } from "../../../../tools/Tools";
 import "./organization.style";
 import ContentWrapper from "./organization.style";
-import AutoCompleteSelect from "../../../components/Autocomplete";
+import AutoCompleteSelect from "../../../../components/Autocomplete";
 
 const { Dragger } = Upload;
 

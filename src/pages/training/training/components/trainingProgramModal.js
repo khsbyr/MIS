@@ -2,12 +2,8 @@ import { DatePicker, Form, Input, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
-<<<<<<< HEAD
-import AutocompleteSelect from "../../../../components/Autocomplete";
-=======
 import ContentWrapper from "./trainingProgram.style";
 
->>>>>>> 180b04277efd1db52bd08ea25f215bf6723c0149
 const layout = {
   labelCol: {
     span: 10,

@@ -13,12 +13,7 @@ import { DataTable } from "primereact/datatable";
 import React, { useEffect, useState } from "react";
 import { isShowLoading } from "../../context/Tools";
 import { getService, putService } from "../../service/service";
-<<<<<<< HEAD
-import { PAGESIZE } from "../../constants/Constant";
-import { errorCatch, convertLazyParamsToObj } from "../../tools/Tools";
-=======
 import { errorCatch } from "../../tools/Tools";
->>>>>>> 180b04277efd1db52bd08ea25f215bf6723c0149
 import CriteriaModal from "../criteria/components/CriteriaModal";
 import "./criteria.style";
 import ContentWrapper from "./criteria.style";

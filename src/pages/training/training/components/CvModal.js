@@ -6,15 +6,7 @@ import React, { useEffect, useState } from "react";
 import { isShowLoading } from "../../../../context/Tools";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
-<<<<<<< HEAD
-import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined , UserOutlined } from "@ant-design/icons";
-import { faCalendarAlt, faEnvelope, faHome, faPhone, faUser, faUserEdit } from "@fortawesome/free-solid-svg-icons";
-import { Row, Col, Select, Option,Upload } from "antd";
-import AutocompleteSelect from "../../../../components/Autocomplete";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-=======
 import ContentWrapper from "./cv.styled";
->>>>>>> 180b04277efd1db52bd08ea25f215bf6723c0149
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import EducationModal from "./EducationModal";
