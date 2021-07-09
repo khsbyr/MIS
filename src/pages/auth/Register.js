@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "antd/dist/antd.css";
-import { Button, Row, Col, Form, Input, Select } from "antd";
+import { Button, Row, Col, Form, Input, Select, message } from "antd";
 import { LogIn } from "./Login.style";
 import { useTranslation } from "react-i18next";
 import Partner from "./components/Partner";
@@ -11,7 +11,6 @@ import { isShowLoading } from "../../context/Tools";
 function Register() {
   const { t } = useTranslation();
   const [userRoles, setUserRoles] = useState([]);
-  const [userOrgs, setUserOrgs] = useState([]);
   const { Option } = Select;
 
   useEffect(() => {
@@ -20,26 +19,23 @@ function Register() {
     });
   }, []);
 
-  const onChangeRole = (code) => {
-    console.log(code);
-    getService(`/organization/getByRole/${code}`).then((result) => {
-      setUserOrgs(result || [])
-    })
-  };
-
   const requestNewUser = (values) => {
-    isShowLoading(true);
-    const saveData = {
-        orgId: values.orgId,
-        firstname: values.name,
+    console.log(values.password);
+    console.log(values.confirmPassword);
+    if (values.password !== values.confirmPassword) {
+        message.error("Passwords don't match")
+    } else {
+      isShowLoading(true);
+      const saveData = {
+        username: values.username,
         email: values.email,
-        userRole: { id: values.code },
-    }
-    console.log(JSON.stringify(saveData));
-    // postService("/signUpRequest/save/9", saveData).then(result => {
-    //     message.success("Таны хүсэлтийг хүлээн авлаа. ")
-    //     window.location.href = "/"
-    // }).finally(() => isShowLoading(false))
+        password: values.password
+      };
+      console.log(JSON.stringify(saveData));
+      postService(`/signUpRequest/save/${values.code}`, saveData).then(result => {
+          message.success("Таны хүсэлтийг хүлээн авлаа. ")
+          window.location.href = "/"
+      }).finally(() => isShowLoading(false))}
   };
 
   return (
@@ -101,7 +97,6 @@ function Register() {
                 placeholder="Хэрэглэгчийн төрөл"
                 style={{ width: "100%" }}
                 bordered={false}
-                onChange={onChangeRole}
                 allowClear
               >
                 {userRoles &&
@@ -111,25 +106,7 @@ function Register() {
                     </Option>
                   ))}
               </Select>
-            </Form.Item>
-            <Form.Item>
-              <p className="subTitle">{t("organization")}</p>
-            </Form.Item>
-            <Form.Item name="orgId" className="underline">
-              <Select
-                placeholder="Байгууллага"
-                style={{ width: "100%" }}
-                bordered={false}
-                allowClear
-              >
-                {userOrgs &&
-                  userOrgs.map((orgDatas, index) => (
-                    <Option key={index} value={orgDatas.id}>
-                      {orgDatas.name}
-                    </Option>
-                  ))}
-              </Select>
-            </Form.Item>
+            </Form.Item> 
             <Form.Item>
               <p className="subTitle">{t("password")}</p>
             </Form.Item>
@@ -153,7 +130,7 @@ function Register() {
               <p className="subTitle">{t("confirm_pass")}</p>
             </Form.Item>
             <Form.Item
-              name="password1"
+              name="confirmPassword"
               rules={[
                 {
                   required: true,
@@ -161,7 +138,7 @@ function Register() {
                 },
               ]}
             >
-              <Input.Password
+              <Input
                 type="password"
                 placeholder="**************"
                 bordered={false}
