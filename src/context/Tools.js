@@ -5,9 +5,9 @@ export const Context = React.createContext()
 
 var ref = null
 
-export function isShowLoading(utga) {
+export function isShowLoading(props) {
     if (!!ref) {
-        ref.current.isShowLoading(utga);
+        ref.current.isShowLoading(props);
     }
 }
 
@@ -17,7 +17,7 @@ export default function ({ children }) {
     React.useImperativeHandle(
         ref,
         () => ({
-            isShowLoading: (utga) => { setshowLoader(utga) }
+            isShowLoading: (props) => { setshowLoader(props) }
         }),
         [],
     )

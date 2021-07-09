@@ -8,12 +8,12 @@ import { DataTable } from "primereact/datatable";
 import React, { useEffect, useRef, useState } from "react";
 import { isShowLoading } from "../../../context/Tools";
 import { getService, putService } from "../../../service/service";
-import { PAGESIZE } from "../../../tools/Constant";
+import { PAGESIZE } from "../../../constants/Constant";
 import { errorCatch } from "../../../tools/Tools";
-import HonogBuudliinZardalModal from "../training/components/HonogBuudliinZardalModal";
+import RoadModal from "../training/components/RoadModal";
 import ContentWrapper from "../training/components/attendance.style";
-import BichgiinHeregselModal from "./components/BichgiinHeregselModal";
-import ShathuuniiZardalModal from "./components/ShathuuniiZardalModal";
+import StationaryModal from "./components/StationaryModal";
+import FuelModal from "./components/FuelModal";
 function handleMenuClick(e) { console.log("click", e.key[0]); }
 function onChange(date, dateString) {
     console.log(date, dateString);
@@ -223,7 +223,7 @@ const Budget = () => {
 
                     </DataTable>
                     {isModalVisibleBichigHeregsel && (
-                        <BichgiinHeregselModal
+                        <StationaryModal
                             Criteriacontroller={editRow}
                             isModalVisible={isModalVisibleBichigHeregsel}
                             close={closeModalBichigHeregsel}
@@ -287,7 +287,7 @@ const Budget = () => {
 
                     </DataTable>
                     {isModalVisible && (
-                        <HonogBuudliinZardalModal
+                        <RoadModal
                             Criteriacontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
@@ -353,7 +353,7 @@ const Budget = () => {
 
                     </DataTable>
                     {isModalVisibleShathuuniiZardal && (
-                        <ShathuuniiZardalModal
+                        <FuelModal
                             Criteriacontroller={editRow}
                             isModalVisible={isModalVisibleShathuuniiZardal}
                             close={closeModalShathuuniiZardal}

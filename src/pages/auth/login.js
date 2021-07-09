@@ -1,121 +1,61 @@
-import React from "react";
+import {React , useState} from "react";
 import "antd/dist/antd.css";
-import { Button, Row, Col, Form, Input, Carousel } from "antd";
-import TextWrapper, { LogIn } from "./Login.style";
+import { Button, Row, Col, Form, Input, message } from "antd";
+import { LogIn } from "./Login.style";
 import { useHistory } from "react-router-dom";
 import {useTranslation} from 'react-i18next';
-import i18n from "../../i18n"
+import { postService } from "../../service/service";
+import { errorCatch } from "../../tools/Tools";
+import { isShowLoading } from '../../context/Tools';
+import Partner from "./components/Partner";
 
 function Login() {
-  const {t, i18} = useTranslation();
+  const {t} = useTranslation();
+  const username = useFormInput('');
+  const password = useFormInput('');
 
-  function handleClick(lang) {
-  i18n.changeLanguage(lang)
-  }
 
   const history = useHistory();
+
   function moveToRegister() {
     history.push("/register");
   }
-  function moveToAdmin() {
-    history.push("/admin");
+
+  function handleLogin() {
+    if(username.value && password.value) {
+      isShowLoading(true);
+      postService("user/login", {username:username.value, password:password.value})
+      .then((result) => {
+        console.log(result.data);
+        localStorage.setItem('token', result.data.token);
+        localStorage.setItem('myHID', result.data.userId);
+        history.push("/admin");
+      })
+      .finally(() => {
+        isShowLoading(false);
+      })
+      .catch((error) => {
+        if (error?.response) {
+          if (error?.response.status === 400) {
+            message.error('Таны нэр нууц үг буруу байна!!!')
+          }
+          else if (error?.response.status === 401)
+              message.warning('Системд нэвтрэхэд алдаа гарлаа')
+          else
+              errorCatch(error)
+        }
+        else errorCatch(error)
+      });
+    }
   }
+
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
   };
-  function onChange(a, b, c) {
-    console.log(a, b, c);
-  }
-  const contentStyle = {
-    height: '180px',
-    fontSize: '16px',
-    color: '#103154',
-    textAlign: 'left',
-  };
-
+  
   return (
       <Row>
-        <Col
-          xs={0}
-          md={0}
-          lg={15}
-          style={{ backgroundColor: "white", height: "100vh" }}
-        >
-          <TextWrapper>
-            <h2 className="title">
-              {t("login_title")}
-            </h2>
-            <h3 className="subTitle">{t("login_subtitle")}</h3>
-            <h2 className="title" style={{ marginTop: "50px" }}>
-            {t("project_background")}
-            </h2>
-            <Carousel auto afterChange={onChange}  style={{height:"160px", width:"510px"}}>
-              <div>           
-                <p style={contentStyle}>
-                  {t("background_content")}
-                </p>             
-              </div>
-              <div>
-                <p style={contentStyle}>
-                 {t("background_content")}
-                </p>  
-              </div>
-              <div>
-                <h3 style={contentStyle}>3</h3>
-              </div>
-          </Carousel> 
-          <Row gutter={[32]}>
-            <Col>
-            <h2 style={{ marginTop: "80px", marginBottom: "30px", color: "#103154", fontSize: "20px" }}>
-            {t("partner")}
-            </h2>
-            <Row gutter={[32,32]}>
-              <Col>
-                <img
-                  src="/images/svg/logo3.svg"
-                  className="icon"
-                  alt="card-icon"
-                  />
-                </Col>
-                <Col>
-                <img
-                  src="/images/svg/logo4.svg"
-                  className="icon"
-                  alt="card-icon"
-                  style={{
-                    height: "80%"
-                  }}
-                  />
-                </Col>
-            </Row>
-            </Col>
-
-            <Col>
-            <h2 className="title" style={{ marginTop: "80px", marginBottom: "30px",  color: "#103154", fontSize: "20px"  }}>
-            {t("investor")}
-            </h2>
-            <Row gutter={[32,32]}>
-            <Col >
-                <img
-                  src="/images/svg/logo2.svg"
-                  className="icon"
-                  alt="card-icon"
-                
-                />
-                </Col>
-                <Col>
-                <img
-                  src="/images/svg/logo1.svg"
-                  className="icon"
-                  alt="card-icon"
-                />
-              </Col>
-            </Row>
-            </Col>
-          </Row>
-          </TextWrapper>
-        </Col>
-
+        <Partner></Partner>
         <Col xs={24} md={24} lg={9} style={{ backgroundColor: "#F8F8F8" }}>
           <LogIn>
             <Form
@@ -142,7 +82,7 @@ function Login() {
                   },
                 ]}
               >
-              <Input placeholder={t('username')} bordered={false} />
+              <Input placeholder={t('username')} {...username} bordered={false} />
               </Form.Item>
               <Form.Item>
                 <p className="subTitle">{t('password')}</p>
@@ -160,6 +100,7 @@ function Login() {
                   type="password"
                   placeholder="**************"
                   bordered={false}
+                  {...password}
                   className="underline"
                 />
               </Form.Item>
@@ -174,7 +115,7 @@ function Login() {
                   type="primary"
                   htmlType="submit"
                   className="login-form-button"
-                  onClick={moveToAdmin}
+                  onClick={handleLogin}
                 >
                   {t('login')}
                 </Button>
@@ -198,6 +139,18 @@ function Login() {
         </Col>
       </Row>
   );
+}
+
+const useFormInput = initialValue => {
+  const [value, setValue] = useState(initialValue);
+ 
+  const handleChange = e => {
+    setValue(e.target.value);
+  }
+  return {
+    value,
+    onChange: handleChange
+  }
 }
 
 export default Login;

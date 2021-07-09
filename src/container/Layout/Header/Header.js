@@ -12,17 +12,7 @@ const { Option } = Select;
 const { Header } = Layout;
 const Headers = () => {
   const { t, i18 } = useTranslation();
-  // const menu = (
-  //   <Menu>
-  //     <Menu.Item key="0">
-  //       <Button onClick={()=>handleClick('mn')}>MN</Button>
-  //     </Menu.Item>
-  //     <Menu.Item key="1">
-  //       <Button onClick={()=>handleClick('en')}>EN</Button>
-  //     </Menu.Item>
-  //   </Menu>
-  // );
-
+ 
   function handleChange(value) {
     i18n.changeLanguage(value);
   }
@@ -70,14 +60,6 @@ const Headers = () => {
                   <Option value="mn">MN</Option>
                   <Option value="en">EN</Option>
                 </Select>
-                {/* <Dropdown overlay={menu}>
-                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                      Click me <DownOutlined />
-                    </a>
-                  </Dropdown> */}
-                {/* <p className="textshow">
-                  <GlobalOutlined /> Монгол
-                </p> */}
               </Col>
             </Row>
           </Col>

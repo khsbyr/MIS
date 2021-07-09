@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Modal, Form, Input, DatePicker } from "antd";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
-import AutocompleteSelect from "../../../components/Autocomplete";
+import AutocompleteSelect from "../../../../components/Autocomplete";
+import ContentWrapper from "./cv.styled";
 const layout = {
     labelCol: {
         span: 10,
@@ -21,7 +22,7 @@ const validateMessages = {
         range: "${label} must be between ${min} and ${max}",
     },
 };
-export default function BolovsrolModal(props) {
+export default function PublishedWorkModal(props) {
     const { Composition, isModalVisible, isEditMode } = props;
     const [stateController, setStateController] = useState([]);
     const [form] = Form.useForm();
@@ -76,7 +77,7 @@ export default function BolovsrolModal(props) {
 
         <div>
             <Modal
-                title="Боловсрол"
+                title="Хэвлүүлсэн бүтээл "
                 okText="Хадгалах"
                 cancelText="Буцах"
                 width={600}
@@ -85,6 +86,7 @@ export default function BolovsrolModal(props) {
                 onOk={save}
                 onCancel={() => props.close()}
             >
+                            <ContentWrapper>
                 <Form
                     form={form}
                     labelAlign={"left"}
@@ -92,27 +94,15 @@ export default function BolovsrolModal(props) {
                     name="nest-messages"
                     validateMessages={validateMessages}
                 >
-                 
                     <Form.Item
-                        name="name"
-                        label="Зэрэг, цол:"
-                        rules={[
-                            {
-                                required: true,
-                            },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        name="work"
-                        label="Их дээд сургуулийн нэр:"
+                        name="nameOfPublishedWork"
+                        label="Бүтээлийн нэр:"
 
                     >
                         <Input />
                     </Form.Item>
               <Form.Item
-                name="code"
+                name="date"
                 label="Огноо:"
                 rules={[
                     {
@@ -124,6 +114,7 @@ export default function BolovsrolModal(props) {
                   <DatePicker/>
               </Form.Item>
                 </Form>
+                </ContentWrapper>
             </Modal>
         </div >
     );

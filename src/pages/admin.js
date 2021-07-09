@@ -21,51 +21,33 @@ import Organization from "./training/training/organization";
 import Plan from "./training/training/plan";
 import TrainingProgram from "./training/training/trainingProgram";
 import TrainingReport from "./training/training/trainingReport";
-import Tunshlel from "./tunshlel";
+import Partnership from "./partnership/partnership";
 import TestAggregation from "./training/training/testAggregation";
 import Budget from "./training/training/budget";
 import User from "./user/user";
 import Role from "./user/role";
 import Signuprequest from "./user/signuprequest";
+import { useHistory } from "react-router-dom";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
-const menu = (
-  <Menu>
-    <Menu.Item key="0">
-      <PoweroffOutlined />
-      <a style={{ color: "black", paddingLeft: "0px" }}>Logout</a>
-    </Menu.Item>
-  </Menu>
-);
-
-
 
 const Admin = () => {
   const { t, i18 } = useTranslation();
 
-  function handleClick(lang) {
-    i18n.changeLanguage(lang)
-  }
-  // state = {
-  //   collapsed: false,
-  // };
+  const history = useHistory();
 
-  // toggle = () => {
-  //   this.setState({
-  //     collapsed: !this.state.collapsed,
-  //   });
-  // };
+  function handleLogout() {
+     localStorage.removeItem('token');
+     localStorage.removeItem('user');
+     history.push("/login");
+  }
+
   return (
-    
       <Router>
         <Layout>
-          <Layout>
             <Sider
               className="site-layout-background"
-              // trigger={null}
-              // collapsible
-              // collapsed={this.state.collapsed}
               style={{ background: "#fff" }}
               breakpoint="lg"
               width="300px"
@@ -81,7 +63,6 @@ const Admin = () => {
               <Menu
                 className="menu"
                 mode="inline"
-                // defaultSelectedKeys={["1"]}
                 style={{
                   height: "100%",
                   borderRight: 0,
@@ -124,46 +105,37 @@ const Admin = () => {
                   icon={<FontAwesomeIcon icon={faLayerGroup} />}
                   title={t("training")}
                 >
-                  <SubMenu
-                    key="sub4"
-                    icon={<FontAwesomeIcon icon={faLayerGroup} />}
-                    title={t("training_plan")}
-                  >
-                    <Menu.Item key="4"><Link to="/composition1">{t("composition1")}</Link></Menu.Item>
-                    <Menu.Item key="5"><Link to="/composition2">{t("composition2")}</Link></Menu.Item>
-                    <Menu.Item key="6"><Link to="/composition3">{t("composition3")}</Link></Menu.Item>
-                    <Menu.Item key="7"><Link to="/composition4">{t("composition4")}</Link></Menu.Item>
-                  </SubMenu>
-                  <SubMenu
-                    key="sub5"
-                    icon={<FontAwesomeIcon icon={faLayerGroup} />}
-                    title={t("training")}
-                  >
-                    <Menu.Item key="8">
-                      <Link to="/organization">{t("consulting_orga")}</Link>
-                    </Menu.Item>
-                    <Menu.Item key="9">
-                      <Link to="/guidelines">{t("training_intro")}</Link>
-                    </Menu.Item>
-                    <Menu.Item key="10">
-                      <Link to="/plan">{t("training_plan")}</Link>
-                    </Menu.Item>
-                    <Menu.Item key="11">
-                      <Link to="/cv">{t("cv_teachers")}</Link>
-                    </Menu.Item>
-                    <Menu.Item key="12">
-                      <Link to="/training_program">{t("training_program")}</Link>
-                    </Menu.Item>
-                    <Menu.Item key="13"><Link to="/attendance">{t("attendance_registration")}</Link></Menu.Item>
-                    <Menu.Item key="14"><Link to="/test_aggregation">{t("test_aggregation")}</Link></Menu.Item>
-                    <Menu.Item key="15"><Link to="/training_report">{t("training_report")}</Link></Menu.Item>
-                    <Menu.Item key="16"><Link to="/budget">{t("training_budget")}</Link></Menu.Item>
-                  </SubMenu>
+                  <Menu.Item key="8">
+                    <Link to="/organization">{t("consulting_orga")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="9">
+                    <Link to="/guidelines">{t("training_intro")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="10">
+                    <Link to="/plan">{t("training_team")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="11">
+                    <Link to="/cv">{t("cv_teachers")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="12">
+                    <Link to="/training_program">{t("training_program")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="13">
+                    <Link to="/attendance">{t("attendance_registration")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="14">
+                    <Link to="/test_aggregation">{t("test_aggregation")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="15">
+                    <Link to="/training_report">{t("training_report")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="16">
+                    <Link to="/budget">{t("training_budget")}</Link>
+                  </Menu.Item>
                 </SubMenu>
                 <SubMenu
                   key="sub6"
                   icon={<FontAwesomeIcon icon={faHandsHelping} />}
-
                   title={t("partnership")}
                 >
                   <SubMenu
@@ -174,7 +146,7 @@ const Admin = () => {
                     {" "}
                     <Menu.Item key="17">
                       {" "}
-                      <Link to="/tunshlel">{t("consulting_orga")}</Link>
+                      <Link to="/partnership">{t("consulting_orga")}</Link>
                     </Menu.Item>
                   </SubMenu>
                 </SubMenu>
@@ -190,23 +162,23 @@ const Admin = () => {
                     {" "}
                     <Menu.Item key="18">
                       {" "}
-                      <Link to="/tunshlel">{t("brief_draft")}</Link>
+                      <Link to="/partnership">{t("brief_draft")}</Link>
                     </Menu.Item>
                     <Menu.Item key="19">
                       {" "}
-                      <Link to="/tunshlel">{t("investment")}</Link>
+                      <Link to="/partnership">{t("investment")}</Link>
                     </Menu.Item>
                     <Menu.Item key="20">
                       {" "}
-                      <Link to="/tunshlel">{t("income_expenses")}</Link>
+                      <Link to="/partnership">{t("income_expenses")}</Link>
                     </Menu.Item>
                     <Menu.Item key="21">
                       {" "}
-                      <Link to="/tunshlel">{t("consulting_orga")}</Link>
+                      <Link to="/partnership">{t("consulting_orga")}</Link>
                     </Menu.Item>
                     <Menu.Item key="22">
                       {" "}
-                      <Link to="/tunshlel">{t("detailed_project")}</Link>
+                      <Link to="/partnership">{t("detailed_project")}</Link>
                     </Menu.Item>
                   </SubMenu>
                 </SubMenu>
@@ -238,14 +210,6 @@ const Admin = () => {
                   </Menu.Item>
                 </SubMenu>
               </Menu>
-              {/* <LogoWrapper id="myDIV">
-                    <h2 className="title"> ÐœÐ­Ð”Ð­Ð­Ð›Ð›Ð˜Ð™Ð Ð£Ð”Ð˜Ð Ð”Ð›ÐÐ“Ð«Ð</h2>
-                    <img
-                          src="/images/svg/logo-head.svg"
-                          className="icon"
-                          alt="card-icon"
-                    />
-                </LogoWrapper> */}
             </Sider>
             <Layout className="site-layout">
               <Header
@@ -257,20 +221,6 @@ const Admin = () => {
                 }}
               >
                 <Row>
-                  {/* <Col span={20}>
-                      {React.createElement(
-                        this.state.collapsed
-                          ? MenuUnfoldOutlined
-                          : MenuFoldOutlined,
-                        {
-                          className: "trigger",
-                          onClick: this.toggle,
-                        }
-                      )}
-                      <a style={{ float: "right" }}>
-                        ÐœÐ­Ð”Ð­Ð­Ð›Ð›Ð˜Ð™Ð Ð£Ð”Ð˜Ð Ð”Ð›ÐÐ“Ð«Ð Ð¡Ð˜Ð¡Ð¢Ð•Ðœ
-                      </a>
-                    </Col> */}
                   <Col span={24} style={{ textAlign: "end " }}>
                     <div>
                       <Avatar
@@ -283,10 +233,19 @@ const Admin = () => {
                       >
                         A
                       </Avatar>
-                      <Dropdown overlay={menu} trigger={["click"]}>
+                      <Dropdown 
+                          overlay={
+                         <Menu>
+                          <Menu.Item key="0" 
+                            onClick={e => {
+                              handleLogout()
+                            }}>
+                              <PoweroffOutlined />
+                              <a style={{ color: "black", paddingLeft: "0px" }}>Logout</a>
+                            </Menu.Item>
+                          </Menu>} trigger={["click"]}>
                         <a
                           className="ant-dropdown-link"
-                          href="#"
                           style={{ color: "#103154", marginRight: "5px" }}
                         >
                           user
@@ -335,8 +294,8 @@ const Admin = () => {
                   <Route path="/plan">
                     <Plan />
                   </Route>
-                  <Route path="/tunshlel">
-                    <Tunshlel />
+                  <Route path="/partnership">
+                    <Partnership />
                   </Route>
                   <Route path="/organization">
                     <Organization />
@@ -374,7 +333,6 @@ const Admin = () => {
                 </Switch>{" "}
               </Content>
             </Layout>
-          </Layout>
         </Layout>
       </Router>
     

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Form, Input, DatePicker } from "antd";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
-import AutocompleteSelect from "../../../components/Autocomplete";
+import AutocompleteSelect from "../../../../components/Autocomplete";
 const layout = {
     labelCol: {
         span: 10,
@@ -21,7 +21,7 @@ const validateMessages = {
         range: "${label} must be between ${min} and ${max}",
     },
 };
-export default function BichgiinHeregselModal(props) {
+export default function RoadModal(props) {
     const { Attendancecontroller, isModalVisible, isEditMode } = props;
     const [stateController, setStateController] = useState([]);
     const [form] = Form.useForm();
@@ -76,7 +76,7 @@ export default function BichgiinHeregselModal(props) {
 
         <div>
             <Modal
-                title="Бичгийн хэрэгсэл"
+                title="Зам хоног, буудлын зардал"
                 okText="Хадгалах"
                 cancelText="Буцах"
                 width={600}
@@ -105,8 +105,8 @@ export default function BichgiinHeregselModal(props) {
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="une"
-                        label="Нэгж үнэ:"
+                        name="turul"
+                        label="Зардлын төрөл:"
                         rules={[
                             {
                                 required: true,
@@ -116,8 +116,8 @@ export default function BichgiinHeregselModal(props) {
                         <Input />
                     </Form.Item>
               <Form.Item
-                name="too"
-                label="Тоо ширхэг:"
+                name="hiniiToo"
+                label="МЗҮБ хүний тоо:"
                 rules={[
                   {
                     required: true,
@@ -127,8 +127,8 @@ export default function BichgiinHeregselModal(props) {
                 <Input />
               </Form.Item>
               <Form.Item
-                name="huniiToo"
-                label="Хүний тоо"
+                name="honogt"
+                label="Хоногт"
                 rules={[
                   {
                     required: true,
@@ -138,8 +138,20 @@ export default function BichgiinHeregselModal(props) {
                 <Input />
               </Form.Item>
               <Form.Item
-                name="Dun"
-                label="Дүн"
+                name="honog"
+                label="Хоног"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                name="niit"
+                label="Нийт"
                 rules={[
                   {
                     required: true,

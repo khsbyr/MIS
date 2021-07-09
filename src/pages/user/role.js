@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, Suspense } from "react";
-import { PAGESIZE } from "../../tools/Constant";
+import { PAGESIZE } from "../../constants/Constant";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { isShowLoading } from "../../context/Tools";

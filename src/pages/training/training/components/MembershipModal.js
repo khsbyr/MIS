@@ -1,7 +1,9 @@
-import { DatePicker, Form, Input, Modal } from "antd";
 import React, { useEffect, useState } from "react";
+import { Modal, Form, Input, DatePicker } from "antd";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
+import AutocompleteSelect from "../../../../components/Autocomplete";
+import ContentWrapper from "./cv.styled";
 const layout = {
     labelCol: {
         span: 10,
@@ -20,7 +22,7 @@ const validateMessages = {
         range: "${label} must be between ${min} and ${max}",
     },
 };
-export default function AjliinTurshlagaModal(props) {
+export default function MembershipModal(props) {
     const { Composition, isModalVisible, isEditMode } = props;
     const [stateController, setStateController] = useState([]);
     const [form] = Form.useForm();
@@ -75,7 +77,7 @@ export default function AjliinTurshlagaModal(props) {
 
         <div>
             <Modal
-                title="Ажлын туршлага"
+                title="Гишүүнчлэл"
                 okText="Хадгалах"
                 cancelText="Буцах"
                 width={600}
@@ -84,6 +86,7 @@ export default function AjliinTurshlagaModal(props) {
                 onOk={save}
                 onCancel={() => props.close()}
             >
+                            <ContentWrapper>
                 <Form
                     form={form}
                     labelAlign={"left"}
@@ -93,7 +96,7 @@ export default function AjliinTurshlagaModal(props) {
                 >
                  
                     <Form.Item
-                        name="name"
+                        name="role"
                         label="Албан тушаал:"
                         rules={[
                             {
@@ -104,14 +107,14 @@ export default function AjliinTurshlagaModal(props) {
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="work"
+                        name="nameOfOrga"
                         label="Байгууллагын нэр:"
 
                     >
                         <Input />
                     </Form.Item>
               <Form.Item
-                name="code"
+                name="date"
                 label="Огноо:"
                 rules={[
                     {
@@ -123,6 +126,7 @@ export default function AjliinTurshlagaModal(props) {
                   <DatePicker/>
               </Form.Item>
                 </Form>
+                </ContentWrapper>
             </Modal>
         </div >
     );

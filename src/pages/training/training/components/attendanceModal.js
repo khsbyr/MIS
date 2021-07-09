@@ -1,8 +1,9 @@
+import { Form, Input, Modal } from "antd";
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input, DatePicker } from "antd";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
-import AutocompleteSelect from "../../../components/Autocomplete";
+import ContentWrapper from "./attendance.style";
+
 const layout = {
     labelCol: {
         span: 10,
@@ -26,20 +27,10 @@ export default function TrainingProgramModal(props) {
     const [stateController, setStateController] = useState([]);
     const [form] = Form.useForm();
     useEffect(() => {
-        getService("criteria/get", {
-            search: "status:true",
-        }).then((result) => {
-            if (result) {
-                setStateController(result.content || []);
-            }
-        });
 
         if (isEditMode) {
-            getService("criteria/get" + Attendancecontroller.id).then((result) => {
-                Attendancecontroller.userServiceId = result.userService.id
-                form.setFieldsValue({ ...Attendancecontroller });
-            })
 
+                form.setFieldsValue({ ...Attendancecontroller });
         }
     }, []);
     const save = () => {
@@ -49,7 +40,7 @@ export default function TrainingProgramModal(props) {
                 values.userService = { id: values.userServiceId }
                 if (isEditMode) {
                     putService(
-                        "criteria/put" + Attendancecontroller.id,
+                        "participants/put" + Attendancecontroller.id,
                         values
                     )
                         .then((result) => {
@@ -59,7 +50,7 @@ export default function TrainingProgramModal(props) {
                             errorCatch(error);
                         })
                 } else {
-                    postService("criteria/post", values)
+                    postService("participants/post", values)
                         .then((result) => {
                             props.close(true);
                         })
@@ -85,60 +76,54 @@ export default function TrainingProgramModal(props) {
                 onOk={save}
                 onCancel={() => props.close()}
             >
-                <Form
-                    form={form}
-                    labelAlign={"left"}
-                    {...layout}
-                    name="nest-messages"
-                    validateMessages={validateMessages}
-                >
-                 
-                    <Form.Item
-                        name="name"
-                        label="Суралцагийн нэр:"
-                        rules={[
-                            {
-                                required: true,
-                            },
-                        ]}
+                <ContentWrapper>
+                    <Form
+                        form={form}
+                        labelAlign={"left"}
+                        {...layout}
+                        name="nest-messages"
+                        validateMessages={validateMessages}
                     >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        name="work"
-                        label="Ажил эрхлэлт:"
-                        rules={[
-                            {
-                                required: true,
-                            },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-              <Form.Item
-                name="contact"
-                label="Холбогдох утас, мэйл, хаяг:"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                name="RD"
-                label="Регистрийн дугаар"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            
-                </Form>
+
+                        <Form.Item
+                            name="name"
+                            label="Суралцагийн нэр:"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="jobDescription"
+                            label="Ажил эрхлэлт:"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="contact"
+                            label="Холбогдох утас, мэйл, хаяг:"
+         
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="RD"
+                            label="Регистрийн дугаар"
+          
+                        >
+                            <Input />
+                        </Form.Item>
+
+                    </Form>
+                </ContentWrapper>
             </Modal>
         </div >
     );

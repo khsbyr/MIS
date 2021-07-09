@@ -1,7 +1,9 @@
-import { ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled } from "@ant-design/icons";
-import SaveIcon from "@material-ui/icons/Save";
-import { Button, Col, DatePicker, Dropdown, Layout, Menu, message, Modal, Row } from "antd";
+import { DownOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { faFileExcel, faPen, faPlus, faPrint, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Col, DatePicker, Layout, message, Modal, Row } from "antd";
 import { Column } from 'primereact/column';
+import { ColumnGroup } from 'primereact/columngroup';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState } from 'react';
 import { isShowLoading } from "../../../context/Tools";
@@ -9,46 +11,17 @@ import { getService, putService } from '../../../service/service';
 import { errorCatch } from "../../../tools/Tools";
 import CriteriaModal from "../../criteria/components/CriteriaModal";
 import ContentWrapper from "../../criteria/criteria.style";
-import { ColumnGroup } from 'primereact/columngroup';
 
 
-function handleMenuClick(e) { console.log("click", e.key[0]); }
 function onChange(date, dateString) {
     console.log(date, dateString);
 }
 const { Content } = Layout;
-const menu = (
-    <Menu onClick={handleMenuClick}>
-        <Menu.Item
-            key="1"
-            icon={<FileSyncOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-
-            Импорт
-        </Menu.Item>
-        <Menu.Item
-            key="2"
-            icon={<FileOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-            Экспорт
-        </Menu.Item>
-
-        <Menu.Item
-            key="3"
-            icon={<PrinterOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-
-            Хэвлэх
-        </Menu.Item>
-
-    </Menu>
-);
 
 var editRow
 var isEditMode;
 const TestAggregation = () => {
-    const [products, setProducts] = useState([]);
-    const [multiSortMeta, setMultiSortMeta] = useState([{ field: 'category', order: -1 }]);
+
     let loadLazyTimeout = null;
     const [list, setList] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -59,6 +32,7 @@ const TestAggregation = () => {
     const PAGESIZE = 20;
     const [selectedRows, setSelectedRows] = useState([]);
 
+
     useEffect(() => {
         onInit();
     }, [lazyParams])
@@ -68,7 +42,7 @@ const TestAggregation = () => {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("casd/get", list)
+        getService("testAggregation/get", list)
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -79,7 +53,7 @@ const TestAggregation = () => {
                 setSelectedRows([]);
 
             })
-            .catch((error)=> {
+            .catch((error) => {
                 errorCatch(error);
                 isShowLoading(false);
             })
@@ -89,19 +63,29 @@ const TestAggregation = () => {
         setIsModalVisible(true);
         isEditMode = false;
     };
-       const edit = (row) => {
-        editRow = row.data
+
+    const action = (row) => {
+        return (
+            <React.Fragment>
+                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />}  onClick={() => edit(row)} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={() => pop(row)} />
+            </React.Fragment>
+        );
+    }
+
+    const edit = (row) => {
+        editRow = row
         isEditMode = true
         setIsModalVisible(true)
     }
 
-    const handleDeleted = () => {
-        if (selectedRows.length === 0) {
+    const handleDeleted = (row) => {
+        if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         }
-        debugger
-        putService("casd/delete/" + selectedRows[0].id)
+        
+        putService("testAggregation/delete/" + row.id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -114,24 +98,98 @@ const TestAggregation = () => {
         setIsModalVisible(false);
         if (isSuccess) onInit();
     };
-    const pop = () => {
-        if (selectedRows.length === 0) {
+    
+    const pop = (row) => {
+        if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         } else {
-            confirm();
+            confirm(row);
         }
     };
-    const [selectedProducts, setSelectedProducts] = useState(null);
+
+    const indexBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">№</span>
+                {row.index}
+            </React.Fragment>
+        );
+    }
+
+    const nameBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Оролцогчийн нэр</span>
+                {row.name}
+            </React.Fragment>
+        );
+    }
+
+    const test1ShouldTakenBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Сорил №1: Авбал зохих</span>
+                {row.indicatorProcess}
+            </React.Fragment>
+        );
+    }
+
+    const test1TakenBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Сорил №1: Авсан</span>
+                {row.indicatorProcess}
+            </React.Fragment>
+        );
+    }
+
+    const test2ShouldTakenBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Сорил №2: Авбал зохих</span>
+                {row.indicatorProcess}
+            </React.Fragment>
+        );
+    }
+
+    const test2TakenBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Сорил №2: Авсан</span>
+                {row.indicatorProcess}
+            </React.Fragment>
+        );
+    }
+
+    const growthBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Өсөлт бууралт</span>
+                {row.indicatorProcess}
+            </React.Fragment>
+        );
+    }
+
+    const explanationBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Тайлбар</span>
+                {row.indicatorProcess}
+            </React.Fragment>
+        );
+    }
+
     let headerGroup = <ColumnGroup>
     <Row>
-        <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }} rowSpan={2}/>
         <Column header="№" rowSpan={2}/>
-        <Column header="Оролцогчийн нэр" rowSpan={2} field="name"/> 
+        <Column header="Оролцогчийн нэр" rowSpan={2} /> 
         <Column header="Сорил №1" colSpan={2} />
         <Column header="Сорил №2" colSpan={2} />
         <Column header="Өсөлт бууралт" rowSpan={2}/>
         <Column header="Тайлбар" rowSpan={2}/>
+        <Column headerStyle={{ width: "7rem" }} body={action} rowSpan={2}></Column>
+
 
     </Row>
     <Row>
@@ -142,74 +200,93 @@ const TestAggregation = () => {
     </Row>
 
     </ColumnGroup>;
+
     return (
         <ContentWrapper>
             <div className="button-demo">
                 <Layout className="btn-layout">
                     <Content>
                         <Row>
-                            <Col>
-                                <h2 className="title">Шалгуур үзүүлэлт</h2>
+                            <Col xs={24} md={24} lg={14}>
+                                <p className="title">Сорилын нэгтгэл</p>
+                            </Col>
+                            <Col xs={24} md={24} lg={10}>
+                                <Row gutter={[0, 15]}>
+                                    <Col xs={8} md={8} lg={6}>
+                                        <DatePicker
+                                            onChange={onChange}
+                                            bordered={false}
+                                            suffixIcon={<DownOutlined />}
+                                            placeholder="Select year"
+                                            picker="year"
+                                            className="DatePicker"
+                                            style={{
+                                                width: "120px",
+                                                color: "black",
+                                                cursor: "pointer",
+                                            }}
+                                        />
+                                    </Col>
+                                    {/* <Col xs={8} md={8} lg={6}>
+                                        <Input
+                                            placeholder="Хайлт хийх"
+                                            allowClear
+                                            prefix={<SearchOutlined />}
+                                            bordered={false}
+                                            onSearch={onSearch}
+                                            style={{
+                                                width: 150,
+                                                borderBottom: "1px solid #103154",
+                                            }}
+                                        />
+                                    </Col> */}
+                                    <Col xs={8} md={8} lg={6}>
+                                        <Button type="text" icon={<FontAwesomeIcon icon={faPrint} />} >Хэвлэх </Button>
+                                    </Col>
+                                    <Col xs={8} md={8} lg={6}>
+                                        <Button type="text" className="export" icon={<FontAwesomeIcon icon={faFileExcel} />} >
+                                            Экспорт
+                                        </Button>
+                                    </Col>
+                                    <Col xs={8} md={8} lg={6}>
+                                        <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={add}>
+                                            Нэмэх
+                                        </Button>
+                                    </Col>
+                                </Row>
                             </Col>
                         </Row>
-                        <Row>
-                            <Col span={2}>
-                                <Button onClick={add} type="link" icon={<SaveIcon />}>
-                                    Нэмэх
-                                </Button>
-                            </Col>
-                            <Col span={2}>
-                                <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
-                                    Устгах
-                                </Button>
-                            </Col>
-                            <Col span={2}>
-                                <DatePicker onChange={onChange} picker="year" />
-                            </Col>
-                            <Col span={18} style={{ textAlign: "right" }}>
-                                <div style={{ marginRight: "5px" }}>
-                                    <Dropdown.Button
-                                        overlay={menu}
-                                        placement="bottomCenter"
-                                        icon={
-                                            <SettingFilled
-                                                style={{ marginLeft: "8px", color: "#45629c" }}
-                                            />
-                                        }
-                                    ></Dropdown.Button>
-                                </div>
-                            </Col>
-                        </Row>
+
                     </Content>
                 </Layout>
                 <div className="datatable-responsive-demo">
-                    <DataTable 
-                        value={list} 
-                        removableSort 
-                        paginator 
+                    <DataTable
+                        value={list}
+                        removableSort
+                        headerColumnGroup={headerGroup}
+                        paginator
                         rows={10}
-                        headerColumnGroup={headerGroup} 
                         className="p-datatable-responsive-demo"
-                        selectionMode="checkbox"
                         selection={selectedRows}
-                        onRowClick={edit}
+                        // onRowClick={edit}
                         onSelectionChange={(e) => {
                             setSelectedRows(e.value);
                         }}
                         dataKey="id">
-                        <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
-                        <Column field="index" sortable/>
-                        <Column field="name" style={{ textAlign: "left"}} sortable filter filterPlaceholder="Хайх"/>
-                        <Column field="indicatorProcess" sortable />
-                        <Column field="upIndicator" sortable />
-                        <Column field="name" />
-                        <Column field="name" />
-                        <Column field="name" />
-                        <Column field="name" />
-                        </DataTable>
+                            <Column field="index" body={indexBodyTemplate} sortable/>
+                            <Column field="name" body={nameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                            <Column field="indicatorProcess" body={test1ShouldTakenBodyTemplate} sortable />
+                            <Column field="upIndicator" body={test1TakenBodyTemplate} sortable />
+                            <Column field="upIndicator" body={test2ShouldTakenBodyTemplate}/>
+                            <Column field="upIndicator" body={test2TakenBodyTemplate}/>
+                            <Column field="upIndicator" body={growthBodyTemplate}/>
+                            <Column field="upIndicator" body={explanationBodyTemplate}/>
+                            <Column headerStyle={{ width: "7rem" }} body={action}></Column>
+
+                    </DataTable>
                     {isModalVisible && (
                         <CriteriaModal
-                        Criteriacontroller={editRow}
+                            Criteriacontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
                             isEditMode={isEditMode}
@@ -219,7 +296,7 @@ const TestAggregation = () => {
             </div>
         </ContentWrapper>
     );
-    function confirm() {
+    function confirm(row) {
         Modal.confirm({
             title: "Та устгахдаа итгэлтэй байна уу ?",
             icon: <ExclamationCircleOutlined />,
@@ -227,7 +304,7 @@ const TestAggregation = () => {
             okText: "Устгах",
             cancelText: "Буцах",
             onOk() {
-                handleDeleted();
+                handleDeleted(row);
                 onInit();
             },
             onCancel() { },
@@ -236,3 +313,11 @@ const TestAggregation = () => {
 }
 
 export default TestAggregation;
+
+
+
+
+
+
+
+

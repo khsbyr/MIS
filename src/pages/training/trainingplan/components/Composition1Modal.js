@@ -6,7 +6,7 @@ import {
   putService,
 } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
-import AutocompleteSelect from "../../../components/Autocomplete";
+import AutocompleteSelect from "../../../../components/Autocomplete";
 import { isShowLoading } from "../../../../context/Tools";
 const layout = {
   labelCol: {

@@ -8,7 +8,7 @@ import { DataTable } from "primereact/datatable";
 import React, { useEffect, useRef, useState } from "react";
 import { isShowLoading } from "../../context/Tools";
 import { getService, putService } from "../../service/service";
-import { PAGESIZE } from "../../tools/Constant";
+import { PAGESIZE } from "../../constants/Constant";
 import { errorCatch } from "../../tools/Tools";
 import "../criteria/criteria.style";
 import ContentWrapper from "../criteria/criteria.style";
@@ -78,11 +78,7 @@ function Signuprequest() {
                     (item, index) =>
                         (item.index = lazyParams.page * PAGESIZE + index + 1)
                 );
-                setLoading(false);
-                setTotalRecords(result.totalElements);
-                setList(list);
-                setSelectedRows([]);
-                setExpandedRows();
+
             })
             .catch((error) => {
                 errorCatch(error);
@@ -234,7 +230,6 @@ function Signuprequest() {
                     setSelectedRows(e.value);
                 }}
                 dataKey="id"
-                onRowToggle={expandedCity}
                 className="p-datatable-gridlines"
             >
                 <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
