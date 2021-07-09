@@ -162,8 +162,6 @@ const Organization = () => {
         );
     }
 
-
-
     return (
         <ContentWrapper>
             <div className="button-demo">

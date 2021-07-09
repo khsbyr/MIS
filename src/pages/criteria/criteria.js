@@ -1,10 +1,10 @@
 import { DownOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import {
-    faFileExcel,
-    faPen,
-    faPlus,
-    faPrint,
-    faTrash
+  faFileExcel,
+  faPen,
+  faPlus,
+  faPrint,
+  faTrash
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Col, DatePicker, Layout, message, Modal, Row } from "antd";
@@ -17,6 +17,7 @@ import { errorCatch } from "../../tools/Tools";
 import CriteriaModal from "../criteria/components/CriteriaModal";
 import "./criteria.style";
 import ContentWrapper from "./criteria.style";
+import { ColumnGroup } from 'primereact/columngroup';
 
 function onChange(date, dateString) {
   console.log(date, dateString);
@@ -83,6 +84,7 @@ const Criteria = () => {
   };
 
   const edit = (row) => {
+    console.log(row)
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
@@ -93,7 +95,6 @@ const Criteria = () => {
       message.warning("Устгах өгөгдлөө сонгоно уу");
       return;
     }
-    debugger;
     putService("criteria/delete/" + row.id)
       .then((result) => {
         message.success("Амжилттай устлаа");
@@ -107,7 +108,6 @@ const Criteria = () => {
     setIsModalVisible(false);
     if (isSuccess) onInit();
   };
-  debugger;
   const pop = (row) => {
     if (row.length === 0) {
       message.warning("Устгах өгөгдлөө сонгоно уу");
@@ -152,6 +152,34 @@ const Criteria = () => {
       </React.Fragment>
     );
   };
+
+  const indicatorTypeBodyTemplate = (row) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Шалгуур үзүүлэлтийн төрөл</span>
+        {row.indicatorProcess}
+      </React.Fragment>
+    );
+  };
+
+
+  let headerGroup = <ColumnGroup>
+  <Row>
+      <Column header="№" rowSpan={2}/>
+      <Column header="Шалгуур үзүүлэлтийн нэр" rowSpan={2} /> 
+      <Column header="Хүрэх үр дүн" rowSpan={2} />
+      <Column header="Үр дүнгийн биелэлт" rowSpan={2} />
+      <Column header="Шалгуур үзүүлэлтийн төрөл" body={indicatorTypeBodyTemplate} colSpan={3}/>
+      <Column headerStyle={{ width: "7rem" }} body={action} rowSpan={2}></Column>
+
+
+  </Row>
+  <Row>
+      <Column header="Хувь /%/"/>
+      <Column header="Тоо"/>
+      <Column header="Томъёо"/>
+  </Row>
+  </ColumnGroup>;
 
   return (
     <ContentWrapper>
@@ -229,6 +257,7 @@ const Criteria = () => {
             value={list}
             removableSort
             paginator
+            headerColumnGroup={headerGroup}
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
@@ -238,35 +267,13 @@ const Criteria = () => {
             }}
             dataKey="id"
           >
-            <Column
-              field="index"
-              header="№"
-              body={indexBodyTemplate}
-              sortable
-            />
-            <Column
-              field="name"
-              header="Шалгуур үзүүлэлтийн нэр"
-              body={nameBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              field="indicatorProcess"
-              header="Хүрэх үр дүн"
-              body={indicatorProcessBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              field="upIndicator"
-              header="Үр дүнгийн биелэлт"
-              body={upIndicatorBodyTemplate}
-              sortable
-            />
-            <Column field="" header="Шалгуур үзүүлэлтийн төрөл" sortable />
+            <Column field="index" header="№" body={indexBodyTemplate} />
+            <Column field="name" header="Шалгуур үзүүлэлтийн нэр" body={nameBodyTemplate} />
+            <Column field="indicatorProcess" header="Хүрэх үр дүн" body={indicatorProcessBodyTemplate} />
+            <Column field="upIndicator" header="Үр дүнгийн биелэлт" body={upIndicatorBodyTemplate}  />
+            <Column field="criteriaIndicator.percentIndicator.value" header="Хувь /%/"/>
+            <Column field="criteriaIndicator.quantityIndicator.value" header="Тоо"/>
+            <Column field="criteriaIndicator.formulaIndicator.value" header="Томъёо"/>
             <Column headerStyle={{ width: "7rem" }} body={action}></Column>
           </DataTable>
           {isModalVisible && (
@@ -292,7 +299,7 @@ const Criteria = () => {
         handleDeleted(row);
         onInit();
       },
-      onCancel() {},
+      onCancel() { },
     });
   }
 };

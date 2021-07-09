@@ -11,6 +11,11 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import EducationModal from "./EducationModal";
 import ExperienceModal from "./ExperienceModal";
+import ConsSerExperienceModal from "./ConsSerExperienceModa";
+import TeacherExperienceModal from "./TeacherExperienceModal";
+import PublishedWorkModal from "./PublishedWorkModal";
+import CertificateModal from "./CertificateModal";
+import MembershipModal from "./MembershipModal";
 
 const { Dragger } = Upload;
 const validateMessages = {
@@ -38,6 +43,11 @@ export default function CvModal(props) {
     const { Usercontroller, isModalVisible } = props;
     const [isModalVisibleEducation, setIsModalVisibleEducation] = useState(false);
     const [isModalVisibleExperience, setIsModalVisibleExperience] = useState(false);
+    const [isModalVisibleConsSerExperience, setIsModalVisibleConsSerExperience] = useState(false);
+    const [isModalVisibleTeacherExperience, setIsModalVisibleTeacherExperience] = useState(false);
+    const [isModalVisiblePublishedWork, setIsModalVisiblePublishedWork] = useState(false);
+    const [isModalVisibleCertificate, setIsModalVisibleCertificate] = useState(false);
+    const [isModalVisibleMembership, setIsModalVisibleMembership] = useState(false);
     const [form] = Form.useForm();
     const [selectedRows, setSelectedRows] = useState([]);
     let loadLazyTimeout = null;
@@ -160,6 +170,177 @@ export default function CvModal(props) {
             confirm();
         }
     };
+
+    const actionConsSerExperience = (row) => {
+        return (
+            <React.Fragment>
+                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />} onClick={() => editConsSerExperience(row)} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={() => popConsSerExperience(row)} />
+            </React.Fragment>
+        );
+    }
+
+    const editConsSerExperience = (row) => {
+        editRow = row.data
+        isEditMode = true
+        setIsModalVisibleConsSerExperience(true)
+    }
+
+    const addConsSerExperience = () => {
+        setIsModalVisibleConsSerExperience(true);
+        isEditMode = false;
+    };
+
+    const closeModalConsSerExperience = (isSuccess = false) => {
+        setIsModalVisibleConsSerExperience(false);
+        if (isSuccess) onInit();
+    };
+
+    const popConsSerExperience = () => {
+        if (selectedRows.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        } else {
+            confirm();
+        }
+    };
+
+    const actionTeacherExperience = (row) => {
+        return (
+            <React.Fragment>
+                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />} onClick={() => editTeacherExperience(row)} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={() => popTeacherExperience(row)} />
+            </React.Fragment>
+        );
+    }
+
+    const editTeacherExperience = (row) => {
+        editRow = row.data
+        isEditMode = true
+        setIsModalVisibleTeacherExperience(true)
+    }
+
+    const addTeacherExperience = () => {
+        setIsModalVisibleTeacherExperience(true);
+        isEditMode = false;
+    };
+
+    const closeModalTeacherExperience = (isSuccess = false) => {
+        setIsModalVisibleTeacherExperience(false);
+        if (isSuccess) onInit();
+    };
+
+    const popTeacherExperience = () => {
+        if (selectedRows.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        } else {
+            confirm();
+        }
+    };
+
+    const actionPublishedWork = (row) => {
+        return (
+            <React.Fragment>
+                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />} onClick={() => editPublishedWork(row)} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={() => popPublishedWork(row)} />
+            </React.Fragment>
+        );
+    }
+
+    const editPublishedWork = (row) => {
+        editRow = row.data
+        isEditMode = true
+        setIsModalVisiblePublishedWork(true)
+    }
+
+    const addPublishedWork = () => {
+        setIsModalVisiblePublishedWork(true);
+        isEditMode = false;
+    };
+
+    const closeModalPublishedWork = (isSuccess = false) => {
+        setIsModalVisiblePublishedWork(false);
+        if (isSuccess) onInit();
+    };
+
+    const popPublishedWork = () => {
+        if (selectedRows.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        } else {
+            confirm();
+        }
+    };
+
+    const actionCertificate = (row) => {
+        return (
+            <React.Fragment>
+                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />} onClick={() => editCertificate(row)} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={() => popCertificate(row)} />
+            </React.Fragment>
+        );
+    }
+
+    const editCertificate = (row) => {
+        editRow = row.data
+        isEditMode = true
+        setIsModalVisibleCertificate(true)
+    }
+
+    const addCertificate = () => {
+        setIsModalVisibleCertificate(true);
+        isEditMode = false;
+    };
+
+    const closeModalCertificate = (isSuccess = false) => {
+        setIsModalVisibleCertificate(false);
+        if (isSuccess) onInit();
+    };
+
+    const popCertificate = () => {
+        if (selectedRows.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        } else {
+            confirm();
+        }
+    };
+
+    const actionMembership = (row) => {
+        return (
+            <React.Fragment>
+                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />} onClick={() => editMembership(row)} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={() => popMembership(row)} />
+            </React.Fragment>
+        );
+    }
+
+    const editMembership = (row) => {
+        editRow = row.data
+        isEditMode = true
+        setIsModalVisibleMembership(true)
+    }
+
+    const addMembership = () => {
+        setIsModalVisibleMembership(true);
+        isEditMode = false;
+    };
+
+    const closeModalMembership = (isSuccess = false) => {
+        setIsModalVisibleMembership(false);
+        if (isSuccess) onInit();
+    };
+
+    const popMembership = () => {
+        if (selectedRows.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        } else {
+            confirm();
+        }
+    };
+
 
 
     const handleDeleted = () => {
@@ -357,6 +538,196 @@ export default function CvModal(props) {
                                     Criteriacontroller={editRow}
                                     isModalVisible={isModalVisibleExperience}
                                     close={closeModalExperience}
+                                    isEditMode={isEditMode}
+                                />
+                            )}
+                        </Col>
+                    </Row>
+
+                    <h2 className="title">
+                        5. Зөвлөх үйлчилгээний ажлын туршлага {" "}
+                        <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={addConsSerExperience} style={{float: "right"}}>
+                            Нэмэх
+                        </Button>
+                    </h2>
+                    <Row>
+                        <Col xs={24} md={24} lg={24}>
+                            <DataTable
+                                value={list}
+                                removableSort
+                                paginator
+                                rows={10}
+                                className="p-datatable-responsive-demo"
+                                selection={selectedRows}
+                                // onRowClick={edit}
+                                onSelectionChange={(e) => {
+                                    setSelectedRows(e.value);
+                                }}
+                                dataKey="id"
+                                >
+                                <Column field="index" header="№" style={{ width: "50px" }} />
+                                <Column field="name" header="Албан тушаал" />
+                                <Column field="" header="Байгууллагын нэр" />
+                                <Column field="" header="Огноо" />
+                                <Column headerStyle={{ width: '7rem' }} body={actionConsSerExperience}></Column>
+                            </DataTable>
+                            {isModalVisibleConsSerExperience && (
+                                <ConsSerExperienceModal
+                                    Criteriacontroller={editRow}
+                                    isModalVisible={isModalVisibleConsSerExperience}
+                                    close={closeModalConsSerExperience}
+                                    isEditMode={isEditMode}
+                                />
+                            )}
+                        </Col>
+                    </Row>
+
+                    <h2 className="title">
+                        6. Багшийн ажлын туршлага {" "}
+                        <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={addTeacherExperience} style={{float: "right"}}>
+                            Нэмэх
+                        </Button>
+                    </h2>
+                    <Row>
+                        <Col xs={24} md={24} lg={24}>
+                            <DataTable
+                                value={list}
+                                removableSort
+                                paginator
+                                rows={10}
+                                className="p-datatable-responsive-demo"
+                                selection={selectedRows}
+                                // onRowClick={edit}
+                                onSelectionChange={(e) => {
+                                    setSelectedRows(e.value);
+                                }}
+                                dataKey="id"
+                                >
+                                <Column field="index" header="№" style={{ width: "50px" }} />
+                                <Column field="name" header="Албан тушаал" />
+                                <Column field="" header="Байгууллагын нэр" />
+                                <Column field="" header="Огноо" />
+                                <Column headerStyle={{ width: '7rem' }} body={actionTeacherExperience}></Column>
+                            </DataTable>
+                            {isModalVisibleTeacherExperience && (
+                                <TeacherExperienceModal
+                                    Criteriacontroller={editRow}
+                                    isModalVisible={isModalVisibleTeacherExperience}
+                                    close={closeModalTeacherExperience}
+                                    isEditMode={isEditMode}
+                                />
+                            )}
+                        </Col>
+                    </Row>
+
+                    <h2 className="title">
+                        7. Хэвлүүлсэн бүтээл (Эрдэм шинжилгээ, судалгааны бүтээл, ном гарын авлага, хэлэлцүүлсэн илтгэлүүд ) {" "}
+                        <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={addPublishedWork} style={{float: "right"}}>
+                            Нэмэх
+                        </Button>
+                    </h2>
+                    <Row>
+                        <Col xs={24} md={24} lg={24}>
+                            <DataTable
+                                value={list}
+                                removableSort
+                                paginator
+                                rows={10}
+                                className="p-datatable-responsive-demo"
+                                selection={selectedRows}
+                                // onRowClick={edit}
+                                onSelectionChange={(e) => {
+                                    setSelectedRows(e.value);
+                                }}
+                                dataKey="id"
+                                >
+                                <Column field="index" header="№" style={{ width: "50px" }} />
+                                <Column field="" header="Бүтээлийн нэр" />
+                                <Column field="" header="Огноо" />
+                                <Column headerStyle={{ width: '7rem' }} body={actionPublishedWork}></Column>
+                            </DataTable>
+                            {isModalVisiblePublishedWork && (
+                                <PublishedWorkModal
+                                    Criteriacontroller={editRow}
+                                    isModalVisible={isModalVisiblePublishedWork}
+                                    close={closeModalPublishedWork}
+                                    isEditMode={isEditMode}
+                                />
+                            )}
+                        </Col>
+                    </Row>
+
+                    
+                    <h2 className="title">
+                        8. Өөрийн нэр дээр бүртгэлтэй оюуны өмч, гэрчилгээ, лиценз, тусгай зөвшөөрөл   {" "}
+                        <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={addCertificate} style={{float: "right"}}>
+                            Нэмэх
+                        </Button>
+                    </h2>
+                    <Row>
+                        <Col xs={24} md={24} lg={24}>
+                            <DataTable
+                                value={list}
+                                removableSort
+                                paginator
+                                rows={10}
+                                className="p-datatable-responsive-demo"
+                                selection={selectedRows}
+                                // onRowClick={edit}
+                                onSelectionChange={(e) => {
+                                    setSelectedRows(e.value);
+                                }}
+                                dataKey="id"
+                                >
+                                <Column field="index" header="№" style={{ width: "50px" }} />
+                                <Column field="name" header="Албан тушаал" />
+                                <Column field="" header="Байгууллагын нэр" />
+                                <Column field="" header="Огноо" />
+                                <Column headerStyle={{ width: '7rem' }} body={actionCertificate}></Column>
+                            </DataTable>
+                            {isModalVisibleCertificate && (
+                                <CertificateModal
+                                    Criteriacontroller={editRow}
+                                    isModalVisible={isModalVisibleCertificate}
+                                    close={closeModalCertificate}
+                                    isEditMode={isEditMode}
+                                />
+                            )}
+                        </Col>
+                    </Row>
+
+                    <h2 className="title">
+                        9. Гишүүнчлэл (Олон нийтийн болон төрийн бус байгууллагын гишүүн эсэх)   {" "}
+                        <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={addMembership} style={{float: "right"}}>
+                            Нэмэх
+                        </Button>
+                    </h2>
+                    <Row>
+                        <Col xs={24} md={24} lg={24}>
+                            <DataTable
+                                value={list}
+                                removableSort
+                                paginator
+                                rows={10}
+                                className="p-datatable-responsive-demo"
+                                selection={selectedRows}
+                                // onRowClick={edit}
+                                onSelectionChange={(e) => {
+                                    setSelectedRows(e.value);
+                                }}
+                                dataKey="id"
+                                >
+                                <Column field="index" header="№" style={{ width: "50px" }} />
+                                <Column field="name" header="Албан тушаал" />
+                                <Column field="" header="Байгууллагын нэр" />
+                                <Column field="" header="Огноо" />
+                                <Column headerStyle={{ width: '7rem' }} body={actionMembership}></Column>
+                            </DataTable>
+                            {isModalVisibleMembership && (
+                                <MembershipModal
+                                    Criteriacontroller={editRow}
+                                    isModalVisible={isModalVisibleMembership}
+                                    close={closeModalMembership}
                                     isEditMode={isEditMode}
                                 />
                             )}
