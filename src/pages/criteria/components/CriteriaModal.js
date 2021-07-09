@@ -145,7 +145,7 @@ export default function CriteriaModal(props) {
 
                     <Form.Item
                         name="percentIndicator"
-                        label="Шалгуур үзүүлэлтийн төрөл"
+                        label="Шалгуур үзүүлэлтийн төрөлa"
                         rules={[
                             {
                                 required: false,
