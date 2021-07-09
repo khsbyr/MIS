@@ -16,24 +16,11 @@ function MapContainer(props) {
     activeMarker: {},
     selectedPlace: {},
   });
+  
   function onclickOk() {
     props.clickOK(state);
   }
-  // const onMarkerClick = (props, marker, e) =>
-  //   setState({
-  //     selectedPlace: props,
-  //     activeMarker: marker,
-  //     showingInfoWindow: true,
-  //   });
-  // const onMapClicked = (props, b, j, d) => {
-  //   console.log("************1", props);
-  //   console.log("************2", b);
-  //   console.log("************3", j);
-  //   console.log("************4", d);
-  //   if (state.showingInfoWindow) {
-  //     setState({ ...state, showingInfoWindow: false, activeMarker: null });
-  //   }
-  // };
+
   function handleChange(address) {
     state.address = address;
     setState({ ...state });

@@ -2,7 +2,7 @@ import { Col, Form, Input, Modal, Row, Select, Radio } from "antd";
 import React, { useEffect, useState } from "react";
 import { getService, postService, putService } from "../../../service/service";
 import { errorCatch } from "../../../tools/Tools";
-import AutocompleteSelect from "../../components/Autocomplete";
+import AutocompleteSelect from "../../../components/Autocomplete";
 // const layout = {
 //   labelCol: {
 //     span: 10,

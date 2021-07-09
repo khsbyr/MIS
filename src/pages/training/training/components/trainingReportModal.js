@@ -13,7 +13,7 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import { errorCatch } from "../../../../tools/Tools";
-import AutocompleteSelect from "../../../components/Autocomplete";
+import AutocompleteSelect from "../../../../components/Autocomplete";
 import ContentWrapper from "./trainingReport.style";
 const layout = {
   labelCol: {

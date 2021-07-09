@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { postService, putService, getService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
 import ContentWrapper from "./guidelines.style";
-import AutoCompleteSelect from "../../../components/Autocomplete";
+import AutoCompleteSelect from "../../../../components/Autocomplete";
 const layout = {
     labelCol: {
         span: 20,
