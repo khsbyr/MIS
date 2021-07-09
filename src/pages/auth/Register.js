@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import Partner from "./components/Partner";
 import { postService, getService } from "../../service/service";
 import { requireFieldFocus } from "../../tools/Tools";
+import { errorCatch } from "../../tools/Tools";
 import { isShowLoading } from "../../context/Tools";
 
 function Register() {
@@ -32,12 +33,24 @@ function Register() {
         password: values.password,
         isActive: true
       };
-      console.log(JSON.stringify(saveData));
       postService(`signUpRequest/post/${values.code}`, saveData).then(result => {
           console.log(result);
           message.success("Таны хүсэлтийг хүлээн авлаа. ")
           window.location.href = "/login"
-      }).finally(() => isShowLoading(false))}
+      })
+      .finally(() => {
+        isShowLoading(false);
+      })
+      .catch((error) => {
+        if (error?.response) {
+          if (error?.response.status === 401) {
+            message.error(error);
+          }
+          else errorCatch(error);
+        }
+        else errorCatch(error);
+      });
+    }
   };
 
   return (
