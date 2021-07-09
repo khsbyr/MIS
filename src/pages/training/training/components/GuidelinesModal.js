@@ -1,7 +1,8 @@
+import { Col, DatePicker, Form, Input, Modal, Row, Select, Table, Upload } from "antd";
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input, Table, Button, DatePicker } from "antd";
-import { getService, postService, putService } from "../../../../service/service";
+import { postService, putService, getService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
+<<<<<<< HEAD
 import { DownOutlined, SearchOutlined, CopyOutlined, InboxOutlined, UploadOutlined } from "@ant-design/icons";
 import { Row, Col, Select, Option, Upload } from "antd";
 import AutocompleteSelect from "../../../../components/Autocomplete";
@@ -59,6 +60,10 @@ const dataa = [
     }
 ]
 const { Dragger } = Upload;
+=======
+import ContentWrapper from "./guidelines.style";
+import AutoCompleteSelect from "../../../components/Autocomplete";
+>>>>>>> 180b04277efd1db52bd08ea25f215bf6723c0149
 const layout = {
     labelCol: {
         span: 20,
@@ -79,33 +84,107 @@ const validateMessages = {
 };
 export default function GuidelinesModal(props) {
     const { Guidelinescontroller, isModalVisible, isEditMode } = props;
-    const [stateController, setStateController] = useState([]);
+    const [stateAimag, setStateAimag] = useState([]);
+    const [stateSum, setStateSum] = useState([]);
+    const [stateCountry, setStateCountry] = useState([]);
+    const [stateBag, setStateBag] = useState([]);
     const [form] = Form.useForm();
-    const { Option } = Select;
+    const FORMAT = "YYY/MM/DD"
     const { RangePicker } = DatePicker;
+
+    function DateOnChange(date, dateString) {
+        console.log(date, dateString);
+    }
+
     useEffect(() => {
-        // getService("trainingGuidelines/get", {
-        //     search: "status:true",
-        // }).then((result) => {
-        //     if (result) {
-        //         setStateController(result.content || []);
-        //     }
-        // });
-
+        getService("country/get").then((result) => {
+            if (result) {
+                setStateCountry(result || []);
+            }
+        });
+        getService("aimag/get").then((result) => {
+            if (result) {
+                setStateAimag(result || []);
+            }
+        });
+        getService(`soum/getList/${Guidelinescontroller.address.aimag.id}`).then((result) => {
+            if (result) {
+              setStateSum(result || []);
+            }
+          });
+          getService(`bag/getList/${Guidelinescontroller.address.soum.id}`).then((result) => {
+            if (result) {
+              setStateBag(result || []);
+            }
+          });
         if (isEditMode) {
-
-            form.setFieldsValue({ ...Guidelinescontroller });
-
-
+            form.setFieldsValue({
+                ...Guidelinescontroller,
+                CountryID : Guidelinescontroller.address.country.id,
+                AimagID : Guidelinescontroller.address.aimag.id,
+                SoumID : Guidelinescontroller.address.soum.id,
+                BagID : Guidelinescontroller.address.bag.id,
+                AddressDetail: Guidelinescontroller.address.addressDetail,
+                StartDate: Guidelinescontroller.startDate,
+            });
         }
     }, []);
+
+
+    const selectCountry = (value) => {
+        getAimag(value);
+    };
+
+    const getAimag = (countryId) => {
+        getService(`aimag/getList/${countryId}`, {}).then((result) => {
+            if (result) {
+                setStateAimag(result || []);
+            }
+        });
+    };
+    const selectAimag = (value) => {
+        getSum(value);
+    };
+    const getSum = (aimagId) => {
+        getService(`soum/getList/${aimagId}`, {}).then((result) => {
+            if (result) {
+                setStateSum(result || []);
+            }
+        });
+    };
+    const selectSum = (value) => {
+        getBag(value);
+    };
+    const getBag = (sumID) => {
+        getService(`bag/getList/${sumID}`, {}).then((result) => {
+            if (result) {
+                setStateBag(result || []);
+            }
+        });
+    };
+
     const save = () => {
         form
             .validateFields()
             .then((values) => {
+                values.address = {
+                    addressDetail: values.AddressDetail,
+                    country: {
+                      id: values.CountryID,
+                    },
+                    aimag: {
+                      id: values.AimagID,
+                    },
+                    soum: {
+                      id: values.SoumID,
+                    },
+                    bag: {
+                      id: values.BagID,
+                    }
+                  };
                 if (isEditMode) {
                     putService(
-                        "trainingGuidelines/put" + Guidelinescontroller.id,
+                        "trainingGuidelines/update/" + Guidelinescontroller.id,
                         values
                     )
                         .then((result) => {
@@ -140,169 +219,171 @@ export default function GuidelinesModal(props) {
                 onOk={save}
                 onCancel={() => props.close()}
             >
-                <Form
-                    form={form}
-                    labelAlign={"left"}
-                    {...layout}
-                    layout="vertical"
-                    name="nest-messages"
-                    validateMessages={validateMessages}
-                >
-                    <Row >
-                        <Col xs={24} md={24} lg={12}>
-                            <Row>
-                                <Col xs={24} md={24} lg={24}>
-                                    <Form.Item label="Сургалтын сэдэв:" name="subject" rules={[
-                                        {
-                                            required: true,
-                                        },
-                                    ]}>
-                                        <Input />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={24} md={24} lg={24}>
-                                    <Form.Item label="Сургалт зохион байгуулах үндэслэл:" name="reason" rules={[
-                                        {
-                                            required: true,
-                                        },
-                                    ]}>
-                                        <Input />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={24} md={24} lg={24}>
-                                    <Form.Item label="Сургалтын зорилго:" name="aim" rules={[
-                                        {
-                                            required: true,
-                                        },
-                                    ]}>
-                                        <Input />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={24} md={24} lg={24}>
-                                    <Form.Item label="Хэрэгжүүлэх үйл ажиллагаа:" name="operation" rules={[
-                                        {
-                                            required: true,
-                                        },
-                                    ]}>
-                                        <Input />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={24} md={24} lg={24}>
-                                    <Form.Item label="Хүлээгдэж буй үр дүн:" name="result" rules={[
-                                        {
-                                            required: true,
-                                        },
-                                    ]}>
-                                        <Input />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={24} md={24} lg={24}>
-                                    <p style={{ color: "#7d7d7d", fontSize: "13px" }}>Сургалт зохион байгуулагдах газар:</p>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={24} md={24} lg={24}>
-                                    <Form.Item label="Аймаг, хот:">
-                                        <Select
-                                            placeholder="Аймаг, хот"
-                                            allowClear
-                                        >
-                                            <Option value="Ulaanbaatar">Улаанбаатар</Option>
-                                            <Option value="Arkhangai">Архангай</Option>
-                                            <Option value="other">other</Option>
-                                        </Select>
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={24} md={24} lg={24}>
-                                    <Form.Item label="Сум, дүүрэг:">
-                                        <Select
-                                            placeholder="Сум, дүүрэг"
-                                            allowClear
-                                        >
-                                            <Option value="Sukhbaatar">Сүхбаатар дүүрэг</Option>
-                                            <Option value="Bayangol">Баянгол</Option>
-                                            <Option value="other">other</Option>
-                                        </Select>
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={24} md={24} lg={24}>
-                                    <Form.Item label="Баг, хороо:">
-                                        <Select
-                                            placeholder="Баг, хороо"
-                                            allowClear
-                                        >
-                                            <Option value="Sukhbaatar">Сүхбаатар дүүрэг</Option>
-                                            <Option value="Bayangol">Баянгол</Option>
-                                            <Option value="other">other</Option>
-                                        </Select>
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={24} md={24} lg={24}>
-                                    <Form.Item label="Хаяг:">
-                                        <Input.TextArea
-                                            style={{
-                                                width: "100%",
-                                                height: "110px"
-                                            }}
-                                        />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                        </Col>
-                        <Col xs={24} md={24} lg={12}>
-                            <Row>
-                                <Col xs={24} md={24} lg={24}>
-                                    <Form.Item label="Сургалтын оролцогчид:">
-                                        <Input.TextArea
-                                            style={{
-                                                width: "100%",
-                                                height: "110px"
-                                            }}
-                                        />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={24} md={24} lg={24}>
-                                    <Form.Item label="Сургалтын оролцогчид:">
-                                        <Table dataSource={data} columns={columns} />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={24} md={24} lg={24}>
-                                    <Form.Item label="Суралцагч:">
-                                        <Table dataSource={dataa} columns={column} />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={24} md={24} lg={24}>
-                                    <Form.Item label="Сургалтын хугацаа:">
-                                        <RangePicker />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
+                <ContentWrapper>
+                    <Form
+                        form={form}
+                        labelAlign={"left"}
+                        {...layout}
+                        layout="vertical"
+                        name="nest-messages"
+                        validateMessages={validateMessages}
+                    >
+                        <Row >
+                            <Col xs={24} md={24} lg={12}>
+                                <Row>
+                                    <Col xs={24} md={24} lg={24}>
+                                        <Form.Item label="Сургалтын сэдэв:" name="subject" rules={[
+                                            {
+                                                required: true,
+                                            },
+                                        ]}>
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col xs={24} md={24} lg={24}>
+                                        <Form.Item label="Сургалт зохион байгуулах үндэслэл:" name="reason" rules={[
+                                            {
+                                                required: true,
+                                            },
+                                        ]}>
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col xs={24} md={24} lg={24}>
+                                        <Form.Item label="Сургалтын зорилго:" name="aim" rules={[
+                                            {
+                                                required: true,
+                                            },
+                                        ]}>
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col xs={24} md={24} lg={24}>
+                                        <Form.Item label="Хэрэгжүүлэх үйл ажиллагаа:" name="operation" rules={[
+                                            {
+                                                required: true,
+                                            },
+                                        ]}>
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col xs={24} md={24} lg={24}>
+                                        <Form.Item label="Хүлээгдэж буй үр дүн:" name="result" rules={[
+                                            {
+                                                required: true,
+                                            },
+                                        ]}>
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
 
-                        </Col>
-                    </Row>
-                </Form>
+                                <Row>
+
+                                    <Col xs={24} md={24} lg={24}>
+                                        <p style={{ color: "#7d7d7d", fontSize: "13px" }}>Сургалт зохион байгуулагдах газар:</p>
+                                    </Col>
+                                </Row>
+                                <Row style={{ maxWidth: "95%" }}>
+                                    <Col xs={24} md={24} lg={12} >
+                                        <Form.Item label="Улс:" name="CountryID" >
+                                            <AutoCompleteSelect
+                                                valueField="id"
+                                                data={stateCountry}
+                                                onChange={(value) => selectCountry(value)}
+                                            />
+
+                                        </Form.Item>
+                                    </Col>
+                                    <Col xs={24} md={24} lg={12}>
+                                        <Form.Item label="Аймаг, хот:" name="AimagID">
+                                            <AutoCompleteSelect
+                                                valueField="id"
+                                                data={stateAimag}
+                                                onChange={(value) => selectAimag(value)}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col xs={24} md={24} lg={12}>
+                                        <Form.Item name="SoumID" layout="vertical" label="Сум, Дүүрэг:">
+                                            <AutoCompleteSelect
+                                                valueField="id"
+                                                data={stateSum}
+                                                onChange={(value) => selectSum(value)}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col xs={24} md={24} lg={12}>
+                                        <Form.Item name="BagID" layout="vertical" label="Баг, Хороо:">
+                                            <AutoCompleteSelect valueField="id" data={stateBag} />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col xs={24} md={24} lg={24}>
+                                        <Form.Item label="Хаяг:" name="AddressDetail">
+                                            <Input.TextArea
+                                                style={{
+                                                    width: "100%",
+                                                    height: "110px"
+                                                }}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                            </Col>
+                            <Col xs={24} md={24} lg={12}>
+                                <Row>
+                                    <Col xs={24} md={24} lg={24}>
+                                        <Form.Item label="Сургалтын оролцогчид:">
+                                            <Input.TextArea
+                                                style={{
+                                                    width: "100%",
+                                                    height: "110px"
+                                                }}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col xs={24} md={24} lg={24}>
+                                        <Form.Item label="Сургалтын оролцогчид:">
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col xs={24} md={24} lg={24}>
+                                        <Form.Item label="Суралцагч:">
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col xs={24} md={24} lg={12} >
+                                        <Form.Item label="Сургалт эхлэх хугацаа:" name="startDate">
+                                            {/* <DatePicker value={Guidelinescontroller.startDate && moment(Guidelinescontroller.startDate, 'YYYY-MM-DD')} allowClear/> */}
+                                            <Input/>
+                                        </Form.Item>                                   
+                                    </Col>
+                                    <Col xs={24} md={24} lg={12}>
+                                        <Form.Item label="Сургалт дуусах хугацаа:" name="endDate">
+                                            {/* <DatePicker value={Guidelinescontroller.endDate && moment(Guidelinescontroller.endDate, 'YYYY-MM-DD')} allowClear/> */}
+                                            <Input/>
+                                        </Form.Item>                                   
+                                    </Col>
+                                </Row>
+
+                            </Col>
+                        </Row>
+                    </Form>
+                </ContentWrapper>
             </Modal>
         </div >
     );

@@ -6,9 +6,9 @@ export default function AutocompleteSelect(props) {
   const { data, value, disabled, viewField, valueField } = props;
   const mode = props.mode || "";
   const placeholder = props.placeholder || "Сонгох";
-  function onChange(value) {
-    props.onChange(value);
-  }
+  // function onChange(value) {
+  //   props.onChange(value);
+  // }
 
   return (
     <Select
@@ -24,7 +24,7 @@ export default function AutocompleteSelect(props) {
       filterOption={(input, option) =>
         option.children?.toLowerCase().indexOf(input.toLowerCase()) >= 0
       }
-      onChange={onChange}
+      onChange={props.onChange}
     >
       {data &&
         data.map((z, index) => (

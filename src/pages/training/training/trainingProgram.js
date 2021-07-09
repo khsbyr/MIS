@@ -1,55 +1,24 @@
-import {
-    ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled, DownOutlined
-} from "@ant-design/icons";
-import SaveIcon from "@material-ui/icons/Save";
-import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker, Select, Input, } from "antd";
+import { DownOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { faFileExcel, faPen, faPlus, faPrint, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Col, DatePicker, Layout, message, Modal, Row, Form, Select, Input } from "antd";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { isShowLoading } from "../../../context/Tools";
 import { getService, putService } from "../../../service/service";
-import { PAGESIZE } from "../../../constants/Constant";
 import { errorCatch } from "../../../tools/Tools";
-import TrainingProgramModal from "../training/components/trainingProgramModal";
 import ContentWrapper from "../training/components/trainingProgram.style";
-function handleMenuClick(e) { console.log("click", e.key[0]); }
+import TrainingProgramModal from "../training/components/trainingProgramModal";
 function onChange(date, dateString) {
     console.log(date, dateString);
 }
 const { Content } = Layout;
-const { Option } = Select;
-const menu = (
-    <Menu onClick={handleMenuClick}>
-        <Menu.Item
-            key="1"
-            icon={<FileSyncOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-
-            Импорт
-        </Menu.Item>
-        <Menu.Item
-            key="2"
-            icon={<FileOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-            Экспорт
-        </Menu.Item>
-
-        <Menu.Item
-            key="3"
-            icon={<PrinterOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-
-            Хэвлэх
-        </Menu.Item>
-
-    </Menu>
-);
 
 var editRow
 var isEditMode;
 const TrainingProgram = () => {
-    const [products, setProducts] = useState([]);
-    const [multiSortMeta, setMultiSortMeta] = useState([{ field: 'category', order: -1 }]);
+
     let loadLazyTimeout = null;
     const [list, setList] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -59,6 +28,7 @@ const TrainingProgram = () => {
     const [loading, setLoading] = useState(false);
     const PAGESIZE = 20;
     const [selectedRows, setSelectedRows] = useState([]);
+    const { Option } = Select;
 
     useEffect(() => {
         onInit();
@@ -69,7 +39,7 @@ const TrainingProgram = () => {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("trainingProgram/get", list)
+        getService("trainingProgram/get/1", list)
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -90,19 +60,29 @@ const TrainingProgram = () => {
         setIsModalVisible(true);
         isEditMode = false;
     };
+
+    const action = (row) => {
+        return (
+            <React.Fragment>
+                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />}  onClick={() => edit(row)} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={() => pop(row)} />
+            </React.Fragment>
+        );
+    }
+
+   
     const edit = (row) => {
-        editRow = row.data
+        editRow = row
         isEditMode = true
         setIsModalVisible(true)
     }
 
-    const handleDeleted = () => {
-        if (selectedRows.length === 0) {
+    const handleDeleted = (row) => {
+        if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         }
-        debugger
-        putService("trainingProgram/delete/" + selectedRows[0].id)
+        putService("trainingProgram/delete/" + row.id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -115,19 +95,119 @@ const TrainingProgram = () => {
         setIsModalVisible(false);
         if (isSuccess) onInit();
     };
-    const pop = () => {
-        if (selectedRows.length === 0) {
+    
+    const pop = (row) => {
+        if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         } else {
-            confirm();
+            confirm(row);
         }
     };
-    const [selectedProducts, setSelectedProducts] = useState(null);
+
+
+    const indexBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">№</span>
+                {row.index}
+            </React.Fragment>
+        );
+    }
+
+    const activityBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Үйл ажиллагаа</span>
+                {row.test}
+            </React.Fragment>
+        );
+    }
+
+    const timeBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Хэрэгжих хугацаа</span>
+                {row.test}
+            </React.Fragment>
+        );
+    }
+
+    const ownerBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Хариуцах эзэн</span>
+                {row.test}
+            </React.Fragment>
+        );
+    }
+    
+    const materialsBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Сургалтын материал</span>
+                {row.test}
+            </React.Fragment>
+        );
+    }
+
     return (
         <ContentWrapper>
-            <h2 className="title">Сургалтын хөтөлбөр</h2>
-            <Row >
+            <div className="button-demo">
+                <Layout className="btn-layout">
+                    <Content>
+                        <Row>
+                            <Col xs={24} md={24} lg={14}>
+                                <p className="title">Сургалтын хөтөлбөр</p>
+                            </Col>
+                            <Col xs={24} md={24} lg={10}>
+                                <Row gutter={[0, 15]}>
+                                    <Col xs={8} md={8} lg={6}>
+                                        <DatePicker
+                                            onChange={onChange}
+                                            bordered={false}
+                                            suffixIcon={<DownOutlined />}
+                                            placeholder="Select year"
+                                            picker="year"
+                                            className="DatePicker"
+                                            style={{
+                                                width: "120px",
+                                                color: "black",
+                                                cursor: "pointer",
+                                            }}
+                                        />
+                                    </Col>
+                                    {/* <Col xs={8} md={8} lg={6}>
+                                        <Input
+                                            placeholder="Хайлт хийх"
+                                            allowClear
+                                            prefix={<SearchOutlined />}
+                                            bordered={false}
+                                            onSearch={onSearch}
+                                            style={{
+                                                width: 150,
+                                                borderBottom: "1px solid #103154",
+                                            }}
+                                        />
+                                    </Col> */}
+                                    <Col xs={8} md={8} lg={6}>
+                                        <Button type="text" icon={<FontAwesomeIcon icon={faPrint} />} >Хэвлэх </Button>
+                                    </Col>
+                                    <Col xs={8} md={8} lg={6}>
+                                        <Button type="text" className="export" icon={<FontAwesomeIcon icon={faFileExcel} />} >
+                                            Экспорт
+                                        </Button>
+                                    </Col>
+                                    <Col xs={8} md={8} lg={6}>
+                                        <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={add}>
+                                            Нэмэх
+                                        </Button>
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
+
+                        <Row >
                 <Col xs={24} md={24} lg={8}>
                     <Form>
                         <Form.Item>
@@ -177,36 +257,6 @@ const TrainingProgram = () => {
                 </Col>
             </Row>
 
-
-            <div className="button-demo">
-                <Layout className="btn-layout">
-                    <Content>
-
-                        <Row>
-                            <Col span={2}>
-                                <Button onClick={add} type="link" icon={<SaveIcon />}>
-                                    Нэмэх
-                                </Button>
-                            </Col>
-                            <Col span={2}>
-                                <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
-                                    Устгах
-                                </Button>
-                            </Col>
-                            <Col span={18} style={{ textAlign: "right" }}>
-                                <div style={{ marginRight: "5px" }}>
-                                    <Dropdown.Button
-                                        overlay={menu}
-                                        placement="bottomCenter"
-                                        icon={
-                                            <SettingFilled
-                                                style={{ marginLeft: "8px", color: "#45629c" }}
-                                            />
-                                        }
-                                    ></Dropdown.Button>
-                                </div>
-                            </Col>
-                        </Row>
                     </Content>
                 </Layout>
                 <div className="datatable-responsive-demo">
@@ -216,23 +266,22 @@ const TrainingProgram = () => {
                         paginator
                         rows={10}
                         className="p-datatable-responsive-demo"
-                        selectionMode="checkbox"
                         selection={selectedRows}
-                        onRowClick={edit}
+                        // onRowClick={edit}
                         onSelectionChange={(e) => {
                             setSelectedRows(e.value);
                         }}
                         dataKey="id">
-                        <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
-                        <Column field="index" header="№" style={{ width: "50px" }} />
-                        <Column field="" header="Үйл ажиллагаа" />
-                        <Column field="" header="Хэрэгжих хугацаа" />
-                        <Column field="" header="Хариуцах эзэн" />
-                        <Column field="" header="Сургалтын материал" />
+                            <Column field="index" header="№"  body={indexBodyTemplate} />
+                            <Column field="" header="Үйл ажиллагаа" body={activityBodyTemplate} />
+                            <Column field="" header="Хэрэгжих хугацаа" body={timeBodyTemplate}/>
+                            <Column field="" header="Хариуцах эзэн"  body={ownerBodyTemplate}/>
+                            <Column field="" header="Сургалтын материал" body={materialsBodyTemplate}/>
+                            <Column headerStyle={{ width: '7rem' }} body={action}></Column>
                     </DataTable>
                     {isModalVisible && (
                         <TrainingProgramModal
-                            Trainingprogramcontroller={editRow}
+                            Criteriacontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
                             isEditMode={isEditMode}
@@ -242,7 +291,7 @@ const TrainingProgram = () => {
             </div>
         </ContentWrapper>
     );
-    function confirm() {
+    function confirm(row) {
         Modal.confirm({
             title: "Та устгахдаа итгэлтэй байна уу ?",
             icon: <ExclamationCircleOutlined />,
@@ -250,7 +299,7 @@ const TrainingProgram = () => {
             okText: "Устгах",
             cancelText: "Буцах",
             onOk() {
-                handleDeleted();
+                handleDeleted(row);
                 onInit();
             },
             onCancel() { },
@@ -258,3 +307,6 @@ const TrainingProgram = () => {
     }
 }
 export default TrainingProgram;
+
+
+

@@ -1,4 +1,4 @@
-import { Col, Form, Input, Modal, Row, Select, Radio } from "antd";
+import { Col, Form, Input, Modal, Radio, Row, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import { getService, postService, putService } from "../../../service/service";
 import { errorCatch } from "../../../tools/Tools";
@@ -21,7 +21,7 @@ const validateMessages = {
     range: "${label} must be between ${min} and ${max}",
   },
 };
-export default function UserModal(props) {
+export default function SettingsModal(props) {
   const { Usercontroller, isModalVisible, isEditMode } = props;
   const [setStateController] = useState([]);
   const [form] = Form.useForm();
@@ -29,9 +29,7 @@ export default function UserModal(props) {
   const [stateCountry, setStateCountry] = useState([]);
   const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
-  const [stateGender, setStateGender] = useState([]);
   const [stateBag, setStateBag] = useState([]);
-  const [stateOrg, setStateOrg] = useState([]);
   const [value, setValue] = React.useState(1);
 
   useEffect(() => {
@@ -169,33 +167,11 @@ export default function UserModal(props) {
                 </Form.Item>
               </Form>
             </Col>
-
-            <Col xs={24} md={24} lg={6}>
-              <Form layout="vertical">
-                <Form.Item
-                  name="name"
-                  layout="vertical"
-                  label="Харьяа байгууллагын нэр:"
-                >
-                  <AutocompleteSelect
-                    valueField="id"
-                    data={stateOrg}
-                  />
-                </Form.Item>
-              </Form>
-            </Col>
-            <Col xs={24} md={24} lg={6}>
-              <Form.Item label="Албан тушаал:" name="position">
-                <Input placeholder="Албан тушаал..." />
-              </Form.Item>
-            </Col>
             <Col xs={24} md={24} lg={6}>
               <Form.Item label="Утасны дугаар:" name="phoneNumber">
                 <Input placeholder="Утасны дугаар..." />
               </Form.Item>
             </Col>
-          </Row>
-          <Row gutter={32}>
             <Col xs={24} md={24} lg={6}>
               <Form layout="vertical">
                 <Form.Item name="name" layout="vertical" label="Улс:">
@@ -240,35 +216,14 @@ export default function UserModal(props) {
                 </Form.Item>
               </Form>
             </Col>
-          </Row>
-          <Row gutter={32}>
             <Col xs={24} md={24} lg={6}>
               <Form.Item label="Хаяг:" name="address">
                 <Input type="text" />
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
-              <Form.Item label="Эрх" name="role">
-                <Select placeholder="Эрх:..." allowClear>
-                  <Option value=""></Option>
-                </Select>{" "}
-              </Form.Item>
-            </Col>
-            <Col xs={24} md={24} lg={6}>
-              <Form.Item label="Password" name="password">
-                <Input.Password />
-              </Form.Item>
-            </Col>
-            <Col xs={24} md={24} lg={6}>
               <Form.Item label="Оруулсан мэдээлэл үнэн болно." name="check">
                 <Input type="checkbox" />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={32}>
-            <Col xs={24} md={24} lg={6}>
-              <Form.Item label="Нэвтрэх нэр:" name="username">
-                <Input placeholder="Нэвтрэх нэр..." />
               </Form.Item>
             </Col>
           </Row>

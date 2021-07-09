@@ -1,19 +1,15 @@
-import { DownOutlined, ExclamationCircleOutlined, FileOutlined, PrinterOutlined } from "@ant-design/icons";
+import { DownOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { faFileExcel, faPen, faPlus, faPrint, faTrash } from "@fortawesome/free-solid-svg-icons";
-import SaveIcon from "@material-ui/icons/Save";
-import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker, Select, Input, InputNumber } from "antd";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Col, DatePicker, Layout, message, Modal, Row } from "antd";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import React, { useEffect, useRef, useState } from "react";
-import { isShowLoading } from "../../../context/Tools";
-import { getService, putService } from "../../../service/service";
-import { PAGESIZE } from "../../../constants/Constant";
-import { errorCatch } from "../../../tools/Tools";
-import TrainingReportModal from "../training/components/trainingReportModal";
-import ContentWrapper from "../training/components/attendance.style";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-const { Option } = Select;
+import React, { useEffect, useState } from "react";
+import { isShowLoading } from "../../context/Tools";
+import ContentWrapper from "../criteria/criteria.style";
+import { getService, putService } from "../../service/service";
+import { errorCatch } from "../../tools/Tools";
+import ProjectSummaryModal from "../project/components/ProjectSummaryModal";
 
 function onChange(date, dateString) {
     console.log(date, dateString);
@@ -22,7 +18,7 @@ const { Content } = Layout;
 
 var editRow
 var isEditMode;
-const TrainingReport = () => {
+const Consultinorg = () => {
 
     let loadLazyTimeout = null;
     const [list, setList] = useState([]);
@@ -43,7 +39,7 @@ const TrainingReport = () => {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("trainers/get", list)
+        getService("organization/get", list)
             .then((result) => {
                 let list = result.content || [];
                 list.map(
@@ -78,7 +74,7 @@ const TrainingReport = () => {
         editRow = row.data
         isEditMode = true
         setIsModalVisible(true)
-
+        
     }
 
     const handleDeleted = () => {
@@ -87,7 +83,7 @@ const TrainingReport = () => {
             return;
         }
         debugger
-        putService("trainers/delete/" + selectedRows[0].id)
+        putService("organization/delete/" + selectedRows[0].id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -121,8 +117,8 @@ const TrainingReport = () => {
     const trainingnameBodyTemplate = (row) => {
         return (
             <React.Fragment>
-                <span className="p-column-title">Сургалтын нэр</span>
-                {row.trainerFor}
+                <span className="p-column-title">Хичээлийн сэдэв</span>
+                {row.name}
             </React.Fragment>
         );
     }
@@ -130,8 +126,8 @@ const TrainingReport = () => {
     const teacherBodyTemplate = (row) => {
         return (
             <React.Fragment>
-                <span className="p-column-title">Огноо</span>
-                {row.registerNumber}
+                <span className="p-column-title">Сургагч багшийн нэр</span>
+                {row.indicatorProcess}
             </React.Fragment>
         );
     }
@@ -143,7 +139,7 @@ const TrainingReport = () => {
                     <Content>
                         <Row>
                             <Col xs={24} md={24} lg={14}>
-                                <p className="title">Сургалтын тайлан</p>
+                                <p className="title">Төслийн хураангуй</p>
                             </Col>
                             <Col xs={24} md={24} lg={10}>
                                 <Row gutter={[0, 15]}>
@@ -191,77 +187,7 @@ const TrainingReport = () => {
                                 </Row>
                             </Col>
                         </Row>
-                        <Row >
-                            <Col xs={24} md={24} lg={8}>
-                                <Form>
-                                    <Form.Item>
-                                        <Input className="FormItem" placeholder="Сургалтын нэр" />
-                                    </Form.Item>
-                                </Form>
-                                <Form>
-                                    <Form.Item>
-                                        <DatePicker
-                                            bordered={false}
-                                            placeholder="Огноо"
-                                            suffixIcon={<DownOutlined />}
-                                            className="DatePicker"
-                                            style={{
-                                                width: "60%",
-                                                color: "black",
-                                                cursor: "pointer",
-                                            }}
-                                        />
-                                    </Form.Item>
-                                </Form>
-                            </Col>
-                            <Col xs={24} md={24} lg={8}>
-                                <Form>
-                                    <Form.Item>
-                                        <Select
-                                            placeholder="Аймаг:"
-                                            allowClear
-                                        >
-                                            <Option value="Ulaanbaatar">Улаанбаатар</Option>
-                                            <Option value="Arkhangai">Архангай</Option>
-                                            <Option value="other">other</Option>
-                                        </Select>
-                                    </Form.Item>
-                                    <Form.Item>
-                                        <Select
-                                            placeholder="Сум:"
-                                            allowClear
-                                        >
-                                            <Option value="Darkhan">Дархан</Option>
-                                            <Option value="Erdenet">Эрдэнэт</Option>
-                                            <Option value="other">other</Option>
-                                        </Select>
-                                    </Form.Item>
-                                </Form>
-                            </Col>
-                            <Col xs={24} md={24} lg={4}>
-                                <Form>
-                                    <Form.Item>
-                                        <InputNumber
-                                            placeholder="Эр"
-                                        />
-                                    </Form.Item>
-                                    <Form.Item>
-                                        <InputNumber
-                                            placeholder="Эм"
-                                        />
-                                    </Form.Item>
-                                </Form>
-                            </Col>
-                            <Col xs={24} md={24} lg={4}>
-                                <Form>
-                                    <Form.Item>
-                                        <InputNumber
-                                            placeholder="Нийт"
-                                        />
-                                    </Form.Item>
-                                </Form>
-                            </Col>
-                        </Row>
+
                     </Content>
                 </Layout>
                 <div className="datatable-responsive-demo">
@@ -281,17 +207,13 @@ const TrainingReport = () => {
                         dataKey="id">
                         {/* <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column> */}
                         <Column field="index" header="№" body={indexBodyTemplate} sortable />
-                        <Column field="trainerFor" header="Сургалтын нэр" body={trainingnameBodyTemplate} sortable filter filterPlaceholder="Хайх" />
-                        <Column field="registerNumber" header="Огноо" body={teacherBodyTemplate} sortable filter filterPlaceholder="Хайх" />
-                        <Column field="" header="Сургалт явагдсан газар" />
-                        <Column field="" header="Сургалт явуулсан байгууллага, хүний нэр" />
-                        <Column field="" header="Сургагч багшийн нэр" />
+                        <Column field="name" header="Хичээлийн сэдэв" body={trainingnameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column field="indicatorProcess" header="Сургагч багшийн нэр" body={teacherBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
                         <Column headerStyle={{ width: '7rem' }} body={action}></Column>
-
                     </DataTable>
                     {isModalVisible && (
-                        <TrainingReportModal
-                            Criteriacontroller={editRow}
+                        <ProjectSummaryModal
+                        Guidelinescontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
                             isEditMode={isEditMode}
@@ -302,7 +224,7 @@ const TrainingReport = () => {
         </ContentWrapper>
     );
     function confirm() {
-        Modal.confirm({
+        Modal.confirm({    
             title: "Та устгахдаа итгэлтэй байна уу ?",
             icon: <ExclamationCircleOutlined />,
             okButtonProps: {},
@@ -316,14 +238,4 @@ const TrainingReport = () => {
         });
     }
 }
-
-export default TrainingReport;
-
-
-
-
-
-
-
-
-
+export default Consultinorg;

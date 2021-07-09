@@ -1,7 +1,13 @@
-import { DatePicker, Form, Input, Modal } from "antd";
 import React, { useEffect, useState } from "react";
+import { Modal, Form, Input, DatePicker } from "antd";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
+<<<<<<< HEAD:src/pages/training/training/components/BolovsrolModal.js
+import AutocompleteSelect from "../../../../components/Autocomplete";
+=======
+import AutocompleteSelect from "../../../components/Autocomplete";
+import ContentWrapper from "./cv.styled";
+>>>>>>> 180b04277efd1db52bd08ea25f215bf6723c0149:src/pages/training/training/components/EducationModal.js
 const layout = {
     labelCol: {
         span: 10,
@@ -20,7 +26,7 @@ const validateMessages = {
         range: "${label} must be between ${min} and ${max}",
     },
 };
-export default function AjliinTurshlagaModal(props) {
+export default function EducationModal(props) {
     const { Composition, isModalVisible, isEditMode } = props;
     const [stateController, setStateController] = useState([]);
     const [form] = Form.useForm();
@@ -75,7 +81,7 @@ export default function AjliinTurshlagaModal(props) {
 
         <div>
             <Modal
-                title="Ажлын туршлага"
+                title="Боловсрол"
                 okText="Хадгалах"
                 cancelText="Буцах"
                 width={600}
@@ -84,6 +90,7 @@ export default function AjliinTurshlagaModal(props) {
                 onOk={save}
                 onCancel={() => props.close()}
             >
+                            <ContentWrapper>
                 <Form
                     form={form}
                     labelAlign={"left"}
@@ -94,7 +101,7 @@ export default function AjliinTurshlagaModal(props) {
                  
                     <Form.Item
                         name="name"
-                        label="Албан тушаал:"
+                        label="Зэрэг, цол:"
                         rules={[
                             {
                                 required: true,
@@ -105,7 +112,7 @@ export default function AjliinTurshlagaModal(props) {
                     </Form.Item>
                     <Form.Item
                         name="work"
-                        label="Байгууллагын нэр:"
+                        label="Их дээд сургуулийн нэр:"
 
                     >
                         <Input />
@@ -123,6 +130,7 @@ export default function AjliinTurshlagaModal(props) {
                   <DatePicker/>
               </Form.Item>
                 </Form>
+                </ContentWrapper>
             </Modal>
         </div >
     );

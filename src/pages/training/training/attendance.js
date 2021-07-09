@@ -1,55 +1,24 @@
-import {
-    ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled, DownOutlined
-} from "@ant-design/icons";
-import SaveIcon from "@material-ui/icons/Save";
-import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker, Select, Input, InputNumber } from "antd";
+import { DownOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { faFileExcel, faPen, faPlus, faPrint, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Col, DatePicker, Layout, message, Modal, Row } from "antd";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { isShowLoading } from "../../../context/Tools";
 import { getService, putService } from "../../../service/service";
-import { PAGESIZE } from "../../../constants/Constant";
 import { errorCatch } from "../../../tools/Tools";
-import AttendanceModal from "../training/components/attendanceModal";
 import ContentWrapper from "../training/components/attendance.style";
-function handleMenuClick(e) { console.log("click", e.key[0]); }
+import AttendanceModal from "../training/components/attendanceModal";
 function onChange(date, dateString) {
     console.log(date, dateString);
 }
 const { Content } = Layout;
-const { Option } = Select;
-const menu = (
-    <Menu onClick={handleMenuClick}>
-        <Menu.Item
-            key="1"
-            icon={<FileSyncOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-
-            Импорт
-        </Menu.Item>
-        <Menu.Item
-            key="2"
-            icon={<FileOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-            Экспорт
-        </Menu.Item>
-
-        <Menu.Item
-            key="3"
-            icon={<PrinterOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-
-            Хэвлэх
-        </Menu.Item>
-
-    </Menu>
-);
 
 var editRow
 var isEditMode;
 const Attendance = () => {
-    const [products, setProducts] = useState([]);
-    const [multiSortMeta, setMultiSortMeta] = useState([{ field: 'category', order: -1 }]);
+
     let loadLazyTimeout = null;
     const [list, setList] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -90,19 +59,28 @@ const Attendance = () => {
         setIsModalVisible(true);
         isEditMode = false;
     };
+
+    const action = (row) => {
+        return (
+            <React.Fragment>
+                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />}  onClick={() => edit(row)} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={() => pop(row)} />
+            </React.Fragment>
+        );
+    }
+
     const edit = (row) => {
-        editRow = row.data
+        editRow = row
         isEditMode = true
         setIsModalVisible(true)
     }
 
-    const handleDeleted = () => {
-        if (selectedRows.length === 0) {
+    const handleDeleted = (row) => {
+        if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         }
-        debugger
-        putService("participants/delete/" + selectedRows[0].id)
+        putService("participants/delete/" + row.id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
                 onInit();
@@ -115,119 +93,124 @@ const Attendance = () => {
         setIsModalVisible(false);
         if (isSuccess) onInit();
     };
-    const pop = () => {
-        if (selectedRows.length === 0) {
+    const pop = (row) => {
+        if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         } else {
-            confirm();
+            confirm(row);
         }
     };
-    const [selectedProducts, setSelectedProducts] = useState(null);
+
+    const indexBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">№</span>
+                {row.index}
+            </React.Fragment>
+        );
+    }
+
+    const nameBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Суралцагчийн нэр</span>
+                {row.name}
+            </React.Fragment>
+        );
+    }
+
+    const jobDescBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Ажил эрхлэлт</span>
+                {row.jobDescription}
+            </React.Fragment>
+        );
+    }
+    
+    const contactBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Холбогдох утас, мэйл, хаяг</span>
+            </React.Fragment>
+        );
+    }
+    
+    const registerNumberBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Регистрийн дугаар</span>
+                {row.asd}
+            </React.Fragment>
+        );
+    }
+
+    const trainingNameBodyTemplate = (row) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Сургалтын нэр</span>
+                {row.training.training_plan.name}
+            </React.Fragment>
+        );
+    }
 
     return (
         <ContentWrapper>
-            <h2 className="title">Ирцийн бүртгэл</h2>
-            {/* <Row >
-                <Col xs={24} md={24} lg={8}>
-                    <Form>
-                        <Form.Item>
-                            <Input className="FormItem" placeholder="Сургалтын нэр" />
-                        </Form.Item>
-                    </Form>
-                    <Form>
-                        <Form.Item>
-                            <DatePicker
-                                bordered={false}
-                                placeholder="Огноо"
-                                suffixIcon={<DownOutlined />}
-                                className="DatePicker"
-                                style={{
-                                    width: "60%",
-                                    color: "black",
-                                    cursor: "pointer",
-                                }}
-                            />
-                        </Form.Item>
-                    </Form>
-                </Col>
-                <Col xs={24} md={24} lg={8}>
-                    <Form>
-                        <Form.Item>
-                            <Select
-                                placeholder="Аймаг:"
-                                allowClear
-                            >
-                                <Option value="Ulaanbaatar">Улаанбаатар</Option>
-                                <Option value="Arkhangai">Архангай</Option>
-                                <Option value="other">other</Option>
-                            </Select>
-                        </Form.Item>
-                        <Form.Item>
-                            <Select
-                                placeholder="Сум:"
-                                allowClear
-                            >
-                                <Option value="Darkhan">Дархан</Option>
-                                <Option value="Erdenet">Эрдэнэт</Option>
-                                <Option value="other">other</Option>
-                            </Select>
-                        </Form.Item>
-                    </Form>
-                </Col>
-                <Col xs={24} md={24} lg={4}>
-                    <Form>
-                        <Form.Item>
-                            <InputNumber
-                                placeholder="Эр"
-                            />
-                        </Form.Item>
-                        <Form.Item>
-                            <InputNumber
-                                placeholder="Эм"
-                            />
-                        </Form.Item>
-                    </Form>
-                </Col>
-                <Col xs={24} md={24} lg={4}>
-                    <Form>
-                        <Form.Item>
-                            <InputNumber
-                                placeholder="Нийт"
-                            />
-                        </Form.Item>
-                    </Form>
-                </Col>
-            </Row> */}
             <div className="button-demo">
                 <Layout className="btn-layout">
                     <Content>
-
                         <Row>
-                            <Col span={2}>
-                                <Button onClick={add} type="link" icon={<SaveIcon />}>
-                                    Нэмэх
-                                </Button>
+                            <Col xs={24} md={24} lg={14}>
+                                <p className="title">Ирцийн бүртгэл</p>
                             </Col>
-                            <Col span={2}>
-                                <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
-                                    Устгах
-                                </Button>
-                            </Col>
-                            <Col span={18} style={{ textAlign: "right" }}>
-                                <div style={{ marginRight: "5px" }}>
-                                    <Dropdown.Button
-                                        overlay={menu}
-                                        placement="bottomCenter"
-                                        icon={
-                                            <SettingFilled
-                                                style={{ marginLeft: "8px", color: "#45629c" }}
-                                            />
-                                        }
-                                    ></Dropdown.Button>
-                                </div>
+                            <Col xs={24} md={24} lg={10}>
+                                <Row gutter={[0, 15]}>
+                                    <Col xs={8} md={8} lg={6}>
+                                        <DatePicker
+                                            onChange={onChange}
+                                            bordered={false}
+                                            suffixIcon={<DownOutlined />}
+                                            placeholder="Select year"
+                                            picker="year"
+                                            className="DatePicker"
+                                            style={{
+                                                width: "120px",
+                                                color: "black",
+                                                cursor: "pointer",
+                                            }}
+                                        />
+                                    </Col>
+                                    {/* <Col xs={8} md={8} lg={6}>
+                                        <Input
+                                            placeholder="Хайлт хийх"
+                                            allowClear
+                                            prefix={<SearchOutlined />}
+                                            bordered={false}
+                                            onSearch={onSearch}
+                                            style={{
+                                                width: 150,
+                                                borderBottom: "1px solid #103154",
+                                            }}
+                                        />
+                                    </Col> */}
+                                    <Col xs={8} md={8} lg={6}>
+                                        <Button type="text" icon={<FontAwesomeIcon icon={faPrint} />} >Хэвлэх </Button>
+                                    </Col>
+                                    <Col xs={8} md={8} lg={6}>
+                                        <Button type="text" className="export" icon={<FontAwesomeIcon icon={faFileExcel} />} >
+                                            Экспорт
+                                        </Button>
+                                    </Col>
+                                    <Col xs={8} md={8} lg={6}>
+                                        <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={add}>
+                                            Нэмэх
+                                        </Button>
+                                    </Col>
+                                </Row>
                             </Col>
                         </Row>
+
                     </Content>
                 </Layout>
                 <div className="datatable-responsive-demo">
@@ -237,26 +220,23 @@ const Attendance = () => {
                         paginator
                         rows={10}
                         className="p-datatable-responsive-demo"
-                        selectionMode="checkbox"
                         selection={selectedRows}
-                        onRowClick={edit}
+                        // onRowClick={edit}
                         onSelectionChange={(e) => {
                             setSelectedRows(e.value);
                         }}
                         dataKey="id">
-                        <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
-                        <Column field="index" header="№" style={{ width: "50px" }} />
-                        <Column field="name" header="Суралцагчийн нэр" sortable filter filterPlaceholder="Хайх"/>
-                        {/* <Column expander style={{ width: '3em' }} /> */}
-                        <Column field="jobDescription" header="Ажил эрхлэлт" sortable filter filterPlaceholder="Хайх"/>
-                        <Column field="" header="Холбогдох утас, мэйл, хаяг" sortable filter filterPlaceholder="Хайх"/>
-                        <Column field="" header="Регистрийн дугаар" sortable filter filterPlaceholder="Хайх"/>
-                        <Column field="" header="Сургалтын нэр" sortable filter filterPlaceholder="Хайх"/>
-
+                        <Column field="index" header="№" body={indexBodyTemplate}/>
+                        <Column field="name" header="Суралцагчийн нэр" sortable filter filterPlaceholder="Хайх" body={nameBodyTemplate}/>
+                        <Column field="jobDescription" header="Ажил эрхлэлт" sortable filter filterPlaceholder="Хайх" body={jobDescBodyTemplate}/>
+                        <Column field="" header="Холбогдох утас, мэйл, хаяг" sortable filter filterPlaceholder="Хайх" body={contactBodyTemplate}/>
+                        <Column field="" header="Регистрийн дугаар" sortable filter filterPlaceholder="Хайх" body={registerNumberBodyTemplate}/>
+                        <Column field="training.training_plan.name" header="Сургалтын нэр" sortable filter filterPlaceholder="Хайх" body={trainingNameBodyTemplate}/>
+                        <Column headerStyle={{ width: '7rem' }} body={action}></Column>
                     </DataTable>
                     {isModalVisible && (
                         <AttendanceModal
-                            Attendancecontroller={editRow}
+                        Attendancecontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
                             isEditMode={isEditMode}
@@ -266,7 +246,7 @@ const Attendance = () => {
             </div>
         </ContentWrapper>
     );
-    function confirm() {
+    function confirm(row) {
         Modal.confirm({
             title: "Та устгахдаа итгэлтэй байна уу ?",
             icon: <ExclamationCircleOutlined />,
@@ -274,14 +254,17 @@ const Attendance = () => {
             okText: "Устгах",
             cancelText: "Буцах",
             onOk() {
-                handleDeleted();
+                handleDeleted(row);
                 onInit();
             },
             onCancel() { },
         });
     }
 }
+
 export default Attendance;
+
+
 
 
 

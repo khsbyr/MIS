@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input } from "antd";
+import { Modal, Form, Input, DatePicker } from "antd";
 import {
   getService,
   postService,
   putService,
 } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
-import AutocompleteSelect from "../../../components/Autocomplete";
-import { isShowLoading } from "../../../../context/Tools";
+import ContentWrapper from "./cv.styled";
+
 const layout = {
   labelCol: {
     span: 10,
@@ -26,49 +26,33 @@ const validateMessages = {
     range: "${label} must be between ${min} and ${max}",
   },
 };
-export default function Composition1Modal(props) {
-  const { Composition, isModalVisible, isEditMode } = props;
+export default function FuelModal(props) {
+  const { Attendancecontroller, isModalVisible, isEditMode } = props;
   const [stateController, setStateController] = useState([]);
-  const [stateController1, setStateController1] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
     getService("criteria/get", {
-        search: "status:true",
+      search: "status:true",
     }).then((result) => {
-        if (result) {
-            setStateController(result.content || []);
-        }
+      if (result) {
+        setStateController(result.content || []);
+      }
     });
 
     if (isEditMode) {
-      // getService("" + Composition.id).then((result) => {
-      //     Composition.userServiceId = result.userService.id
-      form.setFieldsValue({ ...Composition });
-      // })
-    }
-  }, []);
-  useEffect(() => {
-    getService("trainingPlan/getParents/1", {
-        search: "status:true",
-    }).then((result) => {
-        if (result) {
-            setStateController1(result.content || []);
-        }
-    });
-
-    if (isEditMode) {
-      // getService("" + Composition.id).then((result) => {
-      //     Composition.userServiceId = result.userService.id
-      form.setFieldsValue({ ...Composition });
-      // })
+      getService("criteria/get" + Attendancecontroller.id).then((result) => {
+        Attendancecontroller.userServiceId = result.userService.id;
+        form.setFieldsValue({ ...Attendancecontroller });
+      });
     }
   }, []);
   const save = () => {
     form
       .validateFields()
       .then((values) => {
+        values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService("trainingPlan/update" + Composition.id, values)
+          putService("criteria/put" + Attendancecontroller.id, values)
             .then((result) => {
               props.close(true);
             })
@@ -76,7 +60,7 @@ export default function Composition1Modal(props) {
               errorCatch(error);
             });
         } else {
-          postService("trainingPlan/post", values)
+          postService("criteria/post", values)
             .then((result) => {
               props.close(true);
             })
@@ -92,7 +76,7 @@ export default function Composition1Modal(props) {
   return (
     <div>
       <Modal
-        title="Бүрэлдэхүүн бүртгэх"
+        title="Бичгийн хэрэгсэл"
         okText="Хадгалах"
         cancelText="Буцах"
         width={600}
@@ -101,6 +85,7 @@ export default function Composition1Modal(props) {
         onOk={save}
         onCancel={() => props.close()}
       >
+          <ContentWrapper>
         <Form
           form={form}
           labelAlign={"left"}
@@ -110,47 +95,61 @@ export default function Composition1Modal(props) {
         >
           <Form.Item
             name="name"
-            label="Сургалтын нэрс:"
-
-          >
-            <AutocompleteSelect valueField="name" data={stateController1}/>{" "}
-          </Form.Item>
-          <Form.Item
-            name="code"
-            label="Код:"
-
+            label="Зардлын нэр:"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name="name"
-            label="Сургалтын нэр:"
-
+            name="une"
+            label="Нэгж үнэ:"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name="name"
-            label="Шалгуур үзүүлэлтийн нэр:"
-
+            name="too"
+            label="Тоо ширхэг:"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
           >
-        <AutocompleteSelect data={stateController} valueField="name"/>{" "}
+            <Input />
           </Form.Item>
           <Form.Item
-            name="gender"
-            label="Хүйс:"
-
+            name="huniiToo"
+            label="Хүний тоо"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
           >
-            <AutocompleteSelect valueField="name"/>{" "}
+            <Input />
           </Form.Item>
           <Form.Item
-                name="upIndicator"
-                label="Зорилтот үр дүн"
-
-              >
-                <Input type="number"/>
-              </Form.Item>
+            name="Dun"
+            label="Дүн"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
         </Form>
+        </ContentWrapper>
       </Modal>
     </div>
   );

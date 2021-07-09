@@ -21,7 +21,6 @@
     "rights_reserved": "©2021 Livestock Commercialization Project. All Rights Reserved.",
     "criteria": "Indicators",
     "criteria_regist": "Indicators registration",
-    "partnership": "Partnership",
     "project": "Project",
     "plan": "Plan",
     "report": "Report",
@@ -51,5 +50,6 @@
     "contact_side": "Contact side",
     "criteria_type": "Types of indicators",
     "role_permission": "Types of indicators",
-    "organization": "Organizations"
+    "organization": "Organizations",
+    "project_summary": "Project summary"
 }
