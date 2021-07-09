@@ -188,6 +188,8 @@ const TestAggregation = () => {
         <Column header="Сорил №2" colSpan={2} />
         <Column header="Өсөлт бууралт" rowSpan={2}/>
         <Column header="Тайлбар" rowSpan={2}/>
+        <Column headerStyle={{ width: "7rem" }} body={action} rowSpan={2}></Column>
+
 
     </Row>
     <Row>
@@ -279,6 +281,8 @@ const TestAggregation = () => {
                             <Column field="upIndicator" body={test2TakenBodyTemplate}/>
                             <Column field="upIndicator" body={growthBodyTemplate}/>
                             <Column field="upIndicator" body={explanationBodyTemplate}/>
+                            <Column headerStyle={{ width: "7rem" }} body={action}></Column>
+
                     </DataTable>
                     {isModalVisible && (
                         <CriteriaModal
