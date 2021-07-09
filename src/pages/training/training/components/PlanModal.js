@@ -17,12 +17,15 @@ const validateMessages = {
 export default function PlanModal(props) {
     const { Plancontroller, isModalVisible, isEditMode } = props;
     const [form] = Form.useForm();
+    const [isUser, setIsUser] = useState(false);
+
 
     useEffect(() => {
         if (isEditMode) {
             form.setFieldsValue({ ...Plancontroller,
-                // UserFirstName: Plancontroller.user ? Plancontroller.user.firstname : Plancontroller.trainers.firstName,
-                // TrainersFirstName: Plancontroller.trainers.firstName,             
+                UserFirstName: Plancontroller.user ? Plancontroller.user.firstname : Plancontroller.trainers.firstName,
+                // TrainersFirstName: Plancontroller.trainers.firstName, 
+                // setIsUser(Plancontroller)
             });
         }
     }, []);
@@ -31,7 +34,7 @@ export default function PlanModal(props) {
         form
             .validateFields()
             .then((values) => {
-                // values.user = {firstname: values.UserFirstName};
+                values.user = {firstname: values.UserFirstName};
                 if (isEditMode) {
                     putService(
                         "trainingTeam/update/" + Plancontroller.id,
@@ -87,7 +90,7 @@ export default function PlanModal(props) {
                                     <Input />
                                 </Form.Item>
                             </Col>
-                            {/* <Col xs={24} md={24} lg={12}>
+                            <Col xs={24} md={24} lg={12}>
                                 <Form.Item label="Сургагч багшийн нэр:" name="UserFirstName" rules={[
                                     {
                                         required: true,
@@ -95,7 +98,7 @@ export default function PlanModal(props) {
                                 ]}>
                                     <Input />
                                 </Form.Item>
-                            </Col> */}
+                            </Col>
                         </Row>
                     </Form>
                 </ContentWrapper>

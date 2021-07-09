@@ -39,7 +39,7 @@ export async function getService(
     }
   }
   const response = await axios
-    .get(serviceName + params, config())
+    .get(serviceName, config())
     .catch((error) => {
       if (isShowErrorMessage) errorCatch(error);
       throw error;
