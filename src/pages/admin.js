@@ -219,7 +219,7 @@ const Admin = () => {
                     <Link to="/guidelines">{t("training_intro")}</Link>
                   </Menu.Item>
                   <Menu.Item key="10">
-                    <Link to="/plan">{t("training_plan")}</Link>
+                    <Link to="/plan">{t("training_team")}</Link>
                   </Menu.Item>
                   <Menu.Item key="11">
                     <Link to="/cv">{t("cv_teachers")}</Link>

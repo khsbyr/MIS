@@ -21,8 +21,8 @@ export default function PlanModal(props) {
     useEffect(() => {
         if (isEditMode) {
             form.setFieldsValue({ ...Plancontroller,
-                trainingName: Plancontroller.training.name,
-                UserFirstName: Plancontroller.user.firstname,
+                // UserFirstName: Plancontroller.user ? Plancontroller.user.firstname : Plancontroller.trainers.firstName,
+                // TrainersFirstName: Plancontroller.trainers.firstName,             
             });
         }
     }, []);
@@ -31,8 +31,7 @@ export default function PlanModal(props) {
         form
             .validateFields()
             .then((values) => {
-                values.training = {name: values.trainingName};
-                values.user = {firstname: values.UserFirstName};
+                // values.user = {firstname: values.UserFirstName};
                 if (isEditMode) {
                     putService(
                         "trainingTeam/update/" + Plancontroller.id,
@@ -61,7 +60,7 @@ export default function PlanModal(props) {
     return (
         <div>
             <Modal
-                title="Сургалтын төлөвлөгөө"
+                title="Сургалтын баг"
                 okText="Хадгалах"
                 cancelText="Буцах"
                 width={1200}
@@ -80,7 +79,7 @@ export default function PlanModal(props) {
                     >
                         <Row gutter={30}>
                             <Col xs={24} md={24} lg={12}>
-                                <Form.Item label="Хичээлийн сэдэв:" name="trainingName" rules={[
+                                <Form.Item label="Хичээлийн сэдэв:" name="mission" rules={[
                                     {
                                         required: true,
                                     },
@@ -88,7 +87,7 @@ export default function PlanModal(props) {
                                     <Input />
                                 </Form.Item>
                             </Col>
-                            <Col xs={24} md={24} lg={12}>
+                            {/* <Col xs={24} md={24} lg={12}>
                                 <Form.Item label="Сургагч багшийн нэр:" name="UserFirstName" rules={[
                                     {
                                         required: true,
@@ -96,7 +95,7 @@ export default function PlanModal(props) {
                                 ]}>
                                     <Input />
                                 </Form.Item>
-                            </Col>
+                            </Col> */}
                         </Row>
                     </Form>
                 </ContentWrapper>
