@@ -29,12 +29,14 @@ function Register() {
       const saveData = {
         username: values.username,
         email: values.email,
-        password: values.password
+        password: values.password,
+        isActive: true
       };
       console.log(JSON.stringify(saveData));
-      postService(`/signUpRequest/save/${values.code}`, saveData).then(result => {
+      postService(`signUpRequest/post/${values.code}`, saveData).then(result => {
+          console.log(result);
           message.success("Таны хүсэлтийг хүлээн авлаа. ")
-          window.location.href = "/"
+          window.location.href = "/login"
       }).finally(() => isShowLoading(false))}
   };
 

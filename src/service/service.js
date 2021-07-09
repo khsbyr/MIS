@@ -6,7 +6,7 @@ import axios from "./axios";
 const config = () => ({
   headers: {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "*",
+    "Access-Control-Allow-Headers": "*"
   },
 });
 
