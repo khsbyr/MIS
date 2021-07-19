@@ -34,7 +34,7 @@ export default function PlanModal(props) {
         form
             .validateFields()
             .then((values) => {
-                values.user = {firstname: values.UserFirstName};
+                // values.user = {firstname: Plancontroller.user ? Plancontroller.user.firstname : ''};
                 if (isEditMode) {
                     putService(
                         "trainingTeam/update/" + Plancontroller.id,
@@ -66,7 +66,7 @@ export default function PlanModal(props) {
                 title="Сургалтын баг"
                 okText="Хадгалах"
                 cancelText="Буцах"
-                width={1200}
+                width={600}
                 alignItems="center"
                 visible={isModalVisible}
                 onOk={save}
@@ -81,8 +81,15 @@ export default function PlanModal(props) {
                         validateMessages={validateMessages}
                     >
                         <Row gutter={30}>
-                            <Col xs={24} md={24} lg={12}>
-                                <Form.Item label="Хичээлийн сэдэв:" name="mission" rules={[
+                            <Col xs={24} md={24} lg={18}>
+                                <Form.Item label="Сургалтанд гүйцэтгэх үүрэг:" name="mission" rules={[
+                                    {
+                                        required: true,
+                                    },
+                                ]}>
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item label="Сургагч багшийн нэр:" name="UserFirstName" rules={[
                                     {
                                         required: true,
                                     },
@@ -91,13 +98,7 @@ export default function PlanModal(props) {
                                 </Form.Item>
                             </Col>
                             <Col xs={24} md={24} lg={12}>
-                                <Form.Item label="Сургагч багшийн нэр:" name="UserFirstName" rules={[
-                                    {
-                                        required: true,
-                                    },
-                                ]}>
-                                    <Input />
-                                </Form.Item>
+
                             </Col>
                         </Row>
                     </Form>

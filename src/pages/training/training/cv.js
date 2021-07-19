@@ -236,7 +236,7 @@ const CV = () => {
                     </DataTable>
                     {isModalVisible && (
                         <CvModal
-                        Usercontroller={editRow}
+                            Usercontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
                             isEditMode={isEditMode}

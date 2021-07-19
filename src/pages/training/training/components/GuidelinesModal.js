@@ -1,9 +1,18 @@
-import { Col, DatePicker, Form, Input, Modal, Row, Select, Table, Upload } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { faPen, faTrash, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Col, DatePicker, Form, Input, message, Modal, Row } from "antd";
+import moment from "moment";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
 import React, { useEffect, useState } from "react";
-import { postService, putService, getService } from "../../../../service/service";
+import AutoCompleteSelect from "../../../../components/Autocomplete";
+import { isShowLoading } from "../../../../context/Tools";
+import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
 import ContentWrapper from "./guidelines.style";
-import AutoCompleteSelect from "../../../../components/Autocomplete";
+import ParticipantsModal from "./ParticipantsModal"
+
 const layout = {
     labelCol: {
         span: 20,
@@ -22,13 +31,25 @@ const validateMessages = {
         range: "${label} must be between ${min} and ${max}",
     },
 };
-export default function GuidelinesModal(props) {
+var editRow
+var isEditModeParticipants;
+export default function GuidelinesModal(props)  {
     const { Guidelinescontroller, isModalVisible, isEditMode } = props;
+    const [isModalVisibleParticipants, setIsModalVisibleParticipants] = useState(false);
     const [stateAimag, setStateAimag] = useState([]);
     const [stateSum, setStateSum] = useState([]);
     const [stateCountry, setStateCountry] = useState([]);
     const [stateBag, setStateBag] = useState([]);
+    const [stateParticipants, setStateParticipants] = useState([]);
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [list, setList] = useState([]);
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
+    const PAGESIZE = 20;
+    const [lazyParams, setLazyParams] = useState({
+        page: 0,
+      });
+    let loadLazyTimeout = null;
     const FORMAT = "YYY/MM/DD"
     const { RangePicker } = DatePicker;
 
@@ -37,6 +58,7 @@ export default function GuidelinesModal(props) {
     }
 
     useEffect(() => {
+        onInit();
         getService("country/get").then((result) => {
             if (result) {
                 setStateCountry(result || []);
@@ -70,6 +92,76 @@ export default function GuidelinesModal(props) {
         }
     }, []);
 
+    const onInit = () => {
+        setLoading(true);
+        if (loadLazyTimeout) {
+          clearTimeout(loadLazyTimeout);
+        }
+        getService("participants/getList/1", list)
+          .then((result) => {
+            let list = result.content || [];
+            list.map(
+              (item, index) =>
+                (item.index = lazyParams.page * PAGESIZE + index + 1)
+            );
+            setList(list);
+            setSelectedRows([]);
+            })
+          .catch((error) => {
+            errorCatch(error);
+            isShowLoading(false);
+            })
+    };
+
+    const action = (row) => {
+        return (
+          <React.Fragment>
+            <Button type="text" icon={<FontAwesomeIcon icon={faPen} />}  onClick={() => edit(row)} />
+            <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />}  onClick={() => pop(row)} />
+          </React.Fragment>
+        );
+    }
+      
+    const edit = (row) => {
+        editRow = row
+        isEditModeParticipants = true
+        setIsModalVisibleParticipants(true)
+    }
+
+    const pop = (row) => {
+        if (row.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        } else {
+            confirm(row);
+        }
+    };
+
+    const add = () => {
+        setIsModalVisibleParticipants(true);
+        isEditModeParticipants = false;
+      };
+
+    const closeModal = (isSuccess = false) => {
+        setIsModalVisibleParticipants(false);
+        if (isSuccess) onInit();
+    };
+
+    const handleDeleted = (row) => {
+        if (row.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        }
+        
+        putService("participants/delete/" + row.id)
+            .then((result) => {
+                message.success("Амжилттай устлаа");
+                onInit();
+            })
+            .catch((error) => {
+                errorCatch(error);
+            });
+    };
 
     const selectCountry = (value) => {
         getAimag(value);
@@ -281,41 +373,51 @@ export default function GuidelinesModal(props) {
                                 </Row>
                             </Col>
                             <Col xs={24} md={24} lg={12}>
+                
                                 <Row>
                                     <Col xs={24} md={24} lg={24}>
                                         <Form.Item label="Сургалтын оролцогчид:">
-                                            <Input.TextArea
-                                                style={{
-                                                    width: "100%",
-                                                    height: "110px"
+                                        <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={add}>
+                                            Нэмэх
+                                        </Button> 
+                                            <DataTable
+                                                value={list}
+                                                removableSort
+                                                paginator
+                                                rows={5}
+                                                className="p-datatable-responsive-demo"
+                                                selection={selectedRows}
+                                                // onRowClick={edit}                                              
+                                                onSelectionChange={(e) => {
+                                                setSelectedRows(e.value);
                                                 }}
-                                            />
+                                                dataKey="id">                                                                                    
+                                                    <Column field="index" header="№"/>
+                                                    <Column field="name" header="Нэр"/>
+                                                    <Column field="phone" header="Утас"/>
+                                                    <Column headerStyle={{ width: '7rem' }} body={action}/>                                         
+                                            </DataTable>
+                                            {isModalVisibleParticipants && (
+                                                <ParticipantsModal
+                                                    ParticipantsModalController={editRow}
+                                                    isModalVisible={isModalVisibleParticipants}
+                                                    close={closeModal}
+                                                    isEditMode={isEditModeParticipants}
+                                                />
+                                            )}
                                         </Form.Item>
                                     </Col>
                                 </Row>
-                                <Row>
-                                    <Col xs={24} md={24} lg={24}>
-                                        <Form.Item label="Сургалтын оролцогчид:">
-                                        </Form.Item>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col xs={24} md={24} lg={24}>
-                                        <Form.Item label="Суралцагч:">
-                                        </Form.Item>
-                                    </Col>
-                                </Row>
+
                                 <Row>
                                     <Col xs={24} md={24} lg={12} >
-                                        <Form.Item label="Сургалт эхлэх хугацаа:" name="startDate">
-                                            {/* <DatePicker value={Guidelinescontroller.startDate && moment(Guidelinescontroller.startDate, 'YYYY-MM-DD')} allowClear/> */}
-                                            <Input/>
+                                        <Form.Item label="Сургалт эхлэх хугацаа:">
+                                            <DatePicker value={Guidelinescontroller.startDate && moment(Guidelinescontroller.startDate, 'YYYY-MM-DD')} allowClear/>
                                         </Form.Item>                                   
                                     </Col>
                                     <Col xs={24} md={24} lg={12}>
-                                        <Form.Item label="Сургалт дуусах хугацаа:" name="endDate">
-                                            {/* <DatePicker value={Guidelinescontroller.endDate && moment(Guidelinescontroller.endDate, 'YYYY-MM-DD')} allowClear/> */}
-                                            <Input/>
+                                        <Form.Item label="Сургалт дуусах хугацаа:">
+                                            <DatePicker value={Guidelinescontroller.endDate && moment(Guidelinescontroller.endDate, 'YYYY-MM-DD')} allowClear/>
                                         </Form.Item>                                   
                                     </Col>
                                 </Row>
@@ -327,4 +429,19 @@ export default function GuidelinesModal(props) {
             </Modal>
         </div >
     );
+    function confirm(row) {
+        Modal.confirm({
+          title: "Та устгахдаа итгэлтэй байна уу ?",
+          icon: <ExclamationCircleOutlined />,
+          okButtonProps: {},
+          okText: "Устгах",
+          cancelText: "Буцах",
+          onOk() {
+            handleDeleted(row);
+            onInit();
+          },
+          onCancel() { },
+        });
+      }
 }
+
