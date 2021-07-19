@@ -1,7 +1,10 @@
 {
     "checkEmail": "И-мэйл шалгах",
     "login_system": "СИСТЕМД НЭВТРЭХ",
+    "forget_password": "НУУЦ ҮГЭЭ МАРТСАН?",
     "register_system": "СИСТЕМД БҮРТГҮҮЛЭХ",
+    "reset_password": "НУУЦ ҮГЭЭ СОЛИХ",
+    "send_password": "НУУЦ ҮГЭЭ СЭРГЭЭХ",
     "confirm_pass": "Нууц үг давтах",
     "email": "И-мэйл хаяг",
     "user": "Хэрэглэгч",

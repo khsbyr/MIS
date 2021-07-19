@@ -1,6 +1,9 @@
 {
     "checkEmail": "Check Email",
     "login_system": "LOGIN",
+    "forget_password": "FORGOT YOUR PASSWORD?",
+    "send_password": "SEND PASSWORD RESET LINK",
+    "reset_password": "RESET PASSWORD",
     "register_system": "REGISTER",
     "confirm_pass": "Confirm password",
     "email": "Email address",
