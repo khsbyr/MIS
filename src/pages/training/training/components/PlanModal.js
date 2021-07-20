@@ -1,6 +1,7 @@
-import { Col, DatePicker, Form, Input, Modal, Row, Select, Table, Upload } from "antd";
+import { Col, Form, Input, Menu, Modal, Row } from "antd";
 import React, { useEffect, useState } from "react";
-import { postService, putService } from "../../../../service/service";
+import AutoCompleteSelect from "../../../../components/Autocomplete";
+import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
 import ContentWrapper from "./guidelines.style";
 
@@ -17,10 +18,19 @@ const validateMessages = {
 export default function PlanModal(props) {
     const { Plancontroller, isModalVisible, isEditMode } = props;
     const [form] = Form.useForm();
-    const [isUser, setIsUser] = useState(false);
-
-
+    const [stateTrainers, setStateTrainers] = useState(false);
+    const [stateUser, setStateUser] = useState([]);
     useEffect(() => {
+        getService("user/get").then((result) => {
+            if (result) {
+              setStateUser(result.content || []);
+            }
+        });
+        getService("trainers/get").then((result) => {
+            if (result) {
+                setStateTrainers(result.content || []);
+            }
+        });
         if (isEditMode) {
             form.setFieldsValue({ ...Plancontroller,
                 UserFirstName: Plancontroller.user ? Plancontroller.user.firstname : Plancontroller.trainers.firstName,
@@ -94,7 +104,24 @@ export default function PlanModal(props) {
                                         required: true,
                                     },
                                 ]}>
-                                    <Input />
+                                    <AutoCompleteSelect      
+                                        valueField="id"
+                                        placeholder="Ажилчдаас сонгох"
+                                        data={stateUser}
+                                        // onChange={(value) => selectOrgs(value)}
+                                    /> 
+                                </Form.Item>
+                                <Form.Item rules={[
+                                    {
+                                        required: true,
+                                    },
+                                ]}>
+                                    <AutoCompleteSelect      
+                                        valueField="id"
+                                        placeholder="Сургагч багшаас сонгох"
+                                        data={stateUser}
+                                        // onChange={(value) => selectOrgs(value)}
+                                    /> 
                                 </Form.Item>
                             </Col>
                             <Col xs={24} md={24} lg={12}>
