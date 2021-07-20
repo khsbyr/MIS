@@ -26,7 +26,6 @@ export default function UserModal(props) {
   const [stateRole, setStateRole] = useState([]);
 
   useEffect(() => {
-
     getService("organization/get").then((result) => {
       if (result) {
         setStateOrg(result.content || []);
@@ -64,6 +63,7 @@ export default function UserModal(props) {
     });
 
     if (isEditMode) {
+      console.log(Usercontroller);
       setStateGender(Usercontroller.gender.id);
       form.setFieldsValue({ 
         ...Usercontroller, 
@@ -123,6 +123,28 @@ export default function UserModal(props) {
     form
       .validateFields()
       .then((values) => {
+        values.gender = {
+          id: values.GenderID,
+        }
+        values.role = {
+          id: values.RoleID,
+        }
+        values.address = {
+          id: Usercontroller.address.id ? Usercontroller.address.id : null,
+          country: {
+            id: values.CountryID
+          },
+          aimag: {
+            id: values.AimagID
+          },
+          soum: {
+            id: values.SoumID
+          },
+          bag: {
+            id: values.BagID
+          },
+          addressDetail: values.AddressDetail   
+        }
         if (isEditMode) {
           putService("user/update/" + Usercontroller.id, values)
             .then((result) => {
@@ -132,7 +154,7 @@ export default function UserModal(props) {
               errorCatch(error);
             });
         } else {
-          postService("user/saveByAdmin/", values)
+          postService("user/saveByAdmin", values)
             .then((result) => {
               props.close(true);
             })
