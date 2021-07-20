@@ -1,27 +1,29 @@
-import { ExclamationCircleOutlined, DownOutlined } from "@ant-design/icons";
-import { faFileExcel, faPen, faPlus, faPrint, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { Button, Col, Layout, message, Modal, Row, DatePicker } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import {
+  faFileExcel,
+  faPen,
+  faPlus,
+  faPrint,
+  faTrash
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button, Col, Layout, message, Modal, Row } from "antd";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import React, { useEffect, useState } from "react";
+import AutoCompleteSelect from "../../../components/Autocomplete";
 import { isShowLoading } from "../../../context/Tools";
 import { getService, putService } from "../../../service/service";
 import { errorCatch } from "../../../tools/Tools";
 import ContentWrapper from "../../criteria/criteria.style";
 import GuidelinesModal from "../training/components/GuidelinesModal";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import AutoCompleteSelect from "../../../components/Autocomplete";
-import OrgaStyle   from "./components/orga.style";
+import OrgaStyle from "./components/orga.style";
 
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
 const { Content } = Layout;
 
-var editRow
+var editRow;
 var isEditMode;
 const Guidelines = () => {
-
   let loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -33,7 +35,6 @@ const Guidelines = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateOrga, setStateOrga] = useState([]);
 
-
   useEffect(() => {
     onInit();
     getService("organization/get").then((result) => {
@@ -41,28 +42,24 @@ const Guidelines = () => {
         setStateOrga(result.content || []);
       }
     });
-  }, [lazyParams])
+  }, [lazyParams]);
 
   const onInit = () => {
     setLoading(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService("trainingGuidelines/get", list)
+    getService("training/get", list)
       .then((result) => {
         let list = result.content || [];
-        list.map(
-          (item, index) =>
-            (item.index = lazyParams.page * PAGESIZE + index + 1)
-        );
+        list.map((item, index) => (item.index = index + 1));
         setList(list);
         setSelectedRows([]);
-
       })
       .catch((error) => {
         errorCatch(error);
         isShowLoading(false);
-      })
+      });
   };
 
   const selectOrgs = (value) => {
@@ -70,17 +67,12 @@ const Guidelines = () => {
   };
 
   const getGuidelines = (orgId) => {
-    getService(`trainingGuidelines/getList/${orgId}`, {}).then((result) => {
+    getService(`training/getList/${orgId}`, {}).then((result) => {
       if (result) {
         let list = result || [];
-        list.map(
-          (item, index) =>
-            (item.index = lazyParams.page * PAGESIZE + index + 1)
-        );
+        list.map((item, index) => (item.index = index + 1));
         setList(list);
         setSelectedRows([]);
-        //setList(result);
-        // setStateAimag(result || []);
       }
     });
   };
@@ -89,21 +81,29 @@ const Guidelines = () => {
     setIsModalVisible(true);
     isEditMode = false;
   };
-  
+
   const action = (row) => {
     return (
       <React.Fragment>
-        <Button type="text" icon={<FontAwesomeIcon icon={faPen} />} onClick={() => edit(row)} />
-        <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={() => pop(row)} />
+        <Button
+          type="text"
+          icon={<FontAwesomeIcon icon={faPen} />}
+          onClick={() => edit(row)}
+        />
+        <Button
+          type="text"
+          icon={<FontAwesomeIcon icon={faTrash} />}
+          onClick={() => pop(row)}
+        />
       </React.Fragment>
     );
-  }
+  };
 
   const edit = (row) => {
-    editRow = row
-    isEditMode = true
-    setIsModalVisible(true)
-  }
+    editRow = row;
+    isEditMode = true;
+    setIsModalVisible(true);
+  };
 
   const handleDeleted = (row) => {
     if (row.length === 0) {
@@ -111,7 +111,7 @@ const Guidelines = () => {
       return;
     }
 
-    putService("trainingGuidelines/delete/" + row.id)
+    putService("training/delete/" + row.id)
       .then((result) => {
         message.success("Амжилттай устлаа");
         onInit();
@@ -134,7 +134,6 @@ const Guidelines = () => {
     }
   };
 
-
   const indexBodyTemplate = (row) => {
     return (
       <React.Fragment>
@@ -142,52 +141,63 @@ const Guidelines = () => {
         {row.index}
       </React.Fragment>
     );
-  }
+  };
 
-  const subjectBodyTemplate = (row) => {
+  const NameBodyTemplate = (row) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Сургалтын сэдэв</span>
-        {row.subject}
+        <span className="p-column-title">Сургалтын нэр</span>
+        {row.name}
       </React.Fragment>
     );
-  }
+  };
 
-  const reasonBodyTemplate = (row) => {
+  const totalBudgetBodyTemplate = (row) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Сургалт зохион байгуулах үндэслэл</span>
-        {row.reason}
+        <span className="p-column-title">
+        Төсөв
+        </span>
+        {row.totalBudget}
       </React.Fragment>
     );
-  }
+  };
 
-  const aimBodyTemplate = (row) => {
+  const performanceBudgetBodyTemplate = (row) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Сургалтын зорилго</span>
-        {row.aim}
+        <span className="p-column-title">Гүйцэтгэлийн төсөв</span>
+        {row.performanceBudget}
       </React.Fragment>
     );
-  }
+  };
 
-  const operationBodyTemplate = (row) => {
+  const startDateBodyTemplate = (row) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Хэрэгжүүлэх үйл ажиллагаа</span>
-        {row.operation}
+        <span className="p-column-title">Эхэлсэн огноо</span>
+        {row.trainingStartDate}
       </React.Fragment>
     );
-  }
+  };
 
-  const resultBodyTemplate = (row) => {
+  const endDateBodyTemplate = (row) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Хүлэгдэж буй үр дүн 1</span>
-        {row.result}
+        <span className="p-column-title">Дууссан огноо</span>
+        {row.trainingEndDate}
       </React.Fragment>
     );
-  }
+  };
+  
+  const participantBodyTemplate = (row) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Оролцогчдын тоо</span>
+        {row.participantsNumber}
+      </React.Fragment>
+    );
+  };
 
   return (
     <ContentWrapper>
@@ -196,55 +206,52 @@ const Guidelines = () => {
           <Content>
             <Row>
               <Col xs={24} md={24} lg={12}>
-                <p className="title">Сургалтын удирдамж</p>
+                <p className="title">Сургалт</p>
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  
+                  <Col xs={8} md={8} lg={6}></Col>
                   <Col xs={8} md={8} lg={6}>
-                  <OrgaStyle>
-                      <AutoCompleteSelect                  
-                          valueField="id"
-                          placeholder="Байгууллага сонгох"
-                          data={stateOrga}
-                          onChange={(value) => selectOrgs(value)}
-
+                    <OrgaStyle>
+                      <AutoCompleteSelect
+                        valueField="id"
+                        placeholder="Байгууллага сонгох"
+                        data={stateOrga}
+                        onChange={(value) => selectOrgs(value)}
                       />
-                      </OrgaStyle>
+                    </OrgaStyle>
                   </Col>
-                  
-                  <Col xs={8} md={8} lg={6}>
-                    <DatePicker
-                      onChange={onChange}
-                      bordered={false}
-                      suffixIcon={<DownOutlined />}
-                      placeholder="Select year"
-                      picker="year"
-                      className="DatePicker"
-                      style={{
-                        width: "120px",
-                        color: "black",
-                        cursor: "pointer",
-                      }}
-                    />
+
+                  <Col xs={8} md={8} lg={4}>
+                    <Button
+                      type="text"
+                      icon={<FontAwesomeIcon icon={faPrint} />}
+                    >
+                      Хэвлэх{" "}
+                    </Button>
                   </Col>
                   <Col xs={8} md={8} lg={4}>
-                    <Button type="text" icon={<FontAwesomeIcon icon={faPrint} />} >Хэвлэх </Button>
-                  </Col>
-                  <Col xs={8} md={8} lg={4}>
-                    <Button type="text" className="export" icon={<FontAwesomeIcon icon={faFileExcel} />} >
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFileExcel} />}
+                    >
                       Экспорт
                     </Button>
                   </Col>
                   <Col xs={8} md={8} lg={4}>
-                    <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={add}>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faPlus} />}
+                      onClick={add}
+                    >
                       Нэмэх
                     </Button>
                   </Col>
                 </Row>
               </Col>
             </Row>
-
           </Content>
         </Layout>
         <div className="datatable-responsive-demo">
@@ -255,30 +262,39 @@ const Guidelines = () => {
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            // onRowClick={edit}
             onSelectionChange={(e) => {
               setSelectedRows(e.value);
             }}
-            dataKey="id">
+            dataKey="id"
+          >
             <Column field="index" header="№" body={indexBodyTemplate} />
-            <Column field="subject" header="Сургалтын сэдэв" filter body={subjectBodyTemplate} />
             <Column
-              field="reason"
-              header="Сургалт зохион байгуулах үндэслэл"
+              field="name"
+              header="Сургалтын сэдэв"
               filter
-              body={reasonBodyTemplate}
+              body={NameBodyTemplate}
             />
-            <Column field="aim" header="Сургалтын зорилго" filter body={aimBodyTemplate} />
+            <Column field="totalBudget" header="Төсөв" filter body={totalBudgetBodyTemplate}/>
             <Column
-              field="operation"
-              header="Хэрэгжүүлэх үйл ажиллагаа"
+              field="performanceBudget"
+              header="Гүйцэтгэлийн төсөв"
               filter
-              body={operationBodyTemplate}
+              body={performanceBudgetBodyTemplate}
             />
-            <Column field="result" header="Хүлэгдэж буй үр дүн 1" filter body={resultBodyTemplate} />
-            <Column headerStyle={{ width: '7rem' }} body={action} />
-
-
+            <Column
+              field="trainingStartDate"
+              header="Эхэлсэн огноо"
+              filter
+              body={startDateBodyTemplate}
+            />
+            <Column field="trainingEndDate" header="Дууссан огноо" filter body={endDateBodyTemplate}/>
+            <Column
+              field="participantsNumber"
+              header="Оролцогчдын тоо"
+              filter
+              body={participantBodyTemplate}
+            />
+            <Column headerStyle={{ width: "7rem" }} body={action}/>
           </DataTable>
           {isModalVisible && (
             <GuidelinesModal
@@ -303,13 +319,9 @@ const Guidelines = () => {
         handleDeleted(row);
         onInit();
       },
-      onCancel() { },
+      onCancel() {},
     });
   }
-}
+};
 
 export default Guidelines;
-
-
-
-
