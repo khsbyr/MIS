@@ -65,11 +65,31 @@ const Guidelines = () => {
       })
   };
 
+  const selectOrgs = (value) => {
+    getGuidelines(value);
+  };
+
+  const getGuidelines = (orgId) => {
+    getService(`trainingGuidelines/getList/${orgId}`, {}).then((result) => {
+      if (result) {
+        let list = result || [];
+        list.map(
+          (item, index) =>
+            (item.index = lazyParams.page * PAGESIZE + index + 1)
+        );
+        setList(list);
+        setSelectedRows([]);
+        //setList(result);
+        // setStateAimag(result || []);
+      }
+    });
+  };
+
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
   };
-
+  
   const action = (row) => {
     return (
       <React.Fragment>
@@ -187,6 +207,8 @@ const Guidelines = () => {
                           valueField="id"
                           placeholder="Байгууллага сонгох"
                           data={stateOrga}
+                          onChange={(value) => selectOrgs(value)}
+
                       />
                       </OrgaStyle>
                   </Col>
