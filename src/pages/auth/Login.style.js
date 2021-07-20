@@ -90,7 +90,6 @@ export const LogIn = styled.div`
         float: right;
         color: #103154;
         font-weight: 600;
-
     }
 
     .underline {
@@ -103,6 +102,21 @@ export const LogIn = styled.div`
         font-weight: 600;
         border-color: #103154;
         width: 150px;
+        height: 50px;
+        border-radius: 36px;
+        margin-right: 35px;
+
+    :hover {
+        background-color: #103154;
+        color: white;
+        }
+    }
+
+    .reset-form-button {
+        background-color: white;
+        color: #103154;
+        font-weight: 600;
+        border-color: #103154;
         height: 50px;
         border-radius: 36px;
         margin-right: 35px;

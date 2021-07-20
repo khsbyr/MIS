@@ -30,14 +30,12 @@ function MapContainer(props) {
     geocodeByAddress(address)
       .then((results) => {
         getLatLng(results[0]).then((latLng) => {
-          // console.log("Success", latLng);
           state.selectedLat = latLng.lat;
           state.selectedLng = latLng.lng;
           state.address = address;
           setState({ ...state });
         });
       })
-
       .catch((error) => console.error("Error", error));
   }
 

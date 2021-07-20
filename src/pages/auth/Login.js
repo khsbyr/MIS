@@ -26,7 +26,6 @@ function Login() {
       isShowLoading(true);
       postService("user/login", {username:username.value, password:password.value})
       .then((result) => {
-        console.log(result.data);
         localStorage.setItem('token', result.data.token);
         localStorage.setItem('myHID', result.data.userId);
         history.push("/admin");
@@ -105,7 +104,7 @@ function Login() {
                 />
               </Form.Item>
               <Form.Item>
-                <a className="login-form-forgot" href="/">
+                <a className="login-form-forgot" href="/forget-password">
                 {t('forgot_pass')}
                 </a>
               </Form.Item>
