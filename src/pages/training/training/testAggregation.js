@@ -84,7 +84,7 @@ const TestAggregation = () => {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         }
-        debugger
+        
         putService("testAggregation/delete/" + row.id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
@@ -98,7 +98,7 @@ const TestAggregation = () => {
         setIsModalVisible(false);
         if (isSuccess) onInit();
     };
-    debugger
+    
     const pop = (row) => {
         if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");

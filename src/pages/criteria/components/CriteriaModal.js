@@ -27,14 +27,14 @@ export default function CriteriaModal(props) {
     const [value, setValue] = React.useState(1);
     useEffect(() => {
         if (isEditMode) {
-            let percentIndicator = Criteriacontroller.criteriaIndicator.percentIndicator ?  Criteriacontroller.criteriaIndicator.percentIndicator.value : '';
-            let quantityIndicator = Criteriacontroller.criteriaIndicator.quantityIndicator ?  Criteriacontroller.criteriaIndicator.quantityIndicator.value : '';
-            let formulaIndicator = Criteriacontroller.criteriaIndicator.formulaIndicator ?  Criteriacontroller.criteriaIndicator.formulaIndicator.value : '';
+            let percentIndicator = Criteriacontroller.criteriaIndicator.percentIndicator ? Criteriacontroller.criteriaIndicator.percentIndicator.value : '';
+            let quantityIndicator = Criteriacontroller.criteriaIndicator.quantityIndicator ? Criteriacontroller.criteriaIndicator.quantityIndicator.value : '';
+            let formulaIndicator = Criteriacontroller.criteriaIndicator.formulaIndicator ? Criteriacontroller.criteriaIndicator.formulaIndicator.value : '';
 
-            form.setFieldsValue({ 
+            form.setFieldsValue({
                 ...Criteriacontroller,
             });
-            setValue( percentIndicator ? 2 : quantityIndicator ? 1 : formulaIndicator ? 3 : '' );
+            setValue(percentIndicator ? 2 : quantityIndicator ? 1 : formulaIndicator ? 3 : '');
         }
 
     }, []);
@@ -48,12 +48,8 @@ export default function CriteriaModal(props) {
         form
             .validateFields()
             .then((values) => {
-                values.criteriaIndicator = {
-                    percentIndicator: {value: values.percentIndicatorr},
-                };
-
-
                 console.log(values);
+                values.criteriaIndicator = {percentIndicator: {value: values.percentIndicator}};
                 if (isEditMode) {
                     putService(
                         "criteria/update/" + Criteriacontroller.id,
@@ -94,7 +90,7 @@ export default function CriteriaModal(props) {
                 <Form
                     form={form}
                     labelAlign={"left"}
-                    
+
                     {...layout}
                     name="nest-messages"
                     validateMessages={validateMessages}
@@ -148,13 +144,8 @@ export default function CriteriaModal(props) {
                     </Form.Item>
 
                     <Form.Item
-                        label="Шалгуур үзүүлэлтийн төрөл"
-                    >
-                    </Form.Item>
-
-                    <Form.Item
-                        name="percentIndicatorr"
-                        label="Шалгуур үзүүлэлтийн төрөл"
+                        name="percentIndicator"
+                        label="Шалгуур үзүүлэлтийн төрөлa"
                         rules={[
                             {
                                 required: false,
@@ -163,23 +154,23 @@ export default function CriteriaModal(props) {
                     >
                         <Radio.Group value={value} onChange={onChange} className="radioButton">
                             <Space direction="vertical">
-                                <Radio value={1} >                      
+                                <Radio value={1} >
                                     Тоо
-                                    {value === 1 ? <InputNumber style={{ width: 100, marginLeft: 10 }} /> : null}                            
+                                    {value === 1 ? <InputNumber defaultValue={Criteriacontroller.criteriaIndicator.quantityIndicator ? Criteriacontroller.criteriaIndicator.quantityIndicator.value : ''} style={{ width: 100, marginLeft: 10 }} /> : null}
                                 </Radio>
                                 <Radio value={2} >
                                     Хувь
-                                    {value === 2 ? <InputNumber value={Criteriacontroller.criteriaIndicator.percentIndicator.value} style={{ width: 100, marginLeft: 10 }} /> : null}
+                                    {value === 2 ? <InputNumber defaultValue={Criteriacontroller.criteriaIndicator.percentIndicator ? Criteriacontroller.criteriaIndicator.percentIndicator.value : ''} style={{ width: 100, marginLeft: 10 }} /> : null}
                                 </Radio>
                                 <Radio value={3}>
                                     Томъё
-                                    {value === 3 ? <InputNumber style={{ width: 100, marginLeft: 10 }} /> : null}
+                                    {value === 3 ? <InputNumber defaultValue={Criteriacontroller.criteriaIndicator.formulaIndicator ? Criteriacontroller.criteriaIndicator.formulaIndicator.value : ''} style={{ width: 100, marginLeft: 10 }} /> : null}
                                 </Radio>
                             </Space>
                         </Radio.Group>
                     </Form.Item>
                 </Form>
             </Modal>
-        </div >
+        </div>
     );
 }

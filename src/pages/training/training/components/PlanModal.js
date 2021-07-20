@@ -17,12 +17,15 @@ const validateMessages = {
 export default function PlanModal(props) {
     const { Plancontroller, isModalVisible, isEditMode } = props;
     const [form] = Form.useForm();
+    const [isUser, setIsUser] = useState(false);
+
 
     useEffect(() => {
         if (isEditMode) {
             form.setFieldsValue({ ...Plancontroller,
-                trainingName: Plancontroller.training.name,
-                UserFirstName: Plancontroller.user.firstname,
+                UserFirstName: Plancontroller.user ? Plancontroller.user.firstname : Plancontroller.trainers.firstName,
+                // TrainersFirstName: Plancontroller.trainers.firstName, 
+                // setIsUser(Plancontroller)
             });
         }
     }, []);
@@ -31,7 +34,6 @@ export default function PlanModal(props) {
         form
             .validateFields()
             .then((values) => {
-                values.training = {name: values.trainingName};
                 values.user = {firstname: values.UserFirstName};
                 if (isEditMode) {
                     putService(
@@ -61,7 +63,7 @@ export default function PlanModal(props) {
     return (
         <div>
             <Modal
-                title="Сургалтын төлөвлөгөө"
+                title="Сургалтын баг"
                 okText="Хадгалах"
                 cancelText="Буцах"
                 width={1200}
@@ -80,7 +82,7 @@ export default function PlanModal(props) {
                     >
                         <Row gutter={30}>
                             <Col xs={24} md={24} lg={12}>
-                                <Form.Item label="Хичээлийн сэдэв:" name="trainingName" rules={[
+                                <Form.Item label="Хичээлийн сэдэв:" name="mission" rules={[
                                     {
                                         required: true,
                                     },

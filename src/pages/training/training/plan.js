@@ -118,7 +118,7 @@ const Plan = () => {
   const missionBodyTemplate = (row) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Хичээлийн сэдэв</span>
+        <span className="p-column-title">Сургалтанд гүйцэтгэх үүрэг</span>
         {row.mission}
       </React.Fragment>
     );
@@ -127,8 +127,9 @@ const Plan = () => {
   const nameBodyTemplate = (row) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Сургагч багшийн нэр</span>
-        {/* {row} */}
+        <span className="p-column-title">Багийн гишүүдийн нэрс</span>
+        {row.user ? row.user.firstname : row.trainers.firstName}
+        {/* {row.training.training_plan.name} */}
       </React.Fragment>
     );
   };
@@ -141,7 +142,7 @@ const Plan = () => {
           <Content>
             <Row>
               <Col xs={24} md={24} lg={14}>
-                <p className="title">Сургалтын төлөвлөгөө</p>
+                <p className="title">Сургалтын баг</p>
               </Col>
               <Col xs={24} md={24} lg={10}>
                 <Row gutter={[0, 15]}>
@@ -226,14 +227,14 @@ const Plan = () => {
               sortable
             />
             <Column
-              header="Хичээлийн сэдэв"
+              header="Сургалтанд гүйцэтгэх үүрэг"
               body={missionBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
             />
             <Column
-              header="Сургагч багшийн нэр"
+              header="Багийн гишүүдийн нэрс"
               body={nameBodyTemplate}
               sortable
               filter

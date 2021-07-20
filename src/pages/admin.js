@@ -104,41 +104,33 @@ const Admin = () => {
                   icon={<FontAwesomeIcon icon={faLayerGroup} />}
                   title={t("training")}
                 >
-                  <SubMenu
-                    key="sub4"
-                    icon={<FontAwesomeIcon icon={faLayerGroup} />}
-                    title={t("training_plan")}
-                  >
-                    <Menu.Item key="4"><Link to="/composition1">{t("composition1")}</Link></Menu.Item>
-                    <Menu.Item key="5"><Link to="/composition2">{t("composition2")}</Link></Menu.Item>
-                    <Menu.Item key="6"><Link to="/composition3">{t("composition3")}</Link></Menu.Item>
-                    <Menu.Item key="7"><Link to="/composition4">{t("composition4")}</Link></Menu.Item>
-                  </SubMenu>
-                  <SubMenu
-                    key="sub5"
-                    icon={<FontAwesomeIcon icon={faLayerGroup} />}
-                    title={t("training")}
-                  >
-                    <Menu.Item key="8">
-                      <Link to="/organization">{t("consulting_orga")}</Link>
-                    </Menu.Item>
-                    <Menu.Item key="9">
-                      <Link to="/guidelines">{t("training_intro")}</Link>
-                    </Menu.Item>
-                    <Menu.Item key="10">
-                      <Link to="/plan">{t("training_plan")}</Link>
-                    </Menu.Item>
-                    <Menu.Item key="11">
-                      <Link to="/cv">{t("cv_teachers")}</Link>
-                    </Menu.Item>
-                    <Menu.Item key="12">
-                      <Link to="/training_program">{t("training_program")}</Link>
-                    </Menu.Item>
-                    <Menu.Item key="13"><Link to="/attendance">{t("attendance_registration")}</Link></Menu.Item>
-                    <Menu.Item key="14"><Link to="/test_aggregation">{t("test_aggregation")}</Link></Menu.Item>
-                    <Menu.Item key="15"><Link to="/training_report">{t("training_report")}</Link></Menu.Item>
-                    <Menu.Item key="16"><Link to="/budget">{t("training_budget")}</Link></Menu.Item>
-                  </SubMenu>
+                  <Menu.Item key="8">
+                    <Link to="/organization">{t("consulting_orga")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="9">
+                    <Link to="/guidelines">{t("training_intro")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="10">
+                    <Link to="/plan">{t("training_team")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="11">
+                    <Link to="/cv">{t("cv_teachers")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="12">
+                    <Link to="/training_program">{t("training_program")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="13">
+                    <Link to="/attendance">{t("attendance_registration")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="14">
+                    <Link to="/test_aggregation">{t("test_aggregation")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="15">
+                    <Link to="/training_report">{t("training_report")}</Link>
+                  </Menu.Item>
+                  <Menu.Item key="16">
+                    <Link to="/budget">{t("training_budget")}</Link>
+                  </Menu.Item>
                 </SubMenu>
                 <SubMenu
                   key="sub6"
