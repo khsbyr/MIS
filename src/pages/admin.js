@@ -8,7 +8,6 @@ import "antd/dist/antd.css";
 import React from "react";
 import { useTranslation } from 'react-i18next';
 import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
-import i18n from "../i18n";
 import Attendance from "./training/training/attendance";
 import Composition1 from "./training/trainingplan/composition1";
 import Composition2 from "./training/trainingplan/composition2";
@@ -33,7 +32,7 @@ const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
 const Admin = () => {
-  const { t, i18 } = useTranslation();
+  const { t } = useTranslation();
 
   const history = useHistory();
 
@@ -78,15 +77,15 @@ const Admin = () => {
               >
                 <Menu.Item key="1" icon={<FontAwesomeIcon icon={faUserAlt} />}>
                   {" "}
-                  <Link to="/user">{t("user")}</Link>
+                  <Link to="/admin/user">{t("user")}</Link>
                 </Menu.Item>{" "}
                 <Menu.Item key="2" icon={<FontAwesomeIcon icon={faUserCog} />}>
                   {" "}
-                  <Link to="/role">{t("user_role")}</Link>
+                  <Link to="/admin/role">{t("user_role")}</Link>
                 </Menu.Item>
                 <Menu.Item key="52" icon={<FontAwesomeIcon icon={faUserCheck} />}>
                   {" "}
-                  <Link to="/signuprequest">{t("signreq")}</Link>
+                  <Link to="/admin/signuprequest">{t("signreq")}</Link>
                 </Menu.Item>
               </SubMenu>
                 <SubMenu
@@ -283,14 +282,13 @@ const Admin = () => {
                 }}
               >
                 <Switch>
-                  {/* user */}
-                <Route exact path="/user">
+                <Route exact path="/admin/user">
                   <User />
                 </Route>
-                <Route exact path="/role">
+                <Route exact path="/admin/role">
                   <Role />
                 </Route>
-                <Route exact path="/signuprequest">
+                <Route exact path="/admin/signuprequest">
                   <Signuprequest />
                 </Route>
                   <Route exact path="/criteria">

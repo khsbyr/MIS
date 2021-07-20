@@ -66,7 +66,6 @@ const User = () => {
     };
 
     const action = (row) => {
-        console.log(row)
         return (
             <React.Fragment>
                 <Button type="text" icon={<FontAwesomeIcon icon={faPen} />} onClick={() => edit(row)} />
@@ -164,7 +163,7 @@ const User = () => {
                                 <p className="title">Хэрэглэгчийн жагсаалт</p>
                             </Col>
                             <Col xs={16} md={16} lg={10}>
-                                <Row gutter={[15, 15]}>
+                                <Row justify="end" gutter={[16, 16]}>
                                     <Col xs={8} md={4} lg={4}>
                                         <Button type="text" icon={<FontAwesomeIcon icon={faPrint} />} >Хэвлэх </Button>
                                     </Col>
@@ -173,7 +172,7 @@ const User = () => {
                                             Экспорт
                                         </Button>
                                     </Col>
-                                    <Col xs={8} md={4} lg={4}>
+                                    <Col xs={8} md={4} lg={8}>
                                         <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={add}>
                                             Нэмэх
                                         </Button>
