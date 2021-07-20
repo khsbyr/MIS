@@ -3,15 +3,18 @@ import React, { useEffect, useState } from "react";
 import { getService, postService, putService } from "../../../service/service";
 import { errorCatch } from "../../../tools/Tools";
 import AutoCompleteSelect from "../../../components/Autocomplete";
+const label = '';
+const max = '';
+const min = '';
 
 const validateMessages = {
-  required: "${label} хоосон байна!",
+  required: `${label} хоосон байна!`,
   types: {
-    email: "${label} is not a valid email!",
-    number: "${label} is not a valid number!",
+    email: `${label} is not a valid email!`,
+    number: `${label} is not a valid number!`,
   },
   number: {
-    range: "${label} must be between ${min} and ${max}",
+    range: `${label} must be between ${min} and ${max}`,
   },
 };
 export default function UserModal(props) {
@@ -22,6 +25,7 @@ export default function UserModal(props) {
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const [stateGender, setStateGender] = useState([]);
+  const [stateTrue, setStateTrue] = useState([]);
   const [stateOrg, setStateOrg] = useState([]);
   const [stateRole, setStateRole] = useState([]);
 
@@ -65,6 +69,7 @@ export default function UserModal(props) {
     if (isEditMode) {
       console.log(Usercontroller);
       setStateGender(Usercontroller.gender.id);
+      setStateTrue(Usercontroller.isTrue);
       form.setFieldsValue({ 
         ...Usercontroller, 
         CountryID : Usercontroller.address.country.id,
@@ -73,10 +78,10 @@ export default function UserModal(props) {
         BagID : Usercontroller.address.bag.id,
         AddressDetail : Usercontroller.address.addressDetail,
         RoleID : Usercontroller.role.id,
-        GenderID : Usercontroller.gender.id
+        GenderID : Usercontroller.gender.id,
       });
     }
-  }, []);
+  }, [Usercontroller, form, isEditMode]);
 
   const selectCountry = (value) => {
     getAimag(value);
@@ -119,6 +124,10 @@ export default function UserModal(props) {
     setStateGender(e.target.value);
   };
 
+  const onChangeCheckBox = e => {
+    setStateTrue(e.target.checked);
+  };
+
   const save = () => {
     form
       .validateFields()
@@ -130,7 +139,6 @@ export default function UserModal(props) {
           id: values.RoleID,
         }
         values.address = {
-          id: Usercontroller.address.id ? Usercontroller.address.id : null,
           country: {
             id: values.CountryID
           },
@@ -145,6 +153,7 @@ export default function UserModal(props) {
           },
           addressDetail: values.AddressDetail   
         }
+        values.isTrue = stateTrue;
         if (isEditMode) {
           putService("user/update/" + Usercontroller.id, values)
             .then((result) => {
@@ -154,7 +163,7 @@ export default function UserModal(props) {
               errorCatch(error);
             });
         } else {
-          postService("user/saveByAdmin", values)
+          postService("user/post", values)
             .then((result) => {
               props.close(true);
             })
@@ -300,8 +309,8 @@ export default function UserModal(props) {
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
-              <Form.Item label="Оруулсан мэдээлэл үнэн болно." name="check">
-                <Input type="checkbox" />
+              <Form.Item label="Оруулсан мэдээлэл үнэн болно." name="isTrue">
+                <Input type="checkbox" onChange={onChangeCheckBox} checked={stateTrue}/>
               </Form.Item>
             </Col>
           </Row>
@@ -309,6 +318,11 @@ export default function UserModal(props) {
             <Col xs={24} md={24} lg={6}>
               <Form.Item label="Нэвтрэх нэр:" name="username">
                 <Input placeholder="Нэвтрэх нэр..." />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={24} lg={6}>
+              <Form.Item label="И-мэйл хаяг:" name="email">
+                <Input placeholder="И-мэйл хаяг..." />
               </Form.Item>
             </Col>
           </Row>

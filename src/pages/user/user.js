@@ -46,13 +46,13 @@ const User = () => {
         getService("user/get", list)
             .then((result) => {
                 let list = result.content || [];
+                console.log(list);
                 list.map(
                     (item, index) =>
                         (item.index = lazyParams.page * PAGESIZE + index + 1)
                 );
                 setList(list);
                 setSelectedRows([]);
-
             })
             .catch((error) => {
                 errorCatch(error);
@@ -200,7 +200,7 @@ const User = () => {
                         <Column field="lastname" header="Овог" body={lastnameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
                         <Column field="register" header="Регистрийн дугаар" body={registerBodyTemplate} sortable/>
                         <Column field="email" header="Й-мэйл" body={emailBodyTemplate} sortable/>
-                        <Column field="email" header="Эрх" sortable />
+                        <Column field='role.name' header="Эрх" sortable />
                         <Column headerStyle={{ width: '7rem' }} body={action}></Column>
                     </DataTable>
                     {isModalVisible && (
