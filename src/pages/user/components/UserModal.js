@@ -54,18 +54,20 @@ export default function UserModal(props) {
       }
     });
 
-    if(Usercontroller.address) {
-      getService(`soum/getList/${Usercontroller.address.aimag.id}`).then((result) => {
-        if (result) {
-          setStateSum(result || []);
-        }
-      });
-
-      getService(`bag/getList/${Usercontroller.address.soum.id}`).then((result) => {
-        if (result) {
-          setStateBag(result || []);
-        }
-      });
+    if(Usercontroller!==undefined) {
+      if(Usercontroller.address) {
+        getService(`soum/getList/${Usercontroller.address.aimag.id}`).then((result) => {
+          if (result) {
+            setStateSum(result || []);
+          }
+        });
+  
+        getService(`bag/getList/${Usercontroller.address.soum.id}`).then((result) => {
+          if (result) {
+            setStateBag(result || []);
+          }
+        });
+      }
     }
     
     if (isEditMode) {
