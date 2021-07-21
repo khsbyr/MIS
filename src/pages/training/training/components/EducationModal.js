@@ -4,6 +4,8 @@ import { getService, postService, putService } from "../../../../service/service
 import { errorCatch } from "../../../../tools/Tools";
 import AutocompleteSelect from "../../../../components/Autocomplete";
 import ContentWrapper from "./cv.styled";
+import moment from "moment";
+
 const layout = {
     labelCol: {
         span: 10,
@@ -22,35 +24,24 @@ const validateMessages = {
         range: "${label} must be between ${min} and ${max}",
     },
 };
+
+const dateFormat = 'YYYY-MM-DD';
+
 export default function EducationModal(props) {
-    const { Composition, isModalVisible, isEditMode } = props;
-    const [stateController, setStateController] = useState([]);
+    const { CvEducationController, isModalVisibleEducation, isEditMode } = props;
     const [form] = Form.useForm();
     useEffect(() => {
-        getService("criteria/get", {
-            search: "status:true",
-        }).then((result) => {
-            if (result) {
-                setStateController(result.content || []);
-            }
-        });
-
         if (isEditMode) {
-            getService("criteria/get" + Composition.id).then((result) => {
-                Composition.userServiceId = result.userService.id
-                form.setFieldsValue({ ...Composition });
-            })
-
+            form.setFieldsValue({ ...CvEducationController });
         }
     }, []);
     const save = () => {
         form
             .validateFields()
             .then((values) => {
-                values.userService = { id: values.userServiceId }
                 if (isEditMode) {
                     putService(
-                        "criteria/put" + Composition.id,
+                        "education/update/" + CvEducationController.id,
                         values
                     )
                         .then((result) => {
@@ -60,7 +51,7 @@ export default function EducationModal(props) {
                             errorCatch(error);
                         })
                 } else {
-                    postService("criteria/post", values)
+                    postService("education/post/"+ CvEducationController.id, values)
                         .then((result) => {
                             props.close(true);
                         })
@@ -73,6 +64,9 @@ export default function EducationModal(props) {
                 console.log("Validate Failed:", info);
             });
     };
+    
+    const onChangeDate = (date, dateString) => console.log(date, dateString);
+
     return (
 
         <div>
@@ -82,50 +76,67 @@ export default function EducationModal(props) {
                 cancelText="Буцах"
                 width={600}
                 alignItems="center"
-                visible={isModalVisible}
+                visible={isModalVisibleEducation}
                 onOk={save}
                 onCancel={() => props.close()}
             >
-                            <ContentWrapper>
-                <Form
-                    form={form}
-                    labelAlign={"left"}
-                    {...layout}
-                    name="nest-messages"
-                    validateMessages={validateMessages}
-                >
-                 
-                    <Form.Item
-                        name="name"
-                        label="Зэрэг, цол:"
-                        rules={[
-                            {
-                                required: true,
-                            },
-                        ]}
+                <ContentWrapper>
+                    <Form
+                        form={form}
+                        labelAlign={"left"}
+                        {...layout}
+                        name="nest-messages"
+                        validateMessages={validateMessages}
                     >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        name="work"
-                        label="Их дээд сургуулийн нэр:"
 
-                    >
-                        <Input />
-                    </Form.Item>
-              <Form.Item
-                name="code"
-                label="Огноо:"
-                rules={[
-                    {
-                        required: true,
-                    },
-                ]}
+                        <Form.Item
+                            name="degree"
+                            label="Зэрэг, цол:"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="universityName"
+                            label="Их дээд сургуулийн нэр:"
 
-              >
-                  <DatePicker/>
-              </Form.Item>
-                </Form>
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            label="Элссэн огноо:"
+                            name="enrolledDate"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                            ]}
+
+                        >
+                            <Input/>
+                            {/* <DatePicker format={dateFormat} onChange={onChangeDate}
+                                defaultValue={CvEducationController && moment(CvEducationController.enrolledDate, dateFormat)}/> */}
+                        </Form.Item>
+                        <Form.Item
+                            label="Төгссөн огноо:"
+                            name="graduatedDate"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                            ]}
+
+                        >
+                            <Input/>
+
+                            {/* <DatePicker format={dateFormat} onChange={onChangeDate}
+                                defaultValue={CvEducationController && moment(CvEducationController.graduatedDate, dateFormat)}/> */}
+                        </Form.Item>
+                    </Form>
                 </ContentWrapper>
             </Modal>
         </div >
