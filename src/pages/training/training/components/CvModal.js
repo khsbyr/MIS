@@ -17,6 +17,7 @@ import MembershipModal from "./MembershipModal";
 import PublishedWorkModal from "./PublishedWorkModal";
 import TeacherExperienceModal from "./TeacherExperienceModal";
 import AutoCompleteSelect from "../../../../components/Autocomplete";
+import moment from "moment"
 
 const { Dragger } = Upload;
 const validateMessages = {
@@ -38,7 +39,10 @@ const layout = {
     },
 };
 
+
 var editRow;
+var isEditModee;
+var editRowEducation;
 export default function CvModal(props) {
     const { Trainerscontroller, isModalVisible, isEditMode } = props;
     const [isModalVisibleEducation, setIsModalVisibleEducation] = useState(false);
@@ -57,6 +61,7 @@ export default function CvModal(props) {
     let loadLazyTimeout = null;
     const [list, setList] = useState([]);
     const [listEducation, setListEducation] = useState([]);
+    const [listExperience, setListExperience] = useState([]);
     const [lazyParams, setLazyParams] = useState({
         page: 0,
     });
@@ -66,6 +71,7 @@ export default function CvModal(props) {
     useEffect(() => {
         onInit();
         onInitEducation();
+        onInitExperience();
         getService("country/get").then((result) => {
             if (result) {
                 setStateCountry(result || []);
@@ -160,9 +166,10 @@ export default function CvModal(props) {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        getService("education/get", listEducation)
+        if(Trainerscontroller!==undefined){
+        getService("education/getByTrainerId/" + Trainerscontroller.id, listEducation)
             .then((result) => {
-                let listEducation = result.content || [];
+                let listEducation = result || [];
                 listEducation.map(
                     (item, index) =>
                         (item.index = lazyParams.page * PAGESIZE + index + 1)
@@ -175,8 +182,32 @@ export default function CvModal(props) {
                 errorCatch(error);
                 isShowLoading(false);
             })
+        }
     };  
 
+    const onInitExperience = () => {
+        setLoading(true);
+        if (loadLazyTimeout) {
+            clearTimeout(loadLazyTimeout);
+        }
+        if(Trainerscontroller!==undefined){
+        getService("expierence/getByTrainerId/" + Trainerscontroller.id, listExperience)
+            .then((result) => {
+                let listExperience = result || [];
+                listExperience.map(
+                    (item, index) =>
+                        (item.index = lazyParams.page * PAGESIZE + index + 1)
+                );
+                setListExperience(listExperience);
+                setSelectedRows([]);
+
+            })
+            .catch((error) => {
+                errorCatch(error);
+                isShowLoading(false);
+            })
+        }
+    }; 
     const action = (row) => {
         return (
             <React.Fragment>
@@ -187,15 +218,16 @@ export default function CvModal(props) {
     }
 
     const edit = (row) => {
-        editRow = row.data
-        isEditMode = true
+        editRowEducation = row
+        isEditModee = true
         setIsModalVisibleEducation(true)
     }
 
 
     const add = () => {
+        editRowEducation = null
         setIsModalVisibleEducation(true);
-        isEditMode = false;
+        isEditModee = false;
     };
 
     const closeModal = (isSuccess = false) => {
@@ -203,12 +235,12 @@ export default function CvModal(props) {
         if (isSuccess) onInit();
     };
 
-    const pop = () => {
-        if (selectedRows.length === 0) {
+    const pop = (row) => {
+        if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         } else {
-            confirm();
+            confirmEducation(row);
         }
     };
 
@@ -222,14 +254,14 @@ export default function CvModal(props) {
     }
 
     const editExperience = (row) => {
-        editRow = row.data
-        isEditMode = true
+        editRow = row
+        isEditModee = true
         setIsModalVisibleExperience(true)
     }
 
     const addExperience = () => {
         setIsModalVisibleExperience(true);
-        isEditMode = false;
+        isEditModee = false;
     };
 
     const closeModalExperience = (isSuccess = false) => {
@@ -237,12 +269,12 @@ export default function CvModal(props) {
         if (isSuccess) onInit();
     };
 
-    const popExperience = () => {
-        if (selectedRows.length === 0) {
+    const popExperience = (row) => {
+        if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         } else {
-            confirm();
+            confirm(row);
         }
     };
 
@@ -416,17 +448,30 @@ export default function CvModal(props) {
         }
     };
 
-
-
-    const handleDeleted = () => {
-        if (selectedRows.length === 0) {
+    const handleDeletedEducation = (row) => {
+        if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         }
-        putService("criteriaa/delete/" + selectedRows[0].id)
+        putService("education/delete/" + row.id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
-                onInit();
+                onInitExperience();
+            })
+            .catch((error) => {
+                errorCatch(error);
+            });
+    };
+
+    const handleDeleted = (row) => {
+        if (row.length === 0) {
+            message.warning("Устгах өгөгдлөө сонгоно уу");
+            return;
+        }
+        putService("expierence/delete/" + row.id)
+            .then((result) => {
+                message.success("Амжилттай устлаа");
+                onInitExperience();
             })
             .catch((error) => {
                 errorCatch(error);
@@ -616,15 +661,16 @@ export default function CvModal(props) {
                                     <Column field="index" header="№" style={{ width: "50px" }} />
                                     <Column field="degree" header="Зэрэг, цол" />
                                     <Column field="universityName" header="Их дээд сургуулийн нэр" />
-                                    <Column field="graduatedDate" header="Огноо" />
+                                    <Column field="enrolledDate" header="Элссэн огноо" />                                   
+                                    <Column field="graduatedDate" header="Төгссөн огноо" />
                                     <Column headerStyle={{ width: '7rem' }} body={action}></Column>
                                 </DataTable>
                                 {isModalVisibleEducation && (
                                     <EducationModal
-                                        Criteriacontroller={editRow}
-                                        isModalVisible={isModalVisibleEducation}
+                                        CvEducationController={editRowEducation}
+                                        isModalVisibleEducation={isModalVisibleEducation}
                                         close={closeModal}
-                                        isEditMode={isEditMode}
+                                        isEditMode={isEditModee}
                                     />
                                 )}
                             </Col>
@@ -639,7 +685,7 @@ export default function CvModal(props) {
                         <Row>
                             <Col xs={24} md={24} lg={24}>
                                 <DataTable
-                                    value={list}
+                                    value={listExperience}
                                     removableSort
                                     paginator
                                     rows={10}
@@ -652,17 +698,17 @@ export default function CvModal(props) {
                                     dataKey="id"
                                 >
                                     <Column field="index" header="№" style={{ width: "50px" }} />
-                                    <Column field="name" header="Албан тушаал" />
-                                    <Column field="" header="Байгууллагын нэр" />
-                                    <Column field="" header="Огноо" />
+                                    <Column field="position" header="Албан тушаал" />
+                                    <Column field="organizationName" header="Байгууллагын нэр" />
+                                    {/* <Column field="hiredDate" header="Ажилд орсон огноо" /> */}
                                     <Column headerStyle={{ width: '7rem' }} body={actionExperience}></Column>
                                 </DataTable>
                                 {isModalVisibleExperience && (
                                     <ExperienceModal
-                                        Criteriacontroller={editRow}
-                                        isModalVisible={isModalVisibleExperience}
+                                        CvExperienceController={editRow}
+                                        isModalVisibleExperience={isModalVisibleExperience}
                                         close={closeModalExperience}
-                                        isEditMode={isEditMode}
+                                        isEditMode={isEditModee}
                                     />
                                 )}
                             </Col>
@@ -877,7 +923,7 @@ export default function CvModal(props) {
             </Modal>
         </div >
     );
-    function confirm() {
+    function confirm(row) {
         Modal.confirm({
             title: "Та устгахдаа итгэлтэй байна уу ?",
             icon: <ExclamationCircleOutlined />,
@@ -885,8 +931,23 @@ export default function CvModal(props) {
             okText: "Устгах",
             cancelText: "Буцах",
             onOk() {
-                handleDeleted();
+                handleDeleted(row);
                 onInit();
+            },
+            onCancel() { },
+        });
+    }
+
+    function confirmEducation(row) {
+        Modal.confirm({
+            title: "Та устгахдаа итгэлтэй байна уу ?",
+            icon: <ExclamationCircleOutlined />,
+            okButtonProps: {},
+            okText: "Устгах",
+            cancelText: "Буцах",
+            onOk() {
+                handleDeletedEducation(row);
+                onInitEducation();
             },
             onCancel() { },
         });
