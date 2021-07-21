@@ -119,7 +119,7 @@ export default function PlanModal(props) {
                                     <AutoCompleteSelect      
                                         valueField="id"
                                         placeholder="Сургагч багшаас сонгох"
-                                        data={stateUser}
+                                        data={stateTrainers}
                                         // onChange={(value) => selectOrgs(value)}
                                     /> 
                                 </Form.Item>
