@@ -7,10 +7,6 @@ const ContentWrapper = styled.div`
     .ant-upload.ant-upload-drag {
         width: 100%;
         height: 160px;
-        //margin: 50px 20px 20px 40px;
-       
-        /* top: 10%;
-        bottom: 20%; */
         border: 1px solid #d9d9d9;
         border-radius: 15px;
     }
@@ -28,7 +24,7 @@ const ContentWrapper = styled.div`
     }
 
     .FormItem {
-        width: 60%;
+        width: 100%;
         height: 40px;
         border:none;
         border-bottom: 1px solid #103154;
@@ -44,6 +40,7 @@ const ContentWrapper = styled.div`
     .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
         height: 40px;
         padding-top: 4px;
+        border: none;
     }
 
     .button {
@@ -61,7 +58,16 @@ const ContentWrapper = styled.div`
     .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
         background-color: #fff;
     }
+    .ant-form-item .ant-select, .ant-form-item .ant-cascader-picker {
+        width: 60%;
+        border-bottom: 1px solid #103154;
+    }
 
+    .ant-input-number {
+        border: none;
+        width: 60%;
+        border-bottom: 1px solid #103154;
+    }
     .ant-input-prefix {
         color: #103154;
         margin-right: 25px;

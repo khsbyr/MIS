@@ -67,46 +67,46 @@ const CV = () => {
     const action = (row) => {
         return (
             <React.Fragment>
-                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />} onClick={edit} />
-                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />} onClick={pop} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faPen} />}  onClick={() => edit(row)} />
+                <Button type="text" icon={<FontAwesomeIcon icon={faTrash} />}  onClick={() => pop(row)} />
             </React.Fragment>
         );
     }
 
     const edit = (row) => {
-        editRow = row.data
+        editRow = row
         isEditMode = true
         setIsModalVisible(true)
         
     }
 
-    const handleDeleted = () => {
-        if (selectedRows.length === 0) {
-            message.warning("Устгах өгөгдлөө сонгоно уу");
-            return;
+    const handleDeleted = (row) => {
+        if (row.length === 0) {
+          message.warning("Устгах өгөгдлөө сонгоно уу");
+          return;
         }
-        debugger
-        putService("trainers/delete/" + selectedRows[0].id)
-            .then((result) => {
-                message.success("Амжилттай устлаа");
-                onInit();
-            })
-            .catch((error) => {
-                errorCatch(error);
-            });
-    };
+        putService("trainers/delete/" + row.id)
+          .then((result) => {
+            message.success("Амжилттай устлаа");
+            onInit();
+          })
+          .catch((error) => {
+            errorCatch(error);
+          });
+      };
+
     const closeModal = (isSuccess = false) => {
         setIsModalVisible(false);
         if (isSuccess) onInit();
     };
-    const pop = () => {
-        if (selectedRows.length === 0) {
-            message.warning("Устгах өгөгдлөө сонгоно уу");
-            return;
+    const pop = (row) => {
+        if (row.length === 0) {
+          message.warning("Устгах өгөгдлөө сонгоно уу");
+          return;
         } else {
-            confirm();
+          confirm(row);
         }
-    };
+      };
 
     const indexBodyTemplate = (row) => {
         return (
@@ -119,7 +119,7 @@ const CV = () => {
     const trainerForBodyTemplate = (row) => {
         return (
             <React.Fragment>
-                <span className="p-column-title">Сургагч багш</span>
+                <span className="p-column-title">Оролцоо</span>
                 {row.trainerFor}
             </React.Fragment>
         );
@@ -129,7 +129,7 @@ const CV = () => {
         return (
             <React.Fragment>
                 <span className="p-column-title">Нэр</span>
-                {row.firstname}
+                {row.firstName}
             </React.Fragment>
         );
     }
@@ -138,18 +138,11 @@ const CV = () => {
         return (
             <React.Fragment>
                 <span className="p-column-title">Овог</span>
-                {row.lastname}
+                {row.lastName}
             </React.Fragment>
         );
     }
-    const addressBodyTemplate = (row) => {
-        return (
-            <React.Fragment>
-                <span className="p-column-title">Сургагч багшийн нэр</span>
-                {row.address.country.name}
-            </React.Fragment>
-        );
-    }
+
     return (
         <ContentWrapper>
             <div className="button-demo">
@@ -176,19 +169,6 @@ const CV = () => {
                                             }}
                                         />
                                     </Col>
-                                    {/* <Col xs={8} md={8} lg={6}>
-                                        <Input
-                                            placeholder="Хайлт хийх"
-                                            allowClear
-                                            prefix={<SearchOutlined />}
-                                            bordered={false}
-                                            onSearch={onSearch}
-                                            style={{
-                                                width: 150,
-                                                borderBottom: "1px solid #103154",
-                                            }}
-                                        />
-                                    </Col> */}
                                     <Col xs={8} md={8} lg={6}>
                                         <Button type="text" icon={<FontAwesomeIcon icon={faPrint} />} >Хэвлэх </Button>
                                     </Col>
@@ -215,28 +195,21 @@ const CV = () => {
                         paginator
                         rows={10}
                         className="p-datatable-responsive-demo"
-                        // selectionMode="checkbox"
                         selection={selectedRows}
-                        // onRowClick={edit}
-                        // editMode="row"
                         onSelectionChange={(e) => {
                             setSelectedRows(e.value);
                         }}
                         dataKey="id">
-                        {/* <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column> */}
                         <Column field="index" header="№" body={indexBodyTemplate} sortable />
-                        <Column header="Сургагч багш" body={trainerForBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
+                        <Column header="Оролцоо" body={trainerForBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
                         <Column header="Нэр" body={FirstNameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
                         <Column header="Овог" body={LastNameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
                         <Column field="registerNumber" header="Сургагч багшийн регистер" sortable filter filterPlaceholder="Хайх"/>
-                        <Column field="imageFilePath" header="Сургагч багшийн зураг" sortable filter filterPlaceholder="Хайх"/>
-                        <Column field="address.country.name" header="address" body={addressBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
-
                         <Column headerStyle={{ width: '7rem' }} body={action}></Column>
                     </DataTable>
                     {isModalVisible && (
                         <CvModal
-                        Usercontroller={editRow}
+                            Trainerscontroller={editRow}
                             isModalVisible={isModalVisible}
                             close={closeModal}
                             isEditMode={isEditMode}
@@ -246,7 +219,7 @@ const CV = () => {
             </div>
         </ContentWrapper>
     );
-    function confirm() {
+    function confirm(row) {
         Modal.confirm({    
             title: "Та устгахдаа итгэлтэй байна уу ?",
             icon: <ExclamationCircleOutlined />,
@@ -254,7 +227,7 @@ const CV = () => {
             okText: "Устгах",
             cancelText: "Буцах",
             onOk() {
-                handleDeleted();
+                handleDeleted(row);
                 onInit();
             },
             onCancel() { },
