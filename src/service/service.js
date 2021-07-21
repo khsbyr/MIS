@@ -6,38 +6,38 @@ import axios from "./axios";
 const config = () => ({
   headers: {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "*"
+    "Access-Control-Allow-Headers": "*",
   },
 });
 
 export async function getService(
   serviceName,
-  param = null,
+  // param = null,
   isShowErrorMessage = true
 ) {
-  let params = "?search=status:true";
-  let isSeparate = false;
-  if (param) {
-    if (param.search) {
-      params += " AND " + param.search;
-      isSeparate = true;
-    }
-    if (param.sort) {
-      if (isSeparate) params += "&";
-      params += "sort=" + param.sort;
-      isSeparate = true;
-    }
-    if (param.page) {
-      if (isSeparate) params += "&";
-      params += "page=" + param.page;
-      isSeparate = true;
-    }
-    if (param.size) {
-      if (isSeparate) params += "&";
-      params += "size=" + param.size;
-      isSeparate = true;
-    }
-  }
+  // let params = "?search=status:true";
+  // let isSeparate = false;
+  // if (param) {
+  //   if (param.search) {
+  //     params += " AND " + param.search;
+  //     isSeparate = true;
+  //   }
+  //   if (param.sort) {
+  //     if (isSeparate) params += "&";
+  //     params += "sort=" + param.sort;
+  //     isSeparate = true;
+  //   }
+  //   if (param.page) {
+  //     if (isSeparate) params += "&";
+  //     params += "page=" + param.page;
+  //     isSeparate = true;
+  //   }
+  //   if (param.size) {
+  //     if (isSeparate) params += "&";
+  //     params += "size=" + param.size;
+  //     isSeparate = true;
+  //   }
+  // }
   const response = await axios
     .get(serviceName, config())
     .catch((error) => {

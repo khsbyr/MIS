@@ -1,16 +1,8 @@
-import {
-  ExclamationCircleOutlined,
-  FileOutlined,
-  FileSyncOutlined, PrinterOutlined,
-  SettingFilled
-} from "@ant-design/icons";
-import Delete from "@material-ui/icons/Delete";
-import SaveIcon from "@material-ui/icons/Save";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
-  Dropdown, Layout,
-  Menu,
+  Layout,
   message,
   Modal,
   Row
@@ -54,13 +46,13 @@ const User = () => {
         getService("user/get", list)
             .then((result) => {
                 let list = result.content || [];
+                console.log(list);
                 list.map(
                     (item, index) =>
                         (item.index = lazyParams.page * PAGESIZE + index + 1)
                 );
                 setList(list);
                 setSelectedRows([]);
-
             })
             .catch((error) => {
                 errorCatch(error);
@@ -74,7 +66,6 @@ const User = () => {
     };
 
     const action = (row) => {
-        console.log(row)
         return (
             <React.Fragment>
                 <Button type="text" icon={<FontAwesomeIcon icon={faPen} />} onClick={() => edit(row)} />
@@ -161,6 +152,7 @@ const User = () => {
             </React.Fragment>
         );
     }
+
     return (
         <ContentWrapper>
             <div className="button-demo">
@@ -170,45 +162,17 @@ const User = () => {
                             <Col xs={24} md={24} lg={14}>
                                 <p className="title">Хэрэглэгчийн жагсаалт</p>
                             </Col>
-                            <Col xs={24} md={24} lg={10}>
-                                <Row gutter={[0, 15]}>
-                                    <Col xs={8} md={8} lg={6}>
-                                        {/* <DatePicker
-                                            onChange={onChange}
-                                            bordered={false}
-                                            suffixIcon={<DownOutlined />}
-                                            placeholder="Select year"
-                                            picker="year"
-                                            className="DatePicker"
-                                            style={{
-                                                width: "120px",
-                                                color: "black",
-                                                cursor: "pointer",
-                                            }}
-                                        /> */}
-                                    </Col>
-                                    {/* <Col xs={8} md={8} lg={6}>
-                                        <Input
-                                            placeholder="Хайлт хийх"
-                                            allowClear
-                                            prefix={<SearchOutlined />}
-                                            bordered={false}
-                                            onSearch={onSearch}
-                                            style={{
-                                                width: 150,
-                                                borderBottom: "1px solid #103154",
-                                            }}
-                                        />
-                                    </Col> */}
-                                    <Col xs={8} md={8} lg={6}>
+                            <Col xs={16} md={16} lg={10}>
+                                <Row justify="end" gutter={[16, 16]}>
+                                    <Col xs={8} md={4} lg={4}>
                                         <Button type="text" icon={<FontAwesomeIcon icon={faPrint} />} >Хэвлэх </Button>
                                     </Col>
-                                    <Col xs={8} md={8} lg={6}>
+                                    <Col xs={8} md={4} lg={4}>
                                         <Button type="text" className="export" icon={<FontAwesomeIcon icon={faFileExcel} />} >
                                             Экспорт
                                         </Button>
                                     </Col>
-                                    <Col xs={8} md={8} lg={6}>
+                                    <Col xs={8} md={4} lg={8}>
                                         <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={add}>
                                             Нэмэх
                                         </Button>
@@ -216,7 +180,6 @@ const User = () => {
                                 </Row>
                             </Col>
                         </Row>
-
                     </Content>
                 </Layout>
                 <div className="datatable-responsive-demo">
@@ -226,21 +189,18 @@ const User = () => {
                         paginator
                         rows={10}
                         className="p-datatable-responsive-demo"
-                        // selectionMode="checkbox"
                         selection={selectedRows}
-                        // onRowClick={edit}
                         editMode="row"
                         onSelectionChange={(e) => {
                             setSelectedRows(e.value);
                         }}
                         dataKey="id">
-                        {/* <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column> */}
                         <Column field="index" header="№" body={indexBodyTemplate} sortable/>
                         <Column field="firstname" header="Нэр" body={firstnameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
                         <Column field="lastname" header="Овог" body={lastnameBodyTemplate} sortable filter filterPlaceholder="Хайх"/>
                         <Column field="register" header="Регистрийн дугаар" body={registerBodyTemplate} sortable/>
                         <Column field="email" header="Й-мэйл" body={emailBodyTemplate} sortable/>
-                        <Column field="" header="Эрх" sortable />
+                        <Column field='role.name' header="Эрх" sortable />
                         <Column headerStyle={{ width: '7rem' }} body={action}></Column>
                     </DataTable>
                     {isModalVisible && (
@@ -255,6 +215,7 @@ const User = () => {
             </div>
         </ContentWrapper>
     );
+
     function confirm(row) {
         Modal.confirm({    
             title: "Та устгахдаа итгэлтэй байна уу ?",

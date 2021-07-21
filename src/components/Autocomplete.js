@@ -3,12 +3,9 @@ import { React } from "react";
 
 export default function AutocompleteSelect(props) {
   const { Option } = Select;
-  const { data, value, disabled, viewField, valueField } = props;
+  const { data, value, disabled, viewField, valueField, size } = props;
   const mode = props.mode || "";
   const placeholder = props.placeholder || "Сонгох";
-  // function onChange(value) {
-  //   props.onChange(value);
-  // }
 
   return (
     <Select
@@ -20,7 +17,7 @@ export default function AutocompleteSelect(props) {
       value={value}
       optionFilterProp="children"
       maxTagCount="responsive"
-      size="small"
+      size={size ? size : "small"}
       filterOption={(input, option) =>
         option.children?.toLowerCase().indexOf(input.toLowerCase()) >= 0
       }

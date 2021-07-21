@@ -21,8 +21,6 @@ function Register() {
   }, []);
 
   const requestNewUser = (values) => {
-    console.log(values.password);
-    console.log(values.confirmPassword);
     if (values.password !== values.confirmPassword) {
         message.error("Passwords don't match")
     } else {
