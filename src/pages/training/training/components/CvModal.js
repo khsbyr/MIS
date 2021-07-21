@@ -34,7 +34,7 @@ const layout = {
         span: 20,
     },
     wrapperCol: {
-        span: 22,
+        span: 24,
     },
 };
 
@@ -56,6 +56,7 @@ export default function CvModal(props) {
     const [selectedRows, setSelectedRows] = useState([]);
     let loadLazyTimeout = null;
     const [list, setList] = useState([]);
+    const [listEducation, setListEducation] = useState([]);
     const [lazyParams, setLazyParams] = useState({
         page: 0,
     });
@@ -64,6 +65,7 @@ export default function CvModal(props) {
     const { RangePicker } = DatePicker;
     useEffect(() => {
         onInit();
+        onInitEducation();
         getService("country/get").then((result) => {
             if (result) {
                 setStateCountry(result || []);
@@ -152,6 +154,28 @@ export default function CvModal(props) {
                 isShowLoading(false);
             })
     };
+
+    const onInitEducation = () => {
+        setLoading(true);
+        if (loadLazyTimeout) {
+            clearTimeout(loadLazyTimeout);
+        }
+        getService("education/get", listEducation)
+            .then((result) => {
+                let listEducation = result.content || [];
+                listEducation.map(
+                    (item, index) =>
+                        (item.index = lazyParams.page * PAGESIZE + index + 1)
+                );
+                setListEducation(listEducation);
+                setSelectedRows([]);
+
+            })
+            .catch((error) => {
+                errorCatch(error);
+                isShowLoading(false);
+            })
+    };  
 
     const action = (row) => {
         return (
@@ -577,7 +601,7 @@ export default function CvModal(props) {
                         <Row>
                             <Col xs={24} md={24} lg={24}>
                                 <DataTable
-                                    value={list}
+                                    value={listEducation}
                                     removableSort
                                     paginator
                                     rows={10}
@@ -590,9 +614,9 @@ export default function CvModal(props) {
                                     dataKey="id"
                                 >
                                     <Column field="index" header="№" style={{ width: "50px" }} />
-                                    <Column field="name" header="Зэрэг, цол" />
-                                    <Column field="" header="Их дээд сургуулийн нэр" />
-                                    <Column field="" header="Огноо" />
+                                    <Column field="degree" header="Зэрэг, цол" />
+                                    <Column field="universityName" header="Их дээд сургуулийн нэр" />
+                                    <Column field="graduatedDate" header="Огноо" />
                                     <Column headerStyle={{ width: '7rem' }} body={action}></Column>
                                 </DataTable>
                                 {isModalVisibleEducation && (
