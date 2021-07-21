@@ -10,6 +10,11 @@ import { getService, putService } from "../../../service/service";
 import { errorCatch } from "../../../tools/Tools";
 import ContentWrapper from "../../criteria/criteria.style";
 import PlanModal from "../training/components/PlanModal";
+import OrgaStyle   from "./components/orga.style";
+import AutoCompleteSelect from "../../../components/Autocomplete";
+import Form from "antd/lib/form/Form";
+import { Subject } from "@material-ui/icons";
+
 
 function onChange(date, dateString) {
   console.log(date, dateString);
@@ -27,16 +32,59 @@ const Plan = () => {
   });
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
+  const [stateOrga, setStateOrga] = useState([]);
+  const [stateGuide, setStateGuide] = useState([]);
+
 
   useEffect(() => {
     onInit();
+    getService("organization/get").then((result) => {
+      if (result) {
+        setStateOrga(result.content || []);
+      }
+    });
+    getService("trainingGuidelines/get").then((result) => {
+      if (result) {
+        setStateGuide(result.content || []);
+      }
+    });
   }, [lazyParams]);
+
+  const selectOrgs = (value) => {
+    getGuidelines(value);
+  };
+
+  const selectGuide = (value) => {
+    getParti(value);
+  };
+
+  const getGuidelines = (orgId) => {
+    getService(`trainingGuidelines/getList/${orgId}`, {}).then((result) => {
+      if (result) {
+        setStateGuide(result || []);
+      }
+    });
+  };
+
+  const getParti = (teamId) => {
+    getService(`trainingTeam/getList/${teamId}`, {}).then((result) => {
+      if (result) {
+        let list = result || [];
+        list.map(
+          (item, index) =>
+            (item.index = lazyParams.page * PAGESIZE + index + 1)
+        );
+        setList(list);
+        setSelectedRows([]);
+      }
+    });
+  };
 
   const onInit = () => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService("trainingTeam/getList/1", list)
+    getService("trainingTeam/get", list)
       .then((result) => {
         let list = result || [];
         list.map(
@@ -141,12 +189,33 @@ const Plan = () => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={14}>
+              <Col xs={24} md={24} lg={8}>
                 <p className="title">Сургалтын баг</p>
               </Col>
-              <Col xs={24} md={24} lg={10}>
+              <Col xs={24} md={24} lg={16}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={6}>
+                <Col xs={8} md={8} lg={5}>
+                  <OrgaStyle>
+                      <AutoCompleteSelect                  
+                          valueField="id"
+                          placeholder="Байгууллага сонгох"
+                          data={stateOrga}
+                          onChange={(value) => selectOrgs(value)}
+                      />
+                      </OrgaStyle>
+                  </Col>
+                  <Col xs={8} md={8} lg={5}>
+                    
+                  <OrgaStyle>                
+                      <AutoCompleteSelect                  
+                          valueField="id"
+                          placeholder="Сургалт сонгох"
+                          data={stateGuide}
+                          onChange={(value) => selectGuide(value)}
+                      />  
+                      </OrgaStyle>
+                  </Col>
+                  <Col xs={8} md={8} lg={5}>
                     <DatePicker
                       onChange={onChange}
                       bordered={false}
@@ -161,20 +230,7 @@ const Plan = () => {
                       }}
                     />
                   </Col>
-                  {/* <Col xs={8} md={8} lg={6}>
-                                          <Input
-                                              placeholder="Хайлт хийх"
-                                              allowClear
-                                              prefix={<SearchOutlined />}
-                                              bordered={false}
-                                              onSearch={onSearch}
-                                              style={{
-                                                  width: 150,
-                                                  borderBottom: "1px solid #103154",
-                                              }}
-                                          />
-                                      </Col> */}
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -182,7 +238,7 @@ const Plan = () => {
                       Хэвлэх{" "}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -191,7 +247,7 @@ const Plan = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
