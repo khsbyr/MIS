@@ -49,20 +49,22 @@ export default function TrainingGuidelinesModal(props) {
           setStateAimag(result || []);
         }
       });
-      // getService(
-      //   `soum/getList/${TrainingGuidelinesModalController.training_guidelines.address.aimag.id}`
-      // ).then((result) => {
-      //   if (result) {
-      //     setStateSum(result || []);
-      //   }
-      // });
-      // getService(
-      //   `bag/getList/${TrainingGuidelinesModalController.training_guidelines.address.soum.id}`
-      // ).then((result) => {
-      //   if (result) {
-      //     setStateBag(result || []);
-      //   }
-      // });
+      if(TrainingGuidelinesModalController!==undefined) {
+      getService(
+        `soum/getList/${TrainingGuidelinesModalController.address.aimag.id}`
+      ).then((result) => {
+        if (result) {
+          setStateSum(result || []);
+        }
+      });
+      getService(
+        `bag/getList/${TrainingGuidelinesModalController.address.soum.id}`
+      ).then((result) => {
+        if (result) {
+          setStateBag(result || []);
+        }
+      });
+    }
       if (isEditMode) {
         form.setFieldsValue({
           ...TrainingGuidelinesModalController,

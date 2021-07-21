@@ -100,6 +100,7 @@ export default function GuidelinesModal(props) {
         setStateAimag(result || []);
       }
     });
+  
     getService(
       `soum/getList/${Guidelinescontroller.training_guidelines.address.aimag.id}`
     ).then((result) => {
@@ -114,6 +115,7 @@ export default function GuidelinesModal(props) {
         setStateBag(result || []);
       }
     });
+    
     if (isEditMode) {
       form.setFieldsValue({
         ...Guidelinescontroller,
@@ -186,8 +188,16 @@ export default function GuidelinesModal(props) {
   const edit = (row) => {
     editRow = row;
     isEditModeParticipants = true;
-    isEditModeGuidelines = true;
+    // isEditModeGuidelines = true;
     setIsModalVisibleParticipants(true);
+    // setIsModalVisibleGuidelines(true);
+  };
+
+  const editUdirdamj = (row) => {
+    editRow = row;
+    // isEditModeParticipants = true;
+    isEditModeGuidelines = true;
+    // setIsModalVisibleParticipants(true);
     setIsModalVisibleGuidelines(true);
   };
 
@@ -200,15 +210,46 @@ export default function GuidelinesModal(props) {
     }
   };
 
-  const add = () => {
+  const actionUdirdamj = (row) => {
+    return (
+      <React.Fragment>
+        <Button
+          type="text"
+          icon={<FontAwesomeIcon icon={faPen} />}
+          onClick={() => editUdirdamj(row)}
+        />
+        <Button
+          type="text"
+          icon={<FontAwesomeIcon icon={faTrash} />}
+          onClick={() => pop(row)}
+        />
+      </React.Fragment>
+    );
+  };
+
+  const addUdirdamj = () => {
     setIsModalVisibleGuidelines(true);
-    setIsModalVisibleParticipants(true);
+    // setIsModalVisibleParticipants(true);
     isEditModeParticipants = false;
+    // isEditModeGuidelines = false;
+  };
+
+  const add = () => {
+    // setIsModalVisibleGuidelines(true);
+    setIsModalVisibleParticipants(true);
+    // isEditModeParticipants = false;
     isEditModeGuidelines = false;
   };
 
   const closeModal = (isSuccess = false) => {
     setIsModalVisibleParticipants(false);
+    // setIsModalVisibleGuidelines(false);
+
+    if (isSuccess) onInit();
+  };
+
+  const closeModalUdirdamj = (isSuccess = false) => {
+    // setIsModalVisibleParticipants(false);
     setIsModalVisibleGuidelines(false);
 
     if (isSuccess) onInit();
@@ -434,7 +475,7 @@ export default function GuidelinesModal(props) {
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
+                      onClick={addUdirdamj}
                     >
                       Нэмэх
                     </Button>
@@ -467,13 +508,13 @@ export default function GuidelinesModal(props) {
                       header="Хэрэгжүүлэх үйл ажиллагаа"
                     />
                     <Column field="result" header="Хүлэгдэж буй үр дүн 1" />
-                    <Column headerStyle={{ width: "7rem" }} body={action}/>
+                    <Column headerStyle={{ width: "7rem" }} body={actionUdirdamj}/>
                   </DataTable>
                   {isModalVisibleGuidelines && (
                     <TrainingGuidelinesModal
                     TrainingGuidelinesModalController={editRow}
                       isModalVisible={isModalVisibleGuidelines}
-                      close={closeModal}
+                      close={closeModalUdirdamj}
                       isEditMode={isEditModeGuidelines}
                     />
                   )}
