@@ -71,7 +71,7 @@ export default function OrganizationModal(props) {
         setStateAimag(result || []);
       }
     });
-    if(Orgcontroller.address){
+    if(Orgcontroller!==undefined) {
     getService(`soum/getList/${Orgcontroller.address.aimag.id}`).then((result) => {
       if (result) {
         setStateSum(result || []);

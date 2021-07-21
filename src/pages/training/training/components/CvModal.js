@@ -74,8 +74,8 @@ export default function CvModal(props) {
                 setStateAimag(result || []);
             }
         });
-        console.log('asd', Trainerscontroller);
-        if(Trainerscontroller) {
+        //console.log('asd', Trainerscontroller);
+        if(Trainerscontroller!==undefined) {
             getService(`soum/getList/${Trainerscontroller.address.aimag.id}`).then((result) => {
                 if (result) {
                     setStateSum(result || []);
