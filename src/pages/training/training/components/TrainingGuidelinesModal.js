@@ -39,6 +39,10 @@ export default function TrainingGuidelinesModal(props) {
     });   
 
     useEffect(() => {
+      getService("trainingGuidelines/get")
+      .then((result) => {
+      })
+
       getService("country/get").then((result) => {
         if (result) {
           setStateCountry(result || []);
@@ -72,10 +76,7 @@ export default function TrainingGuidelinesModal(props) {
           AimagID: TrainingGuidelinesModalController.address.aimag.id,
           SoumID: TrainingGuidelinesModalController.address.soum.id,
           BagID: TrainingGuidelinesModalController.address.bag.id,
-          AddressDetail:
-          TrainingGuidelinesModalController.address.addressDetail,
-          trainingStartDate:
-          TrainingGuidelinesModalController.trainingStartDate,
+          AddressDetail:TrainingGuidelinesModalController.address.addressDetail,
           subject: TrainingGuidelinesModalController.subject,
           reason: TrainingGuidelinesModalController.reason,
           aim: TrainingGuidelinesModalController.aim,
@@ -117,7 +118,6 @@ export default function TrainingGuidelinesModal(props) {
       });
     };
     const save = () => {
-      debugger
       form
         .validateFields()
         .then((values) => {
@@ -162,7 +162,7 @@ export default function TrainingGuidelinesModal(props) {
 
         <div>
             <Modal
-                title="Оролцогчийн бүртгэл"
+                title="Сургалтын удирдамж"
                 okText="Хадгалах"
                 cancelText="Буцах"
                 width={1000}

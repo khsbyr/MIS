@@ -1,20 +1,11 @@
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { faPen, faTrash, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPen, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Button,
-  Col,
-  DatePicker,
-  Form,
-  Input,
-  message,
-  Modal,
-  Row,
-} from "antd";
-import moment from "moment";
+import { Button, Col, Form, Input, message, Modal, Row } from "antd";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import React, { useEffect, useState } from "react";
+import { traverseTwoPhase } from "react-dom/test-utils";
 import AutocompleteSelect from "../../../../components/Autocomplete";
 import { isShowLoading } from "../../../../context/Tools";
 import {
@@ -55,11 +46,6 @@ export default function GuidelinesModal(props) {
     useState(false);
   const [isModalVisibleGuidelines, setIsModalVisibleGuidelines] =
     useState(false);
-  const [stateAimag, setStateAimag] = useState([]);
-  const [stateSum, setStateSum] = useState([]);
-  const [stateCountry, setStateCountry] = useState([]);
-  const [stateBag, setStateBag] = useState([]);
-  const [stateParticipants, setStateParticipants] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [list, setList] = useState([]);
   const [list1, setList1] = useState([]);
@@ -67,16 +53,11 @@ export default function GuidelinesModal(props) {
   const [stateOrga, setStateOrga] = useState([]);
   const [statePlan, setStatePlan] = useState([]);
 
-
   const PAGESIZE = 20;
   const [lazyParams, setLazyParams] = useState({
     page: 0,
   });
   let loadLazyTimeout = null;
-
-  function DateOnChange(date, dateString) {
-    console.log(date, dateString);
-  }
 
   useEffect(() => {
     onInit();
@@ -86,60 +67,27 @@ export default function GuidelinesModal(props) {
       }
     });
     getService("trainingPlan/get").then((result) => {
-        if (result) {
-            setStatePlan(result.content || []);
-        }
-      });
-    getService("country/get").then((result) => {
       if (result) {
-        setStateCountry(result || []);
+        setStatePlan(result.content || []);
       }
     });
-    getService("aimag/get").then((result) => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-  
-    getService(
-      `soum/getList/${Guidelinescontroller.training_guidelines.address.aimag.id}`
-    ).then((result) => {
-      if (result) {
-        setStateSum(result || []);
-      }
-    });
-    getService(
-      `bag/getList/${Guidelinescontroller.training_guidelines.address.soum.id}`
-    ).then((result) => {
-      if (result) {
-        setStateBag(result || []);
-      }
-    });
-    
+    if(Guidelinescontroller!==undefined){
+    getService("training/get/" + Guidelinescontroller.id).then((result) => {});
+
     if (isEditMode) {
       form.setFieldsValue({
         ...Guidelinescontroller,
-        CountryID: Guidelinescontroller.training_guidelines.address.country.id,
-        AimagID: Guidelinescontroller.training_guidelines.address.aimag.id,
-        SoumID: Guidelinescontroller.training_guidelines.address.soum.id,
-        BagID: Guidelinescontroller.training_guidelines.address.bag.id,
-        AddressDetail:
-          Guidelinescontroller.training_guidelines.address.addressDetail,
-        trainingStartDate:
-          Guidelinescontroller.training_guidelines.trainingStartDate,
-        Subject: Guidelinescontroller.training_guidelines.subject,
-        Reason: Guidelinescontroller.training_guidelines.reason,
-        Aim: Guidelinescontroller.training_guidelines.aim,
-        Operation: Guidelinescontroller.training_guidelines.operation,
-        Result: Guidelinescontroller.training_guidelines.result,
+        TrainingPlanName: Guidelinescontroller.training_plan.name,
+        OrganizationName: Guidelinescontroller.organization.name,
       });
-    }
+    }}
   }, []);
 
   const onInit = () => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
+    if(Guidelinescontroller!==undefined){
     getService("participants/getList/" + Guidelinescontroller.id, list)
       .then((result) => {
         let list = result.content || [];
@@ -153,7 +101,7 @@ export default function GuidelinesModal(props) {
         errorCatch(error);
         isShowLoading(false);
       });
-    getService("trainingGuidelines/get/", list1)
+    getService("trainingGuidelines/get", list1)
       .then((result) => {
         let list1 = result.content || [];
         list1.map(
@@ -166,6 +114,7 @@ export default function GuidelinesModal(props) {
         errorCatch(error);
         isShowLoading(false);
       });
+    }
   };
 
   const action = (row) => {
@@ -188,16 +137,12 @@ export default function GuidelinesModal(props) {
   const edit = (row) => {
     editRow = row;
     isEditModeParticipants = true;
-    // isEditModeGuidelines = true;
     setIsModalVisibleParticipants(true);
-    // setIsModalVisibleGuidelines(true);
   };
 
   const editUdirdamj = (row) => {
     editRow = row;
-    // isEditModeParticipants = true;
     isEditModeGuidelines = true;
-    // setIsModalVisibleParticipants(true);
     setIsModalVisibleGuidelines(true);
   };
 
@@ -229,27 +174,21 @@ export default function GuidelinesModal(props) {
 
   const addUdirdamj = () => {
     setIsModalVisibleGuidelines(true);
-    // setIsModalVisibleParticipants(true);
     isEditModeParticipants = false;
-    // isEditModeGuidelines = false;
   };
 
   const add = () => {
-    // setIsModalVisibleGuidelines(true);
     setIsModalVisibleParticipants(true);
-    // isEditModeParticipants = false;
     isEditModeGuidelines = false;
   };
 
   const closeModal = (isSuccess = false) => {
     setIsModalVisibleParticipants(false);
-    // setIsModalVisibleGuidelines(false);
 
     if (isSuccess) onInit();
   };
 
   const closeModalUdirdamj = (isSuccess = false) => {
-    // setIsModalVisibleParticipants(false);
     setIsModalVisibleGuidelines(false);
 
     if (isSuccess) onInit();
@@ -270,57 +209,10 @@ export default function GuidelinesModal(props) {
         errorCatch(error);
       });
   };
-
-  const selectCountry = (value) => {
-    getAimag(value);
-  };
-
-  const getAimag = (countryId) => {
-    getService(`aimag/getList/${countryId}`, {}).then((result) => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-  };
-  const selectAimag = (value) => {
-    getSum(value);
-  };
-  const getSum = (aimagId) => {
-    getService(`soum/getList/${aimagId}`, {}).then((result) => {
-      if (result) {
-        setStateSum(result || []);
-      }
-    });
-  };
-  const selectSum = (value) => {
-    getBag(value);
-  };
-  const getBag = (sumID) => {
-    getService(`bag/getList/${sumID}`, {}).then((result) => {
-      if (result) {
-        setStateBag(result || []);
-      }
-    });
-  };
-
-  
-    const selectPlan = (value) => {
-      getPlans(value);
-    };
-
-    const getPlans = (planId) => {
-      getService(`trainingPlan/get/${planId}`, {}).then((result) => {
-        if (result) {
-
-        }
-      });
-    };
-
   const save = () => {
     form
       .validateFields()
       .then((values) => {
-
         if (isEditMode) {
           putService("training/update/" + Guidelinescontroller.id, values)
             .then((result) => {
@@ -368,22 +260,28 @@ export default function GuidelinesModal(props) {
               <Col xs={24} md={24} lg={24}>
                 <Row>
                   <Col xs={24} md={24} lg={6}>
-                    <Form.Item layout="vertical" label="Байгууллага сонгох:">
+                    <Form.Item
+                      layout="vertical"
+                      label="Байгууллага сонгох:"
+                      name="OrganizationName"
+                    >
                       <AutocompleteSelect
                         valueField="id"
                         data={stateOrga}
                         placeholder="Байгууллага сонгох"
-                        // onChange={(value) => selectOrgs(value)}
                       />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={6}>
-                    <Form.Item layout="vertical" label="Сургалтын төлөвлөгөө:">
+                    <Form.Item
+                      layout="vertical"
+                      label="Сургалтын төлөвлөгөө:"
+                      name="TrainingPlanName"
+                    >
                       <AutocompleteSelect
                         valueField="id"
                         data={statePlan}
                         placeholder="Сургалтын төлөвлөгөө"
-                        // onChange={(value) => selectOrgs(value)}
                       />
                     </Form.Item>
                   </Col>
@@ -453,8 +351,8 @@ export default function GuidelinesModal(props) {
                     dataKey="id"
                   >
                     <Column field="index" header="№" />
-                    <Column field="name" header="Нэр" filter/>
-                    <Column field="phone" header="Утас" filter/>
+                    <Column field="name" header="Нэр" filter />
+                    <Column field="phone" header="Утас" filter />
                     <Column headerStyle={{ width: "7rem" }} body={action} />
                   </DataTable>
                   {isModalVisibleParticipants && (
@@ -471,14 +369,14 @@ export default function GuidelinesModal(props) {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Form.Item label="Сургалтын удирдамж:">
-                <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={addUdirdamj}
-                    >
-                      Нэмэх
-                    </Button>
+                  <Button
+                    type="text"
+                    className="export"
+                    icon={<FontAwesomeIcon icon={faPlus} />}
+                    onClick={addUdirdamj}
+                  >
+                    Нэмэх
+                  </Button>
                   <DataTable
                     value={list1}
                     removableSort
@@ -493,26 +391,25 @@ export default function GuidelinesModal(props) {
                     dataKey="id"
                   >
                     <Column field="index" header="№" />
-                    <Column
-                          field="subject"
-                          header="Сургалтын сэдэв"
-                          filter
-                        />
+                    <Column field="subject" header="Сургалтын сэдэв" filter />
                     <Column
                       field="reason"
                       header="Сургалт зохион байгуулах үндэслэл"
                     />
-                    <Column field="aim" header="Сургалтын зорилго"/>
+                    <Column field="aim" header="Сургалтын зорилго" />
                     <Column
                       field="operation"
                       header="Хэрэгжүүлэх үйл ажиллагаа"
                     />
                     <Column field="result" header="Хүлэгдэж буй үр дүн 1" />
-                    <Column headerStyle={{ width: "7rem" }} body={actionUdirdamj}/>
+                    <Column
+                      headerStyle={{ width: "7rem" }}
+                      body={actionUdirdamj}
+                    />
                   </DataTable>
                   {isModalVisibleGuidelines && (
                     <TrainingGuidelinesModal
-                    TrainingGuidelinesModalController={editRow}
+                      TrainingGuidelinesModalController={editRow}
                       isModalVisible={isModalVisibleGuidelines}
                       close={closeModalUdirdamj}
                       isEditMode={isEditModeGuidelines}
