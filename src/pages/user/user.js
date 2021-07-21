@@ -13,7 +13,6 @@ import React, { useEffect, useState } from "react";
 import { isShowLoading } from "../../context/Tools";
 import { getService, putService } from "../../service/service";
 import { errorCatch } from "../../tools/Tools";
-import "../criteria/criteria.style";
 import ContentWrapper from "../criteria/criteria.style";
 import UserModal from "../user/components/UserModal";
 import { faFileExcel, faPen, faPlus, faPrint, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -23,7 +22,6 @@ const { Content } = Layout;
 var editRow
 var isEditMode;
 const User = () => {
-
     let loadLazyTimeout = null;
     const [list, setList] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);

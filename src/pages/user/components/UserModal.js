@@ -54,31 +54,34 @@ export default function UserModal(props) {
       }
     });
 
-    getService(`soum/getList/${Usercontroller.address.aimag.id}`).then((result) => {
-      if (result) {
-        setStateSum(result || []);
+    if(Usercontroller!==undefined) {
+      if(Usercontroller.address) {
+        getService(`soum/getList/${Usercontroller.address.aimag.id}`).then((result) => {
+          if (result) {
+            setStateSum(result || []);
+          }
+        });
+  
+        getService(`bag/getList/${Usercontroller.address.soum.id}`).then((result) => {
+          if (result) {
+            setStateBag(result || []);
+          }
+        });
       }
-    });
-
-    getService(`bag/getList/${Usercontroller.address.soum.id}`).then((result) => {
-      if (result) {
-        setStateBag(result || []);
-      }
-    });
-
+    }
+    
     if (isEditMode) {
-      console.log(Usercontroller);
       setStateGender(Usercontroller.gender.id);
       setStateTrue(Usercontroller.isTrue);
       form.setFieldsValue({ 
         ...Usercontroller, 
-        CountryID : Usercontroller.address.country.id,
-        AimagID : Usercontroller.address.aimag.id,
-        SoumID : Usercontroller.address.soum.id,
-        BagID : Usercontroller.address.bag.id,
-        AddressDetail : Usercontroller.address.addressDetail,
-        RoleID : Usercontroller.role.id,
-        GenderID : Usercontroller.gender.id,
+        CountryID : Usercontroller.address ? Usercontroller.address.country.id : '',
+        AimagID : Usercontroller.address ? Usercontroller.address.aimag.id : '',
+        SoumID : Usercontroller.address ? Usercontroller.address.soum.id : '',
+        BagID : Usercontroller.address ? Usercontroller.address.bag.id : '',
+        AddressDetail : Usercontroller.address ? Usercontroller.address.addressDetail : '',
+        RoleID : Usercontroller.role ? Usercontroller.role.id : '',
+        GenderID : Usercontroller.gender ? Usercontroller.gender.id : '',
       });
     }
   }, [Usercontroller, form, isEditMode]);
