@@ -1,14 +1,17 @@
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { faPen, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPen, faTrash, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Button,
-  Col, Form,
+  Col,
+  DatePicker,
+  Form,
   Input,
   message,
   Modal,
-  Row
+  Row,
 } from "antd";
+import moment from "moment";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import React, { useEffect, useState } from "react";
@@ -17,7 +20,7 @@ import { isShowLoading } from "../../../../context/Tools";
 import {
   getService,
   postService,
-  putService
+  putService,
 } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
 import ContentWrapper from "./guidelines.style";

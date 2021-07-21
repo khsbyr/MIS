@@ -105,31 +105,31 @@ const Admin = () => {
                   title={t("training")}
                 >
                   <Menu.Item key="8">
-                    <Link to="/admin//organization">{t("consulting_orga")}</Link>
+                    <Link to="/admin/organization">{t("consulting_orga")}</Link>
                   </Menu.Item>
                   <Menu.Item key="9">
-                    <Link to="/admin//guidelines">{t("training_intro")}</Link>
+                    <Link to="/admin/guidelines">{t("training_intro")}</Link>
                   </Menu.Item>
                   <Menu.Item key="10">
-                    <Link to="/admin//plan">{t("training_team")}</Link>
+                    <Link to="/admin/plan">{t("training_team")}</Link>
                   </Menu.Item>
                   <Menu.Item key="11">
-                    <Link to="/admin//cv">{t("cv_teachers")}</Link>
+                    <Link to="/admin/cv">{t("cv_teachers")}</Link>
                   </Menu.Item>
                   <Menu.Item key="12">
-                    <Link to="/admin//training_program">{t("training_program")}</Link>
+                    <Link to="/admin/training_program">{t("training_program")}</Link>
                   </Menu.Item>
                   <Menu.Item key="13">
-                    <Link to="/admin//attendance">{t("attendance_registration")}</Link>
+                    <Link to="/admin/attendance">{t("attendance_registration")}</Link>
                   </Menu.Item>
                   <Menu.Item key="14">
-                    <Link to="/admin//test_aggregation">{t("test_aggregation")}</Link>
+                    <Link to="/admin/test_aggregation">{t("test_aggregation")}</Link>
                   </Menu.Item>
                   <Menu.Item key="15">
-                    <Link to="/admin//training_report">{t("training_report")}</Link>
+                    <Link to="/admin/training_report">{t("training_report")}</Link>
                   </Menu.Item>
                   <Menu.Item key="16">
-                    <Link to="/admin//budget">{t("training_budget")}</Link>
+                    <Link to="/admin/budget">{t("training_budget")}</Link>
                   </Menu.Item>
                 </SubMenu>
                 <SubMenu
@@ -145,7 +145,7 @@ const Admin = () => {
                     {" "}
                     <Menu.Item key="17">
                       {" "}
-                      <Link to="/admin//partnership">{t("consulting_orga")}</Link>
+                      <Link to="/admin/partnership">{t("consulting_orga")}</Link>
                     </Menu.Item>
                   </SubMenu>
                 </SubMenu>
@@ -161,23 +161,23 @@ const Admin = () => {
                     {" "}
                     <Menu.Item key="18">
                       {" "}
-                      <Link to="/admin//partnership">{t("brief_draft")}</Link>
+                      <Link to="/admin/partnership">{t("brief_draft")}</Link>
                     </Menu.Item>
                     <Menu.Item key="19">
                       {" "}
-                      <Link to="/admin//partnership">{t("investment")}</Link>
+                      <Link to="/admin/partnership">{t("investment")}</Link>
                     </Menu.Item>
                     <Menu.Item key="20">
                       {" "}
-                      <Link to="/admin//partnership">{t("income_expenses")}</Link>
+                      <Link to="/admin/partnership">{t("income_expenses")}</Link>
                     </Menu.Item>
                     <Menu.Item key="21">
                       {" "}
-                      <Link to="/admin//partnership">{t("consulting_orga")}</Link>
+                      <Link to="/admin/partnership">{t("consulting_orga")}</Link>
                     </Menu.Item>
                     <Menu.Item key="22">
                       {" "}
-                      <Link to="/admin//partnership">{t("detailed_project")}</Link>
+                      <Link to="/admin/partnership">{t("detailed_project")}</Link>
                     </Menu.Item>
                   </SubMenu>
                 </SubMenu>
@@ -286,46 +286,46 @@ const Admin = () => {
                   <Route exact path="/admin/criteria">
                     <Criteria />
                   </Route>
-                  <Route path="/admin//guidelines">
+                  <Route path="/admin/guidelines">
                     <Guidelines />
                   </Route>
-                  <Route path="/admin//plan">
+                  <Route path="/admin/plan">
                     <Plan />
                   </Route>
-                  <Route path="/admin//partnership">
+                  <Route path="/admin/partnership">
                     <Partnership />
                   </Route>
-                  <Route path="/admin//organization">
+                  <Route path="/admin/organization">
                     <Organization />
                   </Route>
-                  <Route path="/admin//cv">
+                  <Route path="/admin/cv">
                     <CV />
                   </Route>
-                  <Route path="/admin//training_report">
+                  <Route path="/admin/training_report">
                     <TrainingReport />
                   </Route>
-                  <Route path="/admin//composition1">
+                  <Route path="/admin/composition1">
                     <Composition1 />
                   </Route>
-                  <Route path="/admin//composition2">
+                  <Route path="/admin/composition2">
                     <Composition2 />
                   </Route>
-                  <Route path="/admin//composition3">
+                  <Route path="/admin/composition3">
                     <Composition3 />
                   </Route>
-                  <Route path="/admin//composition4">
+                  <Route path="/admin/composition4">
                     <Composition4 />
                   </Route>
-                  <Route path="/admin//training_program">
+                  <Route path="/admin/training_program">
                     <TrainingProgram />
                   </Route>
-                  <Route path="/admin//attendance">
+                  <Route path="/admin/attendance">
                     <Attendance />
                   </Route>
-                  <Route path="/admin//test_aggregation">
+                  <Route path="/admin/test_aggregation">
                     <TestAggregation />
                   </Route>
-                  <Route path="/admin//budget">
+                  <Route path="/admin/budget">
                     <Budget />
                   </Route>
                 </Switch>{" "}
