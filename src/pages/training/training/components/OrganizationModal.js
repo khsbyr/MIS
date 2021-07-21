@@ -71,6 +71,7 @@ export default function OrganizationModal(props) {
         setStateAimag(result || []);
       }
     });
+    if(Orgcontroller!==undefined) {
     getService(`soum/getList/${Orgcontroller.address.aimag.id}`).then((result) => {
       if (result) {
         setStateSum(result || []);
@@ -81,14 +82,15 @@ export default function OrganizationModal(props) {
         setStateBag(result || []);
       }
     });
+    }
     if (isEditMode) {
       form.setFieldsValue({ ...Orgcontroller , 
         bankID : Orgcontroller.bank.id,
         Currency : Orgcontroller.currency.id,
-        CountryID : Orgcontroller.address.country.id,
-        AimagID : Orgcontroller.address.aimag.id,
-        SoumID : Orgcontroller.address.soum.id,
-        BagID : Orgcontroller.address.bag.id,
+        CountryID: Orgcontroller.address ? Orgcontroller.address.country.id : '',
+        AimagID: Orgcontroller.address ? Orgcontroller.address.aimag.id : '',
+        SoumID: Orgcontroller.address ? Orgcontroller.address.soum.id : '',
+        BagID: Orgcontroller.address ? Orgcontroller.address.bag.id : '',
         AddressDetail : Orgcontroller.address.addressDetail,
         RespoUserFirstName : Orgcontroller.responsibleUser.firstname,
         RespoUserLastName : Orgcontroller.responsibleUser.lastname,

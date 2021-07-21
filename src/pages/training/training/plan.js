@@ -12,9 +12,6 @@ import ContentWrapper from "../../criteria/criteria.style";
 import PlanModal from "../training/components/PlanModal";
 import OrgaStyle   from "./components/orga.style";
 import AutoCompleteSelect from "../../../components/Autocomplete";
-import Form from "antd/lib/form/Form";
-import { Subject } from "@material-ui/icons";
-
 
 function onChange(date, dateString) {
   console.log(date, dateString);
@@ -43,7 +40,7 @@ const Plan = () => {
         setStateOrga(result.content || []);
       }
     });
-    getService("trainingGuidelines/get").then((result) => {
+    getService("training/get").then((result) => {
       if (result) {
         setStateGuide(result.content || []);
       }
@@ -59,7 +56,7 @@ const Plan = () => {
   };
 
   const getGuidelines = (orgId) => {
-    getService(`trainingGuidelines/getList/${orgId}`, {}).then((result) => {
+    getService(`training/getList/${orgId}`, {}).then((result) => {
       if (result) {
         setStateGuide(result || []);
       }
@@ -189,12 +186,12 @@ const Plan = () => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={8}>
+              <Col xs={24} md={24} lg={6}>
                 <p className="title">Сургалтын баг</p>
               </Col>
-              <Col xs={24} md={24} lg={16}>
+              <Col xs={24} md={24} lg={18}>
                 <Row gutter={[0, 15]}>
-                <Col xs={8} md={8} lg={5}>
+                <Col xs={8} md={8} lg={6}>
                   <OrgaStyle>
                       <AutoCompleteSelect                  
                           valueField="id"
@@ -204,7 +201,7 @@ const Plan = () => {
                       />
                       </OrgaStyle>
                   </Col>
-                  <Col xs={8} md={8} lg={5}>
+                  <Col xs={8} md={8} lg={6}>
                     
                   <OrgaStyle>                
                       <AutoCompleteSelect                  
@@ -215,7 +212,7 @@ const Plan = () => {
                       />  
                       </OrgaStyle>
                   </Col>
-                  <Col xs={8} md={8} lg={5}>
+                  <Col xs={8} md={8} lg={3}>
                     <DatePicker
                       onChange={onChange}
                       bordered={false}

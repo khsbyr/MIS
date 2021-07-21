@@ -74,8 +74,8 @@ export default function CvModal(props) {
                 setStateAimag(result || []);
             }
         });
-
-        if(Trainerscontroller.address) {
+        //console.log('asd', Trainerscontroller);
+        if(Trainerscontroller!==undefined) {
             getService(`soum/getList/${Trainerscontroller.address.aimag.id}`).then((result) => {
                 if (result) {
                     setStateSum(result || []);
@@ -399,7 +399,6 @@ export default function CvModal(props) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
         }
-        debugger
         putService("criteriaa/delete/" + selectedRows[0].id)
             .then((result) => {
                 message.success("Амжилттай устлаа");
