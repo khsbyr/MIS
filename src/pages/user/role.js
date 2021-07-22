@@ -77,21 +77,7 @@ export default function Roles() {
         .catch((error) => errorCatch(error));
   };
 
-  const onPage = (event) => {
-    let _lazyParams = { ...lazyParams, ...event };
-    setLazyParams(_lazyParams);
-  };
 
-  const onSort = (event) => {
-    let _lazyParams = { ...lazyParams, ...event };
-    setLazyParams(_lazyParams);
-  };
-
-  const onFilter = (event) => {
-    let _lazyParams = { ...lazyParams, ...event };
-    _lazyParams["first"] = 0;
-    setLazyParams(_lazyParams);
-  };
 
   const add = () => {
     setIsShowModal(true);
@@ -103,6 +89,11 @@ export default function Roles() {
     setIsShowModal(true);
     setSelectedRow(row.data);
   };
+
+  const closeModal = (isSuccess = false) => {
+    setIsShowModal(false);
+    if (isSuccess) loadData();
+};
 
   const activeBodyTemplate = (rowData) => {
     return <Checkbox defaultChecked={rowData.isActive} disabled />;
@@ -138,7 +129,7 @@ export default function Roles() {
 
   return (
     <ContentWrapper>
-      <div>
+      <div className="button-demo">
         <Layout className="btn-layout">
             <Content>
                 <Row>
@@ -155,7 +146,7 @@ export default function Roles() {
                                     Экспорт
                                 </Button>
                             </Col>
-                            <Col xs={8} md={4} lg={8}>
+                            <Col xs={8} md={4} lg={4}>
                                 <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={add}>
                                     Нэмэх
                                 </Button>
@@ -165,23 +156,19 @@ export default function Roles() {
                 </Row>
             </Content>
         </Layout>
-        <Layout className="Hynax-table">
+        <div className="datatable-responsive-demo">
           <DataTable
-            ref={dt}
-            value={list}
-            lazy
-            paginator
-            first={lazyParams.first}
-            rows={PAGESIZE}
-            totalRecords={totalRecords}
-            onPage={onPage}
-            onSort={onSort}
-            sortField={lazyParams.sortField}
-            sortOrder={lazyParams.sortOrder}
-            onFilter={onFilter}
-            filters={lazyParams.filters}
-            emptyMessage="Өгөгдөл олдсонгүй..."
-            tableStyle={{ minWidth: 1000 }}
+             value={list}
+             removableSort
+             paginator
+             rows={10}
+             className="p-datatable-responsive-demo"
+             selection={selectedRow}
+             editMode="row"
+             onSelectionChange={(e) => {
+                 setSelectedRow(e.value);
+             }}
+             dataKey="id"
             onRowClick={edit}
           >
             <Column field="index" header="№" style={{ width: 40 }} />
@@ -200,13 +187,13 @@ export default function Roles() {
               body={roleBodyTemplate}
             />
           </DataTable>
-        </Layout>
+        </div>
         {isShowModal && (
           <RoleModal
             visible={isShowModal}
             isEditMode={isEditMode}
-            editValue={selectedRow}
-            close={() => setIsShowModal(false)}
+            roleController={selectedRow}
+            close={closeModal}
             save={save}
           />
         )}

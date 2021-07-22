@@ -75,8 +75,7 @@ const User = () => {
     const edit = (row) => {
         editRow = row
         isEditMode = true
-        setIsModalVisible(true)
-        
+        setIsModalVisible(true) 
     }
 
     const handleDeleted = (row) => {
@@ -170,7 +169,7 @@ const User = () => {
                                             Экспорт
                                         </Button>
                                     </Col>
-                                    <Col xs={8} md={4} lg={8}>
+                                    <Col xs={8} md={4} lg={4}>
                                         <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={add}>
                                             Нэмэх
                                         </Button>

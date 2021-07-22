@@ -13,8 +13,7 @@ export default function MenuConfig(props) {
     const [roleTree, setRoleTree] = useState([]);
     useEffect(() => {
         isShowLoading(true)
-        const param = { search: "isParent:true", sort: "priority,asc" };
-        getService("/gap-core-service/menus", param).then((result) => {
+        getService("menu/get").then((result) => {
             let list = result.content || [];
             setRoleTree(convertTree(list));
             getService("/gap-core-service/menuShows", {

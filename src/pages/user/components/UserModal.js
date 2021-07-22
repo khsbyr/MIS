@@ -3,10 +3,7 @@ import React, { useEffect, useState } from "react";
 import { getService, postService, putService } from "../../../service/service";
 import { errorCatch } from "../../../tools/Tools";
 import AutoCompleteSelect from "../../../components/Autocomplete";
-const label = '';
-const max = '';
-const min = '';
-
+var label, max, min;
 const validateMessages = {
   required: `${label} хоосон байна!`,
   types: {
@@ -179,6 +176,7 @@ export default function UserModal(props) {
         console.log("Validate Failed:", info);
       });
   };
+  
   return (
     <div>
       <Modal
