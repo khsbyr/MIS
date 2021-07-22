@@ -99,7 +99,7 @@ export default function ExperienceModal(props) {
                         >
                             <Input />
                         </Form.Item>
-                        {/* <Form.Item
+                        <Form.Item
                             name="hiredDate"
                             label="Ажилд орсон огноо:"
                             rules={[
@@ -110,7 +110,7 @@ export default function ExperienceModal(props) {
 
                         >
                             <Input />
-                        </Form.Item> */}
+                        </Form.Item>
                     </Form>
                 </ContentWrapper>
             </Modal>

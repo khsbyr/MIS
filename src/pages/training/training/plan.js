@@ -31,6 +31,8 @@ const Plan = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateOrga, setStateOrga] = useState([]);
   const [stateGuide, setStateGuide] = useState([]);
+  const [trainingID, setTrainingID] = useState([]);
+  const [orgID, setOrgID] = useState([]);
 
 
   useEffect(() => {
@@ -56,21 +58,23 @@ const Plan = () => {
   };
 
   const getGuidelines = (orgId) => {
-    getService(`training/getList/${orgId}`, {}).then((result) => {
-      if (result) {
-        setStateGuide(result || []);
-      }
-    });
+      getService(`training/getList/${orgId}`, {}).then((result) => {
+        if (result) {
+          setStateGuide(result || []);
+          setOrgID(orgId);
+        }
+      });
   };
 
-  const getParti = (teamId) => {
-    getService(`trainingTeam/getList/${teamId}`, {}).then((result) => {
+  const getParti = (trainingID) => {
+    getService(`trainingTeam/getList/${trainingID}`, {}).then((result) => {
       if (result) {
         let list = result || [];
         list.map(
           (item, index) =>
             (item.index = lazyParams.page * PAGESIZE + index + 1)
         );
+        setTrainingID(trainingID);
         setList(list);
         setSelectedRows([]);
       }
@@ -81,19 +85,19 @@ const Plan = () => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService("trainingTeam/get", list)
-      .then((result) => {
-        let list = result || [];
-        list.map(
-          (item, index) => (item.index = lazyParams.page * PAGESIZE + index + 1)
-        );
-        setList(list);
-        setSelectedRows([]);
-      })
-      .catch((error) => {
-        errorCatch(error);
-        isShowLoading(false);
-      });
+      getService("trainingTeam/get", list)
+        .then((result) => {
+          let list = result || [];
+          list.map(
+            (item, index) => (item.index = lazyParams.page * PAGESIZE + index + 1)
+          );
+          setList(list);
+          setSelectedRows([]);
+        })
+        .catch((error) => {
+          errorCatch(error);
+          isShowLoading(false);
+        });
   };
 
   const add = () => {
@@ -169,16 +173,23 @@ const Plan = () => {
     );
   };
 
-  const nameBodyTemplate = (row) => {
+  const nameUserBodyTemplate = (row) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Багийн гишүүдийн нэрс</span>
-        {row.user ? row.user.firstname : row.trainers.firstName}
-        {/* {row.training.training_plan.name} */}
+        <span className="p-column-title">Ажилчдын нэрс</span>
+        {row.user && row.user.firstname}
       </React.Fragment>
     );
   };
 
+  const nameTrainerBodyTemplate = (row) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Багшийн нэрс</span>
+        {row.trainers && row.trainers.firstName}
+      </React.Fragment>
+    );
+  };
 
   return (
     <ContentWrapper>
@@ -287,8 +298,15 @@ const Plan = () => {
               filterPlaceholder="Хайх"
             />
             <Column
-              header="Багийн гишүүдийн нэрс"
-              body={nameBodyTemplate}
+              header="Ажилчдын нэрс"
+              body={nameUserBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              header="Багшийн нэрс"
+              body={nameTrainerBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
@@ -301,6 +319,8 @@ const Plan = () => {
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+              trainingID={trainingID}
+              orgID = {orgID}
             />
           )}
         </div>
