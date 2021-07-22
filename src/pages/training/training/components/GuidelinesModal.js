@@ -75,7 +75,7 @@ export default function GuidelinesModal(props) {
         // stateplanID(planID)
       }
     });
-    if(Guidelinescontroller!==undefined){
+    if(Guidelinescontroller!==null){
     getService("training/get/" + Guidelinescontroller.id).then((result) => {
       if(result){
         setTrainingID(Guidelinescontroller.id)
@@ -100,7 +100,7 @@ export default function GuidelinesModal(props) {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    if(Guidelinescontroller!==undefined){
+    if(Guidelinescontroller!==null){
     getService("participants/getList/" + Guidelinescontroller.id, list)
       .then((result) => {
         let list = result.content || [];

@@ -80,6 +80,7 @@ const Guidelines = () => {
   };
 
   const add = () => {
+    editRow = null;
     setIsModalVisible(true);
     isEditMode = false;
   };
