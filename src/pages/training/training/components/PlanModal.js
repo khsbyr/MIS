@@ -16,26 +16,29 @@ const validateMessages = {
     },
 };
 export default function PlanModal(props) {
-    const { Plancontroller, isModalVisible, isEditMode } = props;
+    const { Plancontroller, isModalVisible, isEditMode, trainingID, orgID } = props;
     const [form] = Form.useForm();
     const [stateTrainers, setStateTrainers] = useState(false);
     const [stateUser, setStateUser] = useState([]);
+
     useEffect(() => {
-        getService("user/get").then((result) => {
+        getService("user/getByOrgId/" + orgID).then((result) => {
+            console.log(result)
             if (result) {
-              setStateUser(result.content || []);
+              setStateUser(result || []);
             }
         });
-        getService("trainers/get").then((result) => {
+        getService("trainers/getList/" + orgID).then((result) => {
             if (result) {
-                setStateTrainers(result.content || []);
+                setStateTrainers(result || []);
             }
         });
         if (isEditMode) {
             form.setFieldsValue({ ...Plancontroller,
-                UserFirstName: Plancontroller.user ? Plancontroller.user.firstname : Plancontroller.trainers.firstName,
-                // TrainersFirstName: Plancontroller.trainers.firstName, 
-                // setIsUser(Plancontroller)
+                UserFirstName: Plancontroller.user && Plancontroller.user.firstname,
+                TrainerFirstName: Plancontroller.trainers && Plancontroller.trainers.firstName,
+                UserID: Plancontroller.user && Plancontroller.user.id,
+                TrainerID: Plancontroller.trainers && Plancontroller.trainers.id,
             });
         }
     }, []);
@@ -43,8 +46,18 @@ export default function PlanModal(props) {
     const save = () => {
         form
             .validateFields()
-            .then((values) => {
-                // values.user = {firstname: Plancontroller.user ? Plancontroller.user.firstname : ''};
+            .then((values) => {            
+                if (values.UserID) {     
+                    values.user = {id: values.UserID};
+                } else {
+                    values.user = null;
+                }
+                if (values.TrainerID) {     
+                    values.trainers = {id: values.TrainerID};
+                } else {
+                    values.trainers = null;
+                }
+                values.training = {id: trainingID}
                 if (isEditMode) {
                     putService(
                         "trainingTeam/update/" + Plancontroller.id,
@@ -99,26 +112,18 @@ export default function PlanModal(props) {
                                 ]}>
                                     <Input />
                                 </Form.Item>
-                                <Form.Item label="Сургагч багшийн нэр:" name="UserFirstName" rules={[
-                                    {
-                                        required: true,
-                                    },
-                                ]}>
+                                <Form.Item name="UserID">
                                     <AutoCompleteSelect      
                                         valueField="id"
                                         placeholder="Ажилчдаас сонгох"
                                         data={stateUser}
-                                        // onChange={(value) => selectOrgs(value)}
+                                        // onChange={(value) => selectUser(value)}
                                     /> 
                                 </Form.Item>
-                                <Form.Item rules={[
-                                    {
-                                        required: true,
-                                    },
-                                ]}>
+                                <Form.Item  name="TrainerID" >
                                     <AutoCompleteSelect      
                                         valueField="id"
-                                        placeholder="Сургагч багшаас сонгох"
+                                        placeholder="Багшаас сонгох"
                                         data={stateTrainers}
                                         // onChange={(value) => selectOrgs(value)}
                                     /> 

@@ -51,7 +51,7 @@ export default function EducationModal(props) {
                             errorCatch(error);
                         })
                 } else {
-                    postService("education/post/"+ CvEducationController.id, values)
+                    postService("education/post/" + CvEducationController.id, values)
                         .then((result) => {
                             props.close(true);
                         })

@@ -44,7 +44,7 @@ var editRow;
 var isEditModee;
 var editRowEducation;
 export default function CvModal(props) {
-    const { Trainerscontroller, isModalVisible, isEditMode } = props;
+    const { Trainerscontroller, isModalVisible, isEditMode, orgId } = props;
     const [isModalVisibleEducation, setIsModalVisibleEducation] = useState(false);
     const [isModalVisibleExperience, setIsModalVisibleExperience] = useState(false);
     const [isModalVisibleConsSerExperience, setIsModalVisibleConsSerExperience] = useState(false);
@@ -68,6 +68,7 @@ export default function CvModal(props) {
     const [loading, setLoading] = useState(false);
     const PAGESIZE = 20;
     const { RangePicker } = DatePicker;
+
     useEffect(() => {
         onInit();
         onInitEducation();
@@ -99,6 +100,7 @@ export default function CvModal(props) {
         if (isEditMode) {
             form.setFieldsValue({
                 ...Trainerscontroller,
+                AddressDetail : Trainerscontroller.address ? Trainerscontroller.address.addressDetail : '',
                 CountryID: Trainerscontroller.address ? Trainerscontroller.address.country.id : '',
                 AimagID: Trainerscontroller.address ? Trainerscontroller.address.aimag.id : '',
                 SoumID: Trainerscontroller.address ? Trainerscontroller.address.soum.id : '',
@@ -225,7 +227,7 @@ export default function CvModal(props) {
 
 
     const add = () => {
-        editRowEducation = null
+        editRowEducation = null;
         setIsModalVisibleEducation(true);
         isEditModee = false;
     };
@@ -463,7 +465,7 @@ export default function CvModal(props) {
             });
     };
 
-    const handleDeleted = (row) => {
+    const handleDeletedExperience = (row) => {
         if (row.length === 0) {
             message.warning("Устгах өгөгдлөө сонгоно уу");
             return;
@@ -483,6 +485,7 @@ export default function CvModal(props) {
             .validateFields()
             .then((values) => {
                 values.address = {
+                    addressDetail: values.AddressDetail,
                     country: {
                         id: values.CountryID,
                     },
@@ -496,6 +499,7 @@ export default function CvModal(props) {
                         id: values.BagID,
                     }
                 };
+                values.organization = {id: orgId}
                 if (isEditMode) {
                     putService(
                         "trainers/update/" + Trainerscontroller.id,
@@ -700,7 +704,7 @@ export default function CvModal(props) {
                                     <Column field="index" header="№" style={{ width: "50px" }} />
                                     <Column field="position" header="Албан тушаал" />
                                     <Column field="organizationName" header="Байгууллагын нэр" />
-                                    {/* <Column field="hiredDate" header="Ажилд орсон огноо" /> */}
+                                    <Column field="hiredDate" header="Ажилд орсон огноо" />
                                     <Column headerStyle={{ width: '7rem' }} body={actionExperience}></Column>
                                 </DataTable>
                                 {isModalVisibleExperience && (
@@ -918,6 +922,21 @@ export default function CvModal(props) {
                                 </Form.Item>
                             </Col>
                         </Row>
+
+                        <h2 className="title">11. Хаягийн дэлгэрэнгүй</h2>
+                        <Row >
+                            <Col xs={24} md={24} lg={24}>
+                                <Form.Item name="AddressDetail">
+                                    <Input.TextArea
+                                        placeholder="(Дэлгэрэнгүй хаягаа оруулна уу)"
+                                        style={{
+                                            width: "100%",
+                                            height: "140px"
+                                        }}
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
                     </Form>
                 </ContentWrapper>
             </Modal>
@@ -931,7 +950,7 @@ export default function CvModal(props) {
             okText: "Устгах",
             cancelText: "Буцах",
             onOk() {
-                handleDeleted(row);
+                handleDeletedExperience(row);
                 onInit();
             },
             onCancel() { },
