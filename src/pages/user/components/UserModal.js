@@ -156,7 +156,7 @@ export default function UserModal(props) {
           },
           addressDetail: values.AddressDetail   
         }
-        values.isTrue = stateTrue;
+        values.isTrue = true;
         if (isEditMode) {
           putService("user/update/" + Usercontroller.id, values)
             .then((result) => {
