@@ -41,19 +41,20 @@ var isEditModeParticipants;
 var isEditModeGuidelines;
 
 export default function GuidelinesModal(props) {
-  const { Guidelinescontroller, isModalVisible, isEditMode } = props;
+  const { Guidelinescontroller, isModalVisible, isEditMode, orgID, planID } = props;
   const [isModalVisibleParticipants, setIsModalVisibleParticipants] =
     useState(false);
   const [isModalVisibleGuidelines, setIsModalVisibleGuidelines] =
     useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [list, setList] = useState([]);
-  const [list1, setList1] = useState([]);
   const [form] = Form.useForm();
   const [stateOrga, setStateOrga] = useState([]);
   const [statePlan, setStatePlan] = useState([]);
-
+  const [trainingID, setTrainingID] = useState([]);
+  const [stateplanID, setStateplanID] = useState([]);
   const PAGESIZE = 20;
+  const [TrainingPlanID, setTrainingPlanID] = useState([]);
   const [lazyParams, setLazyParams] = useState({
     page: 0,
   });
@@ -69,10 +70,17 @@ export default function GuidelinesModal(props) {
     getService("trainingPlan/get").then((result) => {
       if (result) {
         setStatePlan(result.content || []);
+        console.log(result.content)
+        // training_plan.id = 
+        // stateplanID(planID)
       }
     });
     if(Guidelinescontroller!==undefined){
-    getService("training/get/" + Guidelinescontroller.id).then((result) => {});
+    getService("training/get/" + Guidelinescontroller.id).then((result) => {
+      if(result){
+        setTrainingID(Guidelinescontroller.id)
+      }
+    });
 
     if (isEditMode) {
       form.setFieldsValue({
@@ -82,6 +90,11 @@ export default function GuidelinesModal(props) {
       });
     }}
   }, []);
+
+  const selectTrainingPlan = (TrainingPlanID) => {
+    console.log(TrainingPlanID)
+    setTrainingPlanID(TrainingPlanID);
+  }
 
   const onInit = () => {
     if (loadLazyTimeout) {
@@ -101,19 +114,19 @@ export default function GuidelinesModal(props) {
         errorCatch(error);
         isShowLoading(false);
       });
-    getService("trainingGuidelines/get", list1)
-      .then((result) => {
-        let list1 = result.content || [];
-        list1.map(
-          (item, index) => (item.index = lazyParams.page * PAGESIZE + index + 1)
-        );
-        setList1(list1);
-        setSelectedRows([]);
-      })
-      .catch((error) => {
-        errorCatch(error);
-        isShowLoading(false);
-      });
+    // getService("trainingGuidelines/get", list1)
+    //   .then((result) => {
+    //     let list1 = result.content || [];
+    //     list1.map(
+    //       (item, index) => (item.index = lazyParams.page * PAGESIZE + index + 1)
+    //     );
+    //     setList1(list1);
+    //     setSelectedRows([]);
+    //   })
+    //   .catch((error) => {
+    //     errorCatch(error);
+    //     isShowLoading(false);
+    //   });
     }
   };
 
@@ -155,31 +168,33 @@ export default function GuidelinesModal(props) {
     }
   };
 
-  const actionUdirdamj = (row) => {
-    return (
-      <React.Fragment>
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faPen} />}
-          onClick={() => editUdirdamj(row)}
-        />
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faTrash} />}
-          onClick={() => pop(row)}
-        />
-      </React.Fragment>
-    );
-  };
+  // const actionUdirdamj = (row) => {
+  //   return (
+  //     <React.Fragment>
+  //       <Button
+  //         type="text"
+  //         icon={<FontAwesomeIcon icon={faPen} />}
+  //         onClick={() => editUdirdamj(row)}
+  //       />
+  //       <Button
+  //         type="text"
+  //         icon={<FontAwesomeIcon icon={faTrash} />}
+  //         onClick={() => pop(row)}
+  //       />
+  //     </React.Fragment>
+  //   );
+  // };
 
-  const addUdirdamj = () => {
-    setIsModalVisibleGuidelines(true);
-    isEditModeParticipants = false;
-  };
+  // const addUdirdamj = () => {
+  //   setIsModalVisibleGuidelines(true);
+  //   // isEditModeParticipants = false;
+  //   isEditModeGuidelines = false;
+
+  // };
 
   const add = () => {
     setIsModalVisibleParticipants(true);
-    isEditModeGuidelines = false;
+    isEditModeParticipants = false;
   };
 
   const closeModal = (isSuccess = false) => {
@@ -213,6 +228,8 @@ export default function GuidelinesModal(props) {
     form
       .validateFields()
       .then((values) => {
+        values.organization = {id: orgID}
+        values.training_plan = {id: TrainingPlanID }
         if (isEditMode) {
           putService("training/update/" + Guidelinescontroller.id, values)
             .then((result) => {
@@ -223,6 +240,8 @@ export default function GuidelinesModal(props) {
             });
         } else {
           postService("training/post", values)
+          debugger
+          console.log(values)
             .then((result) => {
               props.close(true);
             })
@@ -259,7 +278,7 @@ export default function GuidelinesModal(props) {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Row>
-                  <Col xs={24} md={24} lg={6}>
+                  {/* <Col xs={24} md={24} lg={6}>
                     <Form.Item
                       layout="vertical"
                       label="Байгууллага сонгох:"
@@ -271,7 +290,7 @@ export default function GuidelinesModal(props) {
                         placeholder="Байгууллага сонгох"
                       />
                     </Form.Item>
-                  </Col>
+                  </Col> */}
                   <Col xs={24} md={24} lg={6}>
                     <Form.Item
                       layout="vertical"
@@ -282,6 +301,7 @@ export default function GuidelinesModal(props) {
                         valueField="id"
                         data={statePlan}
                         placeholder="Сургалтын төлөвлөгөө"
+                        onChange={(value) => selectTrainingPlan(value)}
                       />
                     </Form.Item>
                   </Col>
@@ -295,8 +315,6 @@ export default function GuidelinesModal(props) {
                       <Input />
                     </Form.Item>
                   </Col>
-                </Row>
-                <Row>
                   <Col xs={24} md={24} lg={6}>
                     <Form.Item
                       label="Гүйцэтгэлийн төсөв:"
@@ -346,7 +364,7 @@ export default function GuidelinesModal(props) {
                     selection={selectedRows}
                     // onRowClick={edit}
                     onSelectionChange={(e) => {
-                      setSelectedRows(e.value);
+                    setSelectedRows(e.value);
                     }}
                     dataKey="id"
                   >
@@ -373,46 +391,17 @@ export default function GuidelinesModal(props) {
                     type="text"
                     className="export"
                     icon={<FontAwesomeIcon icon={faPlus} />}
-                    onClick={addUdirdamj}
+                    onClick={editUdirdamj}
                   >
-                    Нэмэх
+                    Харах
                   </Button>
-                  <DataTable
-                    value={list1}
-                    removableSort
-                    paginator
-                    rows={5}
-                    className="p-datatable-responsive-demo"
-                    selection={selectedRows}
-                    // onRowClick={edit}
-                    onSelectionChange={(e) => {
-                      setSelectedRows(e.value);
-                    }}
-                    dataKey="id"
-                  >
-                    <Column field="index" header="№" />
-                    <Column field="subject" header="Сургалтын сэдэв" filter />
-                    <Column
-                      field="reason"
-                      header="Сургалт зохион байгуулах үндэслэл"
-                    />
-                    <Column field="aim" header="Сургалтын зорилго" />
-                    <Column
-                      field="operation"
-                      header="Хэрэгжүүлэх үйл ажиллагаа"
-                    />
-                    <Column field="result" header="Хүлэгдэж буй үр дүн 1" />
-                    <Column
-                      headerStyle={{ width: "7rem" }}
-                      body={actionUdirdamj}
-                    />
-                  </DataTable>
                   {isModalVisibleGuidelines && (
                     <TrainingGuidelinesModal
                       TrainingGuidelinesModalController={editRow}
                       isModalVisible={isModalVisibleGuidelines}
                       close={closeModalUdirdamj}
                       isEditMode={isEditModeGuidelines}
+                      trainingID={trainingID}
                     />
                   )}
                 </Form.Item>

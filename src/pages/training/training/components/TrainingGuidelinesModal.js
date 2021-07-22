@@ -1,176 +1,176 @@
-import {
-  Col, Form,
-  Input, Modal,
-  Row
-} from "antd";
+import { Col, Form, Input, Modal, Row, Button } from "antd";
 import React, { useEffect, useState } from "react";
 import AutoCompleteSelect from "../../../../components/Autocomplete";
-import { getService, postService, putService } from "../../../../service/service";
+import {
+  getService,
+  postService,
+  putService,
+} from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
 import ContentWrapper from "./attendance.style";
 
 const layout = {
-    labelCol: {
-        span: 20,
-    },
-    wrapperCol: {
-        span: 22,
-    },
+  labelCol: {
+    span: 20,
+  },
+  wrapperCol: {
+    span: 22,
+  },
 };
 const validateMessages = {
-    required: "${label} хоосон байна!",
-    types: {
-        email: "${label} is not a valid email!",
-        number: "${label} is not a valid number!",
-    },
-    number: {
-        range: "${label} must be between ${min} and ${max}",
-    },
+  required: "${label} хоосон байна!",
+  types: {
+    email: "${label} is not a valid email!",
+    number: "${label} is not a valid number!",
+  },
+  number: {
+    range: "${label} must be between ${min} and ${max}",
+  },
 };
 export default function TrainingGuidelinesModal(props) {
-    const { TrainingGuidelinesModalController, isModalVisible, isEditMode } = props;
-    const [stateAimag, setStateAimag] = useState([]);
-    const [stateSum, setStateSum] = useState([]);
-    const [stateCountry, setStateCountry] = useState([]);
-    const [stateBag, setStateBag] = useState([]);
-    const [form] = Form.useForm();
-    const [lazyParams, setLazyParams] = useState({
-      page: 0,
-    });   
+  const {
+    TrainingGuidelinesModalController,
+    result,
+    isModalVisible,
+    isEditMode,
+    trainingID,
+  } = props;
+  const [stateAimag, setStateAimag] = useState([]);
+  const [stateSum, setStateSum] = useState([]);
+  const [stateCountry, setStateCountry] = useState([]);
+  const [stateBag, setStateBag] = useState([]);
+  const [form] = Form.useForm();
+  const [valueState, setStateValue] = useState([]);
+  const [lazyParams, setLazyParams] = useState({
+    page: 0,
+  });
 
-    useEffect(() => {
-      getService("trainingGuidelines/get")
-      .then((result) => {
-      })
+  useEffect(() => {
+    getService("trainingGuidelines/get/" + trainingID).then((result) => {
+      let value = result;
+      setStateValue(value)
+      form.setFieldsValue({
+        ...result,
+        subject: result.subject,
+        CountryID: result.address.country.id,
+        AimagID: result.address.aimag.id,
+        SoumID: result.address.soum.id,
+        BagID: result.address.bag.id,
+        AddressDetail: result.address.addressDetail,
+      });
+    });
 
-      getService("country/get").then((result) => {
-        if (result) {
-          setStateCountry(result || []);
-        }
-      });
-      getService("aimag/get").then((result) => {
-        if (result) {
-          setStateAimag(result || []);
-        }
-      });
-      if(TrainingGuidelinesModalController!==undefined) {
-      getService(
-        `soum/getList/${TrainingGuidelinesModalController.address.aimag.id}`
-      ).then((result) => {
+    getService("country/get").then((result) => {
+      if (result) {
+        setStateCountry(result || []);
+      }
+    });
+    getService("aimag/get").then((result) => {
+      if (result) {
+        setStateAimag(result || []);
+      }
+    });
+    if (result !== undefined) {
+      getService(`soum/getList/${result.address.aimag.id}`).then((result) => {
         if (result) {
           setStateSum(result || []);
         }
       });
-      getService(
-        `bag/getList/${TrainingGuidelinesModalController.address.soum.id}`
-      ).then((result) => {
+      getService(`bag/getList/${result.address.soum.id}`).then((result) => {
         if (result) {
           setStateBag(result || []);
         }
       });
     }
-      if (isEditMode) {
-        form.setFieldsValue({
-          ...TrainingGuidelinesModalController,
-          CountryID: TrainingGuidelinesModalController.address.country.id,
-          AimagID: TrainingGuidelinesModalController.address.aimag.id,
-          SoumID: TrainingGuidelinesModalController.address.soum.id,
-          BagID: TrainingGuidelinesModalController.address.bag.id,
-          AddressDetail:TrainingGuidelinesModalController.address.addressDetail,
-          subject: TrainingGuidelinesModalController.subject,
-          reason: TrainingGuidelinesModalController.reason,
-          aim: TrainingGuidelinesModalController.aim,
-          operation: TrainingGuidelinesModalController.operation,
-          result: TrainingGuidelinesModalController.result,
-        });
+    // if (isEditMode) {
+    //   form.setFieldsValue({
+    //     ...result,
+    //   });
+    // }
+  }, []);
+
+  const selectCountry = (value) => {
+    getAimag(value);
+  };
+
+  const getAimag = (countryId) => {
+    getService(`aimag/getList/${countryId}`, {}).then((result) => {
+      if (result) {
+        setStateAimag(result || []);
       }
-    }, []);
+    });
+  };
+  const selectAimag = (value) => {
+    getSum(value);
+  };
+  const getSum = (aimagId) => {
+    getService(`soum/getList/${aimagId}`, {}).then((result) => {
+      if (result) {
+        setStateSum(result || []);
+      }
+    });
+  };
+  const selectSum = (value) => {
+    getBag(value);
+  };
+  const getBag = (sumID) => {
+    getService(`bag/getList/${sumID}`, {}).then((result) => {
+      if (result) {
+        setStateBag(result || []);
+      }
+    });
+  };
 
-    const selectCountry = (value) => {
-      getAimag(value);
-    };
-  
-    const getAimag = (countryId) => {
-      getService(`aimag/getList/${countryId}`, {}).then((result) => {
-        if (result) {
-          setStateAimag(result || []);
-        }
-      });
-    };
-    const selectAimag = (value) => {
-      getSum(value);
-    };
-    const getSum = (aimagId) => {
-      getService(`soum/getList/${aimagId}`, {}).then((result) => {
-        if (result) {
-          setStateSum(result || []);
-        }
-      });
-    };
-    const selectSum = (value) => {
-      getBag(value);
-    };
-    const getBag = (sumID) => {
-      getService(`bag/getList/${sumID}`, {}).then((result) => {
-        if (result) {
-          setStateBag(result || []);
-        }
-      });
-    };
-    const save = () => {
-      form
-        .validateFields()
-        .then((values) => {
-          values.address = {
-            addressDetail: values.AddressDetail,
-            country: {
-              id: values.CountryID,
-            },
-            aimag: {
-              id: values.AimagID,
-            },
-            soum: {
-              id: values.SoumID,
-            },
-            bag: {
-              id: values.BagID,
-            },
-          };
-          if (isEditMode) {
-            putService("trainingGuidelines/update/" + TrainingGuidelinesModalController.id, values)
-              .then((result) => {
-                props.close(true);
-              })
-              .catch((error) => {
-                errorCatch(error);
-              });
-          } else {
-            postService("trainingGuidelines/post", values)
-              .then((result) => {
-                props.close(true);
-              })
-              .catch((error) => {
-                errorCatch(error);
-              });
-          }
-        })
-        .catch((info) => {
-          console.log("Validate Failed:", info);
-        });
-    };
-    return (
+  const onReset = () => {
+    form.resetFields();
+  };
 
-        <div>
-            <Modal
-                title="Сургалтын удирдамж"
-                okText="Хадгалах"
-                cancelText="Буцах"
-                width={1000}
-                alignItems="center"
-                visible={isModalVisible}
-                onOk={save}
-                onCancel={() => props.close()}
-            >
+  const save = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        console.log(values);
+        values.address = {
+          addressDetail: values.AddressDetail,
+          country: {
+            id: values.CountryID,
+          },
+          aimag: {
+            id: values.AimagID,
+          },
+          soum: {
+            id: values.SoumID,
+          },
+          bag: {
+            id: values.BagID,
+          },
+        };
+        //if (isEditMode) {
+          putService("trainingGuidelines/update/" + valueState.id, values)
+            .then((result) => {
+              props.close(true);
+            })
+            .catch((error) => {
+              errorCatch(error);
+            });
+       //} 
+      })
+      .catch((info) => {
+        console.log("Validate Failed:", info);
+      });
+  };
+  return (
+    <div>
+      <Modal
+        title="Сургалтын удирдамж"
+        okText="Хадгалах"
+        cancelText="Буцах"
+        width={1000}
+        alignItems="center"
+        visible={isModalVisible}
+        onOk={save}
+        onCancel={() => props.close()}
+      >
         <ContentWrapper>
           <Form
             form={form}
@@ -183,7 +183,7 @@ export default function TrainingGuidelinesModal(props) {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Row>
-                <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={12}>
                     <Form.Item
                       label="Сургалтын сэдэв:"
                       name="subject"
@@ -193,7 +193,7 @@ export default function TrainingGuidelinesModal(props) {
                         },
                       ]}
                     >
-                      <Input />
+                      <Input allowClear />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={12}>
@@ -222,7 +222,7 @@ export default function TrainingGuidelinesModal(props) {
                       <Input />
                     </Form.Item>
                   </Col>
-            
+
                   <Col xs={24} md={24} lg={12}>
                     <Form.Item
                       label="Хэрэгжүүлэх үйл ажиллагаа:"
@@ -236,7 +236,7 @@ export default function TrainingGuidelinesModal(props) {
                       <Input />
                     </Form.Item>
                   </Col>
-        
+
                   <Col xs={24} md={24} lg={12}>
                     <Form.Item
                       label="Хүлээгдэж буй үр дүн:"
@@ -313,11 +313,14 @@ export default function TrainingGuidelinesModal(props) {
                     </Form.Item>
                   </Col>
                 </Row>
+                <Button htmlType="button" onClick={onReset}>
+                  Reset
+                </Button>
               </Col>
             </Row>
           </Form>
         </ContentWrapper>
-            </Modal>
-        </div >
-    );
+      </Modal>
+    </div>
+  );
 }

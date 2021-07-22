@@ -34,6 +34,7 @@ const Guidelines = () => {
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateOrga, setStateOrga] = useState([]);
+  const [orgID, setOrgID] = useState([]);
 
   useEffect(() => {
     onInit();
@@ -73,6 +74,7 @@ const Guidelines = () => {
         list.map((item, index) => (item.index = index + 1));
         setList(list);
         setSelectedRows([]);
+        setOrgID(orgId)
       }
     });
   };
@@ -302,6 +304,7 @@ const Guidelines = () => {
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+              orgID={orgID}
             />
           )}
         </div>
