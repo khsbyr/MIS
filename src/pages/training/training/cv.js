@@ -84,6 +84,7 @@ const CV = () => {
     };
 
     const add = () => {
+        editRow = null;
         setIsModalVisible(true);
         isEditMode = false;
     };
