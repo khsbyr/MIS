@@ -1,4 +1,4 @@
-import { Form, Input, Modal } from "antd";
+import { Form, Input, Modal, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import { getService, postService, putService } from "../../../../service/service";
 import { errorCatch } from "../../../../tools/Tools";
@@ -23,24 +23,34 @@ const validateMessages = {
     },
 };
 export default function TrainingProgramModal(props) {
-    const { Attendancecontroller, isModalVisible, isEditMode } = props;
-    const [stateController, setStateController] = useState([]);
+    const { Attendancecontroller, isModalVisible, isEditMode, trainingID } = props;
     const [form] = Form.useForm();
+    const { Option } = Select;
+    const [genderID, setGenderID] = useState([])
+
+    function handleChange(value) {
+        console.log(`selected ${value}`);
+        setGenderID(value);
+      }
+
     useEffect(() => {
-
         if (isEditMode) {
-
-                form.setFieldsValue({ ...Attendancecontroller });
+                setGenderID(Attendancecontroller.gender.id)
+                form.setFieldsValue({ ...Attendancecontroller,
+                Gender: Attendancecontroller.gender.gender,
+                GenderID: Attendancecontroller.gender.id,
+                });
         }
     }, []);
     const save = () => {
         form
             .validateFields()
             .then((values) => {
-                values.userService = { id: values.userServiceId }
+                values.training = {id: trainingID}
+                values.gender = {id: genderID}
                 if (isEditMode) {
                     putService(
-                        "participants/put" + Attendancecontroller.id,
+                        "participants/update/" + Attendancecontroller.id,
                         values
                     )
                         .then((result) => {
@@ -108,18 +118,26 @@ export default function TrainingProgramModal(props) {
                             <Input />
                         </Form.Item>
                         <Form.Item
-                            name="contact"
-                            label="Холбогдох утас, мэйл, хаяг:"
-         
+                            name="phone"
+                            label="Холбогдох утас:"       
                         >
                             <Input />
                         </Form.Item>
                         <Form.Item
-                            name="RD"
-                            label="Регистрийн дугаар"
-          
+                            name="register"
+                            label="Регистрийн дугаар"     
                         >
                             <Input />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="Хүйс"
+                            name="Gender"
+                        >
+                            <Select defaultValue="Эрэгтэй" style={{ width: 120 }} onChange={handleChange}>
+                                <Option value={1}>Эрэгтэй</Option>
+                                <Option value={2}>Эмэгтэй</Option>
+                            </Select>
                         </Form.Item>
 
                     </Form>

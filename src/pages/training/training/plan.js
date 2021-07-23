@@ -10,7 +10,7 @@ import { getService, putService } from "../../../service/service";
 import { errorCatch } from "../../../tools/Tools";
 import ContentWrapper from "../../criteria/criteria.style";
 import PlanModal from "../training/components/PlanModal";
-import OrgaStyle   from "./components/orga.style";
+import OrgaStyle from "./components/orga.style";
 import AutoCompleteSelect from "../../../components/Autocomplete";
 
 function onChange(date, dateString) {
@@ -58,12 +58,12 @@ const Plan = () => {
   };
 
   const getGuidelines = (orgId) => {
-      getService(`training/getList/${orgId}`, {}).then((result) => {
-        if (result) {
-          setStateGuide(result || []);
-          setOrgID(orgId);
-        }
-      });
+    getService(`training/getList/${orgId}`, {}).then((result) => {
+      if (result) {
+        setStateGuide(result || []);
+        setOrgID(orgId);
+      }
+    });
   };
 
   const getParti = (trainingID) => {
@@ -85,19 +85,19 @@ const Plan = () => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-      getService("trainingTeam/get", list)
-        .then((result) => {
-          let list = result || [];
-          list.map(
-            (item, index) => (item.index = lazyParams.page * PAGESIZE + index + 1)
-          );
-          setList(list);
-          setSelectedRows([]);
-        })
-        .catch((error) => {
-          errorCatch(error);
-          isShowLoading(false);
-        });
+    getService("trainingTeam/get", list)
+      .then((result) => {
+        let list = result || [];
+        list.map(
+          (item, index) => (item.index = lazyParams.page * PAGESIZE + index + 1)
+        );
+        setList(list);
+        setSelectedRows([]);
+      })
+      .catch((error) => {
+        errorCatch(error);
+        isShowLoading(false);
+      });
   };
 
   const add = () => {
@@ -197,33 +197,33 @@ const Plan = () => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={6}>
+              <Col xs={24} md={24} lg={12}>
                 <p className="title">Сургалтын баг</p>
               </Col>
-              <Col xs={24} md={24} lg={18}>
+              <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                <Col xs={8} md={8} lg={6}>
-                  <OrgaStyle>
-                      <AutoCompleteSelect                  
-                          valueField="id"
-                          placeholder="Байгууллага сонгох"
-                          data={stateOrga}
-                          onChange={(value) => selectOrgs(value)}
-                      />
-                      </OrgaStyle>
-                  </Col>
                   <Col xs={8} md={8} lg={6}>
-                    
-                  <OrgaStyle>                
-                      <AutoCompleteSelect                  
-                          valueField="id"
-                          placeholder="Сургалт сонгох"
-                          data={stateGuide}
-                          onChange={(value) => selectGuide(value)}
-                      />  
-                      </OrgaStyle>
+                    <OrgaStyle>
+                      <AutoCompleteSelect
+                        valueField="id"
+                        placeholder="Байгууллага сонгох"
+                        data={stateOrga}
+                        onChange={(value) => selectOrgs(value)}
+                      />
+                    </OrgaStyle>
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={5}>
+
+                    <OrgaStyle>
+                      <AutoCompleteSelect
+                        valueField="id"
+                        placeholder="Сургалт сонгох"
+                        data={stateGuide}
+                        onChange={(value) => selectGuide(value)}
+                      />
+                    </OrgaStyle>
+                  </Col>
+                  <Col xs={8} md={8} lg={4}>
                     <DatePicker
                       onChange={onChange}
                       bordered={false}
@@ -320,7 +320,7 @@ const Plan = () => {
               close={closeModal}
               isEditMode={isEditMode}
               trainingID={trainingID}
-              orgID = {orgID}
+              orgID={orgID}
             />
           )}
         </div>

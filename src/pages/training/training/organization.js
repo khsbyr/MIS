@@ -168,12 +168,14 @@ const Organization = () => {
                 <Layout className="btn-layout">
                     <Content>
                         <Row>
-                            <Col xs={24} md={24} lg={14}>
+                            <Col xs={24} md={24} lg={12}>
                                 <p className="title">Зөвлөх байгууллага</p>
                             </Col>
-                            <Col xs={24} md={24} lg={10}>
+                            <Col xs={24} md={24} lg={12}>
                                 <Row gutter={[0, 15]}>
-                                    <Col xs={8} md={8} lg={6}>
+                                    <Col xs={8} md={8} lg={11}>
+                                    </Col>
+                                    <Col xs={8} md={8} lg={4}>
                                         <DatePicker
                                             onChange={onChange}
                                             bordered={false}
@@ -188,28 +190,15 @@ const Organization = () => {
                                             }}
                                         />
                                     </Col>
-                                    {/* <Col xs={8} md={8} lg={6}>
-                                        <Input
-                                            placeholder="Хайлт хийх"
-                                            allowClear
-                                            prefix={<SearchOutlined />}
-                                            bordered={false}
-                                            onSearch={onSearch}
-                                            style={{
-                                                width: 150,
-                                                borderBottom: "1px solid #103154",
-                                            }}
-                                        />
-                                    </Col> */}
-                                    <Col xs={8} md={8} lg={6}>
+                                    <Col xs={8} md={8} lg={3}>
                                         <Button type="text" icon={<FontAwesomeIcon icon={faPrint} />} >Хэвлэх </Button>
                                     </Col>
-                                    <Col xs={8} md={8} lg={6}>
+                                    <Col xs={8} md={8} lg={3}>
                                         <Button type="text" className="export" icon={<FontAwesomeIcon icon={faFileExcel} />} >
                                             Экспорт
                                         </Button>
                                     </Col>
-                                    <Col xs={8} md={8} lg={6}>
+                                    <Col xs={8} md={8} lg={3}>
                                         <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={add}>
                                             Нэмэх
                                         </Button>
