@@ -5,7 +5,6 @@ import { Button, Col, Form, Input, message, Modal, Row } from "antd";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import React, { useEffect, useState } from "react";
-import { traverseTwoPhase } from "react-dom/test-utils";
 import AutocompleteSelect from "../../../../components/Autocomplete";
 import { isShowLoading } from "../../../../context/Tools";
 import {
@@ -27,12 +26,16 @@ const layout = {
   },
 };
 const validateMessages = {
+  // eslint-disable-next-line no-template-curly-in-string
   required: "${label} хоосон байна!",
   types: {
+    // eslint-disable-next-line no-template-curly-in-string
     email: "${label} is not a valid email!",
+    // eslint-disable-next-line no-template-curly-in-string
     number: "${label} is not a valid number!",
   },
   number: {
+    // eslint-disable-next-line no-template-curly-in-string
     range: "${label} must be between ${min} and ${max}",
   },
 };
@@ -41,6 +44,7 @@ var isEditModeParticipants;
 var isEditModeGuidelines;
 
 export default function GuidelinesModal(props) {
+  // eslint-disable-next-line no-unused-vars
   const { Guidelinescontroller, isModalVisible, isEditMode, orgID, planID } = props;
   const [isModalVisibleParticipants, setIsModalVisibleParticipants] =
     useState(false);
@@ -49,12 +53,15 @@ export default function GuidelinesModal(props) {
   const [selectedRows, setSelectedRows] = useState([]);
   const [list, setList] = useState([]);
   const [form] = Form.useForm();
+  // eslint-disable-next-line no-unused-vars
   const [stateOrga, setStateOrga] = useState([]);
   const [statePlan, setStatePlan] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [stateplanID, setStateplanID] = useState([]);
   const PAGESIZE = 20;
   const [TrainingPlanID, setTrainingPlanID] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [lazyParams, setLazyParams] = useState({
     page: 0,
   });
@@ -89,6 +96,7 @@ export default function GuidelinesModal(props) {
         OrganizationName: Guidelinescontroller.organization.name,
       });
     }}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const selectTrainingPlan = (TrainingPlanID) => {
@@ -114,19 +122,6 @@ export default function GuidelinesModal(props) {
         errorCatch(error);
         isShowLoading(false);
       });
-    // getService("trainingGuidelines/get", list1)
-    //   .then((result) => {
-    //     let list1 = result.content || [];
-    //     list1.map(
-    //       (item, index) => (item.index = lazyParams.page * PAGESIZE + index + 1)
-    //     );
-    //     setList1(list1);
-    //     setSelectedRows([]);
-    //   })
-    //   .catch((error) => {
-    //     errorCatch(error);
-    //     isShowLoading(false);
-    //   });
     }
   };
 
@@ -168,29 +163,6 @@ export default function GuidelinesModal(props) {
     }
   };
 
-  // const actionUdirdamj = (row) => {
-  //   return (
-  //     <React.Fragment>
-  //       <Button
-  //         type="text"
-  //         icon={<FontAwesomeIcon icon={faPen} />}
-  //         onClick={() => editUdirdamj(row)}
-  //       />
-  //       <Button
-  //         type="text"
-  //         icon={<FontAwesomeIcon icon={faTrash} />}
-  //         onClick={() => pop(row)}
-  //       />
-  //     </React.Fragment>
-  //   );
-  // };
-
-  // const addUdirdamj = () => {
-  //   setIsModalVisibleGuidelines(true);
-  //   // isEditModeParticipants = false;
-  //   isEditModeGuidelines = false;
-
-  // };
 
   const add = () => {
     setIsModalVisibleParticipants(true);
@@ -231,6 +203,7 @@ export default function GuidelinesModal(props) {
         values.organization = {id: orgID}
         values.training_plan = {id: TrainingPlanID }
         if (isEditMode) {
+          setTrainingPlanID(Guidelinescontroller.training_plan.id)
           putService("training/update/" + Guidelinescontroller.id, values)
             .then((result) => {
               props.close(true);
@@ -278,19 +251,6 @@ export default function GuidelinesModal(props) {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Row>
-                  {/* <Col xs={24} md={24} lg={6}>
-                    <Form.Item
-                      layout="vertical"
-                      label="Байгууллага сонгох:"
-                      name="OrganizationName"
-                    >
-                      <AutocompleteSelect
-                        valueField="id"
-                        data={stateOrga}
-                        placeholder="Байгууллага сонгох"
-                      />
-                    </Form.Item>
-                  </Col> */}
                   <Col xs={24} md={24} lg={6}>
                     <Form.Item
                       layout="vertical"

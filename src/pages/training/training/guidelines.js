@@ -27,10 +27,13 @@ const Guidelines = () => {
   let loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [lazyParams, setLazyParams] = useState({
     page: 0,
   });
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateOrga, setStateOrga] = useState([]);
@@ -43,6 +46,7 @@ const Guidelines = () => {
         setStateOrga(result.content || []);
       }
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lazyParams]);
 
   const onInit = () => {
