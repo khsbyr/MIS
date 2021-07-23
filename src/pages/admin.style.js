@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 
-const AdminWrapper = styled.div `
-
-body {
+const AdminWrapper = styled.div`
+  body {
     margin: 0;
     /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
       'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -10,7 +9,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
+
   code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
       monospace;
@@ -22,7 +21,7 @@ body {
     cursor: pointer;
     transition: color 0.3s;
   }
-  
+
   .trigger:hover {
     color: #1890ff;
   }
@@ -33,12 +32,12 @@ body {
     margin: 16px 24px 16px 0;
     background: rgba(255, 255, 255, 0.3);
   }
-  
+
   .ant-row-rtl .logo {
     float: right;
     margin: 16px 0 16px 24px;
   }
-  
+
   .site-layout-background {
     background: green;
     width: 500px;
@@ -62,6 +61,6 @@ body {
     position: absolute;
     top: 10px;
   }
-  `;
+`;
 
 export default AdminWrapper;

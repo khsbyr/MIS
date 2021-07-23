@@ -1,11 +1,13 @@
-import React from "react";
-import Routes from "./routes/router";
+import React from 'react';
+import Routes from './routes/router';
+import ContextProvider from './context/Tools';
 
-export default function App(){
-
-  return(
+export default function App() {
+  return (
     <div>
-    <Routes/>
+      <ContextProvider>
+        <Routes />
+      </ContextProvider>
     </div>
-  )
+  );
 }

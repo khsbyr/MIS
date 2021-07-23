@@ -1,12 +1,13 @@
-import { DatePicker, Form, Input, Modal } from "antd";
-import React, { useEffect, useState } from "react";
+import { DatePicker, Form, Input, Modal } from 'antd';
+import React, { useEffect, useState } from 'react';
 import {
   getService,
   postService,
   putService,
-} from "../../../../service/service";
-import { errorCatch } from "../../../../tools/Tools";
-import ContentWrapper from "./cv.styled";
+} from '../../../../service/service';
+import { errorCatch } from '../../../../tools/Tools';
+import ContentWrapper from './cv.styled';
+import validateMessages from '../../../../tools/validateMessage';
 
 const layout = {
   labelCol: {
@@ -16,31 +17,22 @@ const layout = {
     span: 14,
   },
 };
-const validateMessages = {
-  required: "${label} хоосон байна!",
-  types: {
-    email: "${label} is not a valid email!",
-    number: "${label} is not a valid number!",
-  },
-  number: {
-    range: "${label} must be between ${min} and ${max}",
-  },
-};
+
 export default function WorkExperienceModal(props) {
   const { Composition, isModalVisible, isEditMode } = props;
   const [stateController, setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
-    getService("criteria/get", {
-      search: "status:true",
-    }).then((result) => {
+    getService('criteria/get', {
+      search: 'status:true',
+    }).then(result => {
       if (result) {
         setStateController(result.content || []);
       }
     });
 
     if (isEditMode) {
-      getService("criteria/get" + Composition.id).then((result) => {
+      getService(`criteria/get${Composition.id}`).then(result => {
         Composition.userServiceId = result.userService.id;
         form.setFieldsValue({ ...Composition });
       });
@@ -49,28 +41,28 @@ export default function WorkExperienceModal(props) {
   const save = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(values => {
         values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService("criteria/put" + Composition.id, values)
-            .then((result) => {
+          putService(`criteria/put${Composition.id}`, values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService("criteria/post", values)
-            .then((result) => {
+          postService('criteria/post', values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         }
       })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
+      .catch(info => {
+        console.log('Validate Failed:', info);
       });
   };
   return (
@@ -85,40 +77,40 @@ export default function WorkExperienceModal(props) {
         onOk={save}
         onCancel={() => props.close()}
       >
-          <ContentWrapper>
-        <Form
-          form={form}
-          labelAlign={"left"}
-          {...layout}
-          name="nest-messages"
-          validateMessages={validateMessages}
-        >
-          <Form.Item
-            name="name"
-            label="Албан тушаал:"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
+        <ContentWrapper>
+          <Form
+            form={form}
+            labelAlign="left"
+            {...layout}
+            name="nest-messages"
+            validateMessages={validateMessages}
           >
-            <Input />
-          </Form.Item>
-          <Form.Item name="work" label="Байгууллагын нэр:">
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="code"
-            label="Огноо:"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <DatePicker />
-          </Form.Item>
-        </Form>
+            <Form.Item
+              name="name"
+              label="Албан тушаал:"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item name="work" label="Байгууллагын нэр:">
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="code"
+              label="Огноо:"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <DatePicker />
+            </Form.Item>
+          </Form>
         </ContentWrapper>
       </Modal>
     </div>

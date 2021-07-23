@@ -1,28 +1,22 @@
-import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { faPen, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Button,
-  Col, Form,
-  Input,
-  message,
-  Modal,
-  Row
-} from "antd";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import React, { useEffect, useState } from "react";
-import AutocompleteSelect from "../../../../components/Autocomplete";
-import { isShowLoading } from "../../../../context/Tools";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Col, Form, Input, message, Modal, Row } from 'antd';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import React, { useEffect, useState, useContext } from 'react';
+import AutocompleteSelect from '../../../../components/Autocomplete';
+import { ToolsContext } from '../../../../context/Tools';
 import {
   getService,
   postService,
-  putService
-} from "../../../../service/service";
-import { errorCatch } from "../../../../tools/Tools";
-import ContentWrapper from "./guidelines.style";
-import ParticipantsModal from "./ParticipantsModal";
-import TrainingGuidelinesModal from "./TrainingGuidelinesModal";
+  putService,
+} from '../../../../service/service';
+import { errorCatch } from '../../../../tools/Tools';
+import ContentWrapper from './guidelines.style';
+import ParticipantsModal from './ParticipantsModal';
+import TrainingGuidelinesModal from './TrainingGuidelinesModal';
+import validateMessages from '../../../../tools/validateMessage';
 
 const layout = {
   labelCol: {
@@ -32,22 +26,13 @@ const layout = {
     span: 22,
   },
 };
-const validateMessages = {
-  required: "${label} хоосон байна!",
-  types: {
-    email: "${label} is not a valid email!",
-    number: "${label} is not a valid number!",
-  },
-  number: {
-    range: "${label} must be between ${min} and ${max}",
-  },
-};
-var editRow;
-var isEditModeParticipants;
-var isEditModeGuidelines;
+let editRow;
+let isEditModeParticipants;
+let isEditModeGuidelines;
 
 export default function GuidelinesModal(props) {
   const { Guidelinescontroller, isModalVisible, isEditMode } = props;
+  const toolsStore = useContext(ToolsContext);
   const [isModalVisibleParticipants, setIsModalVisibleParticipants] =
     useState(false);
   const [isModalVisibleGuidelines, setIsModalVisibleGuidelines] =
@@ -64,55 +49,87 @@ export default function GuidelinesModal(props) {
   const [stateOrga, setStateOrga] = useState([]);
   const [statePlan, setStatePlan] = useState([]);
 
-
   const PAGESIZE = 20;
   const [lazyParams, setLazyParams] = useState({
     page: 0,
   });
-  let loadLazyTimeout = null;
+  const loadLazyTimeout = null;
 
   function DateOnChange(date, dateString) {
     console.log(date, dateString);
   }
 
+  const onInit = () => {
+    toolsStore.setIsShowLoader(true);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    getService(`participants/getList/${Guidelinescontroller.id}`, list)
+      .then(result => {
+        const listResult = result.content || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
+        setSelectedRows([]);
+      })
+      .catch(error => {
+        errorCatch(error);
+        toolsStore.setIsShowLoader(false);
+      });
+    getService('trainingGuidelines/get/', list1)
+      .then(result => {
+        const listResult1 = result.content || [];
+        listResult1.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList1(listResult1);
+        setSelectedRows([]);
+      })
+      .catch(error => {
+        errorCatch(error);
+        toolsStore.setIsShowLoader(false);
+      });
+  };
+
   useEffect(() => {
     onInit();
-    getService("organization/get").then((result) => {
+    getService('organization/get').then(result => {
       if (result) {
         setStateOrga(result.content || []);
       }
     });
-    getService("trainingPlan/get").then((result) => {
-        if (result) {
-            setStatePlan(result.content || []);
-        }
-      });
-    getService("country/get").then((result) => {
+    getService('trainingPlan/get').then(result => {
+      if (result) {
+        setStatePlan(result.content || []);
+      }
+    });
+    getService('country/get').then(result => {
       if (result) {
         setStateCountry(result || []);
       }
     });
-    getService("aimag/get").then((result) => {
+    getService('aimag/get').then(result => {
       if (result) {
         setStateAimag(result || []);
       }
     });
-  
+
     getService(
       `soum/getList/${Guidelinescontroller.training_guidelines.address.aimag.id}`
-    ).then((result) => {
+    ).then(result => {
       if (result) {
         setStateSum(result || []);
       }
     });
     getService(
       `bag/getList/${Guidelinescontroller.training_guidelines.address.soum.id}`
-    ).then((result) => {
+    ).then(result => {
       if (result) {
         setStateBag(result || []);
       }
     });
-    
+
     if (isEditMode) {
       form.setFieldsValue({
         ...Guidelinescontroller,
@@ -133,56 +150,7 @@ export default function GuidelinesModal(props) {
     }
   }, []);
 
-  const onInit = () => {
-    if (loadLazyTimeout) {
-      clearTimeout(loadLazyTimeout);
-    }
-    getService("participants/getList/" + Guidelinescontroller.id, list)
-      .then((result) => {
-        let list = result.content || [];
-        list.map(
-          (item, index) => (item.index = lazyParams.page * PAGESIZE + index + 1)
-        );
-        setList(list);
-        setSelectedRows([]);
-      })
-      .catch((error) => {
-        errorCatch(error);
-        isShowLoading(false);
-      });
-    getService("trainingGuidelines/get/", list1)
-      .then((result) => {
-        let list1 = result.content || [];
-        list1.map(
-          (item, index) => (item.index = lazyParams.page * PAGESIZE + index + 1)
-        );
-        setList1(list1);
-        setSelectedRows([]);
-      })
-      .catch((error) => {
-        errorCatch(error);
-        isShowLoading(false);
-      });
-  };
-
-  const action = (row) => {
-    return (
-      <React.Fragment>
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faPen} />}
-          onClick={() => edit(row)}
-        />
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faTrash} />}
-          onClick={() => pop(row)}
-        />
-      </React.Fragment>
-    );
-  };
-
-  const edit = (row) => {
+  const edit = row => {
     editRow = row;
     isEditModeParticipants = true;
     // isEditModeGuidelines = true;
@@ -190,7 +158,61 @@ export default function GuidelinesModal(props) {
     // setIsModalVisibleGuidelines(true);
   };
 
-  const editUdirdamj = (row) => {
+  const handleDeleted = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+      return;
+    }
+
+    putService(`participants/delete/${row.id}`)
+      .then(result => {
+        message.success('Амжилттай устлаа');
+        onInit();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+  };
+
+  function confirm(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeleted(row);
+        onInit();
+      },
+      onCancel() {},
+    });
+  }
+
+  const pop = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+    } else {
+      confirm(row);
+    }
+  };
+
+  const action = row => (
+    <>
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={() => edit(row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={() => pop(row)}
+      />
+    </>
+  );
+
+  const editUdirdamj = row => {
     editRow = row;
     // isEditModeParticipants = true;
     isEditModeGuidelines = true;
@@ -198,31 +220,20 @@ export default function GuidelinesModal(props) {
     setIsModalVisibleGuidelines(true);
   };
 
-  const pop = (row) => {
-    if (row.length === 0) {
-      message.warning("Устгах өгөгдлөө сонгоно уу");
-      return;
-    } else {
-      confirm(row);
-    }
-  };
-
-  const actionUdirdamj = (row) => {
-    return (
-      <React.Fragment>
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faPen} />}
-          onClick={() => editUdirdamj(row)}
-        />
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faTrash} />}
-          onClick={() => pop(row)}
-        />
-      </React.Fragment>
-    );
-  };
+  const actionUdirdamj = row => (
+    <>
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={() => editUdirdamj(row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={() => pop(row)}
+      />
+    </>
+  );
 
   const addUdirdamj = () => {
     setIsModalVisibleGuidelines(true);
@@ -252,92 +263,76 @@ export default function GuidelinesModal(props) {
     if (isSuccess) onInit();
   };
 
-  const handleDeleted = (row) => {
-    if (row.length === 0) {
-      message.warning("Устгах өгөгдлөө сонгоно уу");
-      return;
-    }
-
-    putService("participants/delete/" + row.id)
-      .then((result) => {
-        message.success("Амжилттай устлаа");
-        onInit();
-      })
-      .catch((error) => {
-        errorCatch(error);
-      });
-  };
-
-  const selectCountry = (value) => {
-    getAimag(value);
-  };
-
-  const getAimag = (countryId) => {
-    getService(`aimag/getList/${countryId}`, {}).then((result) => {
+  const getAimag = countryId => {
+    getService(`aimag/getList/${countryId}`, {}).then(result => {
       if (result) {
         setStateAimag(result || []);
       }
     });
   };
-  const selectAimag = (value) => {
-    getSum(value);
+
+  const selectCountry = value => {
+    getAimag(value);
   };
-  const getSum = (aimagId) => {
-    getService(`soum/getList/${aimagId}`, {}).then((result) => {
+
+  const getSum = aimagId => {
+    getService(`soum/getList/${aimagId}`, {}).then(result => {
       if (result) {
         setStateSum(result || []);
       }
     });
   };
-  const selectSum = (value) => {
-    getBag(value);
+
+  const selectAimag = value => {
+    getSum(value);
   };
-  const getBag = (sumID) => {
-    getService(`bag/getList/${sumID}`, {}).then((result) => {
+
+  const getBag = sumID => {
+    getService(`bag/getList/${sumID}`, {}).then(result => {
       if (result) {
         setStateBag(result || []);
       }
     });
   };
 
-  
-    const selectPlan = (value) => {
-      getPlans(value);
-    };
+  const selectSum = value => {
+    getBag(value);
+  };
 
-    const getPlans = (planId) => {
-      getService(`trainingPlan/get/${planId}`, {}).then((result) => {
-        if (result) {
+  const getPlans = planId => {
+    getService(`trainingPlan/get/${planId}`, {}).then(result => {
+      console.log(result);
+    });
+  };
 
-        }
-      });
-    };
+  const selectPlan = value => {
+    getPlans(value);
+  };
 
   const save = () => {
     form
       .validateFields()
-      .then((values) => {
-
+      .then(values => {
         if (isEditMode) {
-          putService("training/update/" + Guidelinescontroller.id, values)
-            .then((result) => {
+          putService(`training/update/${Guidelinescontroller.id}`, values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService("training/post", values)
-            .then((result) => {
+          postService('training/post', values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         }
       })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
+      .catch(info => {
+        console.log('Validate Failed:', info);
       });
   };
   return (
@@ -355,7 +350,7 @@ export default function GuidelinesModal(props) {
         <ContentWrapper>
           <Form
             form={form}
-            labelAlign={"left"}
+            labelAlign="left"
             {...layout}
             layout="vertical"
             name="nest-messages"
@@ -444,15 +439,15 @@ export default function GuidelinesModal(props) {
                     className="p-datatable-responsive-demo"
                     selection={selectedRows}
                     // onRowClick={edit}
-                    onSelectionChange={(e) => {
+                    onSelectionChange={e => {
                       setSelectedRows(e.value);
                     }}
                     dataKey="id"
                   >
                     <Column field="index" header="№" />
-                    <Column field="name" header="Нэр" filter/>
-                    <Column field="phone" header="Утас" filter/>
-                    <Column headerStyle={{ width: "7rem" }} body={action} />
+                    <Column field="name" header="Нэр" filter />
+                    <Column field="phone" header="Утас" filter />
+                    <Column headerStyle={{ width: '7rem' }} body={action} />
                   </DataTable>
                   {isModalVisibleParticipants && (
                     <ParticipantsModal
@@ -468,14 +463,14 @@ export default function GuidelinesModal(props) {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Form.Item label="Сургалтын удирдамж:">
-                <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={addUdirdamj}
-                    >
-                      Нэмэх
-                    </Button>
+                  <Button
+                    type="text"
+                    className="export"
+                    icon={<FontAwesomeIcon icon={faPlus} />}
+                    onClick={addUdirdamj}
+                  >
+                    Нэмэх
+                  </Button>
                   <DataTable
                     value={list1}
                     removableSort
@@ -484,32 +479,31 @@ export default function GuidelinesModal(props) {
                     className="p-datatable-responsive-demo"
                     selection={selectedRows}
                     // onRowClick={edit}
-                    onSelectionChange={(e) => {
+                    onSelectionChange={e => {
                       setSelectedRows(e.value);
                     }}
                     dataKey="id"
                   >
                     <Column field="index" header="№" />
-                    <Column
-                          field="subject"
-                          header="Сургалтын сэдэв"
-                          filter
-                        />
+                    <Column field="subject" header="Сургалтын сэдэв" filter />
                     <Column
                       field="reason"
                       header="Сургалт зохион байгуулах үндэслэл"
                     />
-                    <Column field="aim" header="Сургалтын зорилго"/>
+                    <Column field="aim" header="Сургалтын зорилго" />
                     <Column
                       field="operation"
                       header="Хэрэгжүүлэх үйл ажиллагаа"
                     />
                     <Column field="result" header="Хүлэгдэж буй үр дүн 1" />
-                    <Column headerStyle={{ width: "7rem" }} body={actionUdirdamj}/>
+                    <Column
+                      headerStyle={{ width: '7rem' }}
+                      body={actionUdirdamj}
+                    />
                   </DataTable>
                   {isModalVisibleGuidelines && (
                     <TrainingGuidelinesModal
-                    TrainingGuidelinesModalController={editRow}
+                      TrainingGuidelinesModalController={editRow}
                       isModalVisible={isModalVisibleGuidelines}
                       close={closeModalUdirdamj}
                       isEditMode={isEditModeGuidelines}
@@ -523,18 +517,4 @@ export default function GuidelinesModal(props) {
       </Modal>
     </div>
   );
-  function confirm(row) {
-    Modal.confirm({
-      title: "Та устгахдаа итгэлтэй байна уу ?",
-      icon: <ExclamationCircleOutlined />,
-      okButtonProps: {},
-      okText: "Устгах",
-      cancelText: "Буцах",
-      onOk() {
-        handleDeleted(row);
-        onInit();
-      },
-      onCancel() {},
-    });
-  }
 }

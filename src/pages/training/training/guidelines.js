@@ -1,80 +1,84 @@
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
   faPlus,
   faPrint,
-  faTrash
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Col, Layout, message, Modal, Row } from "antd";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import React, { useEffect, useState } from "react";
-import AutoCompleteSelect from "../../../components/Autocomplete";
-import { isShowLoading } from "../../../context/Tools";
-import { getService, putService } from "../../../service/service";
-import { errorCatch } from "../../../tools/Tools";
-import ContentWrapper from "../../criteria/criteria.style";
-import GuidelinesModal from "../training/components/GuidelinesModal";
-import OrgaStyle from "./components/orga.style";
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Col, Layout, message, Modal, Row } from 'antd';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import React, { useEffect, useState, useContext } from 'react';
+import AutoCompleteSelect from '../../../components/Autocomplete';
+import { ToolsContext } from '../../../context/Tools';
+import { getService, putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import ContentWrapper from '../../criteria/criteria.style';
+import GuidelinesModal from './components/GuidelinesModal';
+import OrgaStyle from './components/orga.style';
 
 const { Content } = Layout;
 
-var editRow;
-var isEditMode;
+let editRow;
+let isEditMode;
 const Guidelines = () => {
-  let loadLazyTimeout = null;
+  const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams, setLazyParams] = useState({
     page: 0,
   });
-  const [loading, setLoading] = useState(false);
+  const toolsStore = useContext(ToolsContext);
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateOrga, setStateOrga] = useState([]);
 
+  const onInit = () => {
+    toolsStore.setIsShowLoader(true);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    getService('training/get', list)
+      .then(result => {
+        const listResult = result.content || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
+        setSelectedRows([]);
+      })
+      .catch(error => {
+        errorCatch(error);
+        toolsStore.setIsShowLoader(false);
+      });
+  };
+
   useEffect(() => {
     onInit();
-    getService("organization/get").then((result) => {
+    getService('organization/get').then(result => {
       if (result) {
         setStateOrga(result.content || []);
       }
     });
   }, [lazyParams]);
 
-  const onInit = () => {
-    setLoading(true);
-    if (loadLazyTimeout) {
-      clearTimeout(loadLazyTimeout);
-    }
-    getService("training/get", list)
-      .then((result) => {
-        let list = result.content || [];
-        list.map((item, index) => (item.index = index + 1));
-        setList(list);
-        setSelectedRows([]);
-      })
-      .catch((error) => {
-        errorCatch(error);
-        isShowLoading(false);
-      });
-  };
-
-  const selectOrgs = (value) => {
-    getGuidelines(value);
-  };
-
-  const getGuidelines = (orgId) => {
-    getService(`training/getList/${orgId}`, {}).then((result) => {
+  const getGuidelines = orgId => {
+    getService(`training/getList/${orgId}`, {}).then(result => {
       if (result) {
-        let list = result || [];
-        list.map((item, index) => (item.index = index + 1));
-        setList(list);
+        const listResult = result.content || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
         setSelectedRows([]);
       }
     });
+  };
+
+  const selectOrgs = value => {
+    getGuidelines(value);
   };
 
   const add = () => {
@@ -82,122 +86,119 @@ const Guidelines = () => {
     isEditMode = false;
   };
 
-  const action = (row) => {
-    return (
-      <React.Fragment>
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faPen} />}
-          onClick={() => edit(row)}
-        />
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faTrash} />}
-          onClick={() => pop(row)}
-        />
-      </React.Fragment>
-    );
-  };
-
-  const edit = (row) => {
+  const edit = row => {
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
   };
 
-  const handleDeleted = (row) => {
+  const handleDeleted = row => {
     if (row.length === 0) {
-      message.warning("Устгах өгөгдлөө сонгоно уу");
+      message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
 
-    putService("training/delete/" + row.id)
-      .then((result) => {
-        message.success("Амжилттай устлаа");
+    putService(`training/delete/${row.id}`)
+      .then(result => {
+        message.success('Амжилттай устлаа');
         onInit();
       })
-      .catch((error) => {
+      .catch(error => {
         errorCatch(error);
       });
   };
-  const closeModal = (isSuccess = false) => {
-    setIsModalVisible(false);
-    if (isSuccess) onInit();
-  };
 
-  const pop = (row) => {
+  function confirm(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeleted(row);
+        onInit();
+      },
+      onCancel() {},
+    });
+  }
+
+  const pop = row => {
     if (row.length === 0) {
-      message.warning("Устгах өгөгдлөө сонгоно уу");
-      return;
+      message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
       confirm(row);
     }
   };
 
-  const indexBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">№</span>
-        {row.index}
-      </React.Fragment>
-    );
+  const action = row => (
+    <>
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={() => edit(row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={() => pop(row)}
+      />
+    </>
+  );
+
+  const closeModal = (isSuccess = false) => {
+    setIsModalVisible(false);
+    if (isSuccess) onInit();
   };
 
-  const NameBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Сургалтын нэр</span>
-        {row.name}
-      </React.Fragment>
-    );
-  };
+  const indexBodyTemplate = row => (
+    <>
+      <span className="p-column-title">№</span>
+      {row.index}
+    </>
+  );
 
-  const totalBudgetBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">
-        Төсөв
-        </span>
-        {row.totalBudget}
-      </React.Fragment>
-    );
-  };
+  const NameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Сургалтын нэр</span>
+      {row.name}
+    </>
+  );
 
-  const performanceBudgetBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Гүйцэтгэлийн төсөв</span>
-        {row.performanceBudget}
-      </React.Fragment>
-    );
-  };
+  const totalBudgetBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Төсөв</span>
+      {row.totalBudget}
+    </>
+  );
 
-  const startDateBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Эхэлсэн огноо</span>
-        {row.trainingStartDate}
-      </React.Fragment>
-    );
-  };
+  const performanceBudgetBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Гүйцэтгэлийн төсөв</span>
+      {row.performanceBudget}
+    </>
+  );
 
-  const endDateBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Дууссан огноо</span>
-        {row.trainingEndDate}
-      </React.Fragment>
-    );
-  };
-  
-  const participantBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Оролцогчдын тоо</span>
-        {row.participantsNumber}
-      </React.Fragment>
-    );
-  };
+  const startDateBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Эхэлсэн огноо</span>
+      {row.trainingStartDate}
+    </>
+  );
+
+  const endDateBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дууссан огноо</span>
+      {row.trainingEndDate}
+    </>
+  );
+
+  const participantBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Оролцогчдын тоо</span>
+      {row.participantsNumber}
+    </>
+  );
 
   return (
     <ContentWrapper>
@@ -210,14 +211,14 @@ const Guidelines = () => {
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={6}></Col>
+                  <Col xs={8} md={8} lg={6} />
                   <Col xs={8} md={8} lg={6}>
                     <OrgaStyle>
                       <AutoCompleteSelect
                         valueField="id"
                         placeholder="Байгууллага сонгох"
                         data={stateOrga}
-                        onChange={(value) => selectOrgs(value)}
+                        onChange={value => selectOrgs(value)}
                       />
                     </OrgaStyle>
                   </Col>
@@ -227,7 +228,7 @@ const Guidelines = () => {
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
                     >
-                      Хэвлэх{" "}
+                      Хэвлэх{' '}
                     </Button>
                   </Col>
                   <Col xs={8} md={8} lg={4}>
@@ -262,7 +263,7 @@ const Guidelines = () => {
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            onSelectionChange={(e) => {
+            onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
@@ -274,7 +275,12 @@ const Guidelines = () => {
               filter
               body={NameBodyTemplate}
             />
-            <Column field="totalBudget" header="Төсөв" filter body={totalBudgetBodyTemplate}/>
+            <Column
+              field="totalBudget"
+              header="Төсөв"
+              filter
+              body={totalBudgetBodyTemplate}
+            />
             <Column
               field="performanceBudget"
               header="Гүйцэтгэлийн төсөв"
@@ -287,14 +293,19 @@ const Guidelines = () => {
               filter
               body={startDateBodyTemplate}
             />
-            <Column field="trainingEndDate" header="Дууссан огноо" filter body={endDateBodyTemplate}/>
+            <Column
+              field="trainingEndDate"
+              header="Дууссан огноо"
+              filter
+              body={endDateBodyTemplate}
+            />
             <Column
               field="participantsNumber"
               header="Оролцогчдын тоо"
               filter
               body={participantBodyTemplate}
             />
-            <Column headerStyle={{ width: "7rem" }} body={action}/>
+            <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <GuidelinesModal
@@ -308,20 +319,6 @@ const Guidelines = () => {
       </div>
     </ContentWrapper>
   );
-  function confirm(row) {
-    Modal.confirm({
-      title: "Та устгахдаа итгэлтэй байна уу ?",
-      icon: <ExclamationCircleOutlined />,
-      okButtonProps: {},
-      okText: "Устгах",
-      cancelText: "Буцах",
-      onOk() {
-        handleDeleted(row);
-        onInit();
-      },
-      onCancel() {},
-    });
-  }
 };
 
 export default Guidelines;
