@@ -1,4 +1,4 @@
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { ExclamationCircleOutlined, DownOutlined } from "@ant-design/icons";
 import {
   faFileExcel,
   faPen,
@@ -7,7 +7,7 @@ import {
   faTrash
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Col, Layout, message, Modal, Row } from "antd";
+import { Button, Col, Layout, message, Modal, Row, DatePicker } from "antd";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import React, { useEffect, useState } from "react";
@@ -19,6 +19,9 @@ import ContentWrapper from "../../criteria/criteria.style";
 import GuidelinesModal from "../training/components/GuidelinesModal";
 import OrgaStyle from "./components/orga.style";
 
+function onChange(date, dateString) {
+  console.log(date, dateString);
+}
 const { Content } = Layout;
 
 var editRow;
@@ -217,7 +220,8 @@ const Guidelines = () => {
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={6}></Col>
+                  <Col xs={8} md={8} lg={5}> 
+                  </Col>
                   <Col xs={8} md={8} lg={6}>
                     <OrgaStyle>
                       <AutoCompleteSelect
@@ -228,8 +232,22 @@ const Guidelines = () => {
                       />
                     </OrgaStyle>
                   </Col>
-
                   <Col xs={8} md={8} lg={4}>
+                      <DatePicker
+                          onChange={onChange}
+                          bordered={false}
+                          suffixIcon={<DownOutlined />}
+                          placeholder="Select year"
+                          picker="year"
+                          className="DatePicker"
+                          style={{
+                              width: "120px",
+                              color: "black",
+                              cursor: "pointer",
+                          }}
+                      />
+                  </Col>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -237,7 +255,7 @@ const Guidelines = () => {
                       Хэвлэх{" "}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -246,7 +264,7 @@ const Guidelines = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"

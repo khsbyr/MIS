@@ -207,8 +207,8 @@ const TrainingProgram = () => {
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={6}></Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={10}></Col>
+                  <Col xs={8} md={8} lg={5}>
                     <OrgaStyle>
                       <AutoCompleteSelect
                         valueField="id"
@@ -219,7 +219,7 @@ const TrainingProgram = () => {
                     </OrgaStyle>
                   </Col>
 
-                  <Col xs={8} md={8} lg={4}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -227,7 +227,7 @@ const TrainingProgram = () => {
                       Хэвлэх{" "}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -236,7 +236,7 @@ const TrainingProgram = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
