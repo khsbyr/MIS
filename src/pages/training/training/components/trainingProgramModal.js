@@ -94,7 +94,7 @@ export default function GuidelinesModal(props) {
 
         if (isEditMode) {
           putService(
-            "trainingProgram/update/" + Trainingprogramcontroller.id,
+            "trainingProgram/update/" + trainingID,
             values
           )
             .then((result) => {
@@ -104,7 +104,7 @@ export default function GuidelinesModal(props) {
               errorCatch(error);
             });
         } else {
-          postService("trainingProgram/post", values);
+          postService("trainingProgram/post/" + trainingID, values);
           debugger;
           console
             .log(values)
@@ -173,7 +173,7 @@ export default function GuidelinesModal(props) {
                     >
                       <Input />
                     </Form.Item>
-                    <Form.Item
+                    {/* <Form.Item
                       layout="vertical"
                       label="Хариуцах эзэн:"
                       name="responsiblePersonName"
@@ -184,7 +184,7 @@ export default function GuidelinesModal(props) {
                         placeholder="Хариуцах эзэн"
                         onChange={(value) => selectTrainingTeam(value)}
                       />
-                    </Form.Item>
+                    </Form.Item> */}
                     <Form.Item
                       name="trainingMaterial"
                       label="Сургалтын материал"

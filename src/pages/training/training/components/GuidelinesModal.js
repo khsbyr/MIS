@@ -78,6 +78,7 @@ export default function GuidelinesModal(props) {
       if (result) {
         setStatePlan(result.content || []);
         console.log(result.content)
+        // console.log(training_plan.name)
         // training_plan.id = 
         // stateplanID(planID)
       }
