@@ -63,15 +63,23 @@ const ContentWrapper = styled.div`
         border-bottom: 1px solid #103154;
     }
 
-    .ant-input-number {
+    .ant-picker .ant-picker-borderless .FormItem .ant-picker-focused {
+        width: 60%;
+        border-bottom: 30px solid #103154;
+    }
+
+    /* .ant-input-number {
         border: none;
         width: 60%;
         border-bottom: 1px solid #103154;
-    }
+    } */
     .ant-input-prefix {
         color: #103154;
         margin-right: 25px;
     }
+    /* .ant-form-item-control-input-content {
+        border-bottom: 1px solid #103154;
+    } */
 `;
 
 export default ContentWrapper;

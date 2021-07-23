@@ -67,7 +67,13 @@ export default function CvModal(props) {
     });
     const [loading, setLoading] = useState(false);
     const PAGESIZE = 20;
+    const [birthDate, setBirthDate] = useState([]);
     const { RangePicker } = DatePicker;
+
+    function onBirthDateChange(date, value) {
+        console.log(date, value);
+        setBirthDate(value);
+    }
 
     useEffect(() => {
         onInit();
@@ -84,7 +90,7 @@ export default function CvModal(props) {
             }
         });
         //console.log('asd', Trainerscontroller);
-        if(Trainerscontroller!==undefined) {
+        if(Trainerscontroller!==null) {
             getService(`soum/getList/${Trainerscontroller.address.aimag.id}`).then((result) => {
                 if (result) {
                     setStateSum(result || []);
@@ -98,7 +104,8 @@ export default function CvModal(props) {
         }
 
         if (isEditMode) {
-            form.setFieldsValue({
+            setBirthDate(Trainerscontroller.birthDate)
+            form.setFieldsValue({             
                 ...Trainerscontroller,
                 AddressDetail : Trainerscontroller.address ? Trainerscontroller.address.addressDetail : '',
                 CountryID: Trainerscontroller.address ? Trainerscontroller.address.country.id : '',
@@ -168,7 +175,7 @@ export default function CvModal(props) {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        if(Trainerscontroller!==undefined){
+        if(Trainerscontroller!==null){
         getService("education/getByTrainerId/" + Trainerscontroller.id, listEducation)
             .then((result) => {
                 let listEducation = result || [];
@@ -192,7 +199,7 @@ export default function CvModal(props) {
         if (loadLazyTimeout) {
             clearTimeout(loadLazyTimeout);
         }
-        if(Trainerscontroller!==undefined){
+        if(Trainerscontroller!==null){
         getService("expierence/getByTrainerId/" + Trainerscontroller.id, listExperience)
             .then((result) => {
                 let listExperience = result || [];
@@ -500,8 +507,9 @@ export default function CvModal(props) {
                     }
                 };
                 values.organization = {id: orgId}
+                values.birthDate = birthDate
                 if (isEditMode) {
-                    putService(
+                    putService(                
                         "trainers/update/" + Trainerscontroller.id,
                         values
                     )
@@ -569,24 +577,31 @@ export default function CvModal(props) {
                                 <Form.Item name="firstName">
                                     <Input className="FormItem" placeholder="Нэр:" prefix={<FontAwesomeIcon icon={faUser} />} />
                                 </Form.Item>
-
-                                <Form.Item name="birthDate">
-                                    <Input className="FormItem" placeholder="Төрсөн огноо:" prefix={<FontAwesomeIcon icon={faCalendarAlt} />} />
-                                </Form.Item>
-
                                 <Form.Item name="registerNumber">
                                     <Input className="FormItem" placeholder="Регистрийн дугаар:" prefix={<FontAwesomeIcon icon={faUserEdit} />} />
                                 </Form.Item>
                                 <Form.Item name="phoneNumber">
                                     <Input className="FormItem" placeholder="Утас, факс:" prefix={<FontAwesomeIcon icon={faPhone} />} />
                                 </Form.Item>
-
+                                <Form.Item name="email">
+                                    <Input className="FormItem" placeholder="И-мэйл хаяг:" prefix={<FontAwesomeIcon icon={faEnvelope} />} />
+                                </Form.Item>
                             </Col>
 
                             <Col xs={24} md={24} lg={9}>
-
-                                <Form.Item name="email">
-                                    <Input className="FormItem" placeholder="И-мэйл хаяг:" prefix={<FontAwesomeIcon icon={faEnvelope} />} />
+                                <Form.Item >
+                                    {/* <Input className="FormItem" placeholder="Төрсөн огноо:" prefix={<FontAwesomeIcon icon={faCalendarAlt} />} /> */}
+                                    <DatePicker 
+                                        prefix= {<FontAwesomeIcon icon={faCalendarAlt} />}
+                                        placeholder="Төрсөн он, сар, өдөр"
+                                        className="FormItem"
+                                        style={{
+                                            height: '36.5px',
+                                        }}
+                                        bordered={false}
+                                        onChange={onBirthDateChange}
+                                        defaultValue={Trainerscontroller && moment(Trainerscontroller.birthDate)}
+                                    />
                                 </Form.Item>
                                 <Form.Item name="CountryID">
                                     <AutoCompleteSelect
@@ -665,7 +680,7 @@ export default function CvModal(props) {
                                     <Column field="index" header="№" style={{ width: "50px" }} />
                                     <Column field="degree" header="Зэрэг, цол" />
                                     <Column field="universityName" header="Их дээд сургуулийн нэр" />
-                                    <Column field="enrolledDate" header="Элссэн огноо" />                                   
+                                    <Column field="enrolledDate" header="Элссэн огноо" />                                                    
                                     <Column field="graduatedDate" header="Төгссөн огноо" />
                                     <Column headerStyle={{ width: '7rem' }} body={action}></Column>
                                 </DataTable>
