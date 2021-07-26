@@ -83,16 +83,20 @@ const User = () => {
   const actionBodyTemplate = rowData => {
     const approve = () => {
       if (!rowData) return;
+      toolsStore.setIsShowLoader(true);
       putService(`signUpRequest/approve/${rowData.id}`).then(() => {
         message.success(MSG.SUCCESS);
         onInit();
+        toolsStore.setIsShowLoader(false);
       });
     };
     const reject = () => {
       if (!rowData) return;
-      putService(`signUpRequest/rewake/${rowData.id}`).then(() => {
+      toolsStore.setIsShowLoader(true);
+      putService(`signUpRequest/decline/${rowData.id}`).then(() => {
         message.success(MSG.SUCCESS);
         onInit();
+        toolsStore.setIsShowLoader(false);
       });
     };
     return (
