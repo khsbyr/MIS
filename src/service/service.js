@@ -7,7 +7,7 @@ const config = () => ({
   headers: {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': '*',
-    'Access-Token': `${localStorage.getItem('token')}`,
+    AccessToken: `${localStorage.getItem('token')}`,
   },
 });
 

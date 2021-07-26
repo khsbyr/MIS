@@ -1,26 +1,13 @@
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, Col, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState, useContext } from 'react';
-import {
-  faFileExcel,
-  faPen,
-  faPlus,
-  faPrint,
-  faTrash,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { message, Button } from 'antd';
+import { MSG } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
-import UserModal from './components/UserModal';
-
-const { Content } = Layout;
-
-let editRow;
-let isEditMode;
+import { Confirm } from '../../components/Confirm';
 
 const User = () => {
   const toolsStore = useContext(ToolsContext);
@@ -40,7 +27,7 @@ const User = () => {
     toolsStore.setIsShowLoader(true);
     getService('signUpRequest/get', list)
       .then(result => {
-        const datas = result.content || [];
+        const datas = result || [];
         datas.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
@@ -58,75 +45,6 @@ const User = () => {
     onInit();
   }, [lazyParams]);
 
-  const add = () => {
-    setIsModalVisible(true);
-    isEditMode = false;
-  };
-
-  const edit = row => {
-    editRow = row;
-    isEditMode = true;
-    setIsModalVisible(true);
-  };
-
-  const handleDeleted = row => {
-    if (row.length === 0) {
-      message.warning('Устгах өгөгдлөө сонгоно уу');
-      return;
-    }
-    putService(`user/delete/${row.id}`)
-      .then(result => {
-        message.success('Амжилттай устлаа');
-        onInit();
-      })
-      .catch(error => {
-        errorCatch(error);
-      });
-  };
-
-  function confirm(row) {
-    Modal.confirm({
-      title: 'Та устгахдаа итгэлтэй байна уу ?',
-      icon: <ExclamationCircleOutlined />,
-      okButtonProps: {},
-      okText: 'Устгах',
-      cancelText: 'Буцах',
-      onOk() {
-        handleDeleted(row);
-        onInit();
-      },
-      onCancel() {},
-    });
-  }
-
-  const pop = row => {
-    if (row.length === 0) {
-      message.warning('Устгах өгөгдлөө сонгоно уу');
-    } else {
-      confirm(row);
-    }
-  };
-
-  const action = row => (
-    <>
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
-      />
-    </>
-  );
-
-  const closeModal = (isSuccess = false) => {
-    setIsModalVisible(false);
-    if (isSuccess) onInit();
-  };
-
   const indexBodyTemplate = row => (
     <>
       <span className="p-column-title">№</span>
@@ -137,29 +55,75 @@ const User = () => {
   const firstnameBodyTemplate = row => (
     <>
       <span className="p-column-title">Нэр</span>
-      {row.firstname}
+      {row.user.firstname}
     </>
   );
 
   const lastnameBodyTemplate = row => (
     <>
       <span className="p-column-title">Овог</span>
-      {row.lastname}
+      {row.user.lastname}
     </>
   );
 
   const registerBodyTemplate = row => (
     <>
       <span className="p-column-title">Регистрийн дугаар</span>
-      {row.register}
+      {row.user.register}
     </>
   );
+
   const emailBodyTemplate = row => (
     <>
       <span className="p-column-title">Й-мэйл</span>
-      {row.email}
+      {row.user.email}
     </>
   );
+
+  const actionBodyTemplate = rowData => {
+    const approve = () => {
+      if (!rowData) return;
+      putService(`signUpRequest/approve/${rowData.id}`).then(() => {
+        message.success(MSG.SUCCESS);
+        onInit();
+      });
+    };
+    const reject = () => {
+      if (!rowData) return;
+      putService(`signUpRequest/rewake/${rowData.id}`).then(() => {
+        message.success(MSG.SUCCESS);
+        onInit();
+      });
+    };
+    return (
+      <>
+        <Button
+          onClick={e => {
+            e.preventDefault();
+            Confirm(
+              approve,
+              'Уг хэрэглэгчийг системийн хэрэглэгчээр бүртгэхдээ итгэлтэй байна уу?'
+            );
+          }}
+        >
+          Зөвшөөрөх
+        </Button>
+        <Button
+          danger
+          style={{ marginLeft: 10 }}
+          onClick={e => {
+            e.preventDefault();
+            Confirm(
+              reject,
+              'Уг хэрэглэгчийн хүсэлтийг татгалзахдаа итгэлтэй байна уу?'
+            );
+          }}
+        >
+          Татгалзах
+        </Button>
+      </>
+    );
+  };
 
   return (
     <ContentWrapper>
@@ -213,17 +177,15 @@ const User = () => {
               body={emailBodyTemplate}
               sortable
             />
-            <Column field="role.name" header="Эрх" sortable />
-            <Column headerStyle={{ width: '7rem' }} body={action} />
-          </DataTable>
-          {isModalVisible && (
-            <UserModal
-              Usercontroller={editRow}
-              isModalVisible={isModalVisible}
-              close={closeModal}
-              isEditMode={isEditMode}
+            <Column field="user.role.name" header="Дүр" sortable />
+            <Column field="status.status" header="Төлөв" sortable />
+            <Column
+              field=""
+              header="Үйлдэл"
+              style={{ width: 300, textAlign: 'right' }}
+              body={actionBodyTemplate}
             />
-          )}
+          </DataTable>
         </div>
       </div>
     </ContentWrapper>
