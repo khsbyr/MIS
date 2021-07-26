@@ -46,7 +46,7 @@ import TestAggregation from './training/training/testAggregation';
 import Budget from './training/training/budget';
 import User from './user/user';
 import Role from './user/role';
-import Signuprequest from './user/signuprequest';
+import SignUpRequest from './user/signUpRequest';
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -105,7 +105,7 @@ const Admin = () => {
               </Menu.Item>
               <Menu.Item key="52" icon={<FontAwesomeIcon icon={faUserCheck} />}>
                 {' '}
-                <Link to="/admin/signuprequest">{t('signreq')}</Link>
+                <Link to="/admin/signUpRequest">{t('signreq')}</Link>
               </Menu.Item>
             </SubMenu>
             <SubMenu
@@ -331,8 +331,8 @@ const Admin = () => {
               <Route exact path="/admin/role">
                 <Role />
               </Route>
-              <Route exact path="/admin/signuprequest">
-                <Signuprequest />
+              <Route exact path="/admin/signUpRequest">
+                <SignUpRequest />
               </Route>
               <Route exact path="/admin/criteria">
                 <Criteria />

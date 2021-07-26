@@ -38,7 +38,7 @@ const User = () => {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService('user/get', list)
+    getService('signUpRequest/get', list)
       .then(result => {
         const datas = result.content || [];
         datas.forEach((item, index) => {
@@ -164,46 +164,7 @@ const User = () => {
   return (
     <ContentWrapper>
       <div className="button-demo">
-        <Layout className="btn-layout">
-          <Content>
-            <Row>
-              <Col xs={24} md={24} lg={14}>
-                <p className="title">Хэрэглэгчийн жагсаалт</p>
-              </Col>
-              <Col xs={16} md={16} lg={10}>
-                <Row justify="end" gutter={[16, 16]}>
-                  <Col xs={8} md={4} lg={4}>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      Хэвлэх{' '}
-                    </Button>
-                  </Col>
-                  <Col xs={8} md={4} lg={4}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      Экспорт
-                    </Button>
-                  </Col>
-                  <Col xs={8} md={4} lg={4}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      Нэмэх
-                    </Button>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Content>
-        </Layout>
+        <p className="title">Хэрэглэгчийн жагсаалт</p>
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}
