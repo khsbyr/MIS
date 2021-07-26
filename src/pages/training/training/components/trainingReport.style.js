@@ -26,13 +26,18 @@ const ContentWrapper = styled.div`
   }
 
   .FormItem {
-    width: 60%;
+    /* width: 100%;
+        height: 40px;
+        border:none;
+        border-bottom: 1px solid #103154; */
+    width: 100%;
     height: 40px;
-    border: none;
-    border-bottom: 1px solid #103154;
-    @media (max-width: 991px) {
-      width: 100%;
-    }
+    border-radius: 3px;
+  }
+  Input {
+    width: 100%;
+    height: 40px;
+    border-radius: 3px;
   }
 
   Select {
@@ -41,7 +46,7 @@ const ContentWrapper = styled.div`
 
   .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
     height: 40px;
-    padding-top: 4px;
+    padding-top: 7px;
   }
 
   .button {

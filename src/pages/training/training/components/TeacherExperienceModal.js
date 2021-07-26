@@ -6,8 +6,9 @@ import {
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import validateMessages from '../../../../tools/validateMessage';
+import AutocompleteSelect from '../../../../components/Autocomplete';
 import ContentWrapper from './cv.styled';
+import validateMessages from '../../../../tools/validateMessage';
 
 const layout = {
   labelCol: {
@@ -17,7 +18,6 @@ const layout = {
     span: 14,
   },
 };
-
 export default function TeacherExperienceModal(props) {
   const { Composition, isModalVisible, isEditMode } = props;
   const [stateController, setStateController] = useState([]);

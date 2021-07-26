@@ -1,4 +1,4 @@
-import { Col, Form, Input, Modal, Row } from 'antd';
+import { Col, Form, Input, Modal, Row, Button } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
 import {
@@ -18,62 +18,70 @@ const layout = {
     span: 22,
   },
 };
-
 export default function TrainingGuidelinesModal(props) {
-  const { TrainingGuidelinesModalController, isModalVisible, isEditMode } =
-    props;
+  const {
+    TrainingGuidelinesModalController,
+    Result,
+    isModalVisible,
+    isEditMode,
+    trainingID,
+  } = props;
   const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
   const [stateCountry, setStateCountry] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const [form] = Form.useForm();
+  const [valueState, setStateValue] = useState([]);
   const [lazyParams, setLazyParams] = useState({
     page: 0,
   });
 
   useEffect(() => {
+    console.log(trainingID);
+    getService(`trainingGuidelines/get/${trainingID}`).then(result => {
+      console.log(result);
+      const value = result;
+      setStateValue(value);
+      console.log(value);
+      form.setFieldsValue({
+        ...result,
+        subject: result.subject,
+        CountryID: result.address.country.id,
+        AimagID: result.address.aimag.id,
+        SoumID: result.address.soum.id,
+        BagID: result.address.bag.id,
+        AddressDetail: result.address.addressDetail,
+      });
+    });
     getService('country/get').then(result => {
       if (result) {
         setStateCountry(result || []);
       }
     });
+
     getService('aimag/get').then(result => {
       if (result) {
         setStateAimag(result || []);
       }
     });
-    if (TrainingGuidelinesModalController !== undefined) {
-      getService(
-        `soum/getList/${TrainingGuidelinesModalController.address.aimag.id}`
-      ).then(result => {
+
+    if (Result) {
+      getService(`soum/getList/${Result.address.aimag.id}`).then(result => {
         if (result) {
           setStateSum(result || []);
         }
       });
-      getService(
-        `bag/getList/${TrainingGuidelinesModalController.address.soum.id}`
-      ).then(result => {
+      getService(`bag/getList/${Result.address.soum.id}`).then(result => {
         if (result) {
           setStateBag(result || []);
         }
       });
     }
-    if (isEditMode) {
-      form.setFieldsValue({
-        ...TrainingGuidelinesModalController,
-        CountryID: TrainingGuidelinesModalController.address.country.id,
-        AimagID: TrainingGuidelinesModalController.address.aimag.id,
-        SoumID: TrainingGuidelinesModalController.address.soum.id,
-        BagID: TrainingGuidelinesModalController.address.bag.id,
-        AddressDetail: TrainingGuidelinesModalController.address.addressDetail,
-        trainingStartDate: TrainingGuidelinesModalController.trainingStartDate,
-        subject: TrainingGuidelinesModalController.subject,
-        reason: TrainingGuidelinesModalController.reason,
-        aim: TrainingGuidelinesModalController.aim,
-        operation: TrainingGuidelinesModalController.operation,
-        result: TrainingGuidelinesModalController.result,
-      });
-    }
+    // if (isEditMode) {
+    //   form.setFieldsValue({
+    //     ...result,
+    //   });
+    // }
   }, []);
 
   const getAimag = countryId => {
@@ -112,10 +120,15 @@ export default function TrainingGuidelinesModal(props) {
     getBag(value);
   };
 
+  const onReset = () => {
+    form.resetFields();
+  };
+
   const save = () => {
     form
       .validateFields()
       .then(values => {
+        console.log(values);
         values.address = {
           addressDetail: values.AddressDetail,
           country: {
@@ -131,26 +144,15 @@ export default function TrainingGuidelinesModal(props) {
             id: values.BagID,
           },
         };
-        if (isEditMode) {
-          putService(
-            `trainingGuidelines/update/${TrainingGuidelinesModalController.id}`,
-            values
-          )
-            .then(result => {
-              props.close(true);
-            })
-            .catch(error => {
-              errorCatch(error);
-            });
-        } else {
-          postService('trainingGuidelines/post', values)
-            .then(result => {
-              props.close(true);
-            })
-            .catch(error => {
-              errorCatch(error);
-            });
-        }
+        // if (isEditMode) {
+        putService(`trainingGuidelines/update/${valueState.id}`, values)
+          .then(result => {
+            props.close(true);
+          })
+          .catch(error => {
+            errorCatch(error);
+          });
+        // }
       })
       .catch(info => {
         console.log('Validate Failed:', info);
@@ -159,7 +161,7 @@ export default function TrainingGuidelinesModal(props) {
   return (
     <div>
       <Modal
-        title="Оролцогчийн бүртгэл"
+        title="Сургалтын удирдамж"
         okText="Хадгалах"
         cancelText="Буцах"
         width={1000}
@@ -190,7 +192,7 @@ export default function TrainingGuidelinesModal(props) {
                         },
                       ]}
                     >
-                      <Input />
+                      <Input allowClear />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={12}>
@@ -310,6 +312,9 @@ export default function TrainingGuidelinesModal(props) {
                     </Form.Item>
                   </Col>
                 </Row>
+                <Button htmlType="button" onClick={onReset}>
+                  Reset
+                </Button>
               </Col>
             </Row>
           </Form>

@@ -1,4 +1,3 @@
-/* eslint-disable no-const-assign */
 import { ExclamationCircleOutlined, InboxOutlined } from '@ant-design/icons';
 import {
   faCalendarAlt,
@@ -22,9 +21,11 @@ import {
   Row,
   Upload,
 } from 'antd';
+import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import AutoCompleteSelect from '../../../../components/Autocomplete';
 import { ToolsContext } from '../../../../context/Tools';
 import {
   getService,
@@ -32,6 +33,7 @@ import {
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
+import validateMessages from '../../../../tools/validateMessage';
 import CertificateModal from './CertificateModal';
 import ConsSerExperienceModal from './ConsSerExperienceModa';
 import ContentWrapper from './cv.styled';
@@ -40,25 +42,22 @@ import ExperienceModal from './ExperienceModal';
 import MembershipModal from './MembershipModal';
 import PublishedWorkModal from './PublishedWorkModal';
 import TeacherExperienceModal from './TeacherExperienceModal';
-import AutoCompleteSelect from '../../../../components/Autocomplete';
-import validateMessages from '../../../../tools/validateMessage';
 
 const { Dragger } = Upload;
-
 const layout = {
   labelCol: {
     span: 20,
   },
   wrapperCol: {
-    span: 22,
+    span: 24,
   },
 };
 
 let editRow;
-
+let isEditModee;
+let editRowEducation;
 export default function CvModal(props) {
-  const { Trainerscontroller, isModalVisible, isEditMode } = props;
-  const toolsStore = useContext(ToolsContext);
+  const { Trainerscontroller, isModalVisible, isEditMode, orgId } = props;
   const [isModalVisibleEducation, setIsModalVisibleEducation] = useState(false);
   const [isModalVisibleExperience, setIsModalVisibleExperience] =
     useState(false);
@@ -73,6 +72,7 @@ export default function CvModal(props) {
   const [isModalVisibleMembership, setIsModalVisibleMembership] =
     useState(false);
   const [form] = Form.useForm();
+  const toolsStore = useContext(ToolsContext);
   const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
   const [stateCountry, setStateCountry] = useState([]);
@@ -80,13 +80,22 @@ export default function CvModal(props) {
   const [selectedRows, setSelectedRows] = useState([]);
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
+  const [listEducation, setListEducation] = useState([]);
+  const [listExperience, setListExperience] = useState([]);
   const [lazyParams, setLazyParams] = useState({
     page: 0,
   });
+  const [loading, setLoading] = useState(false);
   const PAGESIZE = 20;
+  const [birthDate, setBirthDate] = useState([]);
+  const { RangePicker } = DatePicker;
 
+  function onBirthDateChange(date, value) {
+    console.log(date, value);
+    setBirthDate(value);
+  }
   const onInit = () => {
-    toolsStore.setIsShowLoader(true);
+    toolsStore.setIsShowLoader(false);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
@@ -99,11 +108,118 @@ export default function CvModal(props) {
         setList(listResult);
         setSelectedRows([]);
       })
+      .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
         errorCatch(error);
-        toolsStore.setIsShowLoader(true);
+        toolsStore.setIsShowLoader(false);
       });
   };
+
+  const onInitEducation = () => {
+    toolsStore.setIsShowLoader(false);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    if (Trainerscontroller !== null) {
+      getService(
+        `education/getByTrainerId/${Trainerscontroller.id}`,
+        listEducation
+      )
+        .then(result => {
+          const listeducation = result || [];
+          listeducation.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setListEducation(listeducation);
+          setSelectedRows([]);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
+        });
+    }
+  };
+
+  const onInitExperience = () => {
+    toolsStore.setIsShowLoader(false);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    if (Trainerscontroller !== null) {
+      getService(
+        `expierence/getByTrainerId/${Trainerscontroller.id}`,
+        listExperience
+      )
+        .then(result => {
+          const listexperience = result || [];
+          listexperience.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setListExperience(listexperience);
+          setSelectedRows([]);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
+        });
+    }
+  };
+  useEffect(() => {
+    onInit();
+    onInitEducation();
+    onInitExperience();
+    getService('country/get').then(result => {
+      if (result) {
+        setStateCountry(result || []);
+      }
+    });
+    getService('aimag/get').then(result => {
+      if (result) {
+        setStateAimag(result || []);
+      }
+    });
+    // console.log('asd', Trainerscontroller);
+    if (Trainerscontroller !== null) {
+      getService(`soum/getList/${Trainerscontroller.address.aimag.id}`).then(
+        result => {
+          if (result) {
+            setStateSum(result || []);
+          }
+        }
+      );
+      getService(`bag/getList/${Trainerscontroller.address.soum.id}`).then(
+        result => {
+          if (result) {
+            setStateBag(result || []);
+          }
+        }
+      );
+    }
+
+    if (isEditMode) {
+      setBirthDate(Trainerscontroller.birthDate);
+      form.setFieldsValue({
+        ...Trainerscontroller,
+        AddressDetail: Trainerscontroller.address
+          ? Trainerscontroller.address.addressDetail
+          : '',
+        CountryID: Trainerscontroller.address
+          ? Trainerscontroller.address.country.id
+          : '',
+        AimagID: Trainerscontroller.address
+          ? Trainerscontroller.address.aimag.id
+          : '',
+        SoumID: Trainerscontroller.address
+          ? Trainerscontroller.address.soum.id
+          : '',
+        BagID: Trainerscontroller.address
+          ? Trainerscontroller.address.bag.id
+          : '',
+      });
+    }
+  }, [lazyParams]);
 
   const getAimag = countryId => {
     getService(`aimag/getList/${countryId}`, {}).then(result => {
@@ -111,6 +227,10 @@ export default function CvModal(props) {
         setStateAimag(result || []);
       }
     });
+  };
+
+  const selectCountry = value => {
+    getAimag(value);
   };
 
   const getSum = aimagId => {
@@ -121,8 +241,8 @@ export default function CvModal(props) {
     });
   };
 
-  const selectCountry = value => {
-    getAimag(value);
+  const selectAimag = value => {
+    getSum(value);
   };
 
   const getBag = sumID => {
@@ -137,36 +257,34 @@ export default function CvModal(props) {
     getBag(value);
   };
 
-  const selectAimag = value => {
-    getSum(value);
-  };
   const edit = row => {
-    editRow = row.data;
-    isEditMode = true;
+    editRowEducation = row;
+    isEditModee = true;
     setIsModalVisibleEducation(true);
   };
 
   const add = () => {
+    editRowEducation = null;
     setIsModalVisibleEducation(true);
-    isEditMode = false;
+    isEditModee = false;
   };
 
-  const handleDeleted = () => {
-    if (selectedRows.length === 0) {
+  const handleDeletedEducation = row => {
+    if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`criteriaa/delete/${selectedRows[0].id}`)
+    putService(`education/delete/${row.id}`)
       .then(result => {
         message.success('Амжилттай устлаа');
-        onInit();
+        onInitExperience();
       })
       .catch(error => {
         errorCatch(error);
       });
   };
 
-  function confirm() {
+  function confirmEducation(row) {
     Modal.confirm({
       title: 'Та устгахдаа итгэлтэй байна уу ?',
       icon: <ExclamationCircleOutlined />,
@@ -174,18 +292,18 @@ export default function CvModal(props) {
       okText: 'Устгах',
       cancelText: 'Буцах',
       onOk() {
-        handleDeleted();
-        onInit();
+        handleDeletedEducation(row);
+        onInitEducation();
       },
       onCancel() {},
     });
   }
 
-  const pop = () => {
-    if (selectedRows.length === 0) {
+  const pop = row => {
+    if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
-      confirm();
+      confirmEducation(row);
     }
   };
 
@@ -204,76 +322,52 @@ export default function CvModal(props) {
     </>
   );
 
-  useEffect(() => {
-    onInit();
-    getService('country/get').then(result => {
-      if (result) {
-        setStateCountry(result || []);
-      }
-    });
-    getService('aimag/get').then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-    // console.log('asd', Trainerscontroller);
-    if (Trainerscontroller !== undefined) {
-      getService(`soum/getList/${Trainerscontroller.address.aimag.id}`).then(
-        result => {
-          if (result) {
-            setStateSum(result || []);
-          }
-        }
-      );
-      getService(`bag/getList/${Trainerscontroller.address.soum.id}`).then(
-        result => {
-          if (result) {
-            setStateBag(result || []);
-          }
-        }
-      );
-    }
-
-    if (isEditMode) {
-      form.setFieldsValue({
-        ...Trainerscontroller,
-        CountryID: Trainerscontroller.address
-          ? Trainerscontroller.address.country.id
-          : '',
-        AimagID: Trainerscontroller.address
-          ? Trainerscontroller.address.aimag.id
-          : '',
-        SoumID: Trainerscontroller.address
-          ? Trainerscontroller.address.soum.id
-          : '',
-        BagID: Trainerscontroller.address
-          ? Trainerscontroller.address.bag.id
-          : '',
-      });
-    }
-  }, [lazyParams]);
-
   const closeModal = (isSuccess = false) => {
     setIsModalVisibleEducation(false);
     if (isSuccess) onInit();
   };
 
   const editExperience = row => {
-    editRow = row.data;
-    isEditMode = true;
+    editRow = row;
+    isEditModee = true;
     setIsModalVisibleExperience(true);
   };
 
-  const addExperience = () => {
-    setIsModalVisibleExperience(true);
-    isEditMode = false;
+  const handleDeletedExperience = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+      return;
+    }
+    putService(`expierence/delete/${row.id}`)
+      .then(result => {
+        message.success('Амжилттай устлаа');
+        onInitExperience();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
   };
 
-  const popExperience = () => {
-    if (selectedRows.length === 0) {
+  function confirm(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeletedExperience(row);
+        onInit();
+      },
+      onCancel() {},
+    });
+  }
+
+  const popExperience = row => {
+    if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
-      confirm();
+      confirm(row);
     }
   };
 
@@ -292,6 +386,11 @@ export default function CvModal(props) {
     </>
   );
 
+  const addExperience = () => {
+    setIsModalVisibleExperience(true);
+    isEditModee = false;
+  };
+
   const closeModalExperience = (isSuccess = false) => {
     setIsModalVisibleExperience(false);
     if (isSuccess) onInit();
@@ -299,7 +398,7 @@ export default function CvModal(props) {
 
   const editConsSerExperience = row => {
     editRow = row.data;
-    isEditMode = true;
+    isEditModee = true;
     setIsModalVisibleConsSerExperience(true);
   };
 
@@ -328,7 +427,7 @@ export default function CvModal(props) {
 
   const addConsSerExperience = () => {
     setIsModalVisibleConsSerExperience(true);
-    isEditMode = false;
+    isEditModee = false;
   };
 
   const closeModalConsSerExperience = (isSuccess = false) => {
@@ -338,7 +437,7 @@ export default function CvModal(props) {
 
   const editTeacherExperience = row => {
     editRow = row.data;
-    isEditMode = true;
+    isEditModee = true;
     setIsModalVisibleTeacherExperience(true);
   };
 
@@ -349,7 +448,6 @@ export default function CvModal(props) {
       confirm();
     }
   };
-
   const actionTeacherExperience = row => (
     <>
       <Button
@@ -367,7 +465,7 @@ export default function CvModal(props) {
 
   const addTeacherExperience = () => {
     setIsModalVisibleTeacherExperience(true);
-    isEditMode = false;
+    isEditModee = false;
   };
 
   const closeModalTeacherExperience = (isSuccess = false) => {
@@ -377,7 +475,7 @@ export default function CvModal(props) {
 
   const editPublishedWork = row => {
     editRow = row.data;
-    isEditMode = true;
+    isEditModee = true;
     setIsModalVisiblePublishedWork(true);
   };
 
@@ -406,12 +504,18 @@ export default function CvModal(props) {
 
   const addPublishedWork = () => {
     setIsModalVisiblePublishedWork(true);
-    isEditMode = false;
+    isEditModee = false;
   };
 
   const closeModalPublishedWork = (isSuccess = false) => {
     setIsModalVisiblePublishedWork(false);
     if (isSuccess) onInit();
+  };
+
+  const editCertificate = row => {
+    editRow = row.data;
+    isEditModee = true;
+    setIsModalVisibleCertificate(true);
   };
 
   const popCertificate = () => {
@@ -420,12 +524,6 @@ export default function CvModal(props) {
     } else {
       confirm();
     }
-  };
-
-  const editCertificate = row => {
-    editRow = row.data;
-    isEditMode = true;
-    setIsModalVisibleCertificate(true);
   };
 
   const actionCertificate = row => (
@@ -445,12 +543,18 @@ export default function CvModal(props) {
 
   const addCertificate = () => {
     setIsModalVisibleCertificate(true);
-    isEditMode = false;
+    isEditModee = false;
   };
 
   const closeModalCertificate = (isSuccess = false) => {
     setIsModalVisibleCertificate(false);
     if (isSuccess) onInit();
+  };
+
+  const editMembership = row => {
+    editRow = row.data;
+    isEditModee = true;
+    setIsModalVisibleMembership(true);
   };
 
   const popMembership = () => {
@@ -459,12 +563,6 @@ export default function CvModal(props) {
     } else {
       confirm();
     }
-  };
-
-  const editMembership = row => {
-    editRow = row.data;
-    isEditMode = true;
-    setIsModalVisibleMembership(true);
   };
 
   const actionMembership = row => (
@@ -484,7 +582,7 @@ export default function CvModal(props) {
 
   const addMembership = () => {
     setIsModalVisibleMembership(true);
-    isEditMode = false;
+    isEditModee = false;
   };
 
   const closeModalMembership = (isSuccess = false) => {
@@ -497,6 +595,7 @@ export default function CvModal(props) {
       .validateFields()
       .then(values => {
         values.address = {
+          addressDetail: values.AddressDetail,
           country: {
             id: values.CountryID,
           },
@@ -510,6 +609,8 @@ export default function CvModal(props) {
             id: values.BagID,
           },
         };
+        values.organization = { id: orgId };
+        values.birthDate = birthDate;
         if (isEditMode) {
           putService(`trainers/update/${Trainerscontroller.id}`, values)
             .then(result => {
@@ -580,15 +681,6 @@ export default function CvModal(props) {
                     prefix={<FontAwesomeIcon icon={faUser} />}
                   />
                 </Form.Item>
-
-                <Form.Item name="birthDate">
-                  <Input
-                    className="FormItem"
-                    placeholder="Төрсөн огноо:"
-                    prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
-                  />
-                </Form.Item>
-
                 <Form.Item name="registerNumber">
                   <Input
                     className="FormItem"
@@ -603,14 +695,26 @@ export default function CvModal(props) {
                     prefix={<FontAwesomeIcon icon={faPhone} />}
                   />
                 </Form.Item>
-              </Col>
-
-              <Col xs={24} md={24} lg={9}>
                 <Form.Item name="email">
                   <Input
                     className="FormItem"
                     placeholder="И-мэйл хаяг:"
                     prefix={<FontAwesomeIcon icon={faEnvelope} />}
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} md={24} lg={9}>
+                <Form.Item>
+                  {/* <Input className="FormItem" placeholder="Төрсөн огноо:" prefix={<FontAwesomeIcon icon={faCalendarAlt} />} /> */}
+                  <DatePicker
+                    prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
+                    placeholder="Төрсөн он, сар, өдөр"
+                    className="FormItem"
+                    onChange={onBirthDateChange}
+                    defaultValue={
+                      Trainerscontroller && moment(Trainerscontroller.birthDate)
+                    }
                   />
                 </Form.Item>
                 <Form.Item name="CountryID">
@@ -681,7 +785,7 @@ export default function CvModal(props) {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <DataTable
-                  value={list}
+                  value={listEducation}
                   removableSort
                   paginator
                   rows={10}
@@ -694,17 +798,21 @@ export default function CvModal(props) {
                   dataKey="id"
                 >
                   <Column field="index" header="№" style={{ width: '50px' }} />
-                  <Column field="name" header="Зэрэг, цол" />
-                  <Column field="" header="Их дээд сургуулийн нэр" />
-                  <Column field="" header="Огноо" />
+                  <Column field="degree" header="Зэрэг, цол" />
+                  <Column
+                    field="universityName"
+                    header="Их дээд сургуулийн нэр"
+                  />
+                  <Column field="enrolledDate" header="Элссэн огноо" />
+                  <Column field="graduatedDate" header="Төгссөн огноо" />
                   <Column headerStyle={{ width: '7rem' }} body={action} />
                 </DataTable>
                 {isModalVisibleEducation && (
                   <EducationModal
-                    Criteriacontroller={editRow}
-                    isModalVisible={isModalVisibleEducation}
+                    CvEducationController={editRowEducation}
+                    isModalVisibleEducation={isModalVisibleEducation}
                     close={closeModal}
-                    isEditMode={isEditMode}
+                    isEditMode={isEditModee}
                   />
                 )}
               </Col>
@@ -725,7 +833,7 @@ export default function CvModal(props) {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <DataTable
-                  value={list}
+                  value={listExperience}
                   removableSort
                   paginator
                   rows={10}
@@ -738,9 +846,9 @@ export default function CvModal(props) {
                   dataKey="id"
                 >
                   <Column field="index" header="№" style={{ width: '50px' }} />
-                  <Column field="name" header="Албан тушаал" />
-                  <Column field="" header="Байгууллагын нэр" />
-                  <Column field="" header="Огноо" />
+                  <Column field="position" header="Албан тушаал" />
+                  <Column field="organizationName" header="Байгууллагын нэр" />
+                  <Column field="hiredDate" header="Ажилд орсон огноо" />
                   <Column
                     headerStyle={{ width: '7rem' }}
                     body={actionExperience}
@@ -748,10 +856,10 @@ export default function CvModal(props) {
                 </DataTable>
                 {isModalVisibleExperience && (
                   <ExperienceModal
-                    Criteriacontroller={editRow}
-                    isModalVisible={isModalVisibleExperience}
+                    CvExperienceController={editRow}
+                    isModalVisibleExperience={isModalVisibleExperience}
                     close={closeModalExperience}
-                    isEditMode={isEditMode}
+                    isEditMode={isEditModee}
                   />
                 )}
               </Col>
@@ -1000,6 +1108,21 @@ export default function CvModal(props) {
                 <Form.Item name="skill">
                   <Input.TextArea
                     placeholder="(Өөрийн давуу тал, ур чадвараа нэрлэнэ үү)"
+                    style={{
+                      width: '100%',
+                      height: '140px',
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <h2 className="title">11. Хаягийн дэлгэрэнгүй</h2>
+            <Row>
+              <Col xs={24} md={24} lg={24}>
+                <Form.Item name="AddressDetail">
+                  <Input.TextArea
+                    placeholder="(Дэлгэрэнгүй хаягаа оруулна уу)"
                     style={{
                       width: '100%',
                       height: '140px',

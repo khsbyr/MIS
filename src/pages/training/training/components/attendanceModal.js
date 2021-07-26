@@ -1,6 +1,10 @@
-import { Form, Input, Modal } from 'antd';
+import { Form, Input, Modal, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { postService, putService } from '../../../../service/service';
+import {
+  getService,
+  postService,
+  putService,
+} from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import ContentWrapper from './attendance.style';
 import validateMessages from '../../../../tools/validateMessage';
@@ -13,22 +17,37 @@ const layout = {
     span: 14,
   },
 };
-
 export default function TrainingProgramModal(props) {
-  const { Attendancecontroller, isModalVisible, isEditMode } = props;
+  const { Attendancecontroller, isModalVisible, isEditMode, trainingID } =
+    props;
+  console.log(props);
   const [form] = Form.useForm();
+  const { Option } = Select;
+  const [genderID, setGenderID] = useState([]);
+
+  function handleChange(value) {
+    console.log(`selected ${value}`);
+    setGenderID(value);
+  }
+
   useEffect(() => {
     if (isEditMode) {
-      form.setFieldsValue({ ...Attendancecontroller });
+      setGenderID(Attendancecontroller.gender.id);
+      form.setFieldsValue({
+        ...Attendancecontroller,
+        Gender: Attendancecontroller.gender.gender,
+        GenderID: Attendancecontroller.gender.id,
+      });
     }
   }, []);
   const save = () => {
     form
       .validateFields()
       .then(values => {
-        values.userService = { id: values.userServiceId };
+        values.training = { id: trainingID };
+        values.gender = { id: genderID };
         if (isEditMode) {
-          putService(`participants/put${Attendancecontroller.id}`, values)
+          putService(`participants/update/${Attendancecontroller.id}`, values)
             .then(result => {
               props.close(true);
             })
@@ -91,11 +110,22 @@ export default function TrainingProgramModal(props) {
             >
               <Input />
             </Form.Item>
-            <Form.Item name="contact" label="Холбогдох утас, мэйл, хаяг:">
+            <Form.Item name="phone" label="Холбогдох утас:">
               <Input />
             </Form.Item>
-            <Form.Item name="RD" label="Регистрийн дугаар">
+            <Form.Item name="register" label="Регистрийн дугаар">
               <Input />
+            </Form.Item>
+
+            <Form.Item label="Хүйс" name="Gender">
+              <Select
+                defaultValue="Хүйс сонгох..."
+                style={{ width: 200 }}
+                onChange={handleChange}
+              >
+                <Option value={1}>Эрэгтэй</Option>
+                <Option value={2}>Эмэгтэй</Option>
+              </Select>
             </Form.Item>
           </Form>
         </ContentWrapper>

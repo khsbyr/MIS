@@ -1,9 +1,4 @@
-import {
-  DownOutlined,
-  ExclamationCircleOutlined,
-  FileOutlined,
-  PrinterOutlined,
-} from '@ant-design/icons';
+import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
@@ -11,29 +6,18 @@ import {
   faPrint,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
-import SaveIcon from '@material-ui/icons/Save';
-import {
-  Button,
-  Col,
-  Dropdown,
-  Form,
-  Layout,
-  Menu,
-  message,
-  Modal,
-  Row,
-  DatePicker,
-} from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useRef, useState, useContext } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useState, useContext } from 'react';
+import AutoCompleteSelect from '../../../components/Autocomplete';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
-import { PAGESIZE } from '../../../constants/Constant';
 import { errorCatch } from '../../../tools/Tools';
-import CvModal from './components/CvModal';
 import ContentWrapper from '../../criteria/criteria.style';
+import CvModal from './components/CvModal';
+import OrgaStyle from './components/orga.style';
 
 function onChange(date, dateString) {
   console.log(date, dateString);
@@ -51,7 +35,10 @@ const CV = () => {
     page: 0,
   });
   const [loading, setLoading] = useState(false);
+  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
+  const [stateOrg, setStateOrg] = useState([]);
+  const [OrgID, setOrgID] = useState([]);
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
@@ -67,6 +54,7 @@ const CV = () => {
         setList(listResult);
         setSelectedRows([]);
       })
+      .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
         errorCatch(error);
         toolsStore.setIsShowLoader(false);
@@ -75,17 +63,35 @@ const CV = () => {
 
   useEffect(() => {
     onInit();
+    getService('organization/get').then(result => {
+      if (result) {
+        setStateOrg(result.content || []);
+      }
+    });
   }, [lazyParams]);
 
-  const add = () => {
-    setIsModalVisible(true);
-    isEditMode = false;
+  const getGuidelines = orgId => {
+    getService(`trainers/getList/${orgId}`, {}).then(result => {
+      if (result) {
+        const listResult = result || [];
+        listResult.forEach((item, index) => {
+          item.index = index + 1;
+        });
+        setList(listResult);
+        setOrgID(orgId);
+        setSelectedRows([]);
+      }
+    });
   };
 
-  const edit = row => {
-    editRow = row;
-    isEditMode = true;
+  const selectOrgs = value => {
+    getGuidelines(value);
+  };
+
+  const add = () => {
+    editRow = null;
     setIsModalVisible(true);
+    isEditMode = false;
   };
 
   const handleDeleted = row => {
@@ -126,6 +132,12 @@ const CV = () => {
     }
   };
 
+  const edit = row => {
+    editRow = row;
+    isEditMode = true;
+    setIsModalVisible(true);
+  };
+
   const action = row => (
     <>
       <Button
@@ -152,12 +164,6 @@ const CV = () => {
       {row.index}
     </>
   );
-  const trainerForBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Оролцоо</span>
-      {row.trainerFor}
-    </>
-  );
 
   const FirstNameBodyTemplate = row => (
     <>
@@ -173,18 +179,35 @@ const CV = () => {
     </>
   );
 
+  const phoneBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Утас</span>
+      {row.phoneNumber}
+    </>
+  );
   return (
     <ContentWrapper>
       <div className="button-demo">
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={14}>
+              <Col xs={24} md={24} lg={12}>
                 <p className="title">Сургагч багшийн CV</p>
               </Col>
-              <Col xs={24} md={24} lg={10}>
+              <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
+                  <Col xs={8} md={8} lg={5} />
                   <Col xs={8} md={8} lg={6}>
+                    <OrgaStyle>
+                      <AutoCompleteSelect
+                        valueField="id"
+                        placeholder="Байгууллага сонгох"
+                        data={stateOrg}
+                        onChange={value => selectOrgs(value)}
+                      />
+                    </OrgaStyle>
+                  </Col>
+                  <Col xs={8} md={8} lg={4}>
                     <DatePicker
                       onChange={onChange}
                       bordered={false}
@@ -199,7 +222,7 @@ const CV = () => {
                       }}
                     />
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -207,7 +230,7 @@ const CV = () => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -216,7 +239,7 @@ const CV = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -251,13 +274,6 @@ const CV = () => {
               sortable
             />
             <Column
-              header="Оролцоо"
-              body={trainerForBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
               header="Нэр"
               body={FirstNameBodyTemplate}
               sortable
@@ -267,6 +283,13 @@ const CV = () => {
             <Column
               header="Овог"
               body={LastNameBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              header="Утас"
+              body={phoneBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
@@ -286,6 +309,7 @@ const CV = () => {
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+              orgId={OrgID}
             />
           )}
         </div>

@@ -51,6 +51,7 @@ const Criteria = () => {
         setList(listResult);
         setSelectedRows([]);
       })
+      .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
         errorCatch(error);
         toolsStore.setIsShowLoader(false);

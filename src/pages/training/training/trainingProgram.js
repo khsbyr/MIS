@@ -1,4 +1,4 @@
-import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
@@ -7,18 +7,7 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Button,
-  Col,
-  DatePicker,
-  Layout,
-  message,
-  Modal,
-  Row,
-  Form,
-  Select,
-  Input,
-} from 'antd';
+import { Button, Col, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState, useContext } from 'react';
@@ -27,10 +16,12 @@ import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import ContentWrapper from './components/trainingProgram.style';
 import TrainingProgramModal from './components/trainingProgramModal';
+import OrgaStyle from './components/orga.style';
+import AutoCompleteSelect from '../../../components/Autocomplete';
 
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
+// function onChange(date, dateString) {
+//   console.log(date, dateString);
+// }
 const { Content } = Layout;
 
 let editRow;
@@ -39,13 +30,17 @@ const TrainingProgram = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [lazyParams, setLazyParams] = useState({
     page: 0,
   });
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const { Option } = Select;
+  const [stateTraining, setStateTraining] = useState([]);
+  const [trainingID, setTrainingID] = useState([]);
   const toolsStore = useContext(ToolsContext);
 
   const onInit = () => {
@@ -53,15 +48,16 @@ const TrainingProgram = () => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('trainingProgram/get/1', list)
+    getService('trainingProgram/get', list)
       .then(result => {
-        const listResult = result.content || [];
+        const listResult = result || [];
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
         setSelectedRows([]);
       })
+      .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
         errorCatch(error);
         toolsStore.setIsShowLoader(false);
@@ -70,9 +66,33 @@ const TrainingProgram = () => {
 
   useEffect(() => {
     onInit();
+    getService('training/get').then(result => {
+      if (result) {
+        setStateTraining(result.content || []);
+      }
+    });
   }, [lazyParams]);
 
+  const getTrainingProgram = trainingId => {
+    getService(`trainingProgram/get/${trainingId}`, {}).then(result => {
+      if (result) {
+        const listResult = result || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
+        setSelectedRows([]);
+        setTrainingID(trainingId);
+      }
+    });
+  };
+
+  const selectTraining = value => {
+    getTrainingProgram(value);
+  };
+
   const add = () => {
+    editRow = null;
     setIsModalVisible(true);
     isEditMode = false;
   };
@@ -88,6 +108,7 @@ const TrainingProgram = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
+
     putService(`trainingProgram/delete/${row.id}`)
       .then(result => {
         message.success('Амжилттай устлаа');
@@ -151,28 +172,28 @@ const TrainingProgram = () => {
   const activityBodyTemplate = row => (
     <>
       <span className="p-column-title">Үйл ажиллагаа</span>
-      {row.test}
+      {row.operation}
     </>
   );
 
   const timeBodyTemplate = row => (
     <>
       <span className="p-column-title">Хэрэгжих хугацаа</span>
-      {row.test}
+      {row.duration}
     </>
   );
 
   const ownerBodyTemplate = row => (
     <>
       <span className="p-column-title">Хариуцах эзэн</span>
-      {row.test}
+      {row.responsiblePersonName}
     </>
   );
 
   const materialsBodyTemplate = row => (
     <>
       <span className="p-column-title">Сургалтын материал</span>
-      {row.test}
+      {row.trainingMaterial}
     </>
   );
 
@@ -182,40 +203,24 @@ const TrainingProgram = () => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={14}>
+              <Col xs={24} md={24} lg={12}>
                 <p className="title">Сургалтын хөтөлбөр</p>
               </Col>
-              <Col xs={24} md={24} lg={10}>
+              <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={6}>
-                    <DatePicker
-                      onChange={onChange}
-                      bordered={false}
-                      suffixIcon={<DownOutlined />}
-                      placeholder="Select year"
-                      picker="year"
-                      className="DatePicker"
-                      style={{
-                        width: '120px',
-                        color: 'black',
-                        cursor: 'pointer',
-                      }}
-                    />
+                  <Col xs={8} md={8} lg={10} />
+                  <Col xs={8} md={8} lg={5}>
+                    <OrgaStyle>
+                      <AutoCompleteSelect
+                        valueField="id"
+                        placeholder="Сургалт сонгох"
+                        data={stateTraining}
+                        onChange={value => selectTraining(value)}
+                      />
+                    </OrgaStyle>
                   </Col>
-                  {/* <Col xs={8} md={8} lg={6}>
-                                        <Input
-                                            placeholder="Хайлт хийх"
-                                            allowClear
-                                            prefix={<SearchOutlined />}
-                                            bordered={false}
-                                            onSearch={onSearch}
-                                            style={{
-                                                width: 150,
-                                                borderBottom: "1px solid #103154",
-                                            }}
-                                        />
-                                    </Col> */}
-                  <Col xs={8} md={8} lg={6}>
+
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -223,7 +228,7 @@ const TrainingProgram = () => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -232,7 +237,7 @@ const TrainingProgram = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -245,52 +250,6 @@ const TrainingProgram = () => {
                 </Row>
               </Col>
             </Row>
-
-            <Row>
-              <Col xs={24} md={24} lg={8}>
-                <Form>
-                  <Form.Item>
-                    <Input
-                      className="FormItem"
-                      placeholder="Малын эрүүл мэнд"
-                    />
-                  </Form.Item>
-                </Form>
-                <Form>
-                  <Form.Item>
-                    <DatePicker
-                      bordered={false}
-                      suffixIcon={<DownOutlined />}
-                      className="DatePicker"
-                      style={{
-                        width: '60%',
-                        color: 'black',
-                        cursor: 'pointer',
-                      }}
-                    />
-                  </Form.Item>
-                </Form>
-              </Col>
-              <Col xs={24} md={24} lg={8}>
-                <Form>
-                  <Form.Item>
-                    <Select placeholder="Аймаг, хот" allowClear>
-                      <Option value="Ulaanbaatar">Улаанбаатар</Option>
-                      <Option value="Arkhangai">Архангай</Option>
-                      <Option value="other">other</Option>
-                    </Select>
-                  </Form.Item>
-                  <Form.Item>
-                    <Select placeholder="Сургууль, цэцэрлэг" allowClear>
-                      <Option value="Surguuli">Сургууль</Option>
-                      <Option value="Tsetserleg">Цэцэрлэг</Option>
-                      <Option value="other">other</Option>
-                    </Select>
-                  </Form.Item>
-                </Form>
-              </Col>
-              <Col xs={24} md={24} lg={8} />
-            </Row>
           </Content>
         </Layout>
         <div className="datatable-responsive-demo">
@@ -301,7 +260,6 @@ const TrainingProgram = () => {
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            // onRowClick={edit}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
@@ -309,29 +267,38 @@ const TrainingProgram = () => {
           >
             <Column field="index" header="№" body={indexBodyTemplate} />
             <Column
-              field=""
+              field="operation"
               header="Үйл ажиллагаа"
+              filter
               body={activityBodyTemplate}
             />
             <Column
-              field=""
+              field="duration"
               header="Хэрэгжих хугацаа"
+              filter
               body={timeBodyTemplate}
             />
-            <Column field="" header="Хариуцах эзэн" body={ownerBodyTemplate} />
             <Column
-              field=""
+              field="responsiblePersonName"
+              header="Хариуцах эзэн"
+              filter
+              body={ownerBodyTemplate}
+            />
+            <Column
+              field="trainingMaterial"
               header="Сургалтын материал"
+              filter
               body={materialsBodyTemplate}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <TrainingProgramModal
-              Criteriacontroller={editRow}
+              Trainingprogramcontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+              trainingID={trainingID}
             />
           )}
         </div>
@@ -339,4 +306,5 @@ const TrainingProgram = () => {
     </ContentWrapper>
   );
 };
+
 export default TrainingProgram;
