@@ -10,14 +10,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import AutoCompleteSelect from '../../../components/Autocomplete';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import ContentWrapper from '../../criteria/criteria.style';
-import PlanModal from './components/PlanModal';
 import OrgaStyle from './components/orga.style';
-import AutoCompleteSelect from '../../../components/Autocomplete';
+import PlanModal from './components/PlanModal';
 
 function onChange(date, dateString) {
   console.log(date, dateString);
@@ -37,6 +37,8 @@ const Plan = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateOrga, setStateOrga] = useState([]);
   const [stateGuide, setStateGuide] = useState([]);
+  const [trainingID, setTrainingID] = useState([]);
+  const [orgID, setOrgID] = useState([]);
   const toolsStore = useContext(ToolsContext);
 
   const onInit = () => {
@@ -46,13 +48,17 @@ const Plan = () => {
     }
     getService('trainingTeam/get', list)
       .then(result => {
-        const listResult = result.content || [];
+        console.log(result);
+        const listResult = result || [];
+        console.log(listResult);
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
+
         setSelectedRows([]);
       })
+      .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
         errorCatch(error);
         toolsStore.setIsShowLoader(false);
@@ -77,22 +83,23 @@ const Plan = () => {
     getService(`training/getList/${orgId}`, {}).then(result => {
       if (result) {
         setStateGuide(result || []);
+        setOrgID(orgId);
       }
     });
   };
-
   const selectOrgs = value => {
     getGuidelines(value);
   };
 
-  const getParti = teamId => {
-    getService(`trainingTeam/getList/${teamId}`, {}).then(result => {
+  const getParti = TrainingID => {
+    getService(`trainingTeam/getList/${TrainingID}`, {}).then(result => {
       if (result) {
-        const listResult = result.content || [];
+        const listResult = result || [];
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
+        setTrainingID(TrainingID);
         setSelectedRows([]);
       }
     });
@@ -105,12 +112,6 @@ const Plan = () => {
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
-  };
-
-  const edit = row => {
-    editRow = row;
-    isEditMode = true;
-    setIsModalVisible(true);
   };
 
   const handleDeleted = row => {
@@ -142,6 +143,12 @@ const Plan = () => {
       onCancel() {},
     });
   }
+
+  const edit = row => {
+    editRow = row;
+    isEditMode = true;
+    setIsModalVisible(true);
+  };
 
   const pop = row => {
     if (row.length === 0) {
@@ -185,11 +192,17 @@ const Plan = () => {
     </>
   );
 
-  const nameBodyTemplate = row => (
+  const nameUserBodyTemplate = row => (
     <>
-      <span className="p-column-title">Багийн гишүүдийн нэрс</span>
-      {row.user ? row.user.firstname : row.trainers.firstName}
-      {/* {row.training.training_plan.name} */}
+      <span className="p-column-title">Ажилчдын нэрс</span>
+      {row.user && row.user.firstname}
+    </>
+  );
+
+  const nameTrainerBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Багшийн нэрс</span>
+      {row.trainers && row.trainers.firstName}
     </>
   );
 
@@ -199,10 +212,10 @@ const Plan = () => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={6}>
+              <Col xs={24} md={24} lg={12}>
                 <p className="title">Сургалтын баг</p>
               </Col>
-              <Col xs={24} md={24} lg={18}>
+              <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
                   <Col xs={8} md={8} lg={6}>
                     <OrgaStyle>
@@ -214,7 +227,7 @@ const Plan = () => {
                       />
                     </OrgaStyle>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={5}>
                     <OrgaStyle>
                       <AutoCompleteSelect
                         valueField="id"
@@ -224,7 +237,7 @@ const Plan = () => {
                       />
                     </OrgaStyle>
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <DatePicker
                       onChange={onChange}
                       bordered={false}
@@ -299,8 +312,15 @@ const Plan = () => {
               filterPlaceholder="Хайх"
             />
             <Column
-              header="Багийн гишүүдийн нэрс"
-              body={nameBodyTemplate}
+              header="Ажилчдын нэрс"
+              body={nameUserBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              header="Багшийн нэрс"
+              body={nameTrainerBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
@@ -313,6 +333,8 @@ const Plan = () => {
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+              trainingID={trainingID}
+              orgID={orgID}
             />
           )}
         </div>

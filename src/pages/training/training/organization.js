@@ -1,9 +1,4 @@
-import {
-  DownOutlined,
-  ExclamationCircleOutlined,
-  FileOutlined,
-  PrinterOutlined,
-} from '@ant-design/icons';
+import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
@@ -12,26 +7,18 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Button,
-  Col,
-  DatePicker,
-  Layout,
-  Menu,
-  message,
-  Modal,
-  Row,
-} from 'antd';
+import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
-import OrganizationModal from './components/OrganizationModal';
 import ContentWrapper from '../../criteria/criteria.style';
+import OrganizationModal from './components/OrganizationModal';
 
 function onChange(date, dateString) {
+  // eslint-disable-next-line no-console
   console.log(date, dateString);
 }
 const { Content } = Layout;
@@ -42,20 +29,18 @@ const Organization = () => {
   const loadLazyTimeout = null;
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
-  const [listBank, setListBank] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     page: 0,
   });
-  const [loading, setLoading] = useState(false);
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
 
   const onInit = () => {
-    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
+    toolsStore.setIsShowLoader(true);
     getService('organization/get', list)
       .then(result => {
         const listResult = result.content || [];
@@ -65,6 +50,7 @@ const Organization = () => {
         setList(listResult);
         setSelectedRows([]);
       })
+      .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
         errorCatch(error);
         toolsStore.setIsShowLoader(false);
@@ -192,12 +178,13 @@ const Organization = () => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={14}>
+              <Col xs={24} md={24} lg={12}>
                 <p className="title">Зөвлөх байгууллага</p>
               </Col>
-              <Col xs={24} md={24} lg={10}>
+              <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={11} />
+                  <Col xs={8} md={8} lg={4}>
                     <DatePicker
                       onChange={onChange}
                       bordered={false}
@@ -212,20 +199,7 @@ const Organization = () => {
                       }}
                     />
                   </Col>
-                  {/* <Col xs={8} md={8} lg={6}>
-                                        <Input
-                                            placeholder="Хайлт хийх"
-                                            allowClear
-                                            prefix={<SearchOutlined />}
-                                            bordered={false}
-                                            onSearch={onSearch}
-                                            style={{
-                                                width: 150,
-                                                borderBottom: "1px solid #103154",
-                                            }}
-                                        />
-                                    </Col> */}
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -233,7 +207,7 @@ const Organization = () => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -242,7 +216,7 @@ const Organization = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"

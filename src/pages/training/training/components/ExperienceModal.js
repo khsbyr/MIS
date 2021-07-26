@@ -1,10 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, DatePicker } from 'antd';
-import {
-  getService,
-  postService,
-  putService,
-} from '../../../../service/service';
+import { Form, Input, Modal } from 'antd';
+import React, { useEffect } from 'react';
+import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './cv.styled';
@@ -19,32 +15,20 @@ const layout = {
 };
 
 export default function ExperienceModal(props) {
-  const { Composition, isModalVisible, isEditMode } = props;
-  const [stateController, setStateController] = useState([]);
+  const { CvExperienceController, isModalVisibleExperience, isEditMode } =
+    props;
   const [form] = Form.useForm();
   useEffect(() => {
-    getService('criteria/get', {
-      search: 'status:true',
-    }).then(result => {
-      if (result) {
-        setStateController(result.content || []);
-      }
-    });
-
     if (isEditMode) {
-      getService(`criteria/get${Composition.id}`).then(result => {
-        Composition.userServiceId = result.userService.id;
-        form.setFieldsValue({ ...Composition });
-      });
+      form.setFieldsValue({ ...CvExperienceController });
     }
   }, []);
   const save = () => {
     form
       .validateFields()
       .then(values => {
-        values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService(`criteria/put${Composition.id}`, values)
+          putService(`expierence/update/${CvExperienceController.id}`, values)
             .then(result => {
               props.close(true);
             })
@@ -52,7 +36,7 @@ export default function ExperienceModal(props) {
               errorCatch(error);
             });
         } else {
-          postService('criteria/post', values)
+          postService(`expierence/post/${CvExperienceController.id}`, values)
             .then(result => {
               props.close(true);
             })
@@ -73,7 +57,7 @@ export default function ExperienceModal(props) {
         cancelText="Буцах"
         width={600}
         alignItems="center"
-        visible={isModalVisible}
+        visible={isModalVisibleExperience}
         onOk={save}
         onCancel={() => props.close()}
       >
@@ -86,7 +70,7 @@ export default function ExperienceModal(props) {
             validateMessages={validateMessages}
           >
             <Form.Item
-              name="role"
+              name="position"
               label="Албан тушаал:"
               rules={[
                 {
@@ -96,19 +80,19 @@ export default function ExperienceModal(props) {
             >
               <Input />
             </Form.Item>
-            <Form.Item name="nameOfOrga" label="Байгууллагын нэр:">
+            <Form.Item name="organizationName" label="Байгууллагын нэр:">
               <Input />
             </Form.Item>
             <Form.Item
-              name="date"
-              label="Огноо:"
+              name="hiredDate"
+              label="Ажилд орсон огноо:"
               rules={[
                 {
                   required: true,
                 },
               ]}
             >
-              <DatePicker />
+              <Input />
             </Form.Item>
           </Form>
         </ContentWrapper>

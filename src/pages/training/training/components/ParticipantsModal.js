@@ -1,12 +1,13 @@
 import { Form, Input, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 import {
-  getService,
   postService,
   putService,
+  getService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import ContentWrapper from './attendance.style';
+import AutocompleteSelect from '../../../../components/Autocomplete';
 import validateMessages from '../../../../tools/validateMessage';
 
 const layout = {
@@ -17,14 +18,22 @@ const layout = {
     span: 14,
   },
 };
-
 export default function ParticipantsModal(props) {
   const { ParticipantsModalController, isModalVisible, isEditMode } = props;
-  const [stateController, setStateController] = useState([]);
   const [form] = Form.useForm();
+  const [setTraining, setStateTraining] = useState([]);
+
   useEffect(() => {
+    getService('training/get').then(result => {
+      if (result) {
+        setStateTraining(result.content || []);
+      }
+    });
     if (isEditMode) {
-      form.setFieldsValue({ ...ParticipantsModalController });
+      form.setFieldsValue({
+        ...ParticipantsModalController,
+        TrainingName: ParticipantsModalController.training.name,
+      });
     }
   }, []);
   const save = () => {
@@ -104,6 +113,17 @@ export default function ParticipantsModal(props) {
             </Form.Item>
             <Form.Item name="register" label="Регистр:">
               <Input />
+            </Form.Item>
+            <Form.Item
+              layout="vertical"
+              label="Сургалтын нэр:"
+              name="TrainingName"
+            >
+              <AutocompleteSelect
+                valueField="id"
+                data={setTraining}
+                placeholder="Сургалтын нэр сонгох"
+              />
             </Form.Item>
           </Form>
         </ContentWrapper>

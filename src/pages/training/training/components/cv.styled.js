@@ -37,7 +37,7 @@ const ContentWrapper = styled.div`
   }
 
   .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
-    height: 40px;
+    height: 39px;
     padding-top: 4px;
     border: none;
   }
@@ -65,15 +65,18 @@ const ContentWrapper = styled.div`
     border-bottom: 1px solid #103154;
   }
 
-  .ant-input-number {
-    border: none;
-    width: 60%;
-    border-bottom: 1px solid #103154;
-  }
+  /* .ant-input-number {
+        border: none;
+        width: 60%;
+        border-bottom: 1px solid #103154;
+    } */
   .ant-input-prefix {
     color: #103154;
     margin-right: 25px;
   }
+  /* .ant-form-item-control-input-content {
+        border-bottom: 1px solid #103154;
+    } */
 `;
 
 export default ContentWrapper;

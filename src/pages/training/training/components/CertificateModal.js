@@ -6,6 +6,7 @@ import {
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
+import AutocompleteSelect from '../../../../components/Autocomplete';
 import ContentWrapper from './cv.styled';
 import validateMessages from '../../../../tools/validateMessage';
 
@@ -17,7 +18,6 @@ const layout = {
     span: 14,
   },
 };
-
 export default function CertificateModal(props) {
   const { Composition, isModalVisible, isEditMode } = props;
   const [stateController, setStateController] = useState([]);

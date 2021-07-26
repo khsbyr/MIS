@@ -1,4 +1,4 @@
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
@@ -7,7 +7,7 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row } from 'antd';
+import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState, useContext } from 'react';
@@ -19,6 +19,9 @@ import ContentWrapper from '../../criteria/criteria.style';
 import GuidelinesModal from './components/GuidelinesModal';
 import OrgaStyle from './components/orga.style';
 
+function onChange(date, dateString) {
+  console.log(date, dateString);
+}
 const { Content } = Layout;
 
 let editRow;
@@ -34,6 +37,7 @@ const Guidelines = () => {
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateOrga, setStateOrga] = useState([]);
+  const [orgID, setOrgID] = useState([]);
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
@@ -49,6 +53,7 @@ const Guidelines = () => {
         setList(listResult);
         setSelectedRows([]);
       })
+      .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
         errorCatch(error);
         toolsStore.setIsShowLoader(false);
@@ -67,12 +72,13 @@ const Guidelines = () => {
   const getGuidelines = orgId => {
     getService(`training/getList/${orgId}`, {}).then(result => {
       if (result) {
-        const listResult = result.content || [];
+        const listResult = result || [];
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
         setSelectedRows([]);
+        setOrgID(orgId);
       }
     });
   };
@@ -82,6 +88,7 @@ const Guidelines = () => {
   };
 
   const add = () => {
+    editRow = null;
     setIsModalVisible(true);
     isEditMode = false;
   };
@@ -211,7 +218,7 @@ const Guidelines = () => {
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={6} />
+                  <Col xs={8} md={8} lg={5} />
                   <Col xs={8} md={8} lg={6}>
                     <OrgaStyle>
                       <AutoCompleteSelect
@@ -222,8 +229,22 @@ const Guidelines = () => {
                       />
                     </OrgaStyle>
                   </Col>
-
                   <Col xs={8} md={8} lg={4}>
+                    <DatePicker
+                      onChange={onChange}
+                      bordered={false}
+                      suffixIcon={<DownOutlined />}
+                      placeholder="Select year"
+                      picker="year"
+                      className="DatePicker"
+                      style={{
+                        width: '120px',
+                        color: 'black',
+                        cursor: 'pointer',
+                      }}
+                    />
+                  </Col>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -231,7 +252,7 @@ const Guidelines = () => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -240,7 +261,7 @@ const Guidelines = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -313,6 +334,7 @@ const Guidelines = () => {
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+              orgID={orgID}
             />
           )}
         </div>

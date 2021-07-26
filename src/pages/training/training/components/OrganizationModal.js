@@ -1,4 +1,4 @@
-import { BankFilled, InboxOutlined, UploadOutlined } from '@ant-design/icons';
+import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
 import {
   Button,
   Checkbox,
@@ -11,15 +11,15 @@ import {
   Upload,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
+import AutoCompleteSelect from '../../../../components/Autocomplete';
 import {
   getService,
   postService,
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import ContentWrapper from './organization.style';
-import AutoCompleteSelect from '../../../../components/Autocomplete';
 import validateMessages from '../../../../tools/validateMessage';
+import ContentWrapper from './organization.style';
 
 const { Dragger } = Upload;
 

@@ -16,6 +16,8 @@ import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import ContentWrapper from './components/attendance.style';
 import AttendanceModal from './components/attendanceModal';
+import OrgaStyle from './components/orga.style';
+import AutoCompleteSelect from '../../../components/Autocomplete';
 
 function onChange(date, dateString) {
   console.log(date, dateString);
@@ -26,15 +28,19 @@ let editRow;
 let isEditMode;
 const Attendance = () => {
   const loadLazyTimeout = null;
-  const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams, setLazyParams] = useState({
     page: 0,
   });
+  const toolsStore = useContext(ToolsContext);
   const [loading, setLoading] = useState(false);
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
+  const [stateOrga, setStateOrga] = useState([]);
+  const [stateGuide, setStateGuide] = useState([]);
+  const [trainingID, setTrainingID] = useState([]);
+  const [orgID, setOrgID] = useState([]);
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
@@ -50,6 +56,7 @@ const Attendance = () => {
         setList(listResult);
         setSelectedRows([]);
       })
+      .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
         errorCatch(error);
         toolsStore.setIsShowLoader(false);
@@ -58,7 +65,48 @@ const Attendance = () => {
 
   useEffect(() => {
     onInit();
+    getService('organization/get').then(result => {
+      if (result) {
+        setStateOrga(result.content || []);
+      }
+    });
+    getService('training/get').then(result => {
+      if (result) {
+        setStateGuide(result.content || []);
+      }
+    });
   }, [lazyParams]);
+
+  const getGuidelines = orgId => {
+    getService(`training/getList/${orgId}`, {}).then(result => {
+      if (result) {
+        setStateGuide(result || []);
+        setOrgID(orgId);
+      }
+    });
+  };
+
+  const selectOrgs = value => {
+    getGuidelines(value);
+  };
+
+  const getParti = TrainingID => {
+    getService(`participants/getList/${TrainingID}`, {}).then(result => {
+      if (result) {
+        const listResult = result.content || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setTrainingID(TrainingID);
+        setList(listResult);
+        setSelectedRows([]);
+      }
+    });
+  };
+
+  const selectGuide = value => {
+    getParti(value);
+  };
 
   const add = () => {
     setIsModalVisible(true);
@@ -152,21 +200,22 @@ const Attendance = () => {
 
   const contactBodyTemplate = row => (
     <>
-      <span className="p-column-title">Холбогдох утас, мэйл, хаяг</span>
+      <span className="p-column-title">Холбогдох утас</span>
+      {row.phone}
     </>
   );
 
   const registerNumberBodyTemplate = row => (
     <>
       <span className="p-column-title">Регистрийн дугаар</span>
-      {row.asd}
+      {row.register}
     </>
   );
 
-  const trainingNameBodyTemplate = row => (
+  const genderBodyTemplate = row => (
     <>
-      <span className="p-column-title">Сургалтын нэр</span>
-      {row.training.training_plan.name}
+      <span className="p-column-title">Хүйс</span>
+      {row.gender.gender}
     </>
   );
 
@@ -176,12 +225,32 @@ const Attendance = () => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={14}>
+              <Col xs={24} md={24} lg={12}>
                 <p className="title">Ирцийн бүртгэл</p>
               </Col>
-              <Col xs={24} md={24} lg={10}>
+              <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
                   <Col xs={8} md={8} lg={6}>
+                    <OrgaStyle>
+                      <AutoCompleteSelect
+                        valueField="id"
+                        placeholder="Байгууллага сонгох"
+                        data={stateOrga}
+                        onChange={value => selectOrgs(value)}
+                      />
+                    </OrgaStyle>
+                  </Col>
+                  <Col xs={8} md={8} lg={5}>
+                    <OrgaStyle>
+                      <AutoCompleteSelect
+                        valueField="id"
+                        placeholder="Сургалт сонгох"
+                        data={stateGuide}
+                        onChange={value => selectGuide(value)}
+                      />
+                    </OrgaStyle>
+                  </Col>
+                  <Col xs={8} md={8} lg={4}>
                     <DatePicker
                       onChange={onChange}
                       bordered={false}
@@ -196,20 +265,7 @@ const Attendance = () => {
                       }}
                     />
                   </Col>
-                  {/* <Col xs={8} md={8} lg={6}>
-                                        <Input
-                                            placeholder="Хайлт хийх"
-                                            allowClear
-                                            prefix={<SearchOutlined />}
-                                            bordered={false}
-                                            onSearch={onSearch}
-                                            style={{
-                                                width: 150,
-                                                borderBottom: "1px solid #103154",
-                                            }}
-                                        />
-                                    </Col> */}
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -217,7 +273,7 @@ const Attendance = () => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -226,7 +282,7 @@ const Attendance = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -274,7 +330,7 @@ const Attendance = () => {
             />
             <Column
               field=""
-              header="Холбогдох утас, мэйл, хаяг"
+              header="Холбогдох утас"
               sortable
               filter
               filterPlaceholder="Хайх"
@@ -289,12 +345,12 @@ const Attendance = () => {
               body={registerNumberBodyTemplate}
             />
             <Column
-              field="training.training_plan.name"
-              header="Сургалтын нэр"
+              field=""
+              header="Хүйс"
               sortable
               filter
               filterPlaceholder="Хайх"
-              body={trainingNameBodyTemplate}
+              body={genderBodyTemplate}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
@@ -304,6 +360,8 @@ const Attendance = () => {
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+              trainingID={trainingID}
+              orgID={orgID}
             />
           )}
         </div>

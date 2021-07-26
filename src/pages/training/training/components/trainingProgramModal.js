@@ -1,4 +1,4 @@
-import { DatePicker, Form, Input, Modal } from 'antd';
+import { Col, Form, Input, Modal, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import {
   getService,
@@ -6,43 +6,80 @@ import {
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import ContentWrapper from './trainingProgram.style';
+import ContentWrapper from './guidelines.style';
+import AutocompleteSelect from '../../../../components/Autocomplete';
 import validateMessages from '../../../../tools/validateMessage';
 
 const layout = {
   labelCol: {
-    span: 10,
+    span: 20,
   },
   wrapperCol: {
-    span: 14,
+    span: 22,
   },
 };
 
 export default function TrainingProgramModal(props) {
-  const { Trainingprogramcontroller, isModalVisible, isEditMode } = props;
-  const [stateController, setStateController] = useState([]);
+  const { Trainingprogramcontroller, isModalVisible, isEditMode, trainingID } =
+    props;
   const [form] = Form.useForm();
+  const [stateTeam, setStateTeam] = useState([]);
+  const [TrainingTeamID, setTrainingTeamID] = useState([]);
+  // eslint-disable-next-line no-unused-vars
+  const PAGESIZE = 20;
+  // eslint-disable-next-line no-unused-vars
+  const [lazyParams, setLazyParams] = useState({
+    page: 0,
+  });
+  const loadLazyTimeout = null;
+
+  const onInit = () => {
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+  };
+
   useEffect(() => {
-    getService('criteria/get', {
-      search: 'status:true',
-    }).then(result => {
+    onInit();
+    getService('trainingPlan/get').then(result => {
       if (result) {
-        setStateController(result.content || []);
+        setStateTeam(result.content || []);
+        console.log(result.content);
+        // training_plan.id =
+        // stateplanID(planID)
       }
     });
+    if (Trainingprogramcontroller !== null) {
+      getService(`training/get/${Trainingprogramcontroller.id}`).then(
+        result => {
+          if (result) {
+            // setTrainingID(Trainingprogramcontroller.id);
+          }
+        }
+      );
 
-    if (isEditMode) {
-      getService(`criteria/get${Trainingprogramcontroller.id}`).then(result => {
-        form.setFieldsValue({ ...Trainingprogramcontroller });
-      });
+      if (isEditMode) {
+        form.setFieldsValue({
+          ...Trainingprogramcontroller,
+        });
+      }
     }
   }, []);
+
+  const selectTrainingTeam = trainingTeamID => {
+    console.log(trainingTeamID);
+    setTrainingTeamID(trainingTeamID);
+  };
+
   const save = () => {
     form
       .validateFields()
       .then(values => {
+        values.training = { id: trainingID };
+        values.training_team = { id: TrainingTeamID };
+
         if (isEditMode) {
-          putService(`criteria/put${Trainingprogramcontroller.id}`, values)
+          putService(`trainingProgram/update/${trainingID}`, values)
             .then(result => {
               props.close(true);
             })
@@ -50,7 +87,9 @@ export default function TrainingProgramModal(props) {
               errorCatch(error);
             });
         } else {
-          postService('criteria/post', values)
+          postService(`trainingProgram/post/${trainingID}`, values);
+          console
+            .log(values)
             .then(result => {
               props.close(true);
             })
@@ -66,7 +105,7 @@ export default function TrainingProgramModal(props) {
   return (
     <div>
       <Modal
-        title="Сургалтын хөтөлбөр бүртгэх"
+        title="Сургалт бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
         width={600}
@@ -80,53 +119,64 @@ export default function TrainingProgramModal(props) {
             form={form}
             labelAlign="left"
             {...layout}
+            layout="vertical"
             name="nest-messages"
             validateMessages={validateMessages}
           >
-            <Form.Item
-              name="uilAjillagaa"
-              label="Үйл ажиллагаа:"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="date"
-              label="Хэрэгжих хугацаа:"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <DatePicker />
-            </Form.Item>
-            <Form.Item
-              name="name"
-              label="Хариуцах эзэн:"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="trainingMaterial"
-              label="Сургалтын материал"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
+            <Row>
+              <Col xs={24} md={24} lg={24}>
+                <Row>
+                  <Col xs={24} md={24} lg={24}>
+                    <Form.Item
+                      name="operation"
+                      label="Үйл ажиллагаа:"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      name="duration"
+                      label="Хэрэгжих хугацаа:"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      name="responsiblePersonName"
+                      label="Хариуцах эзэн:"
+                    >
+                      <Input />
+                    </Form.Item>
+                    {/* <Form.Item
+                      layout="vertical"
+                      label="Хариуцах эзэн:"
+                      name="responsiblePersonName"
+                    >
+                      <AutocompleteSelect
+                        valueField="id"
+                        data={stateTeam}
+                        placeholder="Хариуцах эзэн"
+                        onChange={(value) => selectTrainingTeam(value)}
+                      />
+                    </Form.Item> */}
+                    <Form.Item
+                      name="trainingMaterial"
+                      label="Сургалтын материал"
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
           </Form>
         </ContentWrapper>
       </Modal>
