@@ -1,40 +1,33 @@
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
   faPlus,
   faPrint,
-  faTrash
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Button,
-  Col, Layout,
-  message,
-  Modal,
-  Row,
-} from "antd";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import React, { useEffect, useState } from "react";
-import { isShowLoading } from "../../../context/Tools";
-import { getService, putService } from "../../../service/service";
-import { errorCatch } from "../../../tools/Tools";
-import ContentWrapper from "../training/components/trainingProgram.style";
-import TrainingProgramModal from "../training/components/trainingProgramModal";
-import OrgaStyle from "./components/orga.style";
-import AutoCompleteSelect from "../../../components/Autocomplete";
-
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Col, Layout, message, Modal, Row } from 'antd';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import React, { useEffect, useState, useContext } from 'react';
+import { ToolsContext } from '../../../context/Tools';
+import { getService, putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import ContentWrapper from './components/trainingProgram.style';
+import TrainingProgramModal from './components/trainingProgramModal';
+import OrgaStyle from './components/orga.style';
+import AutoCompleteSelect from '../../../components/Autocomplete';
 
 // function onChange(date, dateString) {
 //   console.log(date, dateString);
 // }
 const { Content } = Layout;
 
-var editRow;
-var isEditMode;
+let editRow;
+let isEditMode;
 const TrainingProgram = () => {
-  let loadLazyTimeout = null;
+  const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   // eslint-disable-next-line no-unused-vars
@@ -48,49 +41,54 @@ const TrainingProgram = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateTraining, setStateTraining] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
+  const toolsStore = useContext(ToolsContext);
+
+  const onInit = () => {
+    toolsStore.setIsShowLoader(true);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    getService('trainingProgram/get', list)
+      .then(result => {
+        const listResult = result || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
+        setSelectedRows([]);
+      })
+      .finally(toolsStore.setIsShowLoader(false))
+      .catch(error => {
+        errorCatch(error);
+        toolsStore.setIsShowLoader(false);
+      });
+  };
 
   useEffect(() => {
     onInit();
-    getService("training/get").then((result) => {
+    getService('training/get').then(result => {
       if (result) {
         setStateTraining(result.content || []);
       }
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lazyParams]);
 
-  const onInit = () => {
-    setLoading(true);
-    if (loadLazyTimeout) {
-      clearTimeout(loadLazyTimeout);
-    }
-    getService("trainingProgram/get", list)
-      .then((result) => {
-        let list = result || [];
-        list.map((item, index) => (item.index = index + 1));
-        setList(list);
-        setSelectedRows([]);
-      })
-      .catch((error) => {
-        errorCatch(error);
-        isShowLoading(false);
-      });
-  };
-
-  const selectTraining = (value) => {
-    getTrainingProgram(value);
-  };
-
-  const getTrainingProgram = (trainingId) => {
-    getService(`trainingProgram/get/${trainingId}`, {}).then((result) => {
+  const getTrainingProgram = trainingId => {
+    getService(`trainingProgram/get/${trainingId}`, {}).then(result => {
       if (result) {
-        let list = result || [];
-        list.map((item, index) => (item.index = index + 1));
-        setList(list);
+        const listResult = result || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
         setSelectedRows([]);
         setTrainingID(trainingId);
       }
     });
+  };
+
+  const selectTraining = value => {
+    getTrainingProgram(value);
   };
 
   const add = () => {
@@ -99,102 +97,105 @@ const TrainingProgram = () => {
     isEditMode = false;
   };
 
-  const action = (row) => {
-    return (
-      <React.Fragment>
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faPen} />}
-          onClick={() => edit(row)}
-        />
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faTrash} />}
-          onClick={() => pop(row)}
-        />
-      </React.Fragment>
-    );
-  };
-
-  const edit = (row) => {
+  const edit = row => {
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
   };
 
-  const handleDeleted = (row) => {
+  const handleDeleted = row => {
     if (row.length === 0) {
-      message.warning("Устгах өгөгдлөө сонгоно уу");
+      message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
 
-    putService("trainingProgram/delete/" + row.id)
-      .then((result) => {
-        message.success("Амжилттай устлаа");
+    putService(`trainingProgram/delete/${row.id}`)
+      .then(result => {
+        message.success('Амжилттай устлаа');
         onInit();
       })
-      .catch((error) => {
+      .catch(error => {
         errorCatch(error);
       });
   };
-  const closeModal = (isSuccess = false) => {
-    setIsModalVisible(false);
-    if (isSuccess) onInit();
-  };
 
-  const pop = (row) => {
+  function confirm(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeleted(row);
+        onInit();
+      },
+      onCancel() {},
+    });
+  }
+
+  const pop = row => {
     if (row.length === 0) {
-      message.warning("Устгах өгөгдлөө сонгоно уу");
-      return;
+      message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
       confirm(row);
     }
   };
 
-  const indexBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">№</span>
-        {row.index}
-      </React.Fragment>
-    );
+  const action = row => (
+    <>
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={() => edit(row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={() => pop(row)}
+      />
+    </>
+  );
+
+  const closeModal = (isSuccess = false) => {
+    setIsModalVisible(false);
+    if (isSuccess) onInit();
   };
 
-  const activityBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Үйл ажиллагаа</span>
-        {row.operation}
-      </React.Fragment>
-    );
-  };
+  const indexBodyTemplate = row => (
+    <>
+      <span className="p-column-title">№</span>
+      {row.index}
+    </>
+  );
 
-  const timeBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Хэрэгжих хугацаа</span>
-        {row.duration}
-      </React.Fragment>
-    );
-  };
+  const activityBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Үйл ажиллагаа</span>
+      {row.operation}
+    </>
+  );
 
-  const ownerBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Хариуцах эзэн</span>
-        {row.responsiblePersonName}
-      </React.Fragment>
-    );
-  };
+  const timeBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Хэрэгжих хугацаа</span>
+      {row.duration}
+    </>
+  );
 
-  const materialsBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Сургалтын материал</span>
-        {row.trainingMaterial}
-      </React.Fragment>
-    );
-  };
+  const ownerBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Хариуцах эзэн</span>
+      {row.responsiblePersonName}
+    </>
+  );
+
+  const materialsBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Сургалтын материал</span>
+      {row.trainingMaterial}
+    </>
+  );
 
   return (
     <ContentWrapper>
@@ -207,14 +208,14 @@ const TrainingProgram = () => {
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={10}></Col>
+                  <Col xs={8} md={8} lg={10} />
                   <Col xs={8} md={8} lg={5}>
                     <OrgaStyle>
                       <AutoCompleteSelect
                         valueField="id"
                         placeholder="Сургалт сонгох"
                         data={stateTraining}
-                        onChange={(value) => selectTraining(value)}
+                        onChange={value => selectTraining(value)}
                       />
                     </OrgaStyle>
                   </Col>
@@ -224,7 +225,7 @@ const TrainingProgram = () => {
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
                     >
-                      Хэвлэх{" "}
+                      Хэвлэх{' '}
                     </Button>
                   </Col>
                   <Col xs={8} md={8} lg={3}>
@@ -259,7 +260,7 @@ const TrainingProgram = () => {
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            onSelectionChange={(e) => {
+            onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
@@ -289,7 +290,7 @@ const TrainingProgram = () => {
               filter
               body={materialsBodyTemplate}
             />
-            <Column headerStyle={{ width: "7rem" }} body={action} />
+            <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <TrainingProgramModal
@@ -304,20 +305,6 @@ const TrainingProgram = () => {
       </div>
     </ContentWrapper>
   );
-  function confirm(row) {
-    Modal.confirm({
-      title: "Та устгахдаа итгэлтэй байна уу ?",
-      icon: <ExclamationCircleOutlined />,
-      okButtonProps: {},
-      okText: "Устгах",
-      cancelText: "Буцах",
-      onOk() {
-        handleDeleted(row);
-        onInit();
-      },
-      onCancel() {},
-    });
-  }
 };
 
 export default TrainingProgram;

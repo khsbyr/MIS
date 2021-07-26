@@ -1,13 +1,14 @@
-import { Form, Input, Modal } from "antd";
-import React, { useEffect, useState } from "react";
+import { Form, Input, Modal } from 'antd';
+import React, { useEffect, useState } from 'react';
 import {
-    postService,
-    putService,
-    getService
-} from "../../../../service/service";
-import { errorCatch } from "../../../../tools/Tools";
-import ContentWrapper from "./attendance.style";
-import AutocompleteSelect from "../../../../components/Autocomplete";
+  postService,
+  putService,
+  getService,
+} from '../../../../service/service';
+import { errorCatch } from '../../../../tools/Tools';
+import ContentWrapper from './attendance.style';
+import AutocompleteSelect from '../../../../components/Autocomplete';
+import validateMessages from '../../../../tools/validateMessage';
 
 const layout = {
   labelCol: {
@@ -17,29 +18,20 @@ const layout = {
     span: 14,
   },
 };
-const validateMessages = {
-  required: "${label} хоосон байна!",
-  types: {
-    email: "${label} is not a valid email!",
-    number: "${label} is not a valid number!",
-  },
-  number: {
-    range: "${label} must be between ${min} and ${max}",
-  },
-};
 export default function ParticipantsModal(props) {
   const { ParticipantsModalController, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
   const [setTraining, setStateTraining] = useState([]);
 
   useEffect(() => {
-    getService("training/get").then((result) => {
+    getService('training/get').then(result => {
       if (result) {
         setStateTraining(result.content || []);
       }
     });
     if (isEditMode) {
-      form.setFieldsValue({ ...ParticipantsModalController,
+      form.setFieldsValue({
+        ...ParticipantsModalController,
         TrainingName: ParticipantsModalController.training.name,
       });
     }
@@ -47,31 +39,31 @@ export default function ParticipantsModal(props) {
   const save = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(values => {
         values.userService = { id: values.userServiceId };
         if (isEditMode) {
           putService(
-            "participants/update/" + ParticipantsModalController.id,
+            `participants/update/${ParticipantsModalController.id}`,
             values
           )
-            .then((result) => {
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService("participants/post", values)
-            .then((result) => {
+          postService('participants/post', values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         }
       })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
+      .catch(info => {
+        console.log('Validate Failed:', info);
       });
   };
   return (
@@ -89,7 +81,7 @@ export default function ParticipantsModal(props) {
         <ContentWrapper>
           <Form
             form={form}
-            labelAlign={"left"}
+            labelAlign="left"
             {...layout}
             name="nest-messages"
             validateMessages={validateMessages}
@@ -123,16 +115,16 @@ export default function ParticipantsModal(props) {
               <Input />
             </Form.Item>
             <Form.Item
-                      layout="vertical"
-                      label="Сургалтын нэр:"
-                      name="TrainingName"
-                    >
-                      <AutocompleteSelect
-                        valueField="id"
-                        data={setTraining}
-                        placeholder="Сургалтын нэр сонгох"
-                      />
-                    </Form.Item>
+              layout="vertical"
+              label="Сургалтын нэр:"
+              name="TrainingName"
+            >
+              <AutocompleteSelect
+                valueField="id"
+                data={setTraining}
+                placeholder="Сургалтын нэр сонгох"
+              />
+            </Form.Item>
           </Form>
         </ContentWrapper>
       </Modal>

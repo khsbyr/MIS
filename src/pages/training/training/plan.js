@@ -1,27 +1,33 @@
-import { DownOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { faFileExcel, faPen, faPlus, faPrint, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import {
+  faFileExcel,
+  faPen,
+  faPlus,
+  faPrint,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, DatePicker, Layout, message, Modal, Row } from "antd";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import React, { useEffect, useState } from "react";
-import { isShowLoading } from "../../../context/Tools";
-import { getService, putService } from "../../../service/service";
-import { errorCatch } from "../../../tools/Tools";
-import ContentWrapper from "../../criteria/criteria.style";
-import PlanModal from "../training/components/PlanModal";
-import OrgaStyle from "./components/orga.style";
-import AutoCompleteSelect from "../../../components/Autocomplete";
+import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import React, { useContext, useEffect, useState } from 'react';
+import AutoCompleteSelect from '../../../components/Autocomplete';
+import { ToolsContext } from '../../../context/Tools';
+import { getService, putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import ContentWrapper from '../../criteria/criteria.style';
+import OrgaStyle from './components/orga.style';
+import PlanModal from './components/PlanModal';
 
 function onChange(date, dateString) {
   console.log(date, dateString);
 }
 const { Content } = Layout;
 
-var editRow;
-var isEditMode;
+let editRow;
+let isEditMode;
 const Plan = () => {
-  let loadLazyTimeout = null;
+  const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams, setLazyParams] = useState({
@@ -33,71 +39,74 @@ const Plan = () => {
   const [stateGuide, setStateGuide] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
   const [orgID, setOrgID] = useState([]);
+  const toolsStore = useContext(ToolsContext);
 
+  const onInit = () => {
+    toolsStore.setIsShowLoader(true);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    getService('trainingTeam/get', list)
+      .then(result => {
+        console.log(result);
+        const listResult = result || [];
+        console.log(listResult);
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
+
+        setSelectedRows([]);
+      })
+      .finally(toolsStore.setIsShowLoader(false))
+      .catch(error => {
+        errorCatch(error);
+        toolsStore.setIsShowLoader(false);
+      });
+  };
 
   useEffect(() => {
     onInit();
-    getService("organization/get").then((result) => {
+    getService('organization/get').then(result => {
       if (result) {
         setStateOrga(result.content || []);
       }
     });
-    getService("training/get").then((result) => {
+    getService('training/get').then(result => {
       if (result) {
         setStateGuide(result.content || []);
       }
     });
   }, [lazyParams]);
 
-  const selectOrgs = (value) => {
-    getGuidelines(value);
-  };
-
-  const selectGuide = (value) => {
-    getParti(value);
-  };
-
-  const getGuidelines = (orgId) => {
-    getService(`training/getList/${orgId}`, {}).then((result) => {
+  const getGuidelines = orgId => {
+    getService(`training/getList/${orgId}`, {}).then(result => {
       if (result) {
         setStateGuide(result || []);
         setOrgID(orgId);
       }
     });
   };
+  const selectOrgs = value => {
+    getGuidelines(value);
+  };
 
-  const getParti = (trainingID) => {
-    getService(`trainingTeam/getList/${trainingID}`, {}).then((result) => {
+  const getParti = TrainingID => {
+    getService(`trainingTeam/getList/${TrainingID}`, {}).then(result => {
       if (result) {
-        let list = result || [];
-        list.map(
-          (item, index) =>
-            (item.index = lazyParams.page * PAGESIZE + index + 1)
-        );
-        setTrainingID(trainingID);
-        setList(list);
+        const listResult = result || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
+        setTrainingID(TrainingID);
         setSelectedRows([]);
       }
     });
   };
 
-  const onInit = () => {
-    if (loadLazyTimeout) {
-      clearTimeout(loadLazyTimeout);
-    }
-    getService("trainingTeam/get", list)
-      .then((result) => {
-        let list = result || [];
-        list.map(
-          (item, index) => (item.index = lazyParams.page * PAGESIZE + index + 1)
-        );
-        setList(list);
-        setSelectedRows([]);
-      })
-      .catch((error) => {
-        errorCatch(error);
-        isShowLoading(false);
-      });
+  const selectGuide = value => {
+    getParti(value);
   };
 
   const add = () => {
@@ -105,91 +114,97 @@ const Plan = () => {
     isEditMode = false;
   };
 
-  const action = (row) => {
-    return (
-      <React.Fragment>
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faPen} />}
-          onClick={() => edit(row)}
-        />
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faTrash} />}
-          onClick={() => pop(row)}
-        />
-      </React.Fragment>
-    );
+  const handleDeleted = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+      return;
+    }
+    putService(`trainingTeam/delete/${row.id}`)
+      .then(result => {
+        message.success('Амжилттай устлаа');
+        onInit();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
   };
 
-  const edit = (row) => {
+  function confirm(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeleted(row);
+        onInit();
+      },
+      onCancel() {},
+    });
+  }
+
+  const edit = row => {
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
   };
 
-  const handleDeleted = (row) => {
+  const pop = row => {
     if (row.length === 0) {
-      message.warning("Устгах өгөгдлөө сонгоно уу");
-      return;
-    }
-    putService("trainingTeam/delete/" + row.id)
-      .then((result) => {
-        message.success("Амжилттай устлаа");
-        onInit();
-      })
-      .catch((error) => {
-        errorCatch(error);
-      });
-  };
-  const closeModal = (isSuccess = false) => {
-    setIsModalVisible(false);
-    if (isSuccess) onInit();
-  };
-  const pop = (row) => {
-    if (row.length === 0) {
-      message.warning("Устгах өгөгдлөө сонгоно уу");
-      return;
+      message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
       confirm(row);
     }
   };
 
-  const indexBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">№</span>
-        {row.index}
-      </React.Fragment>
-    );
+  const action = row => (
+    <>
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={() => edit(row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={() => pop(row)}
+      />
+    </>
+  );
+
+  const closeModal = (isSuccess = false) => {
+    setIsModalVisible(false);
+    if (isSuccess) onInit();
   };
 
-  const missionBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Сургалтанд гүйцэтгэх үүрэг</span>
-        {row.mission}
-      </React.Fragment>
-    );
-  };
+  const indexBodyTemplate = row => (
+    <>
+      <span className="p-column-title">№</span>
+      {row.index}
+    </>
+  );
 
-  const nameUserBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Ажилчдын нэрс</span>
-        {row.user && row.user.firstname}
-      </React.Fragment>
-    );
-  };
+  const missionBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Сургалтанд гүйцэтгэх үүрэг</span>
+      {row.mission}
+    </>
+  );
 
-  const nameTrainerBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Багшийн нэрс</span>
-        {row.trainers && row.trainers.firstName}
-      </React.Fragment>
-    );
-  };
+  const nameUserBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Ажилчдын нэрс</span>
+      {row.user && row.user.firstname}
+    </>
+  );
+
+  const nameTrainerBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Багшийн нэрс</span>
+      {row.trainers && row.trainers.firstName}
+    </>
+  );
 
   return (
     <ContentWrapper>
@@ -208,18 +223,17 @@ const Plan = () => {
                         valueField="id"
                         placeholder="Байгууллага сонгох"
                         data={stateOrga}
-                        onChange={(value) => selectOrgs(value)}
+                        onChange={value => selectOrgs(value)}
                       />
                     </OrgaStyle>
                   </Col>
                   <Col xs={8} md={8} lg={5}>
-
                     <OrgaStyle>
                       <AutoCompleteSelect
                         valueField="id"
                         placeholder="Сургалт сонгох"
                         data={stateGuide}
-                        onChange={(value) => selectGuide(value)}
+                        onChange={value => selectGuide(value)}
                       />
                     </OrgaStyle>
                   </Col>
@@ -232,9 +246,9 @@ const Plan = () => {
                       picker="year"
                       className="DatePicker"
                       style={{
-                        width: "120px",
-                        color: "black",
-                        cursor: "pointer",
+                        width: '120px',
+                        color: 'black',
+                        cursor: 'pointer',
                       }}
                     />
                   </Col>
@@ -243,7 +257,7 @@ const Plan = () => {
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
                     >
-                      Хэвлэх{" "}
+                      Хэвлэх{' '}
                     </Button>
                   </Col>
                   <Col xs={8} md={8} lg={3}>
@@ -279,7 +293,7 @@ const Plan = () => {
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             // onRowClick={edit}
-            onSelectionChange={(e) => {
+            onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
@@ -311,7 +325,7 @@ const Plan = () => {
               filter
               filterPlaceholder="Хайх"
             />
-            <Column headerStyle={{ width: "7rem" }} body={action}></Column>
+            <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <PlanModal
@@ -327,19 +341,5 @@ const Plan = () => {
       </div>
     </ContentWrapper>
   );
-  function confirm(row) {
-    Modal.confirm({
-      title: "Та устгахдаа итгэлтэй байна уу ?",
-      icon: <ExclamationCircleOutlined />,
-      okButtonProps: {},
-      okText: "Устгах",
-      cancelText: "Буцах",
-      onOk() {
-        handleDeleted(row);
-        onInit();
-      },
-      onCancel() { },
-    });
-  }
 };
 export default Plan;

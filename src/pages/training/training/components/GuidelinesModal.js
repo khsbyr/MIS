@@ -1,21 +1,22 @@
-import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { faPen, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Col, Form, Input, message, Modal, Row } from "antd";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import React, { useEffect, useState } from "react";
-import AutocompleteSelect from "../../../../components/Autocomplete";
-import { isShowLoading } from "../../../../context/Tools";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Col, Form, Input, message, Modal, Row } from 'antd';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import React, { useEffect, useState, useContext } from 'react';
+import AutocompleteSelect from '../../../../components/Autocomplete';
+import { ToolsContext } from '../../../../context/Tools';
 import {
   getService,
   postService,
   putService,
-} from "../../../../service/service";
-import { errorCatch } from "../../../../tools/Tools";
-import ContentWrapper from "./guidelines.style";
-import ParticipantsModal from "./ParticipantsModal";
-import TrainingGuidelinesModal from "./TrainingGuidelinesModal";
+} from '../../../../service/service';
+import { errorCatch } from '../../../../tools/Tools';
+import ContentWrapper from './guidelines.style';
+import ParticipantsModal from './ParticipantsModal';
+import TrainingGuidelinesModal from './TrainingGuidelinesModal';
+import validateMessages from '../../../../tools/validateMessage';
 
 const layout = {
   labelCol: {
@@ -25,31 +26,20 @@ const layout = {
     span: 22,
   },
 };
-const validateMessages = {
-  // eslint-disable-next-line no-template-curly-in-string
-  required: "${label} хоосон байна!",
-  types: {
-    // eslint-disable-next-line no-template-curly-in-string
-    email: "${label} is not a valid email!",
-    // eslint-disable-next-line no-template-curly-in-string
-    number: "${label} is not a valid number!",
-  },
-  number: {
-    // eslint-disable-next-line no-template-curly-in-string
-    range: "${label} must be between ${min} and ${max}",
-  },
-};
-var editRow;
-var isEditModeParticipants;
-var isEditModeGuidelines;
+
+let editRow;
+let isEditModeParticipants;
+let isEditModeGuidelines;
 
 export default function GuidelinesModal(props) {
   // eslint-disable-next-line no-unused-vars
-  const { Guidelinescontroller, isModalVisible, isEditMode, orgID, planID } = props;
+  const { Guidelinescontroller, isModalVisible, isEditMode, orgID, planID } =
+    props;
   const [isModalVisibleParticipants, setIsModalVisibleParticipants] =
     useState(false);
   const [isModalVisibleGuidelines, setIsModalVisibleGuidelines] =
     useState(false);
+  const toolsStore = useContext(ToolsContext);
   const [selectedRows, setSelectedRows] = useState([]);
   const [list, setList] = useState([]);
   const [form] = Form.useForm();
@@ -65,105 +55,132 @@ export default function GuidelinesModal(props) {
   const [lazyParams, setLazyParams] = useState({
     page: 0,
   });
-  let loadLazyTimeout = null;
+  const loadLazyTimeout = null;
+
+  const onInit = () => {
+    toolsStore.setIsShowLoader(false);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    if (Guidelinescontroller !== null) {
+      getService(`participants/getList/${Guidelinescontroller.id}`, list)
+        .then(result => {
+          const listResult = result.content || [];
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setList(listResult);
+          setSelectedRows([]);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
+        });
+    }
+  };
 
   useEffect(() => {
     onInit();
-    getService("organization/get").then((result) => {
+    getService('organization/get').then(result => {
       if (result) {
         setStateOrga(result.content || []);
       }
     });
-    getService("trainingPlan/get").then((result) => {
+    getService('trainingPlan/get').then(result => {
       if (result) {
         setStatePlan(result.content || []);
-        console.log(result.content)
         // console.log(training_plan.name)
-        // training_plan.id = 
+        // training_plan.id =
         // stateplanID(planID)
       }
     });
-    if(Guidelinescontroller!==null){
-    getService("training/get/" + Guidelinescontroller.id).then((result) => {
-      if(result){
-        setTrainingID(Guidelinescontroller.id)
-      }
-    });
-
-    if (isEditMode) {
-      form.setFieldsValue({
-        ...Guidelinescontroller,
-        TrainingPlanName: Guidelinescontroller.training_plan.name,
-        OrganizationName: Guidelinescontroller.organization.name,
+    if (Guidelinescontroller !== null) {
+      getService(`training/get/${Guidelinescontroller.id}`).then(result => {
+        if (result) {
+          setTrainingID(Guidelinescontroller.id);
+        }
       });
-    }}
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+      if (isEditMode) {
+        form.setFieldsValue({
+          ...Guidelinescontroller,
+          TrainingPlanName: Guidelinescontroller.training_plan.name,
+          OrganizationName: Guidelinescontroller.organization.name,
+        });
+      }
+    }
   }, []);
 
-  const selectTrainingPlan = (TrainingPlanID) => {
-    console.log(TrainingPlanID)
-    setTrainingPlanID(TrainingPlanID);
-  }
-
-  const onInit = () => {
-    if (loadLazyTimeout) {
-      clearTimeout(loadLazyTimeout);
-    }
-    if(Guidelinescontroller!==null){
-    getService("participants/getList/" + Guidelinescontroller.id, list)
-      .then((result) => {
-        let list = result.content || [];
-        list.map(
-          (item, index) => (item.index = lazyParams.page * PAGESIZE + index + 1)
-        );
-        setList(list);
-        setSelectedRows([]);
-      })
-      .catch((error) => {
-        errorCatch(error);
-        isShowLoading(false);
-      });
-    }
+  const selectTrainingPlan = trainingPlanID => {
+    setTrainingPlanID(trainingPlanID);
   };
 
-  const action = (row) => {
-    return (
-      <React.Fragment>
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faPen} />}
-          onClick={() => edit(row)}
-        />
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faTrash} />}
-          onClick={() => pop(row)}
-        />
-      </React.Fragment>
-    );
-  };
-
-  const edit = (row) => {
+  const edit = row => {
     editRow = row;
     isEditModeParticipants = true;
     setIsModalVisibleParticipants(true);
   };
 
-  const editUdirdamj = (row) => {
-    editRow = row;
-    isEditModeGuidelines = true;
-    setIsModalVisibleGuidelines(true);
+  const handleDeleted = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+      return;
+    }
+
+    putService(`participants/delete/${row.id}`)
+      .then(result => {
+        message.success('Амжилттай устлаа');
+        onInit();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
   };
 
-  const pop = (row) => {
+  function confirm(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeleted(row);
+        onInit();
+      },
+      onCancel() {},
+    });
+  }
+
+  const pop = row => {
     if (row.length === 0) {
-      message.warning("Устгах өгөгдлөө сонгоно уу");
-      return;
+      message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
       confirm(row);
     }
   };
 
+  const action = row => (
+    <>
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={() => edit(row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={() => pop(row)}
+      />
+    </>
+  );
+
+  const editUdirdamj = row => {
+    editRow = row;
+    isEditModeGuidelines = true;
+    setIsModalVisibleGuidelines(true);
+  };
 
   const add = () => {
     setIsModalVisibleParticipants(true);
@@ -182,52 +199,36 @@ export default function GuidelinesModal(props) {
     if (isSuccess) onInit();
   };
 
-  const handleDeleted = (row) => {
-    if (row.length === 0) {
-      message.warning("Устгах өгөгдлөө сонгоно уу");
-      return;
-    }
-
-    putService("participants/delete/" + row.id)
-      .then((result) => {
-        message.success("Амжилттай устлаа");
-        onInit();
-      })
-      .catch((error) => {
-        errorCatch(error);
-      });
-  };
   const save = () => {
     form
       .validateFields()
-      .then((values) => {
-        values.organization = {id: orgID}
-        values.training_plan = {id: TrainingPlanID }
+      .then(values => {
+        values.organization = { id: orgID };
+        values.training_plan = { id: TrainingPlanID };
         if (isEditMode) {
-          setTrainingPlanID(Guidelinescontroller.training_plan.id)
-          putService("training/update/" + Guidelinescontroller.id, values)
-            .then((result) => {
+          setTrainingPlanID(Guidelinescontroller.training_plan.id);
+          putService(`training/update/${Guidelinescontroller.id}`, values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService("training/post", values)
-          debugger
-          console.log(values)
-            .then((result) => {
+          postService('training/post', values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         }
       })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
+      .catch(info => {
+        console.log('Validate Failed:', info);
       });
   };
+
   return (
     <div>
       <Modal
@@ -243,7 +244,7 @@ export default function GuidelinesModal(props) {
         <ContentWrapper>
           <Form
             form={form}
-            labelAlign={"left"}
+            labelAlign="left"
             {...layout}
             layout="vertical"
             name="nest-messages"
@@ -262,7 +263,7 @@ export default function GuidelinesModal(props) {
                         valueField="id"
                         data={statePlan}
                         placeholder="Сургалтын төлөвлөгөө"
-                        onChange={(value) => selectTrainingPlan(value)}
+                        onChange={value => selectTrainingPlan(value)}
                       />
                     </Form.Item>
                   </Col>
@@ -324,15 +325,15 @@ export default function GuidelinesModal(props) {
                     className="p-datatable-responsive-demo"
                     selection={selectedRows}
                     // onRowClick={edit}
-                    onSelectionChange={(e) => {
-                    setSelectedRows(e.value);
+                    onSelectionChange={e => {
+                      setSelectedRows(e.value);
                     }}
                     dataKey="id"
                   >
                     <Column field="index" header="№" />
                     <Column field="name" header="Нэр" filter />
                     <Column field="phone" header="Утас" filter />
-                    <Column headerStyle={{ width: "7rem" }} body={action} />
+                    <Column headerStyle={{ width: '7rem' }} body={action} />
                   </DataTable>
                   {isModalVisibleParticipants && (
                     <ParticipantsModal
@@ -373,18 +374,4 @@ export default function GuidelinesModal(props) {
       </Modal>
     </div>
   );
-  function confirm(row) {
-    Modal.confirm({
-      title: "Та устгахдаа итгэлтэй байна уу ?",
-      icon: <ExclamationCircleOutlined />,
-      okButtonProps: {},
-      okText: "Устгах",
-      cancelText: "Буцах",
-      onOk() {
-        handleDeleted(row);
-        onInit();
-      },
-      onCancel() {},
-    });
-  }
 }

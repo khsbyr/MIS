@@ -1,29 +1,28 @@
-import { Menu, Select } from "antd";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { FaCheck } from "react-icons/fa";
-import { TiArrowSortedDown } from "react-icons/ti";
-import { withRouter } from "react-router-dom";
-
+import { Menu, Select } from 'antd';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { FaCheck } from 'react-icons/fa';
+import { TiArrowSortedDown } from 'react-icons/ti';
+import { withRouter } from 'react-router-dom';
 
 const { Option } = Select;
 
 const AuthMenu = ({ location, className }) => {
   const { i18n } = useTranslation();
-  const changeLanguage = (value) => {
+  const changeLanguage = value => {
     i18n.changeLanguage(value);
-    localStorage.setItem("i18nextLng", value);
+    localStorage.setItem('i18nextLng', value);
   };
 
   const getDefaultLanguage = () => {
-    const lang = localStorage.getItem("i18nextLng");
+    const lang = localStorage.getItem('i18nextLng');
     if (lang) return lang;
-    return "mn";
+    return 'mn';
   };
 
   return (
     <Menu className={className}>
-      <Menu.Item key="0" style={{ marginRight: "20px", fontWeight: "700" }}>
+      <Menu.Item key="0" style={{ marginRight: '20px', fontWeight: '700' }}>
         <img src="/images/translation.png" alt="translate" width="20" />
         <Select
           bordered={false}

@@ -1,13 +1,14 @@
-import { Col, Form, Input, Modal, Row, Button } from "antd";
-import React, { useEffect, useState } from "react";
-import AutoCompleteSelect from "../../../../components/Autocomplete";
+import { Col, Form, Input, Modal, Row, Button } from 'antd';
+import React, { useEffect, useState } from 'react';
+import AutoCompleteSelect from '../../../../components/Autocomplete';
 import {
   getService,
   postService,
   putService,
-} from "../../../../service/service";
-import { errorCatch } from "../../../../tools/Tools";
-import ContentWrapper from "./attendance.style";
+} from '../../../../service/service';
+import { errorCatch } from '../../../../tools/Tools';
+import ContentWrapper from './attendance.style';
+import validateMessages from '../../../../tools/validateMessage';
 
 const layout = {
   labelCol: {
@@ -17,20 +18,10 @@ const layout = {
     span: 22,
   },
 };
-const validateMessages = {
-  required: "${label} хоосон байна!",
-  types: {
-    email: "${label} is not a valid email!",
-    number: "${label} is not a valid number!",
-  },
-  number: {
-    range: "${label} must be between ${min} and ${max}",
-  },
-};
 export default function TrainingGuidelinesModal(props) {
   const {
     TrainingGuidelinesModalController,
-    result,
+    Result,
     isModalVisible,
     isEditMode,
     trainingID,
@@ -46,9 +37,12 @@ export default function TrainingGuidelinesModal(props) {
   });
 
   useEffect(() => {
-    getService("trainingGuidelines/get/" + trainingID).then((result) => {
-      let value = result;
-      setStateValue(value)
+    console.log(trainingID);
+    getService(`trainingGuidelines/get/${trainingID}`).then(result => {
+      console.log(result);
+      const value = result;
+      setStateValue(value);
+      console.log(value);
       form.setFieldsValue({
         ...result,
         subject: result.subject,
@@ -59,24 +53,25 @@ export default function TrainingGuidelinesModal(props) {
         AddressDetail: result.address.addressDetail,
       });
     });
-
-    getService("country/get").then((result) => {
+    getService('country/get').then(result => {
       if (result) {
         setStateCountry(result || []);
       }
     });
-    getService("aimag/get").then((result) => {
+
+    getService('aimag/get').then(result => {
       if (result) {
         setStateAimag(result || []);
       }
     });
-    if (result !== undefined) {
-      getService(`soum/getList/${result.address.aimag.id}`).then((result) => {
+
+    if (Result) {
+      getService(`soum/getList/${Result.address.aimag.id}`).then(result => {
         if (result) {
           setStateSum(result || []);
         }
       });
-      getService(`bag/getList/${result.address.soum.id}`).then((result) => {
+      getService(`bag/getList/${Result.address.soum.id}`).then(result => {
         if (result) {
           setStateBag(result || []);
         }
@@ -89,36 +84,40 @@ export default function TrainingGuidelinesModal(props) {
     // }
   }, []);
 
-  const selectCountry = (value) => {
-    getAimag(value);
-  };
-
-  const getAimag = (countryId) => {
-    getService(`aimag/getList/${countryId}`, {}).then((result) => {
+  const getAimag = countryId => {
+    getService(`aimag/getList/${countryId}`, {}).then(result => {
       if (result) {
         setStateAimag(result || []);
       }
     });
   };
-  const selectAimag = (value) => {
-    getSum(value);
+
+  const selectCountry = value => {
+    getAimag(value);
   };
-  const getSum = (aimagId) => {
-    getService(`soum/getList/${aimagId}`, {}).then((result) => {
+
+  const getSum = aimagId => {
+    getService(`soum/getList/${aimagId}`, {}).then(result => {
       if (result) {
         setStateSum(result || []);
       }
     });
   };
-  const selectSum = (value) => {
-    getBag(value);
+
+  const selectAimag = value => {
+    getSum(value);
   };
-  const getBag = (sumID) => {
-    getService(`bag/getList/${sumID}`, {}).then((result) => {
+
+  const getBag = sumID => {
+    getService(`bag/getList/${sumID}`, {}).then(result => {
       if (result) {
         setStateBag(result || []);
       }
     });
+  };
+
+  const selectSum = value => {
+    getBag(value);
   };
 
   const onReset = () => {
@@ -128,7 +127,7 @@ export default function TrainingGuidelinesModal(props) {
   const save = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(values => {
         console.log(values);
         values.address = {
           addressDetail: values.AddressDetail,
@@ -145,18 +144,18 @@ export default function TrainingGuidelinesModal(props) {
             id: values.BagID,
           },
         };
-        //if (isEditMode) {
-          putService("trainingGuidelines/update/" + valueState.id, values)
-            .then((result) => {
-              props.close(true);
-            })
-            .catch((error) => {
-              errorCatch(error);
-            });
-       //} 
+        // if (isEditMode) {
+        putService(`trainingGuidelines/update/${valueState.id}`, values)
+          .then(result => {
+            props.close(true);
+          })
+          .catch(error => {
+            errorCatch(error);
+          });
+        // }
       })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
+      .catch(info => {
+        console.log('Validate Failed:', info);
       });
   };
   return (
@@ -174,7 +173,7 @@ export default function TrainingGuidelinesModal(props) {
         <ContentWrapper>
           <Form
             form={form}
-            labelAlign={"left"}
+            labelAlign="left"
             {...layout}
             layout="vertical"
             name="nest-messages"
@@ -254,18 +253,18 @@ export default function TrainingGuidelinesModal(props) {
 
                 <Row>
                   <Col xs={24} md={24} lg={24}>
-                    <p style={{ color: "#7d7d7d", fontSize: "13px" }}>
+                    <p style={{ color: '#7d7d7d', fontSize: '13px' }}>
                       Сургалт зохион байгуулагдах газар:
                     </p>
                   </Col>
                 </Row>
-                <Row style={{ maxWidth: "95%" }}>
+                <Row style={{ maxWidth: '95%' }}>
                   <Col xs={24} md={24} lg={12}>
                     <Form.Item label="Улс:" name="CountryID">
                       <AutoCompleteSelect
                         valueField="id"
                         data={stateCountry}
-                        onChange={(value) => selectCountry(value)}
+                        onChange={value => selectCountry(value)}
                       />
                     </Form.Item>
                   </Col>
@@ -274,7 +273,7 @@ export default function TrainingGuidelinesModal(props) {
                       <AutoCompleteSelect
                         valueField="id"
                         data={stateAimag}
-                        onChange={(value) => selectAimag(value)}
+                        onChange={value => selectAimag(value)}
                       />
                     </Form.Item>
                   </Col>
@@ -287,7 +286,7 @@ export default function TrainingGuidelinesModal(props) {
                       <AutoCompleteSelect
                         valueField="id"
                         data={stateSum}
-                        onChange={(value) => selectSum(value)}
+                        onChange={value => selectSum(value)}
                       />
                     </Form.Item>
                   </Col>
@@ -306,8 +305,8 @@ export default function TrainingGuidelinesModal(props) {
                     <Form.Item label="Хаяг:" name="AddressDetail">
                       <Input.TextArea
                         style={{
-                          width: "100%",
-                          height: "110px",
+                          width: '100%',
+                          height: '110px',
                         }}
                       />
                     </Form.Item>

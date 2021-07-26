@@ -1,67 +1,108 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form, Input, Checkbox } from 'antd';
-import { requireFieldFocus } from '../../../tools/Tools';
+import { requireFieldFocus, errorCatch } from '../../../tools/Tools';
+import { getService, postService, putService } from '../../../service/service';
+import AutoCompleteSelect from '../../../components/Autocomplete';
 
 const layout = {
-    labelCol: {
-        span: 8,
-    },
-    wrapperCol: {
-        span: 16,
-    },
-};
-const tailLayout = {
-    wrapperCol: {
-        offset: 8,
-        span: 16,
-    },
+  labelCol: {
+    span: 8,
+  },
+  wrapperCol: {
+    span: 16,
+  },
 };
 
 export default function RoleModal(props) {
-    const { visible, isEditMode, editValue } = props
-    const [form] = Form.useForm();
+  const { roleController, visible, isEditMode } = props;
+  const [form] = Form.useForm();
+  const [stateRoleLevel, setStateRoleLevel] = useState([]);
 
-    React.useEffect(() => {
+  useEffect(() => {
+    getService('roleLevel/get').then(result => {
+      if (result) {
+        setStateRoleLevel(result || []);
+      }
+    });
+    if (isEditMode) {
+      form.setFieldsValue({
+        ...roleController,
+        roleLevelId: roleController.roleLevel
+          ? roleController.roleLevel.id
+          : '',
+      });
+    }
+  }, [roleController, form, isEditMode]);
+
+  const save = () => {
+    form
+      .validateFields()
+      .then(values => {
+        values.roleLevel = {
+          id: values.roleLevelId,
+        };
         if (isEditMode) {
-            form.setFieldsValue(editValue)
+          putService(`role/update/${roleController.id}`, values)
+            .then(result => {
+              props.close(true);
+            })
+            .catch(error => {
+              errorCatch(error);
+            });
+        } else {
+          postService('role/post', values)
+            .then(result => {
+              props.close(true);
+            })
+            .catch(error => {
+              errorCatch(error);
+            });
         }
-    }, [isEditMode, editValue])
+      })
+      .catch(info => {
+        console.log('Validate Failed:', info);
+      });
+  };
 
-    return (
-        <Modal
-            title="Хэрэглэгчйн дүр бүртгэх"
-            visible={visible}
-            footer={false}
-            onCancel={() => props.close(false)}
-            width={450}
+  return (
+    <Modal
+      title="Хэрэглэгчийн дүр бүртгэх"
+      okText="Хадгалах"
+      cancelText="Буцах"
+      width={460}
+      alignItems="center"
+      visible={visible}
+      onOk={save}
+      onCancel={() => props.close()}
+    >
+      <Form
+        {...layout}
+        form={form}
+        name="user"
+        initialValues={{
+          isActive: true,
+        }}
+        onFinish={values => {
+          const formData = form.getFieldValue();
+          props.save({ ...values, id: formData.id });
+        }}
+        onFinishFailed={requireFieldFocus}
+      >
+        <Form.Item
+          label="Дүрийн нэр"
+          name="name"
+          rules={[{ required: true, message: '' }]}
         >
-            <Form
-                {...layout}
-                form={form}
-                name="user"
-                initialValues={{
-                    isActive: true,
-                }}
-                onFinish={(values) => {
-                    const formData = form.getFieldValue()
-                    props.save({ ...values, id: formData.id })
-                }}
-                onFinishFailed={requireFieldFocus}
-            >
-                <Form.Item label="Дүрийн код" name="code" rules={[{ required: true, message: '' }]}>
-                    <Input />
-                </Form.Item>
-                <Form.Item label="Дүрийн нэр" name="name" rules={[{ required: true, message: '' }]}>
-                    <Input />
-                </Form.Item>
-                <Form.Item {...tailLayout} name="isActive" valuePropName="checked">
-                    <Checkbox>Идэвхтэй эсэх</Checkbox>
-                </Form.Item>
-                <div style={{ textAlign: 'right' }}>
-                    <Button htmlType="button" style={{ marginRight: 8 }} onClick={() => props.close()}>Болих</Button>
-                    <Button type="primary" htmlType="submit" >Хадгалах</Button>
-                </div>
-            </Form>
-        </Modal>
-    )
+          <Input />
+        </Form.Item>
+        <Form.Item name="roleLevelId" layout="vertical" label="Дүрийн код:">
+          <AutoCompleteSelect
+            valueField="id"
+            size="medium"
+            data={stateRoleLevel}
+          />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
 }

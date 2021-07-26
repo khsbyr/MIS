@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Modal, Form, Input } from "antd";
+import React, { useEffect, useState } from 'react';
+import { Modal, Form, Input } from 'antd';
 import {
   getService,
   postService,
   putService,
-} from "../../../../service/service";
-import { errorCatch } from "../../../../tools/Tools";
-import AutocompleteSelect from "../../../../components/Autocomplete";
-import { isShowLoading } from "../../../../context/Tools";
+} from '../../../../service/service';
+import { errorCatch } from '../../../../tools/Tools';
+import AutocompleteSelect from '../../../../components/Autocomplete';
+import { ToolsContext } from '../../../../context/Tools';
+import validateMessages from '../../../../tools/validateMessage';
+
 const layout = {
   labelCol: {
     span: 10,
@@ -16,28 +18,19 @@ const layout = {
     span: 14,
   },
 };
-const validateMessages = {
-  required: "${label} хоосон байна!",
-  types: {
-    email: "${label} is not a valid email!",
-    number: "${label} is not a valid number!",
-  },
-  number: {
-    range: "${label} must be between ${min} and ${max}",
-  },
-};
+
 export default function Composition1Modal(props) {
   const { Composition, isModalVisible, isEditMode } = props;
   const [stateController, setStateController] = useState([]);
   const [stateController1, setStateController1] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
-    getService("criteria/get", {
-        search: "status:true",
-    }).then((result) => {
-        if (result) {
-            setStateController(result.content || []);
-        }
+    getService('criteria/get', {
+      search: 'status:true',
+    }).then(result => {
+      if (result) {
+        setStateController(result.content || []);
+      }
     });
 
     if (isEditMode) {
@@ -48,12 +41,12 @@ export default function Composition1Modal(props) {
     }
   }, []);
   useEffect(() => {
-    getService("trainingPlan/getParents/1", {
-        search: "status:true",
-    }).then((result) => {
-        if (result) {
-            setStateController1(result.content || []);
-        }
+    getService('trainingPlan/getParents/1', {
+      search: 'status:true',
+    }).then(result => {
+      if (result) {
+        setStateController1(result.content || []);
+      }
     });
 
     if (isEditMode) {
@@ -66,27 +59,27 @@ export default function Composition1Modal(props) {
   const save = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(values => {
         if (isEditMode) {
-          putService("trainingPlan/update" + Composition.id, values)
-            .then((result) => {
+          putService(`trainingPlan/update${Composition.id}`, values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService("trainingPlan/post", values)
-            .then((result) => {
+          postService('trainingPlan/post', values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         }
       })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
+      .catch(info => {
+        console.log('Validate Failed:', info);
       });
   };
   return (
@@ -103,53 +96,29 @@ export default function Composition1Modal(props) {
       >
         <Form
           form={form}
-          labelAlign={"left"}
+          labelAlign="left"
           {...layout}
           name="nest-messages"
           validateMessages={validateMessages}
         >
-          <Form.Item
-            name="name"
-            label="Сургалтын нэрс:"
-
-          >
-            <AutocompleteSelect valueField="name" data={stateController1}/>{" "}
+          <Form.Item name="name" label="Сургалтын нэрс:">
+            <AutocompleteSelect valueField="name" data={stateController1} />{' '}
           </Form.Item>
-          <Form.Item
-            name="code"
-            label="Код:"
-
-          >
+          <Form.Item name="code" label="Код:">
             <Input />
           </Form.Item>
-          <Form.Item
-            name="name"
-            label="Сургалтын нэр:"
-
-          >
+          <Form.Item name="name" label="Сургалтын нэр:">
             <Input />
           </Form.Item>
-          <Form.Item
-            name="name"
-            label="Шалгуур үзүүлэлтийн нэр:"
-
-          >
-        <AutocompleteSelect data={stateController} valueField="name"/>{" "}
+          <Form.Item name="name" label="Шалгуур үзүүлэлтийн нэр:">
+            <AutocompleteSelect data={stateController} valueField="name" />{' '}
           </Form.Item>
-          <Form.Item
-            name="gender"
-            label="Хүйс:"
-
-          >
-            <AutocompleteSelect valueField="name"/>{" "}
+          <Form.Item name="gender" label="Хүйс:">
+            <AutocompleteSelect valueField="name" />{' '}
           </Form.Item>
-          <Form.Item
-                name="upIndicator"
-                label="Зорилтот үр дүн"
-
-              >
-                <Input type="number"/>
-              </Form.Item>
+          <Form.Item name="upIndicator" label="Зорилтот үр дүн">
+            <Input type="number" />
+          </Form.Item>
         </Form>
       </Modal>
     </div>

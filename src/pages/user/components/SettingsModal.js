@@ -1,26 +1,10 @@
-import { Col, Form, Input, Modal, Radio, Row, Select } from "antd";
-import React, { useEffect, useState } from "react";
-import { getService, postService, putService } from "../../../service/service";
-import { errorCatch } from "../../../tools/Tools";
-import AutocompleteSelect from "../../../components/Autocomplete";
-// const layout = {
-//   labelCol: {
-//     span: 10,
-//   },
-//   wrapperCol: {
-//     span: 14,
-//   },
-// };
-const validateMessages = {
-  required: "${label} хоосон байна!",
-  types: {
-    email: "${label} is not a valid email!",
-    number: "${label} is not a valid number!",
-  },
-  number: {
-    range: "${label} must be between ${min} and ${max}",
-  },
-};
+import { Col, Form, Input, Modal, Radio, Row, Select } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { getService, postService, putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import AutocompleteSelect from '../../../components/Autocomplete';
+import validateMessages from '../../../tools/validateMessage';
+
 export default function SettingsModal(props) {
   const { Usercontroller, isModalVisible, isEditMode } = props;
   const [setStateController] = useState([]);
@@ -33,7 +17,7 @@ export default function SettingsModal(props) {
   const [value, setValue] = React.useState(1);
 
   useEffect(() => {
-    getService("country/get").then((result) => {
+    getService('country/get').then(result => {
       if (result) {
         setStateCountry(result || []);
       }
@@ -43,12 +27,8 @@ export default function SettingsModal(props) {
     }
   }, []);
 
-  const selectCountry = (value) => {
-    getAimag(value);
-  };
-
-  const getAimag = (countryId) => {
-    getService(`aimag/getList/${countryId}`, {}).then((result) => {
+  const getAimag = countryId => {
+    getService(`aimag/getList/${countryId}`, {}).then(result => {
       if (result) {
         setStateAimag(result || []);
       }
@@ -57,11 +37,13 @@ export default function SettingsModal(props) {
       form.setFieldsValue({ ...Usercontroller });
     }
   };
-  const selectAimag = (value) => {
-    getSum(value);
+
+  const selectCountry = val => {
+    getAimag(val);
   };
-  const getSum = (aimagId) => {
-    getService(`soum/getList/${aimagId}`, {}).then((result) => {
+
+  const getSum = aimagId => {
+    getService(`soum/getList/${aimagId}`, {}).then(result => {
       if (result) {
         setStateSum(result || []);
       }
@@ -70,11 +52,13 @@ export default function SettingsModal(props) {
       form.setFieldsValue({ ...Usercontroller });
     }
   };
-  const selectSum = (value) => {
-    getBag(value);
+
+  const selectAimag = valData => {
+    getSum(valData);
   };
-  const getBag = (sumID) => {
-    getService(`bag/getList/${sumID}`, {}).then((result) => {
+
+  const getBag = sumID => {
+    getService(`bag/getList/${sumID}`, {}).then(result => {
       if (result) {
         setStateBag(result || []);
       }
@@ -83,36 +67,40 @@ export default function SettingsModal(props) {
       form.setFieldsValue({ ...Usercontroller });
     }
   };
-  const onChange = (e) => {
+
+  const selectSum = val => {
+    getBag(val);
+  };
+
+  const onChange = e => {
     getService(`gender/get/${e.target.value}`);
-    console.log("radio checked", e.target.value);
+    console.log('radio checked', e.target.value);
     setValue(e.target.value);
   };
   const save = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(values => {
         if (isEditMode) {
-          putService("user/update" + Usercontroller.id, values)
-            .then((result) => {
+          putService(`user/update${Usercontroller.id}`, values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         } else {
-          debugger;
-          postService("user/saveByAdmin/", values)
-            .then((result) => {
+          postService('user/saveByAdmin/', values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         }
       })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
+      .catch(info => {
+        console.log('Validate Failed:', info);
       });
   };
   return (
@@ -129,7 +117,7 @@ export default function SettingsModal(props) {
       >
         <Form
           form={form}
-          labelAlign={"left"}
+          labelAlign="left"
           name="nest-messages"
           layout="vertical"
           validateMessages={validateMessages}
@@ -178,7 +166,7 @@ export default function SettingsModal(props) {
                   <AutocompleteSelect
                     valueField="id"
                     data={stateCountry}
-                    onChange={(value) => selectCountry(value)}
+                    onChange={val => selectCountry(val)}
                   />
                 </Form.Item>
               </Form>
@@ -193,7 +181,7 @@ export default function SettingsModal(props) {
                   <AutocompleteSelect
                     valueField="id"
                     data={stateAimag}
-                    onChange={(value) => selectAimag(value)}
+                    onChange={valData => selectAimag(valData)}
                   />
                 </Form.Item>
               </Form>
@@ -204,7 +192,7 @@ export default function SettingsModal(props) {
                   <AutocompleteSelect
                     valueField="id"
                     data={stateSum}
-                    onChange={(value) => selectSum(value)}
+                    onChange={val => selectSum(val)}
                   />
                 </Form.Item>
               </Form>

@@ -1,7 +1,9 @@
-import { Form, Input, Modal } from "antd";
-import React, { useEffect, useState } from "react";
-import { getService, postService, putService } from "../../../service/service";
-import { errorCatch } from "../../../tools/Tools";
+import { Form, Input, Modal } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { getService, postService, putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import validateMessages from '../../../tools/validateMessage';
+
 const layout = {
   labelCol: {
     span: 10,
@@ -10,31 +12,22 @@ const layout = {
     span: 14,
   },
 };
-const validateMessages = {
-  required: "${label} хоосон байна!",
-  types: {
-    email: "${label} is not a valid email!",
-    number: "${label} is not a valid number!",
-  },
-  number: {
-    range: "${label} must be between ${min} and ${max}",
-  },
-};
+
 export default function SignuprequestModal(props) {
   const { Usercontroller, isModalVisible, isEditMode } = props;
   const [stateController, setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
-    getService("criteria/get", {
-      search: "status:true",
-    }).then((result) => {
+    getService('criteria/get', {
+      search: 'status:true',
+    }).then(result => {
       if (result) {
         setStateController(result.content || []);
       }
     });
 
     if (isEditMode) {
-      getService("criteria/get" + Usercontroller.id).then((result) => {
+      getService(`criteria/get${Usercontroller.id}`).then(result => {
         Usercontroller.userServiceId = result.userService.id;
         form.setFieldsValue({ ...Usercontroller });
       });
@@ -43,28 +36,28 @@ export default function SignuprequestModal(props) {
   const save = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(values => {
         values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService("criteria/put" + Usercontroller.id, values)
-            .then((result) => {
+          putService(`criteria/put${Usercontroller.id}`, values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService("criteria/post", values)
-            .then((result) => {
+          postService('criteria/post', values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         }
       })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
+      .catch(info => {
+        console.log('Validate Failed:', info);
       });
   };
   return (
@@ -81,7 +74,7 @@ export default function SignuprequestModal(props) {
       >
         <Form
           form={form}
-          labelAlign={"left"}
+          labelAlign="left"
           {...layout}
           name="nest-messages"
           validateMessages={validateMessages}

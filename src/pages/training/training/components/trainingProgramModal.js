@@ -1,14 +1,14 @@
-// import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Col, Form, Input, Modal, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import { Col, Form, Input, Modal, Row } from 'antd';
+import React, { useEffect, useState } from 'react';
 import {
   getService,
   postService,
   putService,
-} from "../../../../service/service";
-import { errorCatch } from "../../../../tools/Tools";
-import ContentWrapper from "./guidelines.style";
-import AutocompleteSelect from "../../../../components/Autocomplete";
+} from '../../../../service/service';
+import { errorCatch } from '../../../../tools/Tools';
+import ContentWrapper from './guidelines.style';
+import AutocompleteSelect from '../../../../components/Autocomplete';
+import validateMessages from '../../../../tools/validateMessage';
 
 const layout = {
   labelCol: {
@@ -18,23 +18,10 @@ const layout = {
     span: 22,
   },
 };
-const validateMessages = {
-  // eslint-disable-next-line no-template-curly-in-string
-  required: "${label} хоосон байна!",
-  types: {
-    // eslint-disable-next-line no-template-curly-in-string
-    email: "${label} is not a valid email!",
-    // eslint-disable-next-line no-template-curly-in-string
-    number: "${label} is not a valid number!",
-  },
-  number: {
-    // eslint-disable-next-line no-template-curly-in-string
-    range: "${label} must be between ${min} and ${max}",
-  },
-};
 
-export default function GuidelinesModal(props) {
-  const { Trainingprogramcontroller, isModalVisible, isEditMode, trainingID } = props;
+export default function TrainingProgramModal(props) {
+  const { Trainingprogramcontroller, isModalVisible, isEditMode, trainingID } =
+    props;
   const [form] = Form.useForm();
   const [stateTeam, setStateTeam] = useState([]);
   const [TrainingTeamID, setTrainingTeamID] = useState([]);
@@ -44,21 +31,27 @@ export default function GuidelinesModal(props) {
   const [lazyParams, setLazyParams] = useState({
     page: 0,
   });
-  let loadLazyTimeout = null;
+  const loadLazyTimeout = null;
+
+  const onInit = () => {
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+  };
 
   useEffect(() => {
     onInit();
-    getService("trainingPlan/get").then((result) => {
+    getService('trainingPlan/get').then(result => {
       if (result) {
         setStateTeam(result.content || []);
-        console.log(result.content)
-        // training_plan.id = 
+        console.log(result.content);
+        // training_plan.id =
         // stateplanID(planID)
       }
     });
     if (Trainingprogramcontroller !== null) {
-      getService("training/get/" + Trainingprogramcontroller.id).then(
-        (result) => {
+      getService(`training/get/${Trainingprogramcontroller.id}`).then(
+        result => {
           if (result) {
             // setTrainingID(Trainingprogramcontroller.id);
           }
@@ -71,53 +64,42 @@ export default function GuidelinesModal(props) {
         });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const selectTrainingTeam = (TrainingTeamID) => {
-    console.log(TrainingTeamID)
-    setTrainingTeamID(TrainingTeamID);
-  }
-
-  const onInit = () => {
-    if (loadLazyTimeout) {
-      clearTimeout(loadLazyTimeout);
-    }
+  const selectTrainingTeam = trainingTeamID => {
+    console.log(trainingTeamID);
+    setTrainingTeamID(trainingTeamID);
   };
 
   const save = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(values => {
         values.training = { id: trainingID };
-        values.training_team = {id: TrainingTeamID }
+        values.training_team = { id: TrainingTeamID };
 
         if (isEditMode) {
-          putService(
-            "trainingProgram/update/" + trainingID,
-            values
-          )
-            .then((result) => {
+          putService(`trainingProgram/update/${trainingID}`, values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService("trainingProgram/post/" + trainingID, values);
-          debugger;
+          postService(`trainingProgram/post/${trainingID}`, values);
           console
             .log(values)
-            .then((result) => {
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         }
       })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
+      .catch(info => {
+        console.log('Validate Failed:', info);
       });
   };
   return (
@@ -135,7 +117,7 @@ export default function GuidelinesModal(props) {
         <ContentWrapper>
           <Form
             form={form}
-            labelAlign={"left"}
+            labelAlign="left"
             {...layout}
             layout="vertical"
             name="nest-messages"
