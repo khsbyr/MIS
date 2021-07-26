@@ -33,8 +33,6 @@ const User = () => {
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
 
-  console.log(toolsStore);
-
   const onInit = () => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);

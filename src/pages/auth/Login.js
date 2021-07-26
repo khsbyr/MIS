@@ -46,7 +46,7 @@ function Login() {
           history.push('/admin');
         })
         .finally(() => {
-          // toolsStore.setIsShowLoader(false);
+          toolsStore.setIsShowLoader(false);
         })
         .catch(error => {
           if (error?.response) {
