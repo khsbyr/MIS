@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Form, Input, Modal } from 'antd';
 import React, { useEffect } from 'react';
 import { postService, putService } from '../../../../service/service';
@@ -14,8 +15,6 @@ const layout = {
   },
 };
 
-const dateFormat = 'YYYY-MM-DD';
-
 export default function EducationModal(props) {
   const { CvEducationController, isModalVisibleEducation, isEditMode } = props;
   const [form] = Form.useForm();
@@ -30,7 +29,7 @@ export default function EducationModal(props) {
       .then(values => {
         if (isEditMode) {
           putService(`education/update/${CvEducationController.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -38,7 +37,7 @@ export default function EducationModal(props) {
             });
         } else {
           postService(`education/post/${CvEducationController.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -50,8 +49,6 @@ export default function EducationModal(props) {
         console.log('Validate Failed:', info);
       });
   };
-
-  const onChangeDate = (date, dateString) => console.log(date, dateString);
 
   return (
     <div>
