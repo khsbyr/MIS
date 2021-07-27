@@ -18,8 +18,8 @@ const layout = {
   },
 };
 
-export default function FuelModal(props) {
-  const { Attendancecontroller, isModalVisible, isEditMode } = props;
+export default function StationaryModal(props) {
+  const { Stationarycontroller, isModalVisible, isEditMode } = props;
   const [stateController, setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
@@ -32,9 +32,9 @@ export default function FuelModal(props) {
     });
 
     if (isEditMode) {
-      getService(`criteria/get${Attendancecontroller.id}`).then(result => {
-        Attendancecontroller.userServiceId = result.userService.id;
-        form.setFieldsValue({ ...Attendancecontroller });
+      getService(`criteria/get${Stationarycontroller.id}`).then(result => {
+        Stationarycontroller.userServiceId = result.userService.id;
+        form.setFieldsValue({ ...Stationarycontroller });
       });
     }
   }, []);
@@ -42,9 +42,8 @@ export default function FuelModal(props) {
     form
       .validateFields()
       .then(values => {
-        values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService(`criteria/put${Attendancecontroller.id}`, values)
+          putService(`criteria/put${Stationarycontroller.id}`, values)
             .then(result => {
               props.close(true);
             })
