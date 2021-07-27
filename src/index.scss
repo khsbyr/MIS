@@ -55,7 +55,26 @@ code {
 }
 
 .ant-layout-header {
-  padding: 0px 0px !important;    
+  padding: 0px 0px !important;  
+  .ant-dropdown-link {
+    position: fixed;
+  }
+  a.list-inline-item {
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+  .list-inline-item {
+    padding: 0 0.875rem;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s;
+    .avatar-text {
+      margin-left: 0.5rem;
+      color: #fff;
+    }
+  }  
 }
 .ant-menu-item .ant-menu-item-icon, .ant-menu-submenu-title .ant-menu-item-icon, .ant-menu-item .anticon, .ant-menu-submenu-title .anticon  {
   color: #103154;
