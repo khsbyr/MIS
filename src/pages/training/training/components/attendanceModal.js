@@ -119,8 +119,8 @@ export default function TrainingProgramModal(props) {
 
             <Form.Item label="Хүйс" name="Gender">
               <Select
-                defaultValue="Хүйс сонгох..."
-                style={{ width: 200 }}
+                placeholder="Хүйс сонгох"
+                style={{ width: 150 }}
                 onChange={handleChange}
               >
                 <Option value={1}>Эрэгтэй</Option>

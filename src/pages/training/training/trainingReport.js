@@ -45,12 +45,12 @@ const TrainingReport = () => {
   const [lazyParams, setLazyParams] = useState({
     page: 0,
   });
-  const [loading, setLoading] = useState(false);
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateOrga, setStateOrga] = useState([]);
   const [orgID, setOrgID] = useState([]);
 
+  console.log(list);
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
@@ -110,13 +110,13 @@ const TrainingReport = () => {
     setIsModalVisible(true);
   };
 
-  const handleDeleted = () => {
-    if (selectedRows.length === 0) {
+  const handleDeleted = row => {
+    if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`trainers/delete/${selectedRows[0].id}`)
-      .then(result => {
+    putService(`trainingReport/delete/${row.id}`)
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })
@@ -125,7 +125,7 @@ const TrainingReport = () => {
       });
   };
 
-  function confirm() {
+  function confirm(row) {
     Modal.confirm({
       title: 'Та устгахдаа итгэлтэй байна уу ?',
       icon: <ExclamationCircleOutlined />,
@@ -133,18 +133,19 @@ const TrainingReport = () => {
       okText: 'Устгах',
       cancelText: 'Буцах',
       onOk() {
-        handleDeleted();
+        handleDeleted(row);
         onInit();
       },
       onCancel() {},
     });
   }
 
-  const pop = () => {
-    if (selectedRows.length === 0) {
+  const pop = row => {
+    console.log(row);
+    if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
-      confirm();
+      confirm(row);
     }
   };
 
@@ -305,13 +306,11 @@ const TrainingReport = () => {
               filter
               filterPlaceholder="Хайх"
             />
-            {/* <Column field="" header="Сургалт явагдсан газар" /> */}
             <Column
               field=""
               header="Сургалт явуулсан байгууллага, хүний нэр"
               body={respoUserBodyTemplate}
             />
-            {/* <Column field="" header="Сургагч багшийн нэр" /> */}
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
