@@ -47,6 +47,7 @@ import Budget from './training/training/budget';
 import User from './user/user';
 import Role from './user/role';
 import SignUpRequest from './user/signUpRequest';
+import MenuSettings from './settings/MenuSettings';
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -252,70 +253,19 @@ const Admin = () => {
                 {t('criteria_type')}{' '}
               </Menu.Item>
             </SubMenu>
+            <SubMenu
+              key="sub11"
+              icon={<FontAwesomeIcon icon={faUserAlt} />}
+              title={t('settings')}
+            >
+              <Menu.Item key="1" icon={<FontAwesomeIcon icon={faUserAlt} />}>
+                {' '}
+                <Link to="/settings/menu">{t('menu')}</Link>
+              </Menu.Item>
+            </SubMenu>
           </Menu>
         </Sider>
         <Layout className="site-layout">
-          <Header
-            className="site-layout-background"
-            style={{
-              backgroundColor: 'white',
-              height: '50px',
-              lineHeight: '50px',
-            }}
-          >
-            <Row>
-              <Col span={24} style={{ textAlign: 'end ' }}>
-                <div>
-                  <Avatar
-                    size="small"
-                    style={{
-                      color: '#f56a00',
-                      backgroundColor: '#103154',
-                      marginRight: '5px',
-                    }}
-                  >
-                    A
-                  </Avatar>
-                  <Dropdown
-                    overlay={
-                      <Menu>
-                        <Menu.Item
-                          key="0"
-                          onClick={e => {
-                            handleLogout();
-                          }}
-                        >
-                          <PoweroffOutlined />
-                          <a style={"color: 'black', paddingLeft: '0px'"}>
-                            Logout
-                          </a>
-                        </Menu.Item>
-                      </Menu>
-                    }
-                    trigger={['click']}
-                  >
-                    <a
-                      className="ant-dropdown-link"
-                      style={{ color: '#103154', marginRight: '5px' }}
-                    >
-                      user
-                      <CaretDownOutlined />
-                    </a>
-                  </Dropdown>
-                </div>
-              </Col>
-            </Row>
-            <Divider
-              style={{
-                position: 'relative',
-                left: '0px',
-                backgroundColor: '#103154',
-                margin: '0px 0px',
-                width: '100%',
-                minWidth: '100%',
-              }}
-            />
-          </Header>
           <Content
             className="site-layout-background"
             style={{
@@ -378,6 +328,9 @@ const Admin = () => {
               </Route>
               <Route path="/admin/budget">
                 <Budget />
+              </Route>
+              <Route exact path="/settings/menu">
+                <MenuSettings />
               </Route>
             </Switch>{' '}
           </Content>
