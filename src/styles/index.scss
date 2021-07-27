@@ -57,7 +57,7 @@ code {
 .ant-layout-header {
   padding: 0px 0px !important;  
   .ant-dropdown-link {
-    position: fixed;
+    position: absolute;
   }
   a.list-inline-item {
     &:hover {
