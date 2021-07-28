@@ -61,7 +61,7 @@ export default function TeacherExperienceModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

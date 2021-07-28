@@ -63,7 +63,7 @@ export default function StationaryModal(props) {
       .catch(info => {
         errorCatch(info);
 
-        // console.log('Validate Failed:', info);
+        // errorCatch(info);
       });
   };
   return (

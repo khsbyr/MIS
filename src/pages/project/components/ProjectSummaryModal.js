@@ -120,7 +120,7 @@ export default function ProjectSummaryModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

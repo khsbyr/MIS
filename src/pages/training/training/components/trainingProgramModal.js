@@ -23,7 +23,7 @@ export default function TrainingProgramModal(props) {
     props;
   const [form] = Form.useForm();
   const [setStateTeam] = useState([]);
-  const [TrainingTeamID, setTrainingTeamID] = useState([]);
+  const [TrainingTeamID] = useState([]);
   // const PAGESIZE = 20;
   // const [lazyParams, setLazyParams] = useState({
   //   page: 0,
@@ -41,7 +41,6 @@ export default function TrainingProgramModal(props) {
     getService('trainingPlan/get').then(result => {
       if (result) {
         setStateTeam(result.content || []);
-        console.log(result.content);
         // training_plan.id =
         // stateplanID(planID)
       }
@@ -63,10 +62,9 @@ export default function TrainingProgramModal(props) {
     }
   }, []);
 
-  const selectTrainingTeam = trainingTeamID => {
-    console.log(trainingTeamID);
-    setTrainingTeamID(trainingTeamID);
-  };
+  // const selectTrainingTeam = trainingTeamID => {
+  //   setTrainingTeamID(trainingTeamID);
+  // };
 
   const save = () => {
     form
@@ -84,9 +82,7 @@ export default function TrainingProgramModal(props) {
               errorCatch(error);
             });
         } else {
-          postService(`trainingProgram/post/${trainingID}`, values);
-          console
-            .log(values)
+          postService(`trainingProgram/post/${trainingID}`, values)
             .then(() => {
               props.close(true);
             })
@@ -96,7 +92,7 @@ export default function TrainingProgramModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

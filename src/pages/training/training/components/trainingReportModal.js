@@ -30,7 +30,6 @@ export default function TrainingReportModal(props) {
   // const [performedProcess3ID, setPerformedProcess3ID] = useState([]);
   // const [performedProcess4ID, setPerformedProcess4ID] = useState([]);
   // const [selectedTraining, setSelectedTraining] = useState([]);
-  console.log(TrainingReportController);
   useEffect(() => {
     getService(`training/getListForReport/${orgID}`).then(result => {
       if (result) {
@@ -133,7 +132,6 @@ export default function TrainingReportModal(props) {
   }, []);
 
   const selectTraining = value => {
-    console.log('training id = ', value);
     getService(`training/get/${value}`).then(result => {
       if (result) {
         const selectedTraining = result;
@@ -307,7 +305,7 @@ export default function TrainingReportModal(props) {
       })
       .catch(info => {
         // eslint-disable-next-line no-console
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

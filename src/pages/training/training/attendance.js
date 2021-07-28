@@ -19,9 +19,6 @@ import AttendanceModal from './components/attendanceModal';
 import OrgaStyle from './components/orga.style';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
 const { Content } = Layout;
 
 let editRow;
@@ -251,7 +248,6 @@ const Attendance = () => {
                   </Col>
                   <Col xs={8} md={8} lg={4}>
                     <DatePicker
-                      onChange={onChange}
                       bordered={false}
                       suffixIcon={<DownOutlined />}
                       placeholder="Select year"

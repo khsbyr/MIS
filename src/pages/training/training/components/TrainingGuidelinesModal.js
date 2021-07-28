@@ -141,7 +141,7 @@ export default function TrainingGuidelinesModal(props) {
         // }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

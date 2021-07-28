@@ -4,10 +4,6 @@ import { DownOutlined, SearchOutlined, CopyOutlined } from '@ant-design/icons';
 import HeaderWrapper from '../training/training/components/plan.styled';
 
 export default function Partnership() {
-  function onChange(date, dateString) {
-    console.log(date, dateString);
-  }
-  const onSearch = value => console.log(value);
   const dataSource = [
     {
       key: '1',
@@ -51,7 +47,6 @@ export default function Partnership() {
           <Row>
             <Col xs={24} md={24} lg={6}>
               <DatePicker
-                onChange={onChange}
                 bordered={false}
                 suffixIcon={<DownOutlined />}
                 placeholder="Select date"
@@ -69,7 +64,6 @@ export default function Partnership() {
                 allowClear
                 prefix={<SearchOutlined />}
                 bordered={false}
-                onSearch={onSearch}
                 style={{
                   width: 150,
                   borderBottom: '1px solid #103154',

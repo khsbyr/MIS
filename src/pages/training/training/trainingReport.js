@@ -19,9 +19,6 @@ import OrgaStyle from './components/orga.style';
 import TrainingReportModal from './components/trainingReportModal';
 import { ToolsContext } from '../../../context/Tools';
 
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
 const { Content } = Layout;
 
 let editRow;
@@ -209,7 +206,6 @@ const TrainingReport = () => {
                   </Col>
                   <Col xs={8} md={8} lg={4}>
                     <DatePicker
-                      onChange={onChange}
                       bordered={false}
                       suffixIcon={<DownOutlined />}
                       placeholder="Select year"

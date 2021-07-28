@@ -17,9 +17,6 @@ import { errorCatch } from '../../../tools/Tools';
 import Composition1Modal from './components/Composition1Modal';
 import ContentWrapper from './components/composition.style';
 
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
 const { Content } = Layout;
 
 let editRow;
@@ -227,7 +224,6 @@ const Composition1 = () => {
                 <Row gutter={[0, 15]}>
                   <Col xs={8} md={8} lg={6}>
                     <DatePicker
-                      onChange={onChange}
                       bordered={false}
                       suffixIcon={<DownOutlined />}
                       placeholder="Select year"

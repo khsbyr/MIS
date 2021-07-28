@@ -92,7 +92,7 @@ export default function RoleConfig(props) {
     toolsStore.setIsShowLoader(true);
 
     postService('/gap-user-service/userPermissions', saveData)
-      .then(result => {
+      .then(() => {
         props.close();
         toolsStore.setIsShowLoader(false);
       })

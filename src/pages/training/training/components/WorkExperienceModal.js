@@ -62,7 +62,7 @@ export default function WorkExperienceModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

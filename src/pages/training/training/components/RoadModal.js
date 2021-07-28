@@ -63,7 +63,7 @@ export default function RoadModal(props) {
       .catch(info => {
         errorCatch(info);
 
-        // console.log('Validate Failed:', info);
+        // errorCatch(info);
       });
   };
   return (

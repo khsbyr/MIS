@@ -13,10 +13,6 @@ import ContentWrapper from './organization.style';
 
 const { Dragger } = Upload;
 
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
-
 export default function OrganizationModal(props) {
   const { Orgcontroller, isModalVisible, isEditMode } = props;
   const [stateBank, setStateBank] = useState([]);
@@ -172,7 +168,7 @@ export default function OrganizationModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
 
@@ -390,9 +386,7 @@ export default function OrganizationModal(props) {
                 <Row>
                   <Col xs={24} md={24} lg={12}>
                     <Form.Item>
-                      <Checkbox onChange={onChange}>
-                        Оруулсан мэдээлэл үнэн болно.
-                      </Checkbox>
+                      <Checkbox>Оруулсан мэдээлэл үнэн болно.</Checkbox>
                     </Form.Item>
                   </Col>
                 </Row>

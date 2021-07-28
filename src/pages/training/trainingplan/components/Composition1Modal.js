@@ -78,7 +78,7 @@ export default function Composition1Modal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

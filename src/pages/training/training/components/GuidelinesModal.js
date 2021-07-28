@@ -72,12 +72,10 @@ export default function GuidelinesModal(props) {
   const loadLazyTimeout = null;
 
   function onStartDateChange(date, value) {
-    console.log(date, value);
     setStartDate(value);
   }
 
   function onEndDateChange(date, value) {
-    console.log(date, value);
     setEndDate(value);
   }
 
@@ -103,10 +101,8 @@ export default function GuidelinesModal(props) {
         });
 
       getService(`trainingGuidelines/get/${trainingID}`).then(result => {
-        console.log(result);
         const value = result;
         setStateValue(value);
-        console.log(value);
         form.setFieldsValue({
           ...result,
           // subject: result.subject,
@@ -272,7 +268,7 @@ export default function GuidelinesModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
 

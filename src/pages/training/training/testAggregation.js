@@ -18,9 +18,6 @@ import { errorCatch } from '../../../tools/Tools';
 import CriteriaModal from '../../criteria/components/CriteriaModal';
 import ContentWrapper from '../../criteria/criteria.style';
 
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
 const { Content } = Layout;
 
 let editRow;
@@ -220,7 +217,6 @@ const TestAggregation = () => {
                 <Row gutter={[0, 15]}>
                   <Col xs={8} md={8} lg={6}>
                     <DatePicker
-                      onChange={onChange}
                       bordered={false}
                       suffixIcon={<DownOutlined />}
                       placeholder="Select year"

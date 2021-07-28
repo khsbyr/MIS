@@ -45,7 +45,7 @@ export default function ExperienceAdviceModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (
