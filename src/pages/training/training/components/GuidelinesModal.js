@@ -1,7 +1,23 @@
+/* eslint-disable no-unused-vars */
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import {
+  faPen,
+  faPlus,
+  faTrash,
+  faCalendarAlt,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Form, Input, message, Modal, Row } from 'antd';
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  message,
+  Modal,
+  Row,
+  DatePicker,
+} from 'antd';
+import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState, useContext } from 'react';
@@ -32,7 +48,6 @@ let isEditModeParticipants;
 let isEditModeGuidelines;
 
 export default function GuidelinesModal(props) {
-  // eslint-disable-next-line no-unused-vars
   const { Guidelinescontroller, isModalVisible, isEditMode, orgID, planID } =
     props;
   const [isModalVisibleParticipants, setIsModalVisibleParticipants] =
@@ -42,20 +57,32 @@ export default function GuidelinesModal(props) {
   const toolsStore = useContext(ToolsContext);
   const [selectedRows, setSelectedRows] = useState([]);
   const [list, setList] = useState([]);
+  const [listguidelines, setListGuidelines] = useState([]);
   const [form] = Form.useForm();
-  // eslint-disable-next-line no-unused-vars
   const [stateOrga, setStateOrga] = useState([]);
   const [statePlan, setStatePlan] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
-  // eslint-disable-next-line no-unused-vars
   const [stateplanID, setStateplanID] = useState([]);
   const PAGESIZE = 20;
   const [TrainingPlanID, setTrainingPlanID] = useState([]);
-  // eslint-disable-next-line no-unused-vars
+  const [startDate, setStartDate] = useState([]);
+  const [endDate, setEndDate] = useState([]);
+  const [valueState, setStateValue] = useState([]);
+
   const [lazyParams, setLazyParams] = useState({
     page: 0,
   });
   const loadLazyTimeout = null;
+
+  function onStartDateChange(date, value) {
+    console.log(date, value);
+    setStartDate(value);
+  }
+
+  function onEndDateChange(date, value) {
+    console.log(date, value);
+    setEndDate(value);
+  }
 
   const onInit = () => {
     toolsStore.setIsShowLoader(false);
@@ -77,6 +104,22 @@ export default function GuidelinesModal(props) {
           errorCatch(error);
           toolsStore.setIsShowLoader(false);
         });
+
+      getService(`trainingGuidelines/get/${trainingID}`).then(result => {
+        console.log(result);
+        const value = result;
+        setStateValue(value);
+        console.log(value);
+        form.setFieldsValue({
+          ...result,
+          // subject: result.subject,
+          // CountryID: result.address.country.id,
+          // AimagID: result.address.aimag.id,
+          // SoumID: result.address.soum.id,
+          // BagID: result.address.bag.id,
+          // AddressDetail: result.address.addressDetail,
+        });
+      });
     }
   };
 
@@ -182,6 +225,11 @@ export default function GuidelinesModal(props) {
     setIsModalVisibleGuidelines(true);
   };
 
+  const addUdirdamj = () => {
+    setIsModalVisibleGuidelines(true);
+    isEditModeGuidelines = false;
+  };
+
   const add = () => {
     setIsModalVisibleParticipants(true);
     isEditModeParticipants = false;
@@ -205,6 +253,8 @@ export default function GuidelinesModal(props) {
       .then(values => {
         values.organization = { id: orgID };
         values.training_plan = { id: TrainingPlanID };
+        values.trainingStartDate = startDate;
+        values.trainingEndDate = endDate;
         if (isEditMode) {
           setTrainingPlanID(Guidelinescontroller.training_plan.id);
           putService(`training/update/${Guidelinescontroller.id}`, values)
@@ -286,13 +336,31 @@ export default function GuidelinesModal(props) {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={6}>
-                    <Form.Item label="Эхэлсэн огноо:" name="trainingStartDate">
-                      <Input />
+                    <Form.Item label="Эхэлсэн огноо:">
+                      <DatePicker
+                        prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
+                        placeholder="Эхэлсэн огноо:"
+                        className="FormItem"
+                        onChange={onStartDateChange}
+                        defaultValue={
+                          Guidelinescontroller &&
+                          moment(Guidelinescontroller.trainingStartDate)
+                        }
+                      />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={6}>
-                    <Form.Item label="Дууссан огноо:" name="trainingEndDate">
-                      <Input />
+                    <Form.Item label="Дууссан огноо:">
+                      <DatePicker
+                        prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
+                        placeholder="Дууссан огноо:"
+                        className="FormItem"
+                        onChange={onEndDateChange}
+                        defaultValue={
+                          Guidelinescontroller &&
+                          moment(Guidelinescontroller.trainingEndDate)
+                        }
+                      />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={6}>
@@ -357,6 +425,173 @@ export default function GuidelinesModal(props) {
                   >
                     Харах
                   </Button>
+                  <Button
+                    type="text"
+                    className="export"
+                    icon={<FontAwesomeIcon icon={faPlus} />}
+                    onClick={addUdirdamj}
+                  >
+                    Нэмэх
+                  </Button>
+                  <DataTable
+                    value={listguidelines}
+                    removableSort
+                    paginator
+                    rows={5}
+                    className="p-datatable-responsive-demo"
+                    selection={selectedRows}
+                    // onRowClick={edit}
+                    onSelectionChange={e => {
+                      setSelectedRows(e.value);
+                    }}
+                    dataKey="id"
+                  >
+                    <Column field="index" header="№" />
+                    <Column field="subject" header="Нэр" filter />
+                    <Column field="phone" header="Утас" filter />
+                    <Column headerStyle={{ width: '7rem' }} body={action} />
+                  </DataTable>
+                  <Row>
+                    <Col xs={24} md={24} lg={24}>
+                      <Row>
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item
+                            label="Сургалтын сэдэв:"
+                            name="subject"
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                          >
+                            <Input allowClear />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item
+                            label="Сургалт зохион байгуулах үндэслэл:"
+                            name="reason"
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item
+                            label="Сургалтын зорилго:"
+                            name="aim"
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item
+                            label="Хэрэгжүүлэх үйл ажиллагаа:"
+                            name="operation"
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item
+                            label="Хүлээгдэж буй үр дүн:"
+                            name="result"
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+
+                      <Row>
+                        <Col xs={24} md={24} lg={24}>
+                          <p style={{ color: '#7d7d7d', fontSize: '13px' }}>
+                            Сургалт зохион байгуулагдах газар:
+                          </p>
+                        </Col>
+                      </Row>
+                      {/* <Row style={{ maxWidth: '95%' }}>
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item label="Улс:" name="CountryID">
+                            <AutoCompleteSelect
+                              valueField="id"
+                              data={stateCountry}
+                              onChange={value => selectCountry(value)}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item label="Аймаг, хот:" name="AimagID">
+                            <AutoCompleteSelect
+                              valueField="id"
+                              data={stateAimag}
+                              onChange={value => selectAimag(value)}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item
+                            name="SoumID"
+                            layout="vertical"
+                            label="Сум, Дүүрэг:"
+                          >
+                            <AutoCompleteSelect
+                              valueField="id"
+                              data={stateSum}
+                              onChange={value => selectSum(value)}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item
+                            name="BagID"
+                            layout="vertical"
+                            label="Баг, Хороо:"
+                          >
+                            <AutoCompleteSelect
+                              valueField="id"
+                              data={stateBag}
+                            />
+                          </Form.Item>
+                        </Col>
+                      </Row> */}
+                      <Row>
+                        <Col xs={24} md={24} lg={24}>
+                          <Form.Item label="Хаяг:" name="AddressDetail">
+                            <Input.TextArea
+                              style={{
+                                width: '100%',
+                                height: '110px',
+                              }}
+                            />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                      {/* <Button htmlType="button" onClick={onReset}>
+                        Reset
+                      </Button> */}
+                    </Col>
+                  </Row>
                   {isModalVisibleGuidelines && (
                     <TrainingGuidelinesModal
                       TrainingGuidelinesModalController={editRow}

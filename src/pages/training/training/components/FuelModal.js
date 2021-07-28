@@ -18,11 +18,11 @@ const layout = {
 };
 
 export default function FuelModal(props) {
-  const { Attendancecontroller, isModalVisible, isEditMode } = props;
+  const { Fuelcontroller, isModalVisible, isEditMode } = props;
   const [stateController, setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
-    getService('criteria/get', {
+    getService('fuelExpenses/get', {
       search: 'status:true',
     }).then(result => {
       if (result) {
@@ -31,9 +31,9 @@ export default function FuelModal(props) {
     });
 
     if (isEditMode) {
-      getService(`criteria/get${Attendancecontroller.id}`).then(result => {
-        Attendancecontroller.userServiceId = result.userService.id;
-        form.setFieldsValue({ ...Attendancecontroller });
+      getService(`fuelExpenses/get${Fuelcontroller.id}`).then(result => {
+        Fuelcontroller.userServiceId = result.userService.id;
+        form.setFieldsValue({ ...Fuelcontroller });
       });
     }
   }, []);
@@ -43,7 +43,7 @@ export default function FuelModal(props) {
       .then(values => {
         values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService(`criteria/put${Attendancecontroller.id}`, values)
+          putService(`fuelExpenses/put${Fuelcontroller.id}`, values)
             .then(result => {
               props.close(true);
             })
@@ -51,7 +51,7 @@ export default function FuelModal(props) {
               errorCatch(error);
             });
         } else {
-          postService('criteria/post', values)
+          postService('fuelExpenses/post', values)
             .then(result => {
               props.close(true);
             })
@@ -84,7 +84,7 @@ export default function FuelModal(props) {
           validateMessages={validateMessages}
         >
           <Form.Item
-            name="marshrut"
+            name="fuelExpenses.route"
             label="Маршрут:"
             rules={[
               {
@@ -95,7 +95,7 @@ export default function FuelModal(props) {
             <Input />
           </Form.Item>
           <Form.Item
-            name="zamiinUrt"
+            name="fuelExpenses.roadLength"
             label="Замын урт /км/:"
             rules={[
               {
@@ -106,7 +106,7 @@ export default function FuelModal(props) {
             <Input />
           </Form.Item>
           <Form.Item
-            name="busiinMedeelel"
+            name="fuelExpenses.regionalSupplement"
             label="Бүсийн нэмэгдэл /%/:"
             rules={[
               {
@@ -117,7 +117,7 @@ export default function FuelModal(props) {
             <Input />
           </Form.Item>
           <Form.Item
-            name="zartsuulahShathuun"
+            name="fuelExpenses.fuelConsumption"
             label="Зарцуулах шатахуун /л/"
             rules={[
               {
@@ -128,7 +128,7 @@ export default function FuelModal(props) {
             <Input />
           </Form.Item>
           <Form.Item
-            name="shathuuniiUne"
+            name="fuelExpenses.fuelCost"
             label="Шатахууны үнэ /₮/ A92"
             rules={[
               {
@@ -140,7 +140,7 @@ export default function FuelModal(props) {
           </Form.Item>
 
           <Form.Item
-            name="niit"
+            name="fuelExpenses.total"
             label="Нийт /₮/"
             rules={[
               {

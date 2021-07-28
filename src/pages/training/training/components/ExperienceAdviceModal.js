@@ -18,24 +18,12 @@ const layout = {
     span: 14,
   },
 };
-export default function ConsSerExperienceModal(props) {
+export default function ExperienceAdviceModal(props) {
   const { Composition, isModalVisible, isEditMode } = props;
-  const [stateController, setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
-    getService('criteria/get', {
-      search: 'status:true',
-    }).then(result => {
-      if (result) {
-        setStateController(result.content || []);
-      }
-    });
-
     if (isEditMode) {
-      getService(`criteria/get${Composition.id}`).then(result => {
-        Composition.userServiceId = result.userService.id;
-        form.setFieldsValue({ ...Composition });
-      });
+      form.setFieldsValue({ ...Composition });
     }
   }, []);
   const save = () => {
