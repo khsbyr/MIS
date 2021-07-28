@@ -52,12 +52,6 @@ const Admin = () => {
           width="300px"
           collapsedWidth="0"
           trigger={<MenuOutlined />}
-          onBreakpoint={broken => {
-            console.log(broken);
-          }}
-          onCollapse={(collapsed, type) => {
-            console.log(collapsed, type);
-          }}
         >
           <Menu
             className="menu"
@@ -239,7 +233,7 @@ const Admin = () => {
             >
               <Menu.Item key="1" icon={<FontAwesomeIcon icon={faUserAlt} />}>
                 {' '}
-                <Link to="/settings/menu">{t('menu')}</Link>
+                <Link to="/admin/menu">{t('menu')}</Link>
               </Menu.Item>
             </SubMenu>
           </Menu>
@@ -308,7 +302,7 @@ const Admin = () => {
               <Route path="/admin/budget">
                 <Budget />
               </Route>
-              <Route exact path="/settings/menu">
+              <Route exact path="/admin/menu">
                 <MenuSettings />
               </Route>
             </Switch>{' '}

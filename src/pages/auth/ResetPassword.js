@@ -62,10 +62,6 @@ function ResetPassword() {
     }
   }
 
-  const onFinish = values => {
-    console.log('Received values of form: ', values);
-  };
-
   return (
     <Row>
       <Partner />
@@ -77,7 +73,6 @@ function ResetPassword() {
             initialValues={{
               remember: true,
             }}
-            onFinish={onFinish}
           >
             <Form.Item>
               <p className="title">{t('reset_password')}</p>
