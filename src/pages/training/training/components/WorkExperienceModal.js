@@ -20,7 +20,7 @@ const layout = {
 
 export default function WorkExperienceModal(props) {
   const { Composition, isModalVisible, isEditMode } = props;
-  const [stateController, setStateController] = useState([]);
+  const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
     getService('criteria/get', {
@@ -45,7 +45,7 @@ export default function WorkExperienceModal(props) {
         values.userService = { id: values.userServiceId };
         if (isEditMode) {
           putService(`criteria/put${Composition.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -53,7 +53,7 @@ export default function WorkExperienceModal(props) {
             });
         } else {
           postService('criteria/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {

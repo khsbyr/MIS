@@ -26,10 +26,9 @@ const Consultinorg = () => {
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     page: 0,
   });
-  const [loading, setLoading] = useState(false);
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
 
@@ -70,7 +69,7 @@ const Consultinorg = () => {
       return;
     }
     putService(`organization/delete/${selectedRows[0].id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })
@@ -102,7 +101,7 @@ const Consultinorg = () => {
     }
   };
 
-  const action = row => (
+  const action = () => (
     <>
       <Button
         type="text"

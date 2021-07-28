@@ -17,9 +17,6 @@ import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ProjectSummaryModal from './components/ProjectSummaryModal';
 
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
 const { Content } = Layout;
 
 let editRow;
@@ -29,10 +26,9 @@ const Investment = () => {
   const [list, setList] = useState([]);
   const toolsStore = useContext(ToolsContext);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     page: 0,
   });
-  const [loading, setLoading] = useState(false);
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
 
@@ -73,7 +69,7 @@ const Investment = () => {
       return;
     }
     putService(`organization/delete/${selectedRows[0].id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })
@@ -105,7 +101,7 @@ const Investment = () => {
     }
   };
 
-  const action = row => (
+  const action = () => (
     <>
       <Button
         type="text"
@@ -163,7 +159,6 @@ const Investment = () => {
                 <Row gutter={[0, 15]}>
                   <Col xs={8} md={8} lg={6}>
                     <DatePicker
-                      onChange={onChange}
                       bordered={false}
                       suffixIcon={<DownOutlined />}
                       placeholder="Select year"
