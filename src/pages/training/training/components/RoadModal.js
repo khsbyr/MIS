@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, DatePicker } from 'antd';
+import { Modal, Form, Input } from 'antd';
 import {
   getService,
   postService,
@@ -19,7 +19,7 @@ const layout = {
 
 export default function RoadModal(props) {
   const { Roadcontroller, isModalVisible, isEditMode } = props;
-  const [stateController, setStateController] = useState([]);
+  const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
     getService('criteria/get', {
@@ -44,7 +44,7 @@ export default function RoadModal(props) {
         values.userService = { id: values.userServiceId };
         if (isEditMode) {
           putService(`criteria/put${Roadcontroller.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -52,7 +52,7 @@ export default function RoadModal(props) {
             });
         } else {
           postService('criteria/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -61,7 +61,9 @@ export default function RoadModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
+
+        // console.log('Validate Failed:', info);
       });
   };
   return (
