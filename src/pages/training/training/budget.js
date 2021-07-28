@@ -1,382 +1,612 @@
+import { ExclamationCircleOutlined, PlusSquareFilled } from '@ant-design/icons';
 import {
-    ExclamationCircleOutlined, FileOutlined, FileSyncOutlined, FolderAddFilled, PrinterOutlined, SettingFilled, DownOutlined
-} from "@ant-design/icons";
-import SaveIcon from "@material-ui/icons/Save";
-import { Button, Col, Dropdown, Form, Layout, Menu, message, Modal, Row, DatePicker, Select, Input, InputNumber } from "antd";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import React, { useEffect, useRef, useState } from "react";
-import { isShowLoading } from "../../../context/Tools";
-import { getService, putService } from "../../../service/service";
-import { PAGESIZE } from "../../../constants/Constant";
-import { errorCatch } from "../../../tools/Tools";
-import RoadModal from "../training/components/RoadModal";
-import ContentWrapper from "../training/components/attendance.style";
-import StationaryModal from "./components/StationaryModal";
-import FuelModal from "./components/FuelModal";
-function handleMenuClick(e) { console.log("click", e.key[0]); }
-function onChange(date, dateString) {
-    console.log(date, dateString);
-}
+  faFileExcel,
+  faPen,
+  faPlus,
+  faPrint,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Col, Layout, message, Modal, Row } from 'antd';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import React, { useEffect, useState, useContext } from 'react';
+import { Delete } from '@material-ui/icons';
+import { ToolsContext } from '../../../context/Tools';
+import { getService, putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import ContentWrapper from './components/attendance.style';
+import TrainingProgramModal from './components/trainingProgramModal';
+import OrgaStyle from './components/orga.style';
+import AutoCompleteSelect from '../../../components/Autocomplete';
+import StationaryModal from './components/StationaryModal';
+import FuelModal from './components/FuelModal';
+import RoadModal from './components/RoadModal';
+
+// function onChange(date, dateString) {
+//   console.log(date, dateString);
+// }
 const { Content } = Layout;
-const { Option } = Select;
-const menu = (
-    <Menu onClick={handleMenuClick}>
-        <Menu.Item
-            key="1"
-            icon={<FileSyncOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
 
-            Импорт
-        </Menu.Item>
-        <Menu.Item
-            key="2"
-            icon={<FileOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-            Экспорт
-        </Menu.Item>
-
-        <Menu.Item
-            key="3"
-            icon={<PrinterOutlined style={{ fontSize: "14px", color: "#45629c" }} />}
-        >
-
-            Хэвлэх
-        </Menu.Item>
-
-    </Menu>
-);
-
-var editRow
-var isEditMode;
+let editRow;
+let isEditMode;
+let isEditModeFuel;
+let isEditModeRoad;
 const Budget = () => {
-    const [products, setProducts] = useState([]);
-    const [multiSortMeta, setMultiSortMeta] = useState([{ field: 'category', order: -1 }]);
-    let loadLazyTimeout = null;
-    const [list, setList] = useState([]);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isModalVisibleBichigHeregsel, setIsModalVisibleBichigHeregsel] = useState(false);
-    const [isModalVisibleShathuuniiZardal, setIsModalVisibleShathuuniiZardal] = useState(false);
-    const [lazyParams, setLazyParams] = useState({
-        page: 0,
-    });
-    const [loading, setLoading] = useState(false);
-    const PAGESIZE = 20;
-    const [selectedRows, setSelectedRows] = useState([]);
+  const loadLazyTimeout = null;
+  const [list, setList] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisibleFuel, setIsModalVisibleFuel] = useState(false);
+  const [isModalVisibleRoad, setIsModalVisibleRoad] = useState(false);
+  const [lazyParams, setLazyParams] = useState({
+    page: 0,
+  });
+  // eslint-disable-next-line no-unused-vars
+  const [loading, setLoading] = useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const PAGESIZE = 20;
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [stateTraining, setStateTraining] = useState([]);
+  const [trainingID, setTrainingID] = useState([]);
+  const toolsStore = useContext(ToolsContext);
 
-    useEffect(() => {
-        onInit();
-    }, [lazyParams])
-
-    const onInit = () => {
-        setLoading(true);
-        if (loadLazyTimeout) {
-            clearTimeout(loadLazyTimeout);
-        }
-        getService("trainingProgram/get", list)
-            .then((result) => {
-                let list = result.content || [];
-                list.map(
-                    (item, index) =>
-                        (item.index = lazyParams.page * PAGESIZE + index + 1)
-                );
-                setList(list);
-                setSelectedRows([]);
-
-            })
-            .catch((error) => {
-                errorCatch(error);
-                isShowLoading(false);
-            })
-    };
-
-    const add = () => {
-        setIsModalVisible(true);
-        isEditMode = false;
-    };
-    const edit = (row) => {
-        editRow = row.data
-        isEditMode = true
-        setIsModalVisible(true)
+  const onInit = () => {
+    toolsStore.setIsShowLoader(true);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
     }
-
-    const handleDeleted = () => {
-        if (selectedRows.length === 0) {
-            message.warning("Устгах өгөгдлөө сонгоно уу");
-            return;
-        }
-        debugger
-        putService("trainingProgram/delete/" + selectedRows[0].id)
-            .then((result) => {
-                message.success("Амжилттай устлаа");
-                onInit();
-            })
-            .catch((error) => {
-                errorCatch(error);
-            });
-    };
-    const closeModal = (isSuccess = false) => {
-        setIsModalVisible(false);
-        if (isSuccess) onInit();
-    };
-    const pop = () => {
-        if (selectedRows.length === 0) {
-            message.warning("Устгах өгөгдлөө сонгоно уу");
-            return;
-        } else {
-            confirm();
-        }
-    };
-
-    const addBichigHeregsel = () => {
-        setIsModalVisibleBichigHeregsel(true);
-        isEditMode = false;
-    };
-
-    const popBichigHeregsel = () => {
-        if (selectedRows.length === 0) {
-            message.warning("Устгах өгөгдлөө сонгоно уу");
-            return;
-        } else {
-            confirm();
-        }
-    };
-    const closeModalBichigHeregsel = (isSuccess = false) => {
-        setIsModalVisibleBichigHeregsel(false);
-        if (isSuccess) onInit();
-    };
-
-    const addShathuuniiZardal = () => {
-        setIsModalVisibleShathuuniiZardal(true);
-        isEditMode = false;
-    };
-
-    const popShathuuniiZardal = () => {
-        if (selectedRows.length === 0) {
-            message.warning("Устгах өгөгдлөө сонгоно уу");
-            return;
-        } else {
-            confirm();
-        }
-    };
-    const closeModalShathuuniiZardal = (isSuccess = false) => {
-        setIsModalVisibleShathuuniiZardal(false);
-        if (isSuccess) onInit();
-    };
-
-    const [selectedProducts, setSelectedProducts] = useState(null);
-    return (
-        <ContentWrapper>
-            <h2 className="title">Сургалтын төсөв</h2>
-            <div className="button-demo">
-                <Layout className="btn-layout">
-                    <Content>
-
-                        <Row>
-                            <Col span={2}>
-                                <Button onClick={addBichigHeregsel} type="link" icon={<SaveIcon />}>
-                                    Нэмэх
-                                </Button>
-                            </Col>
-                            <Col span={2}>
-                                <Button onClick={popBichigHeregsel} type="link" icon={<FolderAddFilled />}>
-                                    Устгах
-                                </Button>
-                            </Col>
-                            <Col span={20} style={{ textAlign: "right" }}>
-                                <div style={{ marginRight: "5px" }}>
-                                    <Dropdown.Button
-                                        overlay={menu}
-                                        placement="bottomCenter"
-                                        icon={
-                                            <SettingFilled
-                                                style={{ marginLeft: "8px", color: "#45629c" }}
-                                            />
-                                        }
-                                    ></Dropdown.Button>
-                                </div>
-                            </Col>
-                        </Row>
-                    </Content>
-                </Layout>
-                <div className="datatable-responsive-demo">
-                    <h3>1. Бичгийн хэрэгсэл</h3>
-                    <DataTable
-                        value={list}
-                        removableSort
-                        paginator
-                        rows={10}
-                        className="p-datatable-responsive-demo"
-                        selectionMode="checkbox"
-                        selection={selectedRows}
-                        onRowClick={edit}
-                        onSelectionChange={(e) => {
-                            setSelectedRows(e.value);
-                        }}
-                        dataKey="id">
-                        <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
-                        <Column field="" header="Зардлын нэр" />
-                        <Column field="" header="Нэгж үнэ /₮/" />
-                        <Column field="" header="Тоо ширхэг" />
-                        <Column field="" header="Хүний тоо" />
-                        <Column field="" header="Дүн /₮/" />
-
-                    </DataTable>
-                    {isModalVisibleBichigHeregsel && (
-                        <StationaryModal
-                            Criteriacontroller={editRow}
-                            isModalVisible={isModalVisibleBichigHeregsel}
-                            close={closeModalBichigHeregsel}
-                            isEditMode={isEditMode}
-                        />
-                    )}
-                </div>
-
-                <Layout className="btn-layout">
-                    <Content>
-
-                        <Row>
-                            <Col span={2}>
-                                <Button onClick={add} type="link" icon={<SaveIcon />}>
-                                    Нэмэх
-                                </Button>
-                            </Col>
-                            <Col span={2}>
-                                <Button onClick={pop} type="link" icon={<FolderAddFilled />}>
-                                    Устгах
-                                </Button>
-                            </Col>
-                            <Col span={20} style={{ textAlign: "right" }}>
-                                <div style={{ marginRight: "5px" }}>
-                                    <Dropdown.Button
-                                        overlay={menu}
-                                        placement="bottomCenter"
-                                        icon={
-                                            <SettingFilled
-                                                style={{ marginLeft: "8px", color: "#45629c" }}
-                                            />
-                                        }
-                                    ></Dropdown.Button>
-                                </div>
-                            </Col>
-                        </Row>
-                    </Content>
-                </Layout>
-                <div className="datatable-responsive-demo">
-                    <h3>2. Зам хоног, буудлын зардал</h3>
-                    <DataTable
-                        value={list}
-                        removableSort
-                        paginator
-                        rows={10}
-                        className="p-datatable-responsive-demo"
-                        selectionMode="checkbox"
-                        selection={selectedRows}
-                        onRowClick={edit}
-                        onSelectionChange={(e) => {
-                            setSelectedRows(e.value);
-                        }}
-                        dataKey="id">
-                        <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
-                        <Column field="" header="Зардлын нэр" />
-                        <Column field="" header="Зардлын төрөл" />
-                        <Column field="" header="МЗҮБ хүний тоо" />
-                        <Column field="" header="Хоногт /₮/" />
-                        <Column field="" header="Хоног" />
-                        <Column field="" header="Нийт /₮/" />
-
-                    </DataTable>
-                    {isModalVisible && (
-                        <RoadModal
-                            Criteriacontroller={editRow}
-                            isModalVisible={isModalVisible}
-                            close={closeModal}
-                            isEditMode={isEditMode}
-                        />
-                    )}
-                </div>
-
-                <Layout className="btn-layout">
-                    <Content>
-
-                        <Row>
-                            <Col span={2}>
-                                <Button onClick={addShathuuniiZardal} type="link" icon={<SaveIcon />}>
-                                    Нэмэх
-                                </Button>
-                            </Col>
-                            <Col span={2}>
-                                <Button onClick={popShathuuniiZardal} type="link" icon={<FolderAddFilled />}>
-                                    Устгах
-                                </Button>
-                            </Col>
-                            <Col span={20} style={{ textAlign: "right" }}>
-                                <div style={{ marginRight: "5px" }}>
-                                    <Dropdown.Button
-                                        overlay={menu}
-                                        placement="bottomCenter"
-                                        icon={
-                                            <SettingFilled
-                                                style={{ marginLeft: "8px", color: "#45629c" }}
-                                            />
-                                        }
-                                    ></Dropdown.Button>
-                                </div>
-                            </Col>
-                        </Row>
-                    </Content>
-                </Layout>
-
-                <div className="datatable-responsive-demo">
-                    <h3>3. Шатахууны зардал /маршрутаар/</h3>
-                    <DataTable
-                        value={list}
-                        removableSort
-                        paginator
-                        rows={10}
-                        className="p-datatable-responsive-demo"
-                        selectionMode="checkbox"
-                        selection={selectedRows}
-                        onRowClick={edit}
-                        onSelectionChange={(e) => {
-                            setSelectedRows(e.value);
-                        }}
-                        dataKey="id">
-                        <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column>
-                        <Column field="" header="Маршрут" />
-                        <Column field="" header="Замын урт /км/" />
-                        <Column field="" header="Бүсийн нэмэгдэл /%/" />
-                        <Column field="" header="Зарцуулах шатахуун /л/" />
-                        <Column field="" header="Шатахууны үнэ /₮/ A92" />
-                        <Column field="" header="Нийт /₮/" />
-
-
-                    </DataTable>
-                    {isModalVisibleShathuuniiZardal && (
-                        <FuelModal
-                            Criteriacontroller={editRow}
-                            isModalVisible={isModalVisibleShathuuniiZardal}
-                            close={closeModalShathuuniiZardal}
-                            isEditMode={isEditMode}
-                        />
-                    )}
-                </div>
-            </div>
-        </ContentWrapper>
-    );
-    function confirm() {
-        Modal.confirm({
-            title: "Та устгахдаа итгэлтэй байна уу ?",
-            icon: <ExclamationCircleOutlined />,
-            okButtonProps: {},
-            okText: "Устгах",
-            cancelText: "Буцах",
-            onOk() {
-                handleDeleted();
-                onInit();
-            },
-            onCancel() { },
+    getService('trainingBudget/get', list)
+      .then(result => {
+        const listResult = result.content || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
         });
+        setList(listResult);
+        setSelectedRows([]);
+      })
+      .finally(toolsStore.setIsShowLoader(false))
+      .catch(error => {
+        errorCatch(error);
+        toolsStore.setIsShowLoader(false);
+      });
+  };
+
+  useEffect(() => {
+    onInit();
+    getService('training/get').then(result => {
+      if (result) {
+        setStateTraining(result.content || []);
+      }
+    });
+  }, [lazyParams]);
+
+  const getTrainingProgram = trainingId => {
+    getService(`trainingBudget/getByTraining/${trainingId}`, {}).then(
+      result => {
+        if (result) {
+          console.log(result);
+          const listResult = result || [];
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          console.log(listResult);
+          setList(listResult);
+          setSelectedRows([]);
+          setTrainingID(trainingId);
+        }
+      }
+    );
+  };
+
+  const selectTraining = value => {
+    getTrainingProgram(value);
+  };
+
+  const add = () => {
+    editRow = null;
+    setIsModalVisible(true);
+    isEditMode = false;
+  };
+
+  const edit = row => {
+    editRow = row;
+    isEditMode = true;
+    setIsModalVisible(true);
+  };
+
+  const handleDeleted = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+      return;
     }
-}
+
+    putService(`trainingBudget/delete/${row.id}`)
+      .then(result => {
+        message.success('Амжилттай устлаа');
+        onInit();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+  };
+
+  function confirm(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeleted(row);
+        onInit();
+      },
+      onCancel() {},
+    });
+  }
+
+  const pop = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+    } else {
+      confirm(row);
+    }
+  };
+
+  const action = row => (
+    <>
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={() => edit(row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={() => pop(row)}
+      />
+    </>
+  );
+
+  const editFuel = row => {
+    editRow = row;
+    isEditModeFuel = true;
+    setIsModalVisibleFuel(true);
+  };
+
+  const addFuel = () => {
+    setIsModalVisibleFuel(true);
+    isEditModeFuel = false;
+  };
+
+  const handleDeletedFuel = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+      return;
+    }
+
+    putService(`trainingBudget/delete/${row.id}`)
+      .then(result => {
+        message.success('Амжилттай устлаа');
+        onInit();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+  };
+
+  function confirmFuel(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeletedFuel(row);
+        onInit();
+      },
+      onCancel() {},
+    });
+  }
+  const popFuel = () => {
+    if (selectedRows.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+    } else {
+      confirmFuel();
+    }
+  };
+
+  const actionFuel = row => (
+    <>
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={() => editFuel(row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={() => popFuel(row)}
+      />
+    </>
+  );
+  const editRoad = row => {
+    editRow = row;
+    isEditModeRoad = true;
+    setIsModalVisibleRoad(true);
+  };
+
+  const addRoad = () => {
+    setIsModalVisibleRoad(true);
+    isEditModeRoad = false;
+  };
+
+  const handleDeletedRoad = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+      return;
+    }
+
+    putService(`trainingBudget/delete/${row.id}`)
+      .then(result => {
+        message.success('Амжилттай устлаа');
+        onInit();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+  };
+
+  function confirmRoad(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeletedRoad(row);
+        onInit();
+      },
+      onCancel() {},
+    });
+  }
+
+  const popRoad = () => {
+    if (selectedRows.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+    } else {
+      confirmRoad();
+    }
+  };
+
+  const actionRoad = row => (
+    <>
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={() => editRoad(row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={() => popRoad(row)}
+      />
+    </>
+  );
+
+  const closeModalFuel = (isSuccess = false) => {
+    setIsModalVisibleFuel(false);
+    if (isSuccess) onInit();
+  };
+
+  const closeModal = (isSuccess = false) => {
+    setIsModalVisible(false);
+    if (isSuccess) onInit();
+  };
+
+  const closeModalRoad = (isSuccess = false) => {
+    setIsModalVisibleRoad(false);
+    if (isSuccess) onInit();
+  };
+
+  const indexBodyTemplate = row => (
+    <>
+      <span className="p-column-title">№</span>
+      {row.index}
+    </>
+  );
+
+  const costNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Зардлын нэр</span>
+      {row.stationeryExpenses.costName}
+    </>
+  );
+
+  const unitPriceNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Нэгж үнэ /₮/</span>
+      {row.stationeryExpenses.unitPrice}
+    </>
+  );
+
+  const quantityNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Тоо ширхэг</span>
+      {row.stationeryExpenses.quantity}
+    </>
+  );
+
+  const numberOfPeopleNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Хүний тоо</span>
+      {row.stationeryExpenses.numberOfPeople}
+    </>
+  );
+
+  const totalNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дүн /₮/</span>
+      {row.stationeryExpenses.total}
+    </>
+  );
+
+  return (
+    <ContentWrapper>
+      <div className="button-demo">
+        <Layout className="btn-layout">
+          <Content>
+            <Row>
+              <Col xs={24} md={24} lg={12}>
+                <p className="title">Сургалтын төсөв</p>
+              </Col>
+              <Col xs={24} md={24} lg={12}>
+                <Row gutter={[0, 15]}>
+                  <Col xs={8} md={8} lg={13} />
+                  <Col xs={8} md={8} lg={5}>
+                    <OrgaStyle>
+                      <AutoCompleteSelect
+                        valueField="id"
+                        placeholder="Сургалт сонгох"
+                        data={stateTraining}
+                        onChange={value => selectTraining(value)}
+                      />
+                    </OrgaStyle>
+                  </Col>
+
+                  <Col xs={8} md={8} lg={3}>
+                    <Button
+                      type="text"
+                      icon={<FontAwesomeIcon icon={faPrint} />}
+                    >
+                      Хэвлэх{' '}
+                    </Button>
+                  </Col>
+                  <Col xs={8} md={8} lg={3}>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFileExcel} />}
+                    >
+                      Экспорт
+                    </Button>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Content>
+        </Layout>
+        <div className="datatable-responsive-demo">
+          <Layout className="btn-layout">
+            <Content>
+              <Row>
+                <Col xs={24} md={24} lg={12}>
+                  <h3>1. Бичгийн хэрэгсэл</h3>
+                </Col>
+                <Col xs={24} md={24} lg={12}>
+                  <Row gutter={[0, 15]}>
+                    <Col xs={8} md={8} lg={10} />
+                    <Col xs={8} md={8} lg={11} />
+                    <Col xs={8} md={8} lg={3}>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={add}
+                      >
+                        Нэмэх
+                      </Button>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            </Content>
+          </Layout>
+          <DataTable
+            value={list}
+            removableSort
+            paginator
+            rows={10}
+            className="p-datatable-responsive-demo"
+            selection={selectedRows}
+            onSelectionChange={e => {
+              setSelectedRows(e.value);
+            }}
+            dataKey="id"
+          >
+            <Column field="index" header="№" body={indexBodyTemplate} />
+
+            <Column
+              field="stationeryExpenses.costName"
+              header="Зардлын нэр"
+              body={costNameBodyTemplate}
+            />
+            <Column
+              field="stationeryExpenses.unitPrice"
+              header="Нэгж үнэ /₮/"
+              body={unitPriceNameBodyTemplate}
+            />
+            <Column
+              field="stationeryExpenses.quantity"
+              header="Тоо ширхэг"
+              body={quantityNameBodyTemplate}
+            />
+            <Column
+              field="stationeryExpenses.numberOfPeople"
+              header="Хүний тоо"
+              body={numberOfPeopleNameBodyTemplate}
+            />
+            <Column
+              field="stationeryExpenses.total"
+              header="Дүн /₮/"
+              body={totalNameBodyTemplate}
+            />
+            <Column headerStyle={{ width: '7rem' }} body={action} />
+          </DataTable>
+          {isModalVisible && (
+            <StationaryModal
+              Stationarycontroller={editRow}
+              isModalVisible={isModalVisible}
+              close={closeModal}
+              isEditMode={isEditMode}
+            />
+          )}
+        </div>
+        <div className="datatable-responsive-demo">
+          <Layout className="btn-layout">
+            <Content>
+              <Row>
+                <Col xs={24} md={24} lg={12}>
+                  <h3>2. Зам хоног, буудлын зардал</h3>
+                </Col>
+                <Col xs={24} md={24} lg={12}>
+                  <Row gutter={[0, 15]}>
+                    <Col xs={8} md={8} lg={10} />
+                    <Col xs={8} md={8} lg={11} />
+                    <Col xs={8} md={8} lg={3}>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={addRoad}
+                      >
+                        Нэмэх
+                      </Button>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            </Content>
+          </Layout>
+          <DataTable
+            value={list}
+            removableSort
+            paginator
+            rows={10}
+            className="p-datatable-responsive-demo"
+            selection={selectedRows}
+            onSelectionChange={e => {
+              setSelectedRows(e.value);
+            }}
+            dataKey="id"
+          >
+            <Column field="index" header="№" />
+
+            <Column
+              field="hotelTravelExpenses.numberOfPeople"
+              header="МЗҮБ хүний тоо"
+            />
+            <Column
+              field="hotelTravelExpenses.costPerDay"
+              header="Хоногт /₮/"
+            />
+            <Column field="hotelTravelExpenses.total" header="Нийт /₮/" />
+            <Column
+              field="hotelTravelExpenses.costType.name"
+              header=" Төлбөрийн төрөл"
+            />
+            <Column field="hotelTravelExpenses.days" header="Хоног" />
+            <Column headerStyle={{ width: '7rem' }} body={actionRoad} />
+          </DataTable>
+          {isModalVisibleRoad && (
+            <RoadModal
+              Roadcontroller={editRow}
+              isModalVisible={isModalVisibleRoad}
+              close={closeModalRoad}
+              isEditMode={isEditModeRoad}
+            />
+          )}
+        </div>
+        <div className="datatable-responsive-demo">
+          <Layout className="btn-layout">
+            <Content>
+              <Row>
+                <Col xs={24} md={24} lg={12}>
+                  <h3>3. Шатахууны зардал /маршрутаар/</h3>
+                </Col>
+                <Col xs={24} md={24} lg={12}>
+                  <Row gutter={[0, 15]}>
+                    <Col xs={8} md={8} lg={10} />
+                    <Col xs={8} md={8} lg={11} />
+                    <Col xs={8} md={8} lg={3}>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={addFuel}
+                      >
+                        Нэмэх
+                      </Button>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            </Content>
+          </Layout>
+          <DataTable
+            value={list}
+            removableSort
+            paginator
+            rows={10}
+            className="p-datatable-responsive-demo"
+            selection={selectedRows}
+            onSelectionChange={e => {
+              setSelectedRows(e.value);
+            }}
+            dataKey="id"
+          >
+            <Column field="index" header="№" body={indexBodyTemplate} />
+            <Column field="fuelExpenses.route" header="Маршрут" />
+            <Column field="fuelExpenses.roadLength" header="Замын урт /км/" />
+            <Column
+              field="fuelExpenses.regionalSupplement"
+              header="Бүсийн нэмэгдэл /%/"
+            />
+            <Column
+              field="fuelExpenses.fuelConsumption"
+              header="Зарцуулах шатахуун /л/"
+            />
+            <Column
+              field="fuelExpenses.fuelCost"
+              header="Шатахууны үнэ /₮/ A92"
+            />
+            <Column field="fuelExpenses.total" header="Нийт /₮/" />
+            <Column headerStyle={{ width: '7rem' }} body={actionFuel} />
+          </DataTable>
+          {isModalVisibleFuel && (
+            <FuelModal
+              Fuelcontroller={editRow}
+              isModalVisible={isModalVisibleFuel}
+              close={closeModalFuel}
+              isEditMode={isEditModeFuel}
+            />
+          )}
+        </div>
+      </div>
+    </ContentWrapper>
+  );
+};
+
 export default Budget;

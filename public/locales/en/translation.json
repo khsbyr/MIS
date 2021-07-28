@@ -55,5 +55,7 @@
     "criteria_type": "Types of indicators",
     "role_permission": "Types of indicators",
     "organization": "Organizations",
-    "project_summary": "Project summary"
+    "project_summary": "Project summary",
+    "settings": "Settings",
+    "menu": "Menu"
 }

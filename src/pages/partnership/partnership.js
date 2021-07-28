@@ -1,14 +1,14 @@
-import { Row, Col, DatePicker, Input, Button, Table } from "antd";
-import React from "react";
-import HeaderWrapper from "../training/training/components/plan.styled";
-import { DownOutlined, SearchOutlined, CopyOutlined } from "@ant-design/icons";
+import { Row, Col, DatePicker, Input, Button, Table } from 'antd';
+import React from 'react';
+import { DownOutlined, SearchOutlined, CopyOutlined } from '@ant-design/icons';
+import HeaderWrapper from '../training/training/components/plan.styled';
 
 export default function Partnership() {
   function onChange(date, dateString) {
     console.log(date, dateString);
   }
-  const onSearch = (value) => console.log(value);
-  //const { Search } = Input;
+  const onSearch = value => console.log(value);
+  // const { Search } = Input;
   const dataSource = [
     {
       key: '1',
@@ -23,7 +23,7 @@ export default function Partnership() {
       address: '10 Downing Street',
     },
   ];
-  
+
   const columns = [
     {
       title: 'Name',
@@ -41,7 +41,7 @@ export default function Partnership() {
       key: 'address',
     },
   ];
-  
+
   return (
     <HeaderWrapper>
       <Row>
@@ -58,9 +58,9 @@ export default function Partnership() {
                 placeholder="Select date"
                 className="DatePicker"
                 style={{
-                  width: "120px",
-                  color: "black",
-                  cursor: "pointer",
+                  width: '120px',
+                  color: 'black',
+                  cursor: 'pointer',
                 }}
               />
             </Col>
@@ -73,7 +73,7 @@ export default function Partnership() {
                 onSearch={onSearch}
                 style={{
                   width: 150,
-                  borderBottom: "1px solid #103154",
+                  borderBottom: '1px solid #103154',
                 }}
               />
             </Col>

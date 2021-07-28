@@ -1,28 +1,38 @@
-import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { faPen, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+/* eslint-disable no-unused-vars */
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import {
+  faPen,
+  faPlus,
+  faTrash,
+  faCalendarAlt,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
-  Col, Form,
+  Col,
+  Form,
   Input,
   message,
   Modal,
-  Row
-} from "antd";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import React, { useEffect, useState } from "react";
-import AutocompleteSelect from "../../../../components/Autocomplete";
-import { isShowLoading } from "../../../../context/Tools";
+  Row,
+  DatePicker,
+} from 'antd';
+import moment from 'moment';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import React, { useEffect, useState, useContext } from 'react';
+import AutocompleteSelect from '../../../../components/Autocomplete';
+import { ToolsContext } from '../../../../context/Tools';
 import {
   getService,
   postService,
-  putService
-} from "../../../../service/service";
-import { errorCatch } from "../../../../tools/Tools";
-import ContentWrapper from "./guidelines.style";
-import ParticipantsModal from "./ParticipantsModal";
-import TrainingGuidelinesModal from "./TrainingGuidelinesModal";
+  putService,
+} from '../../../../service/service';
+import { errorCatch } from '../../../../tools/Tools';
+import ContentWrapper from './guidelines.style';
+import ParticipantsModal from './ParticipantsModal';
+import TrainingGuidelinesModal from './TrainingGuidelinesModal';
+import validateMessages from '../../../../tools/validateMessage';
 
 const layout = {
   labelCol: {
@@ -32,314 +42,243 @@ const layout = {
     span: 22,
   },
 };
-const validateMessages = {
-  required: "${label} хоосон байна!",
-  types: {
-    email: "${label} is not a valid email!",
-    number: "${label} is not a valid number!",
-  },
-  number: {
-    range: "${label} must be between ${min} and ${max}",
-  },
-};
-var editRow;
-var isEditModeParticipants;
-var isEditModeGuidelines;
+
+let editRow;
+let isEditModeParticipants;
+let isEditModeGuidelines;
 
 export default function GuidelinesModal(props) {
-  const { Guidelinescontroller, isModalVisible, isEditMode } = props;
+  const { Guidelinescontroller, isModalVisible, isEditMode, orgID, planID } =
+    props;
   const [isModalVisibleParticipants, setIsModalVisibleParticipants] =
     useState(false);
   const [isModalVisibleGuidelines, setIsModalVisibleGuidelines] =
     useState(false);
-  const [stateAimag, setStateAimag] = useState([]);
-  const [stateSum, setStateSum] = useState([]);
-  const [stateCountry, setStateCountry] = useState([]);
-  const [stateBag, setStateBag] = useState([]);
-  const [stateParticipants, setStateParticipants] = useState([]);
+  const toolsStore = useContext(ToolsContext);
   const [selectedRows, setSelectedRows] = useState([]);
   const [list, setList] = useState([]);
-  const [list1, setList1] = useState([]);
+  const [listguidelines, setListGuidelines] = useState([]);
   const [form] = Form.useForm();
   const [stateOrga, setStateOrga] = useState([]);
   const [statePlan, setStatePlan] = useState([]);
-
-
+  const [trainingID, setTrainingID] = useState([]);
+  const [stateplanID, setStateplanID] = useState([]);
   const PAGESIZE = 20;
+  const [TrainingPlanID, setTrainingPlanID] = useState([]);
+  const [startDate, setStartDate] = useState([]);
+  const [endDate, setEndDate] = useState([]);
+  const [valueState, setStateValue] = useState([]);
+
   const [lazyParams, setLazyParams] = useState({
     page: 0,
   });
-  let loadLazyTimeout = null;
+  const loadLazyTimeout = null;
 
-  function DateOnChange(date, dateString) {
-    console.log(date, dateString);
+  function onStartDateChange(date, value) {
+    console.log(date, value);
+    setStartDate(value);
   }
+
+  function onEndDateChange(date, value) {
+    console.log(date, value);
+    setEndDate(value);
+  }
+
+  const onInit = () => {
+    toolsStore.setIsShowLoader(false);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    if (Guidelinescontroller !== null) {
+      getService(`participants/getList/${Guidelinescontroller.id}`, list)
+        .then(result => {
+          const listResult = result.content || [];
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setList(listResult);
+          setSelectedRows([]);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
+        });
+
+      getService(`trainingGuidelines/get/${trainingID}`).then(result => {
+        console.log(result);
+        const value = result;
+        setStateValue(value);
+        console.log(value);
+        form.setFieldsValue({
+          ...result,
+          // subject: result.subject,
+          // CountryID: result.address.country.id,
+          // AimagID: result.address.aimag.id,
+          // SoumID: result.address.soum.id,
+          // BagID: result.address.bag.id,
+          // AddressDetail: result.address.addressDetail,
+        });
+      });
+    }
+  };
 
   useEffect(() => {
     onInit();
-    getService("organization/get").then((result) => {
+    getService('organization/get').then(result => {
       if (result) {
         setStateOrga(result.content || []);
       }
     });
-    getService("trainingPlan/get").then((result) => {
+    getService('trainingPlan/get').then(result => {
+      if (result) {
+        setStatePlan(result.content || []);
+        // console.log(training_plan.name)
+        // training_plan.id =
+        // stateplanID(planID)
+      }
+    });
+    if (Guidelinescontroller !== null) {
+      getService(`training/get/${Guidelinescontroller.id}`).then(result => {
         if (result) {
-            setStatePlan(result.content || []);
+          setTrainingID(Guidelinescontroller.id);
         }
       });
-    getService("country/get").then((result) => {
-      if (result) {
-        setStateCountry(result || []);
+
+      if (isEditMode) {
+        form.setFieldsValue({
+          ...Guidelinescontroller,
+          TrainingPlanName: Guidelinescontroller.training_plan.name,
+          OrganizationName: Guidelinescontroller.organization.name,
+        });
       }
-    });
-    getService("aimag/get").then((result) => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-  
-    getService(
-      `soum/getList/${Guidelinescontroller.training_guidelines.address.aimag.id}`
-    ).then((result) => {
-      if (result) {
-        setStateSum(result || []);
-      }
-    });
-    getService(
-      `bag/getList/${Guidelinescontroller.training_guidelines.address.soum.id}`
-    ).then((result) => {
-      if (result) {
-        setStateBag(result || []);
-      }
-    });
-    
-    if (isEditMode) {
-      form.setFieldsValue({
-        ...Guidelinescontroller,
-        CountryID: Guidelinescontroller.training_guidelines.address.country.id,
-        AimagID: Guidelinescontroller.training_guidelines.address.aimag.id,
-        SoumID: Guidelinescontroller.training_guidelines.address.soum.id,
-        BagID: Guidelinescontroller.training_guidelines.address.bag.id,
-        AddressDetail:
-          Guidelinescontroller.training_guidelines.address.addressDetail,
-        trainingStartDate:
-          Guidelinescontroller.training_guidelines.trainingStartDate,
-        Subject: Guidelinescontroller.training_guidelines.subject,
-        Reason: Guidelinescontroller.training_guidelines.reason,
-        Aim: Guidelinescontroller.training_guidelines.aim,
-        Operation: Guidelinescontroller.training_guidelines.operation,
-        Result: Guidelinescontroller.training_guidelines.result,
-      });
     }
   }, []);
 
-  const onInit = () => {
-    if (loadLazyTimeout) {
-      clearTimeout(loadLazyTimeout);
-    }
-    getService("participants/getList/" + Guidelinescontroller.id, list)
-      .then((result) => {
-        let list = result.content || [];
-        list.map(
-          (item, index) => (item.index = lazyParams.page * PAGESIZE + index + 1)
-        );
-        setList(list);
-        setSelectedRows([]);
-      })
-      .catch((error) => {
-        errorCatch(error);
-        isShowLoading(false);
-      });
-    getService("trainingGuidelines/get/", list1)
-      .then((result) => {
-        let list1 = result.content || [];
-        list1.map(
-          (item, index) => (item.index = lazyParams.page * PAGESIZE + index + 1)
-        );
-        setList1(list1);
-        setSelectedRows([]);
-      })
-      .catch((error) => {
-        errorCatch(error);
-        isShowLoading(false);
-      });
+  const selectTrainingPlan = trainingPlanID => {
+    setTrainingPlanID(trainingPlanID);
   };
 
-  const action = (row) => {
-    return (
-      <React.Fragment>
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faPen} />}
-          onClick={() => edit(row)}
-        />
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faTrash} />}
-          onClick={() => pop(row)}
-        />
-      </React.Fragment>
-    );
-  };
-
-  const edit = (row) => {
+  const edit = row => {
     editRow = row;
     isEditModeParticipants = true;
-    // isEditModeGuidelines = true;
     setIsModalVisibleParticipants(true);
-    // setIsModalVisibleGuidelines(true);
   };
 
-  const editUdirdamj = (row) => {
-    editRow = row;
-    // isEditModeParticipants = true;
-    isEditModeGuidelines = true;
-    // setIsModalVisibleParticipants(true);
-    setIsModalVisibleGuidelines(true);
-  };
-
-  const pop = (row) => {
+  const handleDeleted = row => {
     if (row.length === 0) {
-      message.warning("Устгах өгөгдлөө сонгоно уу");
+      message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
+    }
+
+    putService(`participants/delete/${row.id}`)
+      .then(result => {
+        message.success('Амжилттай устлаа');
+        onInit();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+  };
+
+  function confirm(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeleted(row);
+        onInit();
+      },
+      onCancel() {},
+    });
+  }
+
+  const pop = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
       confirm(row);
     }
   };
 
-  const actionUdirdamj = (row) => {
-    return (
-      <React.Fragment>
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faPen} />}
-          onClick={() => editUdirdamj(row)}
-        />
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faTrash} />}
-          onClick={() => pop(row)}
-        />
-      </React.Fragment>
-    );
+  const action = row => (
+    <>
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={() => edit(row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={() => pop(row)}
+      />
+    </>
+  );
+
+  const editUdirdamj = row => {
+    editRow = row;
+    isEditModeGuidelines = true;
+    setIsModalVisibleGuidelines(true);
   };
 
   const addUdirdamj = () => {
     setIsModalVisibleGuidelines(true);
-    // setIsModalVisibleParticipants(true);
-    isEditModeParticipants = false;
-    // isEditModeGuidelines = false;
+    isEditModeGuidelines = false;
   };
 
   const add = () => {
-    // setIsModalVisibleGuidelines(true);
     setIsModalVisibleParticipants(true);
-    // isEditModeParticipants = false;
-    isEditModeGuidelines = false;
+    isEditModeParticipants = false;
   };
 
   const closeModal = (isSuccess = false) => {
     setIsModalVisibleParticipants(false);
-    // setIsModalVisibleGuidelines(false);
 
     if (isSuccess) onInit();
   };
 
   const closeModalUdirdamj = (isSuccess = false) => {
-    // setIsModalVisibleParticipants(false);
     setIsModalVisibleGuidelines(false);
 
     if (isSuccess) onInit();
   };
 
-  const handleDeleted = (row) => {
-    if (row.length === 0) {
-      message.warning("Устгах өгөгдлөө сонгоно уу");
-      return;
-    }
-
-    putService("participants/delete/" + row.id)
-      .then((result) => {
-        message.success("Амжилттай устлаа");
-        onInit();
-      })
-      .catch((error) => {
-        errorCatch(error);
-      });
-  };
-
-  const selectCountry = (value) => {
-    getAimag(value);
-  };
-
-  const getAimag = (countryId) => {
-    getService(`aimag/getList/${countryId}`, {}).then((result) => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-  };
-  const selectAimag = (value) => {
-    getSum(value);
-  };
-  const getSum = (aimagId) => {
-    getService(`soum/getList/${aimagId}`, {}).then((result) => {
-      if (result) {
-        setStateSum(result || []);
-      }
-    });
-  };
-  const selectSum = (value) => {
-    getBag(value);
-  };
-  const getBag = (sumID) => {
-    getService(`bag/getList/${sumID}`, {}).then((result) => {
-      if (result) {
-        setStateBag(result || []);
-      }
-    });
-  };
-
-  
-    const selectPlan = (value) => {
-      getPlans(value);
-    };
-
-    const getPlans = (planId) => {
-      getService(`trainingPlan/get/${planId}`, {}).then((result) => {
-        if (result) {
-
-        }
-      });
-    };
-
   const save = () => {
     form
       .validateFields()
-      .then((values) => {
-
+      .then(values => {
+        values.organization = { id: orgID };
+        values.training_plan = { id: TrainingPlanID };
+        values.trainingStartDate = startDate;
+        values.trainingEndDate = endDate;
         if (isEditMode) {
-          putService("training/update/" + Guidelinescontroller.id, values)
-            .then((result) => {
+          setTrainingPlanID(Guidelinescontroller.training_plan.id);
+          putService(`training/update/${Guidelinescontroller.id}`, values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService("training/post", values)
-            .then((result) => {
+          postService('training/post', values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         }
       })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
+      .catch(info => {
+        console.log('Validate Failed:', info);
       });
   };
+
   return (
     <div>
       <Modal
@@ -355,7 +294,7 @@ export default function GuidelinesModal(props) {
         <ContentWrapper>
           <Form
             form={form}
-            labelAlign={"left"}
+            labelAlign="left"
             {...layout}
             layout="vertical"
             name="nest-messages"
@@ -365,22 +304,16 @@ export default function GuidelinesModal(props) {
               <Col xs={24} md={24} lg={24}>
                 <Row>
                   <Col xs={24} md={24} lg={6}>
-                    <Form.Item layout="vertical" label="Байгууллага сонгох:">
-                      <AutocompleteSelect
-                        valueField="id"
-                        data={stateOrga}
-                        placeholder="Байгууллага сонгох"
-                        // onChange={(value) => selectOrgs(value)}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} md={24} lg={6}>
-                    <Form.Item layout="vertical" label="Сургалтын төлөвлөгөө:">
+                    <Form.Item
+                      layout="vertical"
+                      label="Сургалтын төлөвлөгөө:"
+                      name="TrainingPlanName"
+                    >
                       <AutocompleteSelect
                         valueField="id"
                         data={statePlan}
                         placeholder="Сургалтын төлөвлөгөө"
-                        // onChange={(value) => selectOrgs(value)}
+                        onChange={value => selectTrainingPlan(value)}
                       />
                     </Form.Item>
                   </Col>
@@ -394,8 +327,6 @@ export default function GuidelinesModal(props) {
                       <Input />
                     </Form.Item>
                   </Col>
-                </Row>
-                <Row>
                   <Col xs={24} md={24} lg={6}>
                     <Form.Item
                       label="Гүйцэтгэлийн төсөв:"
@@ -405,13 +336,31 @@ export default function GuidelinesModal(props) {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={6}>
-                    <Form.Item label="Эхэлсэн огноо:" name="trainingStartDate">
-                      <Input />
+                    <Form.Item label="Эхэлсэн огноо:">
+                      <DatePicker
+                        prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
+                        placeholder="Эхэлсэн огноо:"
+                        className="FormItem"
+                        onChange={onStartDateChange}
+                        defaultValue={
+                          Guidelinescontroller &&
+                          moment(Guidelinescontroller.trainingStartDate)
+                        }
+                      />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={6}>
-                    <Form.Item label="Дууссан огноо:" name="trainingEndDate">
-                      <Input />
+                    <Form.Item label="Дууссан огноо:">
+                      <DatePicker
+                        prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
+                        placeholder="Дууссан огноо:"
+                        className="FormItem"
+                        onChange={onEndDateChange}
+                        defaultValue={
+                          Guidelinescontroller &&
+                          moment(Guidelinescontroller.trainingEndDate)
+                        }
+                      />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={6}>
@@ -444,15 +393,15 @@ export default function GuidelinesModal(props) {
                     className="p-datatable-responsive-demo"
                     selection={selectedRows}
                     // onRowClick={edit}
-                    onSelectionChange={(e) => {
+                    onSelectionChange={e => {
                       setSelectedRows(e.value);
                     }}
                     dataKey="id"
                   >
                     <Column field="index" header="№" />
-                    <Column field="name" header="Нэр" filter/>
-                    <Column field="phone" header="Утас" filter/>
-                    <Column headerStyle={{ width: "7rem" }} body={action} />
+                    <Column field="name" header="Нэр" filter />
+                    <Column field="phone" header="Утас" filter />
+                    <Column headerStyle={{ width: '7rem' }} body={action} />
                   </DataTable>
                   {isModalVisibleParticipants && (
                     <ParticipantsModal
@@ -468,51 +417,188 @@ export default function GuidelinesModal(props) {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Form.Item label="Сургалтын удирдамж:">
-                <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={addUdirdamj}
-                    >
-                      Нэмэх
-                    </Button>
+                  <Button
+                    type="text"
+                    className="export"
+                    icon={<FontAwesomeIcon icon={faPlus} />}
+                    onClick={editUdirdamj}
+                  >
+                    Харах
+                  </Button>
+                  <Button
+                    type="text"
+                    className="export"
+                    icon={<FontAwesomeIcon icon={faPlus} />}
+                    onClick={addUdirdamj}
+                  >
+                    Нэмэх
+                  </Button>
                   <DataTable
-                    value={list1}
+                    value={listguidelines}
                     removableSort
                     paginator
                     rows={5}
                     className="p-datatable-responsive-demo"
                     selection={selectedRows}
                     // onRowClick={edit}
-                    onSelectionChange={(e) => {
+                    onSelectionChange={e => {
                       setSelectedRows(e.value);
                     }}
                     dataKey="id"
                   >
                     <Column field="index" header="№" />
-                    <Column
-                          field="subject"
-                          header="Сургалтын сэдэв"
-                          filter
-                        />
-                    <Column
-                      field="reason"
-                      header="Сургалт зохион байгуулах үндэслэл"
-                    />
-                    <Column field="aim" header="Сургалтын зорилго"/>
-                    <Column
-                      field="operation"
-                      header="Хэрэгжүүлэх үйл ажиллагаа"
-                    />
-                    <Column field="result" header="Хүлэгдэж буй үр дүн 1" />
-                    <Column headerStyle={{ width: "7rem" }} body={actionUdirdamj}/>
+                    <Column field="subject" header="Нэр" filter />
+                    <Column field="phone" header="Утас" filter />
+                    <Column headerStyle={{ width: '7rem' }} body={action} />
                   </DataTable>
+                  <Row>
+                    <Col xs={24} md={24} lg={24}>
+                      <Row>
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item
+                            label="Сургалтын сэдэв:"
+                            name="subject"
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                          >
+                            <Input allowClear />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item
+                            label="Сургалт зохион байгуулах үндэслэл:"
+                            name="reason"
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item
+                            label="Сургалтын зорилго:"
+                            name="aim"
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item
+                            label="Хэрэгжүүлэх үйл ажиллагаа:"
+                            name="operation"
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item
+                            label="Хүлээгдэж буй үр дүн:"
+                            name="result"
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+
+                      <Row>
+                        <Col xs={24} md={24} lg={24}>
+                          <p style={{ color: '#7d7d7d', fontSize: '13px' }}>
+                            Сургалт зохион байгуулагдах газар:
+                          </p>
+                        </Col>
+                      </Row>
+                      {/* <Row style={{ maxWidth: '95%' }}>
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item label="Улс:" name="CountryID">
+                            <AutoCompleteSelect
+                              valueField="id"
+                              data={stateCountry}
+                              onChange={value => selectCountry(value)}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item label="Аймаг, хот:" name="AimagID">
+                            <AutoCompleteSelect
+                              valueField="id"
+                              data={stateAimag}
+                              onChange={value => selectAimag(value)}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item
+                            name="SoumID"
+                            layout="vertical"
+                            label="Сум, Дүүрэг:"
+                          >
+                            <AutoCompleteSelect
+                              valueField="id"
+                              data={stateSum}
+                              onChange={value => selectSum(value)}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} md={24} lg={12}>
+                          <Form.Item
+                            name="BagID"
+                            layout="vertical"
+                            label="Баг, Хороо:"
+                          >
+                            <AutoCompleteSelect
+                              valueField="id"
+                              data={stateBag}
+                            />
+                          </Form.Item>
+                        </Col>
+                      </Row> */}
+                      <Row>
+                        <Col xs={24} md={24} lg={24}>
+                          <Form.Item label="Хаяг:" name="AddressDetail">
+                            <Input.TextArea
+                              style={{
+                                width: '100%',
+                                height: '110px',
+                              }}
+                            />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                      {/* <Button htmlType="button" onClick={onReset}>
+                        Reset
+                      </Button> */}
+                    </Col>
+                  </Row>
                   {isModalVisibleGuidelines && (
                     <TrainingGuidelinesModal
-                    TrainingGuidelinesModalController={editRow}
+                      TrainingGuidelinesModalController={editRow}
                       isModalVisible={isModalVisibleGuidelines}
                       close={closeModalUdirdamj}
                       isEditMode={isEditModeGuidelines}
+                      trainingID={trainingID}
                     />
                   )}
                 </Form.Item>
@@ -523,18 +609,4 @@ export default function GuidelinesModal(props) {
       </Modal>
     </div>
   );
-  function confirm(row) {
-    Modal.confirm({
-      title: "Та устгахдаа итгэлтэй байна уу ?",
-      icon: <ExclamationCircleOutlined />,
-      okButtonProps: {},
-      okText: "Устгах",
-      cancelText: "Буцах",
-      onOk() {
-        handleDeleted(row);
-        onInit();
-      },
-      onCancel() {},
-    });
-  }
 }

@@ -1,20 +1,26 @@
-import React, { useState, useRef, useEffect, Suspense } from "react";
-import { PAGESIZE } from "../../constants/Constant";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { isShowLoading } from "../../context/Tools";
-import { Button, message, Layout, Checkbox, Row, Col } from "antd";
-import { convertLazyParamsToObj, errorCatch } from "../../tools/Tools";
-import { getService, postService, putService } from "../../service/service";
-import { faFileExcel, faPlus, faPrint } from "@fortawesome/free-solid-svg-icons";
+import React, { useState, useEffect, Suspense, useContext } from 'react';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Button, message, Layout, Checkbox, Row, Col } from 'antd';
+import {
+  faFileExcel,
+  faPlus,
+  faPrint,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import RoleModal from "./components/RoleModal";
-import ContentWrapper from "../criteria/criteria.style";
-const RoleConfig = React.lazy(() => import("./components/RoleConfig"));
-const MenuConfig = React.lazy(() => import("./components/MenuConfig"));
+import { ToolsContext } from '../../context/Tools';
+import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
+import { getService, postService, putService } from '../../service/service';
+import { PAGESIZE } from '../../constants/Constant';
+import RoleModal from './components/RoleModal';
+import ContentWrapper from '../criteria/criteria.style';
+
+const RoleConfig = React.lazy(() => import('./components/RoleConfig'));
+const MenuConfig = React.lazy(() => import('./components/MenuConfig'));
 const { Content } = Layout;
 
-var isEditMode, selectedRole;
+let isEditMode;
+let selectedRole;
 
 export default function Roles() {
   const [totalRecords, setTotalRecords] = useState(0);
@@ -27,70 +33,55 @@ export default function Roles() {
     first: 0,
     page: 0,
   });
-  const dt = useRef(null);
+  const toolsStore = useContext(ToolsContext);
 
   let loadLazyTimeout = null;
 
-  useEffect(() => {
-    loadData();
-  }, [lazyParams]);
-
   const loadData = () => {
-    isShowLoading(true);
+    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService("role/get", obj)
-        .then((data) => {
-          let list = data || [];
-          list.map((item, index) =>
-            (item.index = lazyParams.page * PAGESIZE + index + 1)
-          );
+      getService('role/get', obj)
+        .then(data => {
+          const listResult = data || [];
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
           setTotalRecords(data.totalElements);
-          setList(list);
-          isShowLoading(false);
+          setList(listResult);
         })
-        .catch((error) => {
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
           message.error(error.toString());
-          isShowLoading(false);
+          toolsStore.setIsShowLoader(false);
         });
     }, 500);
   };
 
-  const save = (role) => {
-    if (isEditMode)
-      putService("role/update/" + role.id, role)
-        .then((result) => {
+  useEffect(() => {
+    loadData();
+  }, [lazyParams]);
+
+  const save = role => {
+    if (isEditMode) {
+      putService(`role/update/${role.id}`, role)
+        .then(result => {
           setIsShowModal(false);
           loadData();
         })
-        .catch((error) => errorCatch(error));
-    else
-      postService("role/post", role)
-        .then((result) => {
+        .catch(error => errorCatch(error));
+    } else {
+      postService('role/post', role)
+        .then(result => {
           setIsShowModal(false);
           setSelectedRow({});
           loadData();
         })
-        .catch((error) => errorCatch(error));
-  };
-
-  const onPage = (event) => {
-    let _lazyParams = { ...lazyParams, ...event };
-    setLazyParams(_lazyParams);
-  };
-
-  const onSort = (event) => {
-    let _lazyParams = { ...lazyParams, ...event };
-    setLazyParams(_lazyParams);
-  };
-
-  const onFilter = (event) => {
-    let _lazyParams = { ...lazyParams, ...event };
-    _lazyParams["first"] = 0;
-    setLazyParams(_lazyParams);
+        .catch(error => errorCatch(error));
+    }
   };
 
   const add = () => {
@@ -98,90 +89,103 @@ export default function Roles() {
     isEditMode = false;
   };
 
-  const edit = (row) => {
+  const edit = row => {
     isEditMode = true;
     setIsShowModal(true);
     setSelectedRow(row.data);
   };
 
-  const activeBodyTemplate = (rowData) => {
-    return <Checkbox defaultChecked={rowData.isActive} disabled />;
+  const closeModal = (isSuccess = false) => {
+    setIsShowModal(false);
+    if (isSuccess) loadData();
   };
 
-  const roleBodyTemplate = (rowData) => {
-    return (
-      <>
-        <Button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setIsShowConfig(true);
-            selectedRole = rowData;
-          }}
-        >
-          Эрх тавих
-        </Button>
-        <Button
-          style={{ marginLeft: 10 }}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setIsShowConfigMenu(true);
-            selectedRole = rowData;
-          }}
-        >
-          Цэс тохируулах
-        </Button>
-      </>
-    );
-  };
+  const activeBodyTemplate = rowData => (
+    <Checkbox defaultChecked={rowData.isActive} disabled />
+  );
+
+  const roleBodyTemplate = rowData => (
+    <>
+      <Button
+        onClick={e => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsShowConfig(true);
+          selectedRole = rowData;
+        }}
+      >
+        Эрх тавих
+      </Button>
+      <Button
+        style={{ marginLeft: 10 }}
+        onClick={e => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsShowConfigMenu(true);
+          selectedRole = rowData;
+        }}
+      >
+        Цэс тохируулах
+      </Button>
+    </>
+  );
 
   return (
     <ContentWrapper>
-      <div>
+      <div className="button-demo">
         <Layout className="btn-layout">
-            <Content>
-                <Row>
-                    <Col xs={24} md={24} lg={14}>
-                        <p className="title">Эрхийн тохиргоо</p>
-                    </Col>
-                    <Col xs={16} md={16} lg={10}>
-                        <Row justify="end" gutter={[16, 16]}>
-                            <Col xs={8} md={4} lg={4}>
-                                <Button type="text" icon={<FontAwesomeIcon icon={faPrint} />} >Хэвлэх </Button>
-                            </Col>
-                            <Col xs={8} md={4} lg={4}>
-                                <Button type="text" className="export" icon={<FontAwesomeIcon icon={faFileExcel} />} >
-                                    Экспорт
-                                </Button>
-                            </Col>
-                            <Col xs={8} md={4} lg={8}>
-                                <Button type="text" className="export" icon={<FontAwesomeIcon icon={faPlus} />} onClick={add}>
-                                    Нэмэх
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Col>
+          <Content>
+            <Row>
+              <Col xs={24} md={24} lg={14}>
+                <p className="title">Эрхийн тохиргоо</p>
+              </Col>
+              <Col xs={16} md={16} lg={10}>
+                <Row justify="end" gutter={[16, 16]}>
+                  <Col xs={8} md={4} lg={4}>
+                    <Button
+                      type="text"
+                      icon={<FontAwesomeIcon icon={faPrint} />}
+                    >
+                      Хэвлэх{' '}
+                    </Button>
+                  </Col>
+                  <Col xs={8} md={4} lg={4}>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFileExcel} />}
+                    >
+                      Экспорт
+                    </Button>
+                  </Col>
+                  <Col xs={8} md={4} lg={4}>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faPlus} />}
+                      onClick={add}
+                    >
+                      Нэмэх
+                    </Button>
+                  </Col>
                 </Row>
-            </Content>
+              </Col>
+            </Row>
+          </Content>
         </Layout>
-        <Layout className="Hynax-table">
+        <div className="datatable-responsive-demo">
           <DataTable
-            ref={dt}
             value={list}
-            lazy
+            removableSort
             paginator
-            first={lazyParams.first}
-            rows={PAGESIZE}
-            totalRecords={totalRecords}
-            onPage={onPage}
-            onSort={onSort}
-            sortField={lazyParams.sortField}
-            sortOrder={lazyParams.sortOrder}
-            onFilter={onFilter}
-            filters={lazyParams.filters}
-            emptyMessage="Өгөгдөл олдсонгүй..."
-            tableStyle={{ minWidth: 1000 }}
+            rows={10}
+            className="p-datatable-responsive-demo"
+            selection={selectedRow}
+            editMode="row"
+            onSelectionChange={e => {
+              setSelectedRow(e.value);
+            }}
+            dataKey="id"
             onRowClick={edit}
           >
             <Column field="index" header="№" style={{ width: 40 }} />
@@ -196,17 +200,17 @@ export default function Roles() {
             <Column
               field=""
               header="Үйлдэл"
-              style={{ width: 300, textAlign: "right" }}
+              style={{ width: 300, textAlign: 'right' }}
               body={roleBodyTemplate}
             />
           </DataTable>
-        </Layout>
+        </div>
         {isShowModal && (
           <RoleModal
             visible={isShowModal}
             isEditMode={isEditMode}
-            editValue={selectedRow}
-            close={() => setIsShowModal(false)}
+            roleController={selectedRow}
+            close={closeModal}
             save={save}
           />
         )}

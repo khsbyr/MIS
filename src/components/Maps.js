@@ -1,42 +1,44 @@
-import React, { useState } from "react";
-import { Map, Marker, GoogleApiWrapper, InfoWindow } from "google-maps-react";
+import React, { useState } from 'react';
+// eslint-disable-next-line import/no-unresolved
+import { Map, Marker, GoogleApiWrapper, InfoWindow } from 'google-maps-react';
 import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
-} from "react-places-autocomplete";
-import { Input, Button } from "antd";
+} from 'react-places-autocomplete';
+import { Input, Button } from 'antd';
 
 function MapContainer(props) {
   const { latitude, longitude, address } = props;
   const [state, setState] = useState({
-    address: address,
+    address,
     selectedLat: latitude,
     selectedLng: longitude,
     showingInfoWindow: false,
     activeMarker: {},
     selectedPlace: {},
   });
-  
+
   function onclickOk() {
     props.clickOK(state);
   }
 
-  function handleChange(address) {
-    state.address = address;
+  function handleChange(value) {
+    state.address = value;
     setState({ ...state });
   }
 
-  function handleSelect(address) {
-    geocodeByAddress(address)
-      .then((results) => {
-        getLatLng(results[0]).then((latLng) => {
+  function handleSelect(value) {
+    geocodeByAddress(value)
+      .then(results => {
+        getLatLng(results[0]).then(latLng => {
           state.selectedLat = latLng.lat;
           state.selectedLng = latLng.lng;
-          state.address = address;
+          state.address = value;
           setState({ ...state });
         });
       })
-      .catch((error) => console.error("Error", error));
+      // eslint-disable-next-line no-console
+      .catch(error => console.log('Error', error));
   }
 
   return (
@@ -52,21 +54,21 @@ function MapContainer(props) {
               <Input
                 size="large"
                 {...getInputProps({
-                  placeholder: "Search Places ...",
-                  className: "location-search-input",
+                  placeholder: 'Search Places ...',
+                  className: 'location-search-input',
                 })}
               />
 
               <div className="autocomplete-dropdown-container">
                 {loading && <div>Loading...</div>}
-                {suggestions.map((suggestion) => {
+                {suggestions.map(suggestion => {
                   const className = suggestion.active
-                    ? "suggestion-item--active"
-                    : "suggestion-item";
+                    ? 'suggestion-item--active'
+                    : 'suggestion-item';
                   // inline style for demonstration purpose
                   const style = suggestion.active
-                    ? { backgroundColor: "#fafafa", cursor: "pointer" }
-                    : { backgroundColor: "#ffffff", cursor: "pointer" };
+                    ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                    : { backgroundColor: '#ffffff', cursor: 'pointer' };
                   return (
                     <div
                       {...getSuggestionItemProps(suggestion, {
@@ -82,7 +84,7 @@ function MapContainer(props) {
             </div>
 
             <Button
-              style={{ fontWeight: "bold", color: "#344ceb" }}
+              style={{ fontWeight: 'bold', color: '#344ceb' }}
               onClick={() => onclickOk()}
             >
               Хадгалах
@@ -101,12 +103,12 @@ function MapContainer(props) {
           lat: state.selectedLat,
           lng: state.selectedLng,
         }}
-        containerStyle={{ position: "unset" }}
+        containerStyle={{ position: 'unset' }}
         // onClick={onMapClicked}
       >
         <Marker
           // onClick={onMarkerClick}
-          name={"Current location"}
+          name="Current location"
           position={{
             lat: state.selectedLat,
             lng: state.selectedLng,
@@ -126,5 +128,5 @@ function MapContainer(props) {
 }
 
 export default GoogleApiWrapper({
-  apiKey: "AIzaSyDpObiL4cyKZ0Eprnatnow77n2fj4Ly1c4",
+  apiKey: 'AIzaSyDpObiL4cyKZ0Eprnatnow77n2fj4Ly1c4',
 })(MapContainer);

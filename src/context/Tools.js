@@ -1,31 +1,29 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react';
 import Loader from '../loader/Loader';
 
-export const Context = React.createContext()
+export const ToolsContext = React.createContext();
 
-var ref = null
+export default function ContextProvider({ children }) {
+  const [isShowLoader, setIsShowLoader] = useState(false);
+  const [tokenParsed, setTokenParsed] = useState();
+  const [user, setUser] = useState();
+  const [org, setOrg] = useState();
 
-export function isShowLoading(props) {
-    if (!!ref) {
-        ref.current.isShowLoading(props);
-    }
-}
-
-export default function ({ children }) {
-    ref = useRef(null)
-    const [showLoader, setshowLoader] = useState(false)
-    React.useImperativeHandle(
-        ref,
-        () => ({
-            isShowLoading: (props) => { setshowLoader(props) }
-        }),
-        [],
-    )
-
-    return (
-        <Context.Provider value={{ showLoader, setshowLoader }}>
-            {showLoader && <Loader />}
-            {children}
-        </Context.Provider>
-    )
+  return (
+    <ToolsContext.Provider
+      value={{
+        isShowLoader,
+        setIsShowLoader,
+        tokenParsed,
+        setTokenParsed,
+        user,
+        setUser,
+        org,
+        setOrg,
+      }}
+    >
+      {isShowLoader && <Loader />}
+      {children}
+    </ToolsContext.Provider>
+  );
 }

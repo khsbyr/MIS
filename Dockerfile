@@ -11,6 +11,7 @@ COPY . /app/
 RUN npm install
 RUN npm install react-scripts@3.0.1 -g
 # We want the production version
+RUN npm run lint:fix
 RUN npm run build
 
 # Prepare nginx

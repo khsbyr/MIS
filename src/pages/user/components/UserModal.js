@@ -1,22 +1,10 @@
-import { Col, Form, Input, Modal, Row, Radio } from "antd";
-import React, { useEffect, useState } from "react";
-import { getService, postService, putService } from "../../../service/service";
-import { errorCatch } from "../../../tools/Tools";
-import AutoCompleteSelect from "../../../components/Autocomplete";
-const label = '';
-const max = '';
-const min = '';
+import { Col, Form, Input, Modal, Row, Radio } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { getService, postService, putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import AutoCompleteSelect from '../../../components/Autocomplete';
+import validateMessages from '../../../tools/validateMessage';
 
-const validateMessages = {
-  required: `${label} хоосон байна!`,
-  types: {
-    email: `${label} is not a valid email!`,
-    number: `${label} is not a valid number!`,
-  },
-  number: {
-    range: `${label} must be between ${min} and ${max}`,
-  },
-};
 export default function UserModal(props) {
   const { Usercontroller, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
@@ -30,98 +18,106 @@ export default function UserModal(props) {
   const [stateRole, setStateRole] = useState([]);
 
   useEffect(() => {
-    getService("organization/get").then((result) => {
+    getService('organization/get').then(result => {
       if (result) {
         setStateOrg(result.content || []);
       }
     });
 
-    getService("role/get").then((result) => {
+    getService('role/get').then(result => {
       if (result) {
         setStateRole(result || []);
       }
     });
 
-    getService("country/get").then((result) => {
+    getService('country/get').then(result => {
       if (result) {
         setStateCountry(result || []);
       }
     });
 
-    getService("aimag/get").then((result) => {
+    getService('aimag/get').then(result => {
       if (result) {
         setStateAimag(result || []);
       }
     });
 
-    if(Usercontroller!==undefined) {
-      if(Usercontroller.address) {
-        getService(`soum/getList/${Usercontroller.address.aimag.id}`).then((result) => {
-          if (result) {
-            setStateSum(result || []);
+    if (Usercontroller !== undefined) {
+      if (Usercontroller.address) {
+        getService(`soum/getList/${Usercontroller.address.aimag.id}`).then(
+          result => {
+            if (result) {
+              setStateSum(result || []);
+            }
           }
-        });
-  
-        getService(`bag/getList/${Usercontroller.address.soum.id}`).then((result) => {
-          if (result) {
-            setStateBag(result || []);
+        );
+
+        getService(`bag/getList/${Usercontroller.address.soum.id}`).then(
+          result => {
+            if (result) {
+              setStateBag(result || []);
+            }
           }
-        });
+        );
       }
     }
-    
+
     if (isEditMode) {
       setStateGender(Usercontroller.gender.id);
       setStateTrue(Usercontroller.isTrue);
-      form.setFieldsValue({ 
-        ...Usercontroller, 
-        CountryID : Usercontroller.address ? Usercontroller.address.country.id : '',
-        AimagID : Usercontroller.address ? Usercontroller.address.aimag.id : '',
-        SoumID : Usercontroller.address ? Usercontroller.address.soum.id : '',
-        BagID : Usercontroller.address ? Usercontroller.address.bag.id : '',
-        AddressDetail : Usercontroller.address ? Usercontroller.address.addressDetail : '',
-        RoleID : Usercontroller.role ? Usercontroller.role.id : '',
-        GenderID : Usercontroller.gender ? Usercontroller.gender.id : '',
+      form.setFieldsValue({
+        ...Usercontroller,
+        CountryID: Usercontroller.address
+          ? Usercontroller.address.country.id
+          : '',
+        AimagID: Usercontroller.address ? Usercontroller.address.aimag.id : '',
+        SoumID: Usercontroller.address ? Usercontroller.address.soum.id : '',
+        BagID: Usercontroller.address ? Usercontroller.address.bag.id : '',
+        AddressDetail: Usercontroller.address
+          ? Usercontroller.address.addressDetail
+          : '',
+        RoleID: Usercontroller.role ? Usercontroller.role.id : '',
+        GenderID: Usercontroller.gender ? Usercontroller.gender.id : '',
       });
     }
   }, [Usercontroller, form, isEditMode]);
 
-  const selectCountry = (value) => {
-    getAimag(value);
-  };
-
-  const getAimag = (countryId) => {
-    getService(`aimag/getList/${countryId}`, {}).then((result) => {
+  const getAimag = countryId => {
+    getService(`aimag/getList/${countryId}`, {}).then(result => {
       if (result) {
         setStateAimag(result || []);
       }
     });
   };
 
-  const selectAimag = (value) => {
-    getSum(value);
+  const selectCountry = value => {
+    getAimag(value);
   };
 
-  const getSum = (aimagId) => {
-    getService(`soum/getList/${aimagId}`, {}).then((result) => {
+  const getSum = aimagId => {
+    getService(`soum/getList/${aimagId}`, {}).then(result => {
       if (result) {
         setStateSum(result || []);
       }
     });
   };
 
-  const selectSum = (value) => {
-    getBag(value);
+  const selectAimag = value => {
+    getSum(value);
   };
 
-  const getBag = (sumID) => {
-    getService(`bag/getList/${sumID}`, {}).then((result) => {
+  const getBag = sumID => {
+    getService(`bag/getList/${sumID}`, {}).then(result => {
       if (result) {
         setStateBag(result || []);
       }
     });
   };
-  
+
+  const selectSum = value => {
+    getBag(value);
+  };
+
   const onChange = e => {
     console.log('radio checked', e.target.value);
     setStateGender(e.target.value);
@@ -134,51 +130,52 @@ export default function UserModal(props) {
   const save = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(values => {
         values.gender = {
           id: values.GenderID,
-        }
+        };
         values.role = {
           id: values.RoleID,
-        }
+        };
         values.address = {
           country: {
-            id: values.CountryID
+            id: values.CountryID,
           },
           aimag: {
-            id: values.AimagID
+            id: values.AimagID,
           },
           soum: {
-            id: values.SoumID
+            id: values.SoumID,
           },
           bag: {
-            id: values.BagID
+            id: values.BagID,
           },
-          addressDetail: values.AddressDetail   
-        }
+          addressDetail: values.AddressDetail,
+        };
         values.isTrue = true;
         if (isEditMode) {
-          putService("user/update/" + Usercontroller.id, values)
-            .then((result) => {
+          putService(`user/update/${Usercontroller.id}`, values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService("user/post", values)
-            .then((result) => {
+          postService('user/post', values)
+            .then(result => {
               props.close(true);
             })
-            .catch((error) => {
+            .catch(error => {
               errorCatch(error);
             });
         }
       })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
+      .catch(info => {
+        console.log('Validate Failed:', info);
       });
   };
+
   return (
     <div>
       <Modal
@@ -193,7 +190,7 @@ export default function UserModal(props) {
       >
         <Form
           form={form}
-          labelAlign={"left"}
+          labelAlign="left"
           name="nest-messages"
           layout="vertical"
           validateMessages={validateMessages}
@@ -204,7 +201,7 @@ export default function UserModal(props) {
                 <Input placeholder="Нэр..." />
               </Form.Item>
             </Col>
-            <Col xs={24} md={24} lg={6}> 
+            <Col xs={24} md={24} lg={6}>
               <Form.Item label="Овог:" name="lastname">
                 <Input placeholder="Овог..." />
               </Form.Item>
@@ -261,8 +258,8 @@ export default function UserModal(props) {
                   valueField="id"
                   data={stateCountry}
                   size="medium"
-                  onChange={(value) => selectCountry(value)}
-                /> 
+                  onChange={value => selectCountry(value)}
+                />
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
@@ -275,7 +272,7 @@ export default function UserModal(props) {
                   valueField="id"
                   data={stateAimag}
                   size="medium"
-                  onChange={(value) => selectAimag(value)}
+                  onChange={value => selectAimag(value)}
                 />
               </Form.Item>
             </Col>
@@ -285,13 +282,17 @@ export default function UserModal(props) {
                   valueField="id"
                   data={stateSum}
                   size="medium"
-                  onChange={(value) => selectSum(value)}
+                  onChange={value => selectSum(value)}
                 />
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
               <Form.Item name="BagID" layout="vertical" label="Баг, Хороо:">
-                <AutoCompleteSelect valueField="id" data={stateBag} size="medium"/>
+                <AutoCompleteSelect
+                  valueField="id"
+                  data={stateBag}
+                  size="medium"
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -302,8 +303,17 @@ export default function UserModal(props) {
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
-              <Form.Item size="large" name="RoleID" layout="vertical" label="Эрх:">
-                <AutoCompleteSelect valueField="id" data={stateRole} size="medium" />
+              <Form.Item
+                size="large"
+                name="RoleID"
+                layout="vertical"
+                label="Эрх:"
+              >
+                <AutoCompleteSelect
+                  valueField="id"
+                  data={stateRole}
+                  size="medium"
+                />
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
@@ -313,7 +323,11 @@ export default function UserModal(props) {
             </Col>
             <Col xs={24} md={24} lg={6}>
               <Form.Item label="Оруулсан мэдээлэл үнэн болно." name="isTrue">
-                <Input type="checkbox" onChange={onChangeCheckBox} checked={stateTrue}/>
+                <Input
+                  type="checkbox"
+                  onChange={onChangeCheckBox}
+                  checked={stateTrue}
+                />
               </Form.Item>
             </Col>
           </Row>

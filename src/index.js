@@ -1,19 +1,19 @@
-import React, {Suspense} from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
-import './index.scss';
-import reportWebVitals from './reportWebVitals';
+import './styles/index.scss';
 import { BrowserRouter } from 'react-router-dom';
+import reportWebVitals from './reportWebVitals';
 import App from './App';
-import "./i18n";
-import 'primereact/resources/themes/saga-blue/theme.css'
-import 'primereact/resources/primereact.min.css'
-import 'primeicons/primeicons.css'
+import './i18n';
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 ReactDOM.render(
   <BrowserRouter>
-      <Suspense fallback={<div>Loading..</div>}>
-        <App />
-      </Suspense>
+    <Suspense fallback={<div>Loading..</div>}>
+      <App />
+    </Suspense>
   </BrowserRouter>,
   document.getElementById('root')
 );

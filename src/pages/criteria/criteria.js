@@ -1,63 +1,60 @@
-import { DownOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import React, { useEffect, useState, useContext } from 'react';
+import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
   faPlus,
   faPrint,
-  faTrash
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Col, DatePicker, Layout, message, Modal, Row } from "antd";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import React, { useEffect, useState } from "react";
-import { isShowLoading } from "../../context/Tools";
-import { getService, putService } from "../../service/service";
-import { errorCatch } from "../../tools/Tools";
-import CriteriaModal from "../criteria/components/CriteriaModal";
-import "./criteria.style";
-import ContentWrapper from "./criteria.style";
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
 import { ColumnGroup } from 'primereact/columngroup';
+import { ToolsContext } from '../../context/Tools';
+import { getService, putService } from '../../service/service';
+import { errorCatch } from '../../tools/Tools';
+import CriteriaModal from './components/CriteriaModal';
+import ContentWrapper from './criteria.style';
 
 function onChange(date, dateString) {
   console.log(date, dateString);
 }
 const { Content } = Layout;
 
-var editRow;
-var isEditMode;
+let editRow;
+let isEditMode;
+
 const Criteria = () => {
-  let loadLazyTimeout = null;
+  const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams, setLazyParams] = useState({
     page: 0,
   });
-  const [loading, setLoading] = useState(false);
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-
-  useEffect(() => {
-    onInit();
-  }, [lazyParams]);
+  const toolsStore = useContext(ToolsContext);
 
   const onInit = () => {
-    setLoading(true);
+    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService("criteria/get", list)
-      .then((result) => {
-        let list = result.content || [];
-        list.map(
-          (item, index) => (item.index = lazyParams.page * PAGESIZE + index + 1)
-        );
-        setList(list);
+    getService('criteria/get', list)
+      .then(result => {
+        const listResult = result.content || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
         setSelectedRows([]);
       })
-      .catch((error) => {
+      .finally(toolsStore.setIsShowLoader(false))
+      .catch(error => {
         errorCatch(error);
-        isShowLoading(false);
+        toolsStore.setIsShowLoader(false);
       });
   };
 
@@ -66,120 +63,130 @@ const Criteria = () => {
     isEditMode = false;
   };
 
-  const action = (row) => {
-    return (
-      <React.Fragment>
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faPen} />}
-          onClick={() => edit(row)}
-        />
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faTrash} />}
-          onClick={() => pop(row)}
-        />
-      </React.Fragment>
-    );
-  };
-
-  const edit = (row) => {
-    console.log(row)
+  const edit = row => {
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
   };
 
-  const handleDeleted = (row) => {
+  const handleDeleted = row => {
     if (row.length === 0) {
-      message.warning("Устгах өгөгдлөө сонгоно уу");
+      message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService("criteria/delete/" + row.id)
-      .then((result) => {
-        message.success("Амжилттай устлаа");
+    putService(`criteria/delete/${row.id}`)
+      .then(result => {
+        message.success('Амжилттай устлаа');
         onInit();
       })
-      .catch((error) => {
+      .catch(error => {
         errorCatch(error);
       });
   };
-  const closeModal = (isSuccess = false) => {
-    setIsModalVisible(false);
-    if (isSuccess) onInit();
-  };
-  const pop = (row) => {
+
+  function confirm(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeleted(row);
+        onInit();
+      },
+      onCancel() {},
+    });
+  }
+
+  const pop = row => {
     if (row.length === 0) {
-      message.warning("Устгах өгөгдлөө сонгоно уу");
-      return;
+      message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
       confirm(row);
     }
   };
 
-  const indexBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">№</span>
-        {row.index}
-      </React.Fragment>
-    );
+  const closeModal = (isSuccess = false) => {
+    setIsModalVisible(false);
+    if (isSuccess) onInit();
   };
 
-  const nameBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Шалгуур үзүүлэлтийн нэр</span>
-        {row.name}
-      </React.Fragment>
-    );
-  };
+  useEffect(() => {
+    onInit();
+  }, [lazyParams]);
 
-  const indicatorProcessBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Хүрэх үр дүн</span>
-        {row.upIndicator}
-      </React.Fragment>
-    );
-  };
+  const action = row => (
+    <>
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={() => edit(row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={() => pop(row)}
+      />
+    </>
+  );
 
-  const upIndicatorBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Үр дүнгийн биелэлт</span>
-        {row.indicatorProcess}
-      </React.Fragment>
-    );
-  };
+  const indexBodyTemplate = row => (
+    <>
+      <span className="p-column-title">№</span>
+      {row.index}
+    </>
+  );
 
-  const indicatorTypeBodyTemplate = (row) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Шалгуур үзүүлэлтийн төрөл</span>
-        {row.indicatorProcess}
-      </React.Fragment>
-    );
-  };
+  const nameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Шалгуур үзүүлэлтийн нэр</span>
+      {row.name}
+    </>
+  );
 
+  const indicatorProcessBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Хүрэх үр дүн</span>
+      {row.upIndicator}
+    </>
+  );
 
-  let headerGroup = <ColumnGroup>
-  <Row>
-      <Column header="№" rowSpan={2}/>
-      <Column header="Шалгуур үзүүлэлтийн нэр" rowSpan={2} /> 
-      <Column header="Хүрэх үр дүн" rowSpan={2} />
-      <Column header="Үр дүнгийн биелэлт" rowSpan={2} />
-      <Column header="Шалгуур үзүүлэлтийн төрөл" body={indicatorTypeBodyTemplate} colSpan={3}/>
-      <Column headerStyle={{ width: "7rem" }} body={action} rowSpan={2}></Column>
+  const upIndicatorBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Үр дүнгийн биелэлт</span>
+      {row.indicatorProcess}
+    </>
+  );
 
+  const indicatorTypeBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Шалгуур үзүүлэлтийн төрөл</span>
+      {row.indicatorProcess}
+    </>
+  );
 
-  </Row>
-  <Row>
-      <Column header="Хувь /%/"/>
-      <Column header="Тоо"/>
-      <Column header="Томъёо"/>
-  </Row>
-  </ColumnGroup>;
+  const headerGroup = (
+    <ColumnGroup>
+      <Row>
+        <Column header="№" rowSpan={2} />
+        <Column header="Шалгуур үзүүлэлтийн нэр" rowSpan={2} />
+        <Column header="Хүрэх үр дүн" rowSpan={2} />
+        <Column header="Үр дүнгийн биелэлт" rowSpan={2} />
+        <Column
+          header="Шалгуур үзүүлэлтийн төрөл"
+          body={indicatorTypeBodyTemplate}
+          colSpan={3}
+        />
+        <Column headerStyle={{ width: '7rem' }} body={action} rowSpan={2} />
+      </Row>
+      <Row>
+        <Column header="Хувь /%/" />
+        <Column header="Тоо" />
+        <Column header="Томъёо" />
+      </Row>
+    </ColumnGroup>
+  );
 
   return (
     <ContentWrapper>
@@ -201,9 +208,9 @@ const Criteria = () => {
                       picker="year"
                       className="DatePicker"
                       style={{
-                        width: "120px",
-                        color: "black",
-                        cursor: "pointer",
+                        width: '120px',
+                        color: 'black',
+                        cursor: 'pointer',
                       }}
                     />
                   </Col>
@@ -225,7 +232,7 @@ const Criteria = () => {
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
                     >
-                      Хэвлэх{" "}
+                      Хэвлэх{' '}
                     </Button>
                   </Col>
                   <Col xs={8} md={8} lg={6}>
@@ -262,19 +269,40 @@ const Criteria = () => {
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             // onRowClick={edit}
-            onSelectionChange={(e) => {
+            onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
           >
             <Column field="index" header="№" body={indexBodyTemplate} />
-            <Column field="name" header="Шалгуур үзүүлэлтийн нэр" body={nameBodyTemplate} />
-            <Column field="indicatorProcess" header="Хүрэх үр дүн" body={indicatorProcessBodyTemplate} />
-            <Column field="upIndicator" header="Үр дүнгийн биелэлт" body={upIndicatorBodyTemplate}  />
-            <Column field="criteriaIndicator.percentIndicator.value" header="Хувь /%/"/>
-            <Column field="criteriaIndicator.quantityIndicator.value" header="Тоо"/>
-            <Column field="criteriaIndicator.formulaIndicator.value" header="Томъёо"/>
-            <Column headerStyle={{ width: "7rem" }} body={action}></Column>
+            <Column
+              field="name"
+              header="Шалгуур үзүүлэлтийн нэр"
+              body={nameBodyTemplate}
+            />
+            <Column
+              field="indicatorProcess"
+              header="Хүрэх үр дүн"
+              body={indicatorProcessBodyTemplate}
+            />
+            <Column
+              field="upIndicator"
+              header="Үр дүнгийн биелэлт"
+              body={upIndicatorBodyTemplate}
+            />
+            <Column
+              field="criteriaIndicator.percentIndicator.value"
+              header="Хувь /%/"
+            />
+            <Column
+              field="criteriaIndicator.quantityIndicator.value"
+              header="Тоо"
+            />
+            <Column
+              field="criteriaIndicator.formulaIndicator.value"
+              header="Томъёо"
+            />
+            <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <CriteriaModal
@@ -288,20 +316,6 @@ const Criteria = () => {
       </div>
     </ContentWrapper>
   );
-  function confirm(row) {
-    Modal.confirm({
-      title: "Та устгахдаа итгэлтэй байна уу ?",
-      icon: <ExclamationCircleOutlined />,
-      okButtonProps: {},
-      okText: "Устгах",
-      cancelText: "Буцах",
-      onOk() {
-        handleDeleted(row);
-        onInit();
-      },
-      onCancel() { },
-    });
-  }
 };
 
 export default Criteria;

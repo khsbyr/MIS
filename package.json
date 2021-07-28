@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^4.6.2",
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
@@ -10,6 +11,7 @@
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/utils": "^4.11.2",
+    "@react-keycloak/web": "^3.4.0",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -21,6 +23,7 @@
     "i18next": "^20.3.1",
     "i18next-browser-languagedetector": "^6.1.2",
     "i18next-http-backend": "^1.2.6",
+    "keycloak-js": "^14.0.0",
     "mdi": "^2.2.43",
     "moment": "^2.29.1",
     "primeicons": "^4.1.0",
@@ -34,6 +37,7 @@
     "react-dom": "^17.0.2",
     "react-highlight-words": "^0.17.0",
     "react-i18next": "^11.10.0",
+    "react-icons": "^4.2.0",
     "react-loadable": "^5.5.0",
     "react-places-autocomplete": "^7.3.0",
     "react-router-dom": "^5.2.0",
@@ -47,14 +51,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "proxy": "http://47.243.61.40:8082",
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "eject": "react-scripts eject",
+    "lint": "./node_modules/.bin/eslint ./src",
+    "lint:fix": "npm run lint -- --fix"
   },
   "browserslist": {
     "production": [
@@ -69,6 +68,15 @@
     ]
   },
   "devDependencies": {
-    "@ant-design/icons": "^4.6.2"
+    "eslint": "^7.31.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "3.4.0",
+    "eslint-plugin-react": "^7.24.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "prettier": "2.3.2"
   }
 }
