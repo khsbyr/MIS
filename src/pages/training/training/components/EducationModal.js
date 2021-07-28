@@ -1,5 +1,5 @@
 import { Form, Input, Modal } from 'antd';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
@@ -17,6 +17,8 @@ const layout = {
 export default function EducationModal(props) {
   const { CvEducationController, isModalVisibleEducation, isEditMode } = props;
   const [form] = Form.useForm();
+  const [trainerID, setTrainerID] = useState([]);
+
   useEffect(() => {
     if (isEditMode) {
       form.setFieldsValue({ ...CvEducationController });
@@ -26,6 +28,7 @@ export default function EducationModal(props) {
     form
       .validateFields()
       .then(values => {
+        setTrainerID(CvEducationController.trainer.id);
         if (isEditMode) {
           putService(`education/update/${CvEducationController.id}`, values)
             .then(() => {

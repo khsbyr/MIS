@@ -1,10 +1,6 @@
-import { DatePicker, Form, Input, Modal } from 'antd';
-import React, { useEffect, useState } from 'react';
-import {
-  getService,
-  postService,
-  putService,
-} from '../../../../service/service';
+import { Form, Input, Modal } from 'antd';
+import React, { useEffect } from 'react';
+import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './cv.styled';
@@ -18,32 +14,22 @@ const layout = {
   },
 };
 export default function TeacherExperienceModal(props) {
-  const { Composition, isModalVisible, isEditMode } = props;
-  const [setStateController] = useState([]);
+  const { TeacherExperienceController, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
   useEffect(() => {
-    getService('criteria/get', {
-      search: 'status:true',
-    }).then(result => {
-      if (result) {
-        setStateController(result.content || []);
-      }
-    });
-
     if (isEditMode) {
-      getService(`criteria/get${Composition.id}`).then(result => {
-        Composition.userServiceId = result.userService.id;
-        form.setFieldsValue({ ...Composition });
-      });
+      form.setFieldsValue({ ...TeacherExperienceController });
     }
   }, []);
   const save = () => {
     form
       .validateFields()
       .then(values => {
-        values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService(`criteria/put${Composition.id}`, values)
+          putService(
+            `expierenceForTeach/update/${TeacherExperienceController.id}`,
+            values
+          )
             .then(() => {
               props.close(true);
             })
@@ -51,7 +37,7 @@ export default function TeacherExperienceModal(props) {
               errorCatch(error);
             });
         } else {
-          postService('criteria/post', values)
+          postService('expierenceForTeach/post', values)
             .then(() => {
               props.close(true);
             })
@@ -85,7 +71,7 @@ export default function TeacherExperienceModal(props) {
             validateMessages={validateMessages}
           >
             <Form.Item
-              name="role"
+              name="position"
               label="Албан тушаал:"
               rules={[
                 {
@@ -95,11 +81,11 @@ export default function TeacherExperienceModal(props) {
             >
               <Input />
             </Form.Item>
-            <Form.Item name="nameOfOrga" label="Байгууллагын нэр:">
+            <Form.Item name="organizationName" label="Байгууллагын нэр:">
               <Input />
             </Form.Item>
             <Form.Item
-              name="date"
+              name="hiredDate"
               label="Огноо:"
               rules={[
                 {
@@ -107,7 +93,7 @@ export default function TeacherExperienceModal(props) {
                 },
               ]}
             >
-              <DatePicker />
+              <Input />
             </Form.Item>
           </Form>
         </ContentWrapper>

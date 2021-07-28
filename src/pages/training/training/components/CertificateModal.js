@@ -1,10 +1,6 @@
-import { DatePicker, Form, Input, Modal } from 'antd';
-import React, { useEffect, useState } from 'react';
-import {
-  getService,
-  postService,
-  putService,
-} from '../../../../service/service';
+import { Form, Input, Modal } from 'antd';
+import React, { useEffect } from 'react';
+import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './cv.styled';
@@ -18,32 +14,19 @@ const layout = {
   },
 };
 export default function CertificateModal(props) {
-  const { Composition, isModalVisible, isEditMode } = props;
-  const [setStateController] = useState([]);
+  const { LicenseController, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
   useEffect(() => {
-    getService('criteria/get', {
-      search: 'status:true',
-    }).then(result => {
-      if (result) {
-        setStateController(result.content || []);
-      }
-    });
-
     if (isEditMode) {
-      getService(`criteria/get${Composition.id}`).then(result => {
-        Composition.userServiceId = result.userService.id;
-        form.setFieldsValue({ ...Composition });
-      });
+      form.setFieldsValue({ ...LicenseController });
     }
   }, []);
   const save = () => {
     form
       .validateFields()
       .then(values => {
-        values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService(`criteria/put${Composition.id}`, values)
+          putService(`propertyLicense/update/${LicenseController.id}`, values)
             .then(() => {
               props.close(true);
             })
@@ -51,7 +34,7 @@ export default function CertificateModal(props) {
               errorCatch(error);
             });
         } else {
-          postService('criteria/post', values)
+          postService('propertyLicense/post', values)
             .then(() => {
               props.close(true);
             })
@@ -85,8 +68,8 @@ export default function CertificateModal(props) {
             validateMessages={validateMessages}
           >
             <Form.Item
-              name="role"
-              label="Албан тушаал:"
+              name="propertyName"
+              label="Оюуны өмч, гэрчилгээ, лицензийн нэр:"
               rules={[
                 {
                   required: true,
@@ -95,11 +78,11 @@ export default function CertificateModal(props) {
             >
               <Input />
             </Form.Item>
-            <Form.Item name="nameOfOrga" label="Байгууллагын нэр:">
+            <Form.Item name="licensedBy" label="Олгосон байгууллагын нэр:">
               <Input />
             </Form.Item>
             <Form.Item
-              name="date"
+              name="licensedDate"
               label="Огноо:"
               rules={[
                 {
@@ -107,7 +90,7 @@ export default function CertificateModal(props) {
                 },
               ]}
             >
-              <DatePicker />
+              <Input />
             </Form.Item>
           </Form>
         </ContentWrapper>

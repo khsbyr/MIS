@@ -1,10 +1,6 @@
-import { DatePicker, Form, Input, Modal } from 'antd';
-import React, { useEffect, useState } from 'react';
-import {
-  getService,
-  postService,
-  putService,
-} from '../../../../service/service';
+import { Form, Input, Modal } from 'antd';
+import React, { useEffect } from 'react';
+import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './cv.styled';
@@ -18,32 +14,22 @@ const layout = {
   },
 };
 export default function PublishedWorkModal(props) {
-  const { Composition, isModalVisible, isEditMode } = props;
-  const [setStateController] = useState([]);
+  const { PublishedWorkController, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
   useEffect(() => {
-    getService('criteria/get', {
-      search: 'status:true',
-    }).then(result => {
-      if (result) {
-        setStateController(result.content || []);
-      }
-    });
-
     if (isEditMode) {
-      getService(`criteria/get${Composition.id}`).then(result => {
-        Composition.userServiceId = result.userService.id;
-        form.setFieldsValue({ ...Composition });
-      });
+      form.setFieldsValue({ ...PublishedWorkController });
     }
   }, []);
   const save = () => {
     form
       .validateFields()
       .then(values => {
-        values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService(`criteria/put${Composition.id}`, values)
+          putService(
+            `publishedWork/update/${PublishedWorkController.id}`,
+            values
+          )
             .then(() => {
               props.close(true);
             })
@@ -51,7 +37,7 @@ export default function PublishedWorkModal(props) {
               errorCatch(error);
             });
         } else {
-          postService('criteria/post', values)
+          postService('publishedWork/post', values)
             .then(() => {
               props.close(true);
             })
@@ -84,11 +70,11 @@ export default function PublishedWorkModal(props) {
             name="nest-messages"
             validateMessages={validateMessages}
           >
-            <Form.Item name="nameOfPublishedWork" label="Бүтээлийн нэр:">
+            <Form.Item name="name" label="Бүтээлийн нэр:">
               <Input />
             </Form.Item>
             <Form.Item
-              name="date"
+              name="publishedDate"
               label="Огноо:"
               rules={[
                 {
@@ -96,7 +82,7 @@ export default function PublishedWorkModal(props) {
                 },
               ]}
             >
-              <DatePicker />
+              <Input />
             </Form.Item>
           </Form>
         </ContentWrapper>

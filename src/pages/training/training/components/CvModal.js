@@ -83,6 +83,10 @@ export default function CvModal(props) {
   const [listEducation, setListEducation] = useState([]);
   const [listExperience, setListExperience] = useState([]);
   const [listExperienceAdvice, setListExperienceAdvice] = useState([]);
+  const [listExperienceTeacher, setListExperienceTeacher] = useState([]);
+  const [listPublishedWork, setListPublishedWork] = useState([]);
+  const [listLicense, setListLicense] = useState([]);
+  const [listMembership, setListMembership] = useState([]);
   const [lazyParams] = useState({
     page: 0,
   });
@@ -191,11 +195,119 @@ export default function CvModal(props) {
     }
   };
 
+  const onInitExperienceTeacher = () => {
+    toolsStore.setIsShowLoader(false);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    if (Trainerscontroller !== null) {
+      getService(
+        `expierenceForTeach/getByTrainerId/${Trainerscontroller.id}`,
+        listExperienceTeacher
+      )
+        .then(result => {
+          const listexperienceTeacher = result || [];
+          listexperienceTeacher.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setListExperienceTeacher(listexperienceTeacher);
+          setSelectedRows([]);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
+        });
+    }
+  };
+
+  const onInitPublishedWork = () => {
+    toolsStore.setIsShowLoader(false);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    if (Trainerscontroller !== null) {
+      getService(
+        `publishedWork/getByTrainerId/${Trainerscontroller.id}`,
+        listPublishedWork
+      )
+        .then(result => {
+          const listpublishedWork = result || [];
+          listpublishedWork.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setListPublishedWork(listpublishedWork);
+          setSelectedRows([]);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
+        });
+    }
+  };
+
+  const onInitLicense = () => {
+    toolsStore.setIsShowLoader(false);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    if (Trainerscontroller !== null) {
+      getService(
+        `propertyLicense/getByTrainerId/${Trainerscontroller.id}`,
+        listLicense
+      )
+        .then(result => {
+          const listlicense = result || [];
+          listlicense.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setListLicense(listlicense);
+          setSelectedRows([]);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
+        });
+    }
+  };
+
+  const onInitMembership = () => {
+    toolsStore.setIsShowLoader(false);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    if (Trainerscontroller !== null) {
+      getService(
+        `membership/getByTrainerId/${Trainerscontroller.id}`,
+        listMembership
+      )
+        .then(result => {
+          const listmembership = result || [];
+          listmembership.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setListMembership(listmembership);
+          setSelectedRows([]);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
+        });
+    }
+  };
+
   useEffect(() => {
     onInit();
     onInitEducation();
     onInitExperience();
     onInitExperienceAdvice();
+    onInitExperienceTeacher();
+    onInitPublishedWork();
+    onInitLicense();
+    onInitMembership();
     getService('country/get').then(result => {
       if (result) {
         setStateCountry(result || []);
@@ -422,7 +534,7 @@ export default function CvModal(props) {
   };
 
   const editExperienceAdvice = row => {
-    editRow = row.data;
+    editRow = row;
     isEditModee = true;
     setIsModalVisibleExperienceAdvice(true);
   };
@@ -461,7 +573,7 @@ export default function CvModal(props) {
   };
 
   const editTeacherExperience = row => {
-    editRow = row.data;
+    editRow = row;
     isEditModee = true;
     setIsModalVisibleTeacherExperience(true);
   };
@@ -499,7 +611,7 @@ export default function CvModal(props) {
   };
 
   const editPublishedWork = row => {
-    editRow = row.data;
+    editRow = row;
     isEditModee = true;
     setIsModalVisiblePublishedWork(true);
   };
@@ -538,7 +650,7 @@ export default function CvModal(props) {
   };
 
   const editCertificate = row => {
-    editRow = row.data;
+    editRow = row;
     isEditModee = true;
     setIsModalVisibleCertificate(true);
   };
@@ -577,7 +689,7 @@ export default function CvModal(props) {
   };
 
   const editMembership = row => {
-    editRow = row.data;
+    editRow = row;
     isEditModee = true;
     setIsModalVisibleMembership(true);
   };
@@ -731,7 +843,6 @@ export default function CvModal(props) {
 
               <Col xs={24} md={24} lg={9}>
                 <Form.Item>
-                  {/* <Input className="FormItem" placeholder="Төрсөн огноо:" prefix={<FontAwesomeIcon icon={faCalendarAlt} />} /> */}
                   <DatePicker
                     prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
                     placeholder="Төрсөн он, сар, өдөр"
@@ -907,7 +1018,6 @@ export default function CvModal(props) {
                   rows={10}
                   className="p-datatable-responsive-demo"
                   selection={selectedRows}
-                  // onRowClick={edit}
                   onSelectionChange={e => {
                     setSelectedRows(e.value);
                   }}
@@ -924,7 +1034,7 @@ export default function CvModal(props) {
                 </DataTable>
                 {isModalVisibleExperienceAdvice && (
                   <ExperienceAdviceModal
-                    Criteriacontroller={editRow}
+                    ExperienceAdviceController={editRow}
                     isModalVisible={isModalVisibleExperienceAdvice}
                     close={closeModalExperienceAdvice}
                     isEditMode={isEditModee}
@@ -948,21 +1058,20 @@ export default function CvModal(props) {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <DataTable
-                  value={list}
+                  value={listExperienceTeacher}
                   removableSort
                   rows={10}
                   className="p-datatable-responsive-demo"
                   selection={selectedRows}
-                  // onRowClick={edit}
                   onSelectionChange={e => {
                     setSelectedRows(e.value);
                   }}
                   dataKey="id"
                 >
                   <Column field="index" header="№" style={{ width: '50px' }} />
-                  <Column field="name" header="Албан тушаал" />
-                  <Column field="" header="Байгууллагын нэр" />
-                  <Column field="" header="Огноо" />
+                  <Column field="position" header="Албан тушаал" />
+                  <Column field="organizationName" header="Байгууллагын нэр" />
+                  <Column field="hiredDate" header="Огноо" />
                   <Column
                     headerStyle={{ width: '7rem' }}
                     body={actionTeacherExperience}
@@ -970,10 +1079,10 @@ export default function CvModal(props) {
                 </DataTable>
                 {isModalVisibleTeacherExperience && (
                   <TeacherExperienceModal
-                    Criteriacontroller={editRow}
+                    TeacherExperienceController={editRow}
                     isModalVisible={isModalVisibleTeacherExperience}
                     close={closeModalTeacherExperience}
-                    isEditMode={isEditMode}
+                    isEditMode={isEditModee}
                   />
                 )}
               </Col>
@@ -995,20 +1104,19 @@ export default function CvModal(props) {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <DataTable
-                  value={list}
+                  value={listPublishedWork}
                   removableSort
                   rows={10}
                   className="p-datatable-responsive-demo"
                   selection={selectedRows}
-                  // onRowClick={edit}
                   onSelectionChange={e => {
                     setSelectedRows(e.value);
                   }}
                   dataKey="id"
                 >
                   <Column field="index" header="№" style={{ width: '50px' }} />
-                  <Column field="" header="Бүтээлийн нэр" />
-                  <Column field="" header="Огноо" />
+                  <Column field="name" header="Бүтээлийн нэр" />
+                  <Column field="publishedDate" header="Огноо" />
                   <Column
                     headerStyle={{ width: '7rem' }}
                     body={actionPublishedWork}
@@ -1016,10 +1124,10 @@ export default function CvModal(props) {
                 </DataTable>
                 {isModalVisiblePublishedWork && (
                   <PublishedWorkModal
-                    Criteriacontroller={editRow}
+                    PublishedWorkController={editRow}
                     isModalVisible={isModalVisiblePublishedWork}
                     close={closeModalPublishedWork}
-                    isEditMode={isEditMode}
+                    isEditMode={isEditModee}
                   />
                 )}
               </Col>
@@ -1041,21 +1149,26 @@ export default function CvModal(props) {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <DataTable
-                  value={list}
+                  value={listLicense}
                   removableSort
                   rows={10}
                   className="p-datatable-responsive-demo"
                   selection={selectedRows}
-                  // onRowClick={edit}
                   onSelectionChange={e => {
                     setSelectedRows(e.value);
                   }}
                   dataKey="id"
                 >
                   <Column field="index" header="№" style={{ width: '50px' }} />
-                  <Column field="name" header="Албан тушаал" />
-                  <Column field="" header="Байгууллагын нэр" />
-                  <Column field="" header="Огноо" />
+                  <Column
+                    field="propertyName"
+                    header="Оюуны өмч, гэрчилгээ, лицензийн нэр"
+                  />
+                  <Column
+                    field="licensedBy"
+                    header="Олгосон байгууллагын нэр"
+                  />
+                  <Column field="licensedDate" header="Огноо" />
                   <Column
                     headerStyle={{ width: '7rem' }}
                     body={actionCertificate}
@@ -1063,10 +1176,10 @@ export default function CvModal(props) {
                 </DataTable>
                 {isModalVisibleCertificate && (
                   <CertificateModal
-                    Criteriacontroller={editRow}
+                    LicenseController={editRow}
                     isModalVisible={isModalVisibleCertificate}
                     close={closeModalCertificate}
-                    isEditMode={isEditMode}
+                    isEditMode={isEditModee}
                   />
                 )}
               </Col>
@@ -1088,21 +1201,20 @@ export default function CvModal(props) {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <DataTable
-                  value={list}
+                  value={listMembership}
                   removableSort
                   rows={10}
                   className="p-datatable-responsive-demo"
                   selection={selectedRows}
-                  // onRowClick={edit}
                   onSelectionChange={e => {
                     setSelectedRows(e.value);
                   }}
                   dataKey="id"
                 >
                   <Column field="index" header="№" style={{ width: '50px' }} />
-                  <Column field="name" header="Албан тушаал" />
-                  <Column field="" header="Байгууллагын нэр" />
-                  <Column field="" header="Огноо" />
+                  <Column field="position" header="Албан тушаал" />
+                  <Column field="organization" header="Байгууллагын нэр" />
+                  <Column field="enrolledDate" header="Огноо" />
                   <Column
                     headerStyle={{ width: '7rem' }}
                     body={actionMembership}
@@ -1110,10 +1222,10 @@ export default function CvModal(props) {
                 </DataTable>
                 {isModalVisibleMembership && (
                   <MembershipModal
-                    Criteriacontroller={editRow}
+                    MembershipController={editRow}
                     isModalVisible={isModalVisibleMembership}
                     close={closeModalMembership}
-                    isEditMode={isEditMode}
+                    isEditMode={isEditModee}
                   />
                 )}
               </Col>
