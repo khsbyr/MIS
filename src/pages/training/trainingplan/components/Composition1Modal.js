@@ -1,13 +1,12 @@
+import { Form, Input, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input } from 'antd';
+import AutocompleteSelect from '../../../../components/Autocomplete';
 import {
   getService,
   postService,
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import AutocompleteSelect from '../../../../components/Autocomplete';
-import { ToolsContext } from '../../../../context/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 
 const layout = {
@@ -62,7 +61,7 @@ export default function Composition1Modal(props) {
       .then(values => {
         if (isEditMode) {
           putService(`trainingPlan/update${Composition.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -70,7 +69,7 @@ export default function Composition1Modal(props) {
             });
         } else {
           postService('trainingPlan/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -79,7 +78,7 @@ export default function Composition1Modal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

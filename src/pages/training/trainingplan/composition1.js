@@ -17,9 +17,6 @@ import { errorCatch } from '../../../tools/Tools';
 import Composition1Modal from './components/Composition1Modal';
 import ContentWrapper from './components/composition.style';
 
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
 const { Content } = Layout;
 
 let editRow;
@@ -30,7 +27,7 @@ const Composition1 = () => {
   const [listchild, setListchild] = useState([]);
   const [expandedRows, setExpandedRows] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     page: 0,
   });
   const PAGESIZE = 20;
@@ -74,7 +71,7 @@ const Composition1 = () => {
       return;
     }
     putService(`trainingPlan/delete/${row.id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })
@@ -186,33 +183,33 @@ const Composition1 = () => {
     if (isSuccess) onInit();
   };
 
-  const indexBodyTemplate = row => (
-    <>
-      <span className="p-column-title">№</span>
-      {row.index}
-    </>
-  );
+  // const indexBodyTemplate = row => (
+  //   <>
+  //     <span className="p-column-title">№</span>
+  //     {row.index}
+  //   </>
+  // );
 
-  const nameBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Шалгуур үзүүлэлтийн нэр</span>
-      {row.name}
-    </>
-  );
+  // const nameBodyTemplate = row => (
+  //   <>
+  //     <span className="p-column-title">Шалгуур үзүүлэлтийн нэр</span>
+  //     {row.name}
+  //   </>
+  // );
 
-  const indicatorProcessBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Хүрэх үр дүн</span>
-      {row.indicatorProcess}
-    </>
-  );
+  // const indicatorProcessBodyTemplate = row => (
+  //   <>
+  //     <span className="p-column-title">Хүрэх үр дүн</span>
+  //     {row.indicatorProcess}
+  //   </>
+  // );
 
-  const upIndicatorBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Үр дүнгийн биелэлт</span>
-      {row.upIndicator}
-    </>
-  );
+  // const upIndicatorBodyTemplate = row => (
+  //   <>
+  //     <span className="p-column-title">Үр дүнгийн биелэлт</span>
+  //     {row.upIndicator}
+  //   </>
+  // );
 
   return (
     <ContentWrapper>
@@ -227,7 +224,6 @@ const Composition1 = () => {
                 <Row gutter={[0, 15]}>
                   <Col xs={8} md={8} lg={6}>
                     <DatePicker
-                      onChange={onChange}
                       bordered={false}
                       suffixIcon={<DownOutlined />}
                       placeholder="Select year"

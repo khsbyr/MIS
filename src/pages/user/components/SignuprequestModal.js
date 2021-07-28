@@ -15,7 +15,7 @@ const layout = {
 
 export default function SignuprequestModal(props) {
   const { Usercontroller, isModalVisible, isEditMode } = props;
-  const [stateController, setStateController] = useState([]);
+  const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
     getService('criteria/get', {
@@ -40,7 +40,7 @@ export default function SignuprequestModal(props) {
         values.userService = { id: values.userServiceId };
         if (isEditMode) {
           putService(`criteria/put${Usercontroller.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -48,7 +48,7 @@ export default function SignuprequestModal(props) {
             });
         } else {
           postService('criteria/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -57,7 +57,7 @@ export default function SignuprequestModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

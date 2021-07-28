@@ -1,14 +1,10 @@
-import { Col, Form, Input, Modal, Row, Button } from 'antd';
+import { Button, Col, Form, Input, Modal, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
-import {
-  getService,
-  postService,
-  putService,
-} from '../../../../service/service';
+import { getService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import ContentWrapper from './attendance.style';
 import validateMessages from '../../../../tools/validateMessage';
+import ContentWrapper from './attendance.style';
 
 const layout = {
   labelCol: {
@@ -19,30 +15,21 @@ const layout = {
   },
 };
 export default function TrainingGuidelinesModal(props) {
-  const {
-    TrainingGuidelinesModalController,
-    Result,
-    isModalVisible,
-    isEditMode,
-    trainingID,
-  } = props;
+  const { Result, isModalVisible, trainingID } = props;
   const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
   const [stateCountry, setStateCountry] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const [form] = Form.useForm();
   const [valueState, setStateValue] = useState([]);
-  const [lazyParams, setLazyParams] = useState({
-    page: 0,
-  });
+  // const [lazyParams, setLazyParams] = useState({
+  //   page: 0,
+  // });
 
   useEffect(() => {
-    console.log(trainingID);
     getService(`trainingGuidelines/get/${trainingID}`).then(result => {
-      console.log(result);
       const value = result;
       setStateValue(value);
-      console.log(value);
       form.setFieldsValue({
         ...result,
         subject: result.subject,
@@ -128,7 +115,6 @@ export default function TrainingGuidelinesModal(props) {
     form
       .validateFields()
       .then(values => {
-        console.log(values);
         values.address = {
           addressDetail: values.AddressDetail,
           country: {
@@ -146,7 +132,7 @@ export default function TrainingGuidelinesModal(props) {
         };
         // if (isEditMode) {
         putService(`trainingGuidelines/update/${valueState.id}`, values)
-          .then(result => {
+          .then(() => {
             props.close(true);
           })
           .catch(error => {
@@ -155,7 +141,7 @@ export default function TrainingGuidelinesModal(props) {
         // }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

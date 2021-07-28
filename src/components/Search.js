@@ -4,7 +4,7 @@ import 'antd/dist/antd.css';
 import { Input } from 'antd';
 
 const { Search } = Input;
-const onSearch = value => console.log(value);
+const onSearch = () => {};
 const Searchs = () => (
   <div className="searchbar" style={{ padding: '15px 10px 10px 10px' }}>
     <Search

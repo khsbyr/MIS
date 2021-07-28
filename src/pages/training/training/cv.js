@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
@@ -20,9 +19,6 @@ import ContentWrapper from '../../criteria/criteria.style';
 import CvModal from './components/CvModal';
 import OrgaStyle from './components/orga.style';
 
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
 const { Content } = Layout;
 
 let editRow;
@@ -209,7 +205,6 @@ const CV = () => {
                   </Col>
                   <Col xs={8} md={8} lg={4}>
                     <DatePicker
-                      onChange={onChange}
                       bordered={false}
                       suffixIcon={<DownOutlined />}
                       placeholder="Select year"

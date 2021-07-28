@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button, Form, Input, Checkbox } from 'antd';
+import { Modal, Form, Input } from 'antd';
 import { requireFieldFocus, errorCatch } from '../../../tools/Tools';
 import { getService, postService, putService } from '../../../service/service';
 import AutoCompleteSelect from '../../../components/Autocomplete';
@@ -43,7 +43,7 @@ export default function RoleModal(props) {
         };
         if (isEditMode) {
           putService(`role/update/${roleController.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -51,7 +51,7 @@ export default function RoleModal(props) {
             });
         } else {
           postService('role/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -60,7 +60,7 @@ export default function RoleModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
 

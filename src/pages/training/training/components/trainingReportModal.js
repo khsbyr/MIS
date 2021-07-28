@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Modal, Row, Upload } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -26,12 +25,11 @@ export default function TrainingReportModal(props) {
   const [tipsID, setTipsID] = useState([]);
   const [resultID, setResultID] = useState([]);
   const [successID, setSuccessID] = useState([]);
-  const [performedProcess1ID, setPerformedProcess1ID] = useState([]);
-  const [performedProcess2ID, setPerformedProcess2ID] = useState([]);
-  const [performedProcess3ID, setPerformedProcess3ID] = useState([]);
-  const [performedProcess4ID, setPerformedProcess4ID] = useState([]);
+  // const [performedProcess1ID, setPerformedProcess1ID] = useState([]);
+  // const [performedProcess2ID, setPerformedProcess2ID] = useState([]);
+  // const [performedProcess3ID, setPerformedProcess3ID] = useState([]);
+  // const [performedProcess4ID, setPerformedProcess4ID] = useState([]);
   // const [selectedTraining, setSelectedTraining] = useState([]);
-  console.log(TrainingReportController);
   useEffect(() => {
     getService(`training/getListForReport/${orgID}`).then(result => {
       if (result) {
@@ -118,24 +116,23 @@ export default function TrainingReportModal(props) {
           TrainingReportController.reportsSuccessOverview.inputText,
         ReportsResult: TrainingReportController.reportsResult.inputText,
         ReportsTips: TrainingReportController.reportsTips.inputText,
-        // PerformedProcess1:
-        //   TrainingReportController.reportsPerformedProcess1 &&
-        //   TrainingReportController.reportsPerformedProcess1.inputText,
-        // PerformedProcess2:
-        //   TrainingReportController.reportsPerformedProcess2 &&
-        //   TrainingReportController.reportsPerformedProcess2.inputText,
-        // PerformedProcess3:
-        //   TrainingReportController.reportsPerformedProcess3 &&
-        //   TrainingReportController.reportsPerformedProcess3.inputText,
-        // PerformedProcess4:
-        //   TrainingReportController.reportsPerformedProcess4 &&
-        //   TrainingReportController.reportsPerformedProcess4.inputText,
+        PerformedProcess1:
+          TrainingReportController.reportsPerformedProcess1 &&
+          TrainingReportController.reportsPerformedProcess1.inputText,
+        PerformedProcess2:
+          TrainingReportController.reportsPerformedProcess2 &&
+          TrainingReportController.reportsPerformedProcess2.inputText,
+        PerformedProcess3:
+          TrainingReportController.reportsPerformedProcess3 &&
+          TrainingReportController.reportsPerformedProcess3.inputText,
+        PerformedProcess4:
+          TrainingReportController.reportsPerformedProcess4 &&
+          TrainingReportController.reportsPerformedProcess4.inputText,
       });
     }
   }, []);
 
   const selectTraining = value => {
-    console.log('training id = ', value);
     getService(`training/get/${value}`).then(result => {
       if (result) {
         const selectedTraining = result;
@@ -309,7 +306,7 @@ export default function TrainingReportModal(props) {
       })
       .catch(info => {
         // eslint-disable-next-line no-console
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

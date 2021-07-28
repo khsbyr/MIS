@@ -1,4 +1,4 @@
-import { Col, Form, Input, Menu, Modal, Row } from 'antd';
+import { Col, Form, Input, Modal, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
 import {
@@ -19,7 +19,6 @@ export default function PlanModal(props) {
 
   useEffect(() => {
     getService(`user/getByOrgId/${orgID}`).then(result => {
-      console.log(result);
       if (result) {
         setStateUser(result || []);
       }
@@ -58,7 +57,7 @@ export default function PlanModal(props) {
         values.training = { id: trainingID };
         if (isEditMode) {
           putService(`trainingTeam/update/${Plancontroller.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -66,7 +65,7 @@ export default function PlanModal(props) {
             });
         } else {
           postService('trainingTeam/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -75,7 +74,7 @@ export default function PlanModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

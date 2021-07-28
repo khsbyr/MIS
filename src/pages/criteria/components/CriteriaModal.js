@@ -43,7 +43,6 @@ export default function CriteriaModal(props) {
   }, []);
 
   const onChange = e => {
-    console.log('radio checked', e.target.value);
     setValue(e.target.value);
   };
 
@@ -51,13 +50,12 @@ export default function CriteriaModal(props) {
     form
       .validateFields()
       .then(values => {
-        console.log(values);
         values.criteriaIndicator = {
           percentIndicator: { value: values.percentIndicator },
         };
         if (isEditMode) {
           putService(`criteria/update/${Criteriacontroller.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -65,7 +63,7 @@ export default function CriteriaModal(props) {
             });
         } else {
           postService('criteria/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -74,7 +72,7 @@ export default function CriteriaModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

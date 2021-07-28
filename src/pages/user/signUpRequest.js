@@ -13,8 +13,7 @@ const User = () => {
   const toolsStore = useContext(ToolsContext);
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     page: 0,
   });
   const PAGESIZE = 20;

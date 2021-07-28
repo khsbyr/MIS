@@ -1,4 +1,4 @@
-import { ExclamationCircleOutlined, PlusSquareFilled } from '@ant-design/icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
@@ -10,18 +10,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useContext } from 'react';
-import { Delete } from '@material-ui/icons';
+import React, { useContext, useEffect, useState } from 'react';
+import AutoCompleteSelect from '../../../components/Autocomplete';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import ContentWrapper from './components/attendance.style';
-import TrainingProgramModal from './components/trainingProgramModal';
-import OrgaStyle from './components/orga.style';
-import AutoCompleteSelect from '../../../components/Autocomplete';
-import StationaryModal from './components/StationaryModal';
 import FuelModal from './components/FuelModal';
+import OrgaStyle from './components/orga.style';
 import RoadModal from './components/RoadModal';
+import StationaryModal from './components/StationaryModal';
 
 // function onChange(date, dateString) {
 //   console.log(date, dateString);
@@ -35,19 +33,19 @@ let isEditModeRoad;
 const Budget = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
+  const [list1, setList1] = useState([]);
+  const [list2, setList2] = useState([]);
+  const [list3, setList3] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisibleFuel, setIsModalVisibleFuel] = useState(false);
   const [isModalVisibleRoad, setIsModalVisibleRoad] = useState(false);
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     page: 0,
   });
-  // eslint-disable-next-line no-unused-vars
-  const [loading, setLoading] = useState(false);
-  // eslint-disable-next-line no-unused-vars
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateTraining, setStateTraining] = useState([]);
-  const [trainingID, setTrainingID] = useState([]);
+  const [setTrainingID] = useState([]);
   const toolsStore = useContext(ToolsContext);
 
   const onInit = () => {
@@ -78,18 +76,40 @@ const Budget = () => {
         setStateTraining(result.content || []);
       }
     });
+    getService('stationeryExpenses/get', list1).then(result => {
+      const listResult = result.content || [];
+      listResult.forEach((item, index) => {
+        item.index = lazyParams.page * PAGESIZE + index + 1;
+      });
+      setList1(listResult);
+      setSelectedRows([]);
+    });
+    getService('hotelTravelExpenses/get', list2).then(result => {
+      const listResult = result.content || [];
+      listResult.forEach((item, index) => {
+        item.index = lazyParams.page * PAGESIZE + index + 1;
+      });
+      setList2(listResult);
+      setSelectedRows([]);
+    });
+    getService('fuelExpenses/get', list3).then(result => {
+      const listResult = result.content || [];
+      listResult.forEach((item, index) => {
+        item.index = lazyParams.page * PAGESIZE + index + 1;
+      });
+      setList3(listResult);
+      setSelectedRows([]);
+    });
   }, [lazyParams]);
 
   const getTrainingProgram = trainingId => {
     getService(`trainingBudget/getByTraining/${trainingId}`, {}).then(
       result => {
         if (result) {
-          console.log(result);
-          const listResult = result || [];
+          const listResult = result.content || [];
           listResult.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });
-          console.log(listResult);
           setList(listResult);
           setSelectedRows([]);
           setTrainingID(trainingId);
@@ -121,7 +141,7 @@ const Budget = () => {
     }
 
     putService(`trainingBudget/delete/${row.id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })
@@ -186,7 +206,7 @@ const Budget = () => {
     }
 
     putService(`trainingBudget/delete/${row.id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })
@@ -249,7 +269,7 @@ const Budget = () => {
     }
 
     putService(`trainingBudget/delete/${row.id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })
@@ -318,40 +338,40 @@ const Budget = () => {
     </>
   );
 
-  const costNameBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Зардлын нэр</span>
-      {row.stationeryExpenses.costName}
-    </>
-  );
+  // const costNameBodyTemplate = row => (
+  //   <>
+  //     <span className="p-column-title">Зардлын нэр</span>
+  //     {row.stationeryExpenses.costName}
+  //   </>
+  // );
 
-  const unitPriceNameBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Нэгж үнэ /₮/</span>
-      {row.stationeryExpenses.unitPrice}
-    </>
-  );
+  // const unitPriceNameBodyTemplate = row => (
+  //   <>
+  //     <span className="p-column-title">Нэгж үнэ /₮/</span>
+  //     {row.stationeryExpenses.unitPrice}
+  //   </>
+  // );
 
-  const quantityNameBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Тоо ширхэг</span>
-      {row.stationeryExpenses.quantity}
-    </>
-  );
+  // const quantityNameBodyTemplate = row => (
+  //   <>
+  //     <span className="p-column-title">Тоо ширхэг</span>
+  //     {row.stationeryExpenses.quantity}
+  //   </>
+  // );
 
-  const numberOfPeopleNameBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Хүний тоо</span>
-      {row.stationeryExpenses.numberOfPeople}
-    </>
-  );
+  // const numberOfPeopleNameBodyTemplate = row => (
+  //   <>
+  //     <span className="p-column-title">Хүний тоо</span>
+  //     {row.stationeryExpenses.numberOfPeople}
+  //   </>
+  // );
 
-  const totalNameBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Дүн /₮/</span>
-      {row.stationeryExpenses.total}
-    </>
-  );
+  // const totalNameBodyTemplate = row => (
+  //   <>
+  //     <span className="p-column-title">Дүн /₮/</span>
+  //     {row.stationeryExpenses.total}
+  //   </>
+  // );
 
   return (
     <ContentWrapper>
@@ -425,7 +445,7 @@ const Budget = () => {
             </Content>
           </Layout>
           <DataTable
-            value={list}
+            value={list1}
             removableSort
             paginator
             rows={10}
@@ -439,29 +459,29 @@ const Budget = () => {
             <Column field="index" header="№" body={indexBodyTemplate} />
 
             <Column
-              field="stationeryExpenses.costName"
+              field="costName"
               header="Зардлын нэр"
-              body={costNameBodyTemplate}
+              // body={costNameBodyTemplate}
             />
             <Column
-              field="stationeryExpenses.unitPrice"
+              field="unitPrice"
               header="Нэгж үнэ /₮/"
-              body={unitPriceNameBodyTemplate}
+              // body={unitPriceNameBodyTemplate}
             />
             <Column
-              field="stationeryExpenses.quantity"
+              field="quantity"
               header="Тоо ширхэг"
-              body={quantityNameBodyTemplate}
+              // body={quantityNameBodyTemplate}
             />
             <Column
-              field="stationeryExpenses.numberOfPeople"
+              field="numberOfPeople"
               header="Хүний тоо"
-              body={numberOfPeopleNameBodyTemplate}
+              // body={numberOfPeopleNameBodyTemplate}
             />
             <Column
-              field="stationeryExpenses.total"
+              field="total"
               header="Дүн /₮/"
-              body={totalNameBodyTemplate}
+              // body={totalNameBodyTemplate}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
@@ -501,7 +521,7 @@ const Budget = () => {
             </Content>
           </Layout>
           <DataTable
-            value={list}
+            value={list2}
             removableSort
             paginator
             rows={10}
@@ -514,20 +534,11 @@ const Budget = () => {
           >
             <Column field="index" header="№" />
 
-            <Column
-              field="hotelTravelExpenses.numberOfPeople"
-              header="МЗҮБ хүний тоо"
-            />
-            <Column
-              field="hotelTravelExpenses.costPerDay"
-              header="Хоногт /₮/"
-            />
-            <Column field="hotelTravelExpenses.total" header="Нийт /₮/" />
-            <Column
-              field="hotelTravelExpenses.costType.name"
-              header=" Төлбөрийн төрөл"
-            />
-            <Column field="hotelTravelExpenses.days" header="Хоног" />
+            <Column field="numberOfPeople" header="МЗҮБ хүний тоо" />
+            <Column field="costPerDay" header="Хоногт /₮/" />
+            <Column field="total" header="Нийт /₮/" />
+            <Column field="costType.name" header=" Төлбөрийн төрөл" />
+            <Column field="days" header="Хоног" />
             <Column headerStyle={{ width: '7rem' }} body={actionRoad} />
           </DataTable>
           {isModalVisibleRoad && (
@@ -566,7 +577,7 @@ const Budget = () => {
             </Content>
           </Layout>
           <DataTable
-            value={list}
+            value={list3}
             removableSort
             paginator
             rows={10}
@@ -578,21 +589,12 @@ const Budget = () => {
             dataKey="id"
           >
             <Column field="index" header="№" body={indexBodyTemplate} />
-            <Column field="fuelExpenses.route" header="Маршрут" />
-            <Column field="fuelExpenses.roadLength" header="Замын урт /км/" />
-            <Column
-              field="fuelExpenses.regionalSupplement"
-              header="Бүсийн нэмэгдэл /%/"
-            />
-            <Column
-              field="fuelExpenses.fuelConsumption"
-              header="Зарцуулах шатахуун /л/"
-            />
-            <Column
-              field="fuelExpenses.fuelCost"
-              header="Шатахууны үнэ /₮/ A92"
-            />
-            <Column field="fuelExpenses.total" header="Нийт /₮/" />
+            <Column field="route" header="Маршрут" />
+            <Column field="roadLength" header="Замын урт /км/" />
+            <Column field="regionalSupplement" header="Бүсийн нэмэгдэл /%/" />
+            <Column field="fuelConsumption" header="Зарцуулах шатахуун /л/" />
+            <Column field="fuelCost" header="Шатахууны үнэ /₮/ A92" />
+            <Column field="total" header="Нийт /₮/" />
             <Column headerStyle={{ width: '7rem' }} body={actionFuel} />
           </DataTable>
           {isModalVisibleFuel && (

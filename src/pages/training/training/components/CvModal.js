@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { ExclamationCircleOutlined, InboxOutlined } from '@ant-design/icons';
 import {
   faCalendarAlt,
@@ -91,7 +90,6 @@ export default function CvModal(props) {
   const [birthDate, setBirthDate] = useState([]);
 
   function onBirthDateChange(date, value) {
-    console.log(date, value);
     setBirthDate(value);
   }
   const onInit = () => {
@@ -657,7 +655,7 @@ export default function CvModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

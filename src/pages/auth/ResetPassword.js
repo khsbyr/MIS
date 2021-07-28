@@ -41,7 +41,7 @@ function ResetPassword() {
         newPassword: password.value,
         repeatPassword: repeatPassword.value,
       })
-        .then(result => {
+        .then(() => {
           message.success('The email was sent successfully');
           history.push('/login');
         })

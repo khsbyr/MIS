@@ -1,6 +1,6 @@
 import { message, Tag } from 'antd';
-import { MSG, ORG_STEP, ORG_WISH } from '../constants/Constant';
 import { Warning } from '../components/Confirm';
+import { ORG_STEP, ORG_WISH } from '../constants/Constant';
 
 export const convertLazyParamsToObj = (lazyParams, searchParam = null) => {
   const obj = { search: searchParam || '' };
@@ -56,7 +56,6 @@ export const errorCatch = error => {
       error.request.statusText === 'Forbidden' &&
       error.request.status === 403
     ) {
-      // console.log(`${MSG.NOT_AUTHORIZED} ===>> ${msg}`);
       Warning();
       return;
     }
@@ -69,7 +68,6 @@ export const errorCatch = error => {
     }
     message.warning(msg);
   } else {
-    // console.log('Error', error.message);
     message.warning(error.message);
   }
 };

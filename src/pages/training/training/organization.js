@@ -78,7 +78,7 @@ const Organization = () => {
       return;
     }
     putService(`organization/delete/${row.id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })

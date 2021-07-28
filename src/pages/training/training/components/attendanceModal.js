@@ -1,10 +1,6 @@
 import { Form, Input, Modal, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
-import {
-  getService,
-  postService,
-  putService,
-} from '../../../../service/service';
+import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import ContentWrapper from './attendance.style';
 import validateMessages from '../../../../tools/validateMessage';
@@ -20,13 +16,11 @@ const layout = {
 export default function TrainingProgramModal(props) {
   const { Attendancecontroller, isModalVisible, isEditMode, trainingID } =
     props;
-  console.log(props);
   const [form] = Form.useForm();
   const { Option } = Select;
   const [genderID, setGenderID] = useState([]);
 
   function handleChange(value) {
-    console.log(`selected ${value}`);
     setGenderID(value);
   }
 
@@ -48,7 +42,7 @@ export default function TrainingProgramModal(props) {
         values.gender = { id: genderID };
         if (isEditMode) {
           putService(`participants/update/${Attendancecontroller.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -56,7 +50,7 @@ export default function TrainingProgramModal(props) {
             });
         } else {
           postService('participants/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -65,7 +59,7 @@ export default function TrainingProgramModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

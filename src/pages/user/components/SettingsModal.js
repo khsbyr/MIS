@@ -1,4 +1,4 @@
-import { Col, Form, Input, Modal, Radio, Row, Select } from 'antd';
+import { Col, Form, Input, Modal, Radio, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { getService, postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
@@ -7,9 +7,7 @@ import validateMessages from '../../../tools/validateMessage';
 
 export default function SettingsModal(props) {
   const { Usercontroller, isModalVisible, isEditMode } = props;
-  const [setStateController] = useState([]);
   const [form] = Form.useForm();
-  const { Option } = Select;
   const [stateCountry, setStateCountry] = useState([]);
   const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
@@ -74,7 +72,6 @@ export default function SettingsModal(props) {
 
   const onChange = e => {
     getService(`gender/get/${e.target.value}`);
-    console.log('radio checked', e.target.value);
     setValue(e.target.value);
   };
   const save = () => {
@@ -83,7 +80,7 @@ export default function SettingsModal(props) {
       .then(values => {
         if (isEditMode) {
           putService(`user/update${Usercontroller.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -91,7 +88,7 @@ export default function SettingsModal(props) {
             });
         } else {
           postService('user/saveByAdmin/', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -100,7 +97,7 @@ export default function SettingsModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

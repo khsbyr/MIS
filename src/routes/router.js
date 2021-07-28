@@ -2,8 +2,8 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import {
   ADMIN_PAGE,
-  REGISTER,
   FORGET_PASSWORD,
+  REGISTER,
   RESET_PASSWORD,
 } from '../settings/constantRoutes';
 import Layouts from '../layout/layouts';
