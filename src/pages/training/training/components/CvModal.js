@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { ExclamationCircleOutlined, InboxOutlined } from '@ant-design/icons';
 import {
   faCalendarAlt,
@@ -35,7 +36,7 @@ import {
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import CertificateModal from './CertificateModal';
-import ConsSerExperienceModal from './ConsSerExperienceModa';
+import ExperienceAdviceModal from './ExperienceAdviceModal';
 import ContentWrapper from './cv.styled';
 import EducationModal from './EducationModal';
 import ExperienceModal from './ExperienceModal';
@@ -61,7 +62,7 @@ export default function CvModal(props) {
   const [isModalVisibleEducation, setIsModalVisibleEducation] = useState(false);
   const [isModalVisibleExperience, setIsModalVisibleExperience] =
     useState(false);
-  const [isModalVisibleConsSerExperience, setIsModalVisibleConsSerExperience] =
+  const [isModalVisibleExperienceAdvice, setIsModalVisibleExperienceAdvice] =
     useState(false);
   const [isModalVisibleTeacherExperience, setIsModalVisibleTeacherExperience] =
     useState(false);
@@ -82,13 +83,12 @@ export default function CvModal(props) {
   const [list, setList] = useState([]);
   const [listEducation, setListEducation] = useState([]);
   const [listExperience, setListExperience] = useState([]);
-  const [lazyParams, setLazyParams] = useState({
+  const [listExperienceAdvice, setListExperienceAdvice] = useState([]);
+  const [lazyParams] = useState({
     page: 0,
   });
-  const [loading, setLoading] = useState(false);
   const PAGESIZE = 20;
   const [birthDate, setBirthDate] = useState([]);
-  const { RangePicker } = DatePicker;
 
   function onBirthDateChange(date, value) {
     console.log(date, value);
@@ -166,10 +166,38 @@ export default function CvModal(props) {
         });
     }
   };
+
+  const onInitExperienceAdvice = () => {
+    toolsStore.setIsShowLoader(false);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    if (Trainerscontroller !== null) {
+      getService(
+        `expierenceForAdvice/getByTrainerId/${Trainerscontroller.id}`,
+        listExperienceAdvice
+      )
+        .then(result => {
+          const listexperienceAdvice = result || [];
+          listexperienceAdvice.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setListExperienceAdvice(listexperienceAdvice);
+          setSelectedRows([]);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
+        });
+    }
+  };
+
   useEffect(() => {
     onInit();
     onInitEducation();
     onInitExperience();
+    onInitExperienceAdvice();
     getService('country/get').then(result => {
       if (result) {
         setStateCountry(result || []);
@@ -180,7 +208,6 @@ export default function CvModal(props) {
         setStateAimag(result || []);
       }
     });
-    // console.log('asd', Trainerscontroller);
     if (Trainerscontroller !== null) {
       getService(`soum/getList/${Trainerscontroller.address.aimag.id}`).then(
         result => {
@@ -275,7 +302,7 @@ export default function CvModal(props) {
       return;
     }
     putService(`education/delete/${row.id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInitExperience();
       })
@@ -339,7 +366,7 @@ export default function CvModal(props) {
       return;
     }
     putService(`expierence/delete/${row.id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInitExperience();
       })
@@ -396,13 +423,13 @@ export default function CvModal(props) {
     if (isSuccess) onInit();
   };
 
-  const editConsSerExperience = row => {
+  const editExperienceAdvice = row => {
     editRow = row.data;
     isEditModee = true;
-    setIsModalVisibleConsSerExperience(true);
+    setIsModalVisibleExperienceAdvice(true);
   };
 
-  const popConsSerExperience = () => {
+  const popExperienceAdvice = () => {
     if (selectedRows.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
@@ -410,28 +437,28 @@ export default function CvModal(props) {
     }
   };
 
-  const actionConsSerExperience = row => (
+  const actionExperienceAdvice = row => (
     <>
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => editConsSerExperience(row)}
+        onClick={() => editExperienceAdvice(row)}
       />
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => popConsSerExperience(row)}
+        onClick={() => popExperienceAdvice(row)}
       />
     </>
   );
 
-  const addConsSerExperience = () => {
-    setIsModalVisibleConsSerExperience(true);
+  const addExperienceAdvice = () => {
+    setIsModalVisibleExperienceAdvice(true);
     isEditModee = false;
   };
 
-  const closeModalConsSerExperience = (isSuccess = false) => {
-    setIsModalVisibleConsSerExperience(false);
+  const closeModalExperienceAdvice = (isSuccess = false) => {
+    setIsModalVisibleExperienceAdvice(false);
     if (isSuccess) onInit();
   };
 
@@ -613,7 +640,7 @@ export default function CvModal(props) {
         values.birthDate = birthDate;
         if (isEditMode) {
           putService(`trainers/update/${Trainerscontroller.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -621,7 +648,7 @@ export default function CvModal(props) {
             });
         } else {
           postService('trainers/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -787,7 +814,6 @@ export default function CvModal(props) {
                 <DataTable
                   value={listEducation}
                   removableSort
-                  paginator
                   rows={10}
                   className="p-datatable-responsive-demo"
                   selection={selectedRows}
@@ -835,11 +861,9 @@ export default function CvModal(props) {
                 <DataTable
                   value={listExperience}
                   removableSort
-                  paginator
                   rows={10}
                   className="p-datatable-responsive-demo"
                   selection={selectedRows}
-                  // onRowClick={edit}
                   onSelectionChange={e => {
                     setSelectedRows(e.value);
                   }}
@@ -871,7 +895,7 @@ export default function CvModal(props) {
                 type="text"
                 className="export"
                 icon={<FontAwesomeIcon icon={faPlus} />}
-                onClick={addConsSerExperience}
+                onClick={addExperienceAdvice}
                 style={{ float: 'right' }}
               >
                 Нэмэх
@@ -880,9 +904,8 @@ export default function CvModal(props) {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <DataTable
-                  value={list}
+                  value={listExperienceAdvice}
                   removableSort
-                  paginator
                   rows={10}
                   className="p-datatable-responsive-demo"
                   selection={selectedRows}
@@ -893,20 +916,20 @@ export default function CvModal(props) {
                   dataKey="id"
                 >
                   <Column field="index" header="№" style={{ width: '50px' }} />
-                  <Column field="name" header="Албан тушаал" />
-                  <Column field="" header="Байгууллагын нэр" />
-                  <Column field="" header="Огноо" />
+                  <Column field="position" header="Албан тушаал" />
+                  <Column field="organizationName" header="Байгууллагын нэр" />
+                  <Column field="hiredDate" header="Огноо" />
                   <Column
                     headerStyle={{ width: '7rem' }}
-                    body={actionConsSerExperience}
+                    body={actionExperienceAdvice}
                   />
                 </DataTable>
-                {isModalVisibleConsSerExperience && (
-                  <ConsSerExperienceModal
+                {isModalVisibleExperienceAdvice && (
+                  <ExperienceAdviceModal
                     Criteriacontroller={editRow}
-                    isModalVisible={isModalVisibleConsSerExperience}
-                    close={closeModalConsSerExperience}
-                    isEditMode={isEditMode}
+                    isModalVisible={isModalVisibleExperienceAdvice}
+                    close={closeModalExperienceAdvice}
+                    isEditMode={isEditModee}
                   />
                 )}
               </Col>
@@ -929,7 +952,6 @@ export default function CvModal(props) {
                 <DataTable
                   value={list}
                   removableSort
-                  paginator
                   rows={10}
                   className="p-datatable-responsive-demo"
                   selection={selectedRows}
@@ -977,7 +999,6 @@ export default function CvModal(props) {
                 <DataTable
                   value={list}
                   removableSort
-                  paginator
                   rows={10}
                   className="p-datatable-responsive-demo"
                   selection={selectedRows}
@@ -1024,7 +1045,6 @@ export default function CvModal(props) {
                 <DataTable
                   value={list}
                   removableSort
-                  paginator
                   rows={10}
                   className="p-datatable-responsive-demo"
                   selection={selectedRows}
@@ -1072,7 +1092,6 @@ export default function CvModal(props) {
                 <DataTable
                   value={list}
                   removableSort
-                  paginator
                   rows={10}
                   className="p-datatable-responsive-demo"
                   selection={selectedRows}

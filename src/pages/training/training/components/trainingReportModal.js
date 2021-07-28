@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Modal, Row, Upload } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -22,7 +23,15 @@ export default function TrainingReportModal(props) {
   const [trainingID, setTrainingID] = useState([]);
   const [guidelinesID, setGuidelinesID] = useState([]);
   const [reportsAimID, setReportsAimID] = useState([]);
-
+  const [tipsID, setTipsID] = useState([]);
+  const [resultID, setResultID] = useState([]);
+  const [successID, setSuccessID] = useState([]);
+  const [performedProcess1ID, setPerformedProcess1ID] = useState([]);
+  const [performedProcess2ID, setPerformedProcess2ID] = useState([]);
+  const [performedProcess3ID, setPerformedProcess3ID] = useState([]);
+  const [performedProcess4ID, setPerformedProcess4ID] = useState([]);
+  // const [selectedTraining, setSelectedTraining] = useState([]);
+  console.log(TrainingReportController);
   useEffect(() => {
     getService(`training/getListForReport/${orgID}`).then(result => {
       if (result) {
@@ -61,6 +70,26 @@ export default function TrainingReportModal(props) {
       setTrainingID(TrainingReportController.training.id);
       setGuidelinesID(TrainingReportController.training.training_guidelines.id);
       setReportsAimID(TrainingReportController.reportsAim.id);
+      setTipsID(TrainingReportController.reportsTips.id);
+      setResultID(TrainingReportController.reportsResult.id);
+      setSuccessID(TrainingReportController.reportsSuccessOverview.id);
+      // setPerformedProcess1ID(
+      //   TrainingReportController.reportsPerformedProcess1 &&
+      //     TrainingReportController.reportsPerformedProcess1.id
+      // );
+      // setPerformedProcess2ID(
+      //   TrainingReportController.reportsPerformedProcess2 &&
+      //     TrainingReportController.reportsPerformedProcess2.id
+      // );
+      // setPerformedProcess3ID(
+      //   TrainingReportController.reportsPerformedProcess3 &&
+      //     TrainingReportController.reportsPerformedProcess3.id
+      // );
+      // setPerformedProcess4ID(
+      //   TrainingReportController.reportsPerformedProcess4 &&
+      //     TrainingReportController.reportsPerformedProcess4.id
+      // );
+
       form.setFieldsValue({
         ...TrainingReportController,
         CountryID: TrainingReportController.training.training_guidelines.address
@@ -80,8 +109,6 @@ export default function TrainingReportModal(props) {
           : '',
         TrainingName: TrainingReportController.training.name,
         TotalParticipants: TrainingReportController.training.totalParticipants,
-        ResponsibleUser:
-          TrainingReportController.training.organization.responsibleUser.id,
         ResponsibleUserName:
           TrainingReportController.training.organization.responsibleUser
             .firstname,
@@ -91,38 +118,81 @@ export default function TrainingReportModal(props) {
           TrainingReportController.reportsSuccessOverview.inputText,
         ReportsResult: TrainingReportController.reportsResult.inputText,
         ReportsTips: TrainingReportController.reportsTips.inputText,
+        // PerformedProcess1:
+        //   TrainingReportController.reportsPerformedProcess1 &&
+        //   TrainingReportController.reportsPerformedProcess1.inputText,
+        // PerformedProcess2:
+        //   TrainingReportController.reportsPerformedProcess2 &&
+        //   TrainingReportController.reportsPerformedProcess2.inputText,
+        // PerformedProcess3:
+        //   TrainingReportController.reportsPerformedProcess3 &&
+        //   TrainingReportController.reportsPerformedProcess3.inputText,
+        // PerformedProcess4:
+        //   TrainingReportController.reportsPerformedProcess4 &&
+        //   TrainingReportController.reportsPerformedProcess4.inputText,
       });
     }
-    // else {
-    //   form.setFieldsValue({
-    //     ...training,
-    //     CountryID: training.training_guidelines.address ? training.training_guidelines.address.country.id : '',
-    //     AimagID: TrainingReportController.training.training_guidelines.address ? TrainingReportController.training.training_guidelines.address.aimag.id : '',
-    //     SoumID: TrainingReportController.training.training_guidelines.address ? TrainingReportController.training.training_guidelines.address.soum.id : '',
-    //     BagID: TrainingReportController.training.training_guidelines.address ? TrainingReportController.training.training_guidelines.address.bag.id : '',
-    //     TrainingName: TrainingReportController.training.name,
-    //     TotalParticipants: TrainingReportController.training.totalParticipants,
-    //     ResponsibleUser: TrainingReportController.training.organization.responsibleUser.id,
-    //     ResponsibleUserName: TrainingReportController.training.organization.responsibleUser.firstname,
-    //     PerformanceBudget: TrainingReportController.training.performanceBudget,
-    //     ReportsAim: TrainingReportController.reportsAim.inputText,
-    //     ReportsSuccessOverview: TrainingReportController.reportsSuccessOverview.inputText,
-    //     ReportsResult: TrainingReportController.reportsResult.inputText,
-    //     ReportsTips: TrainingReportController.reportsTips.inputText,
-    //   });
-    // }
   }, []);
 
   const selectTraining = value => {
-    console.log(value);
-    console.log(orgID);
-    getService(`training/getListForReport/${orgID}`).then(result => {
-      console.log('asdas', result);
+    console.log('training id = ', value);
+    getService(`training/get/${value}`).then(result => {
       if (result) {
-        setTraining(result || []);
+        const selectedTraining = result;
+        setTrainingID(selectedTraining.id);
+        setGuidelinesID(
+          selectedTraining.training_guidelines &&
+            selectedTraining.training_guidelines.id
+        );
+        setReportsAimID(
+          selectedTraining.reportsAim && selectedTraining.reportsAim.id
+        );
+        setTipsID(
+          selectedTraining.reportsTips && selectedTraining.reportsTips.id
+        );
+        setResultID(
+          selectedTraining.reportsResult && selectedTraining.reportsResult.id
+        );
+        setSuccessID(
+          selectedTraining.reportsSuccessOverview &&
+            selectedTraining.reportsSuccessOverview.id
+        );
+        // setPerformedProcess1ID(
+        //   TrainingReportController.reportsPerformedProcess1.id
+        // );
+        // setPerformedProcess2ID(
+        //   TrainingReportController.reportsPerformedProcess2.id
+        // );
+        // setPerformedProcess3ID(
+        //   TrainingReportController.reportsPerformedProcess3.id
+        // );
+        // setPerformedProcess4ID(
+        //   TrainingReportController.reportsPerformedProcess4.id
+        // );
+
+        form.setFieldsValue({
+          ...selectedTraining,
+          CountryID:
+            selectedTraining.training_guidelines &&
+            selectedTraining.training_guidelines.address.country.id,
+          AimagID: selectedTraining.training_guidelines
+            ? selectedTraining.training_guidelines.address.aimag.id
+            : '',
+          SoumID: selectedTraining.training_guidelines
+            ? selectedTraining.training_guidelines.address.soum.id
+            : '',
+          BagID: selectedTraining.training_guidelines
+            ? selectedTraining.training_guidelines.address.bag.id
+            : '',
+          TrainingName: selectedTraining.name,
+          TotalParticipants: selectedTraining.totalParticipants,
+          PerformanceBudget: selectedTraining.performanceBudget,
+          ResponsibleUserName:
+            selectedTraining.organization &&
+            selectedTraining.organization.responsibleUser.firstname,
+        });
       }
     });
-    setTrainingID(value);
   };
 
   const getAimag = countryId => {
@@ -138,10 +208,8 @@ export default function TrainingReportModal(props) {
   };
 
   const getSum = aimagId => {
-    console.log(`aimagId${aimagId}`);
     getService(`soum/getList/${aimagId}`, {}).then(result => {
       if (result) {
-        console.log(`asd${result}`);
         setStateSum(result || []);
       }
     });
@@ -172,7 +240,6 @@ export default function TrainingReportModal(props) {
           totalParticipants: values.TotalParticipants,
           organization: {
             id: orgID,
-            responsibleUser: { id: values.ResponsibleUser },
           },
           performanceBudget: values.PerformanceBudget,
           training_guidelines: {
@@ -193,15 +260,38 @@ export default function TrainingReportModal(props) {
             },
           },
         };
-        // values.training = {organization: {id: orgID}}
         values.reportsAim = { id: reportsAimID, inputText: values.ReportsAim };
-        // values.reportsTips = {inputText: values.ReportsTips}
+        values.reportsTips = { id: tipsID, inputText: values.ReportsTips };
+        values.reportsResult = {
+          id: resultID,
+          inputText: values.ReportsResult,
+        };
+        values.reportsSuccessOverview = {
+          id: successID,
+          inputText: values.ReportsSuccessOverview,
+        };
+        // values.reportsPerformedProcess1 = {
+        //   id: performedProcess1ID,
+        //   inputText: values.PerformedProcess1,
+        // };
+        // values.reportsPerformedProcess2 = {
+        //   id: performedProcess2ID,
+        //   inputText: values.PerformedProcess2,
+        // };
+        // values.reportsPerformedProcess3 = {
+        //   id: performedProcess3ID,
+        //   inputText: values.PerformedProcess3,
+        // };
+        // values.reportsPerformedProcess4 = {
+        //   id: performedProcess4ID,
+        //   inputText: values.PerformedProcess4,
+        // };
         if (isEditMode) {
           putService(
             `trainingReport/update/${TrainingReportController.id}`,
             values
           )
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -209,7 +299,7 @@ export default function TrainingReportModal(props) {
             });
         } else {
           postService('trainingReport/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -218,6 +308,7 @@ export default function TrainingReportModal(props) {
         }
       })
       .catch(info => {
+        // eslint-disable-next-line no-console
         console.log('Validate Failed:', info);
       });
   };
@@ -249,7 +340,6 @@ export default function TrainingReportModal(props) {
                       disabled
                       valueField="id"
                       data={training}
-                      // onChange={(value) => selectAimag(value)}
                     />
                   ) : (
                     <AutoCompleteSelect
@@ -264,22 +354,14 @@ export default function TrainingReportModal(props) {
                   label="Сургалтад хамрагдсан:"
                   name="TotalParticipants"
                 >
-                  {isEditMode ? (
-                    <Input className="FormItem" disabled />
-                  ) : (
-                    <Input className="FormItem" />
-                  )}
+                  <Input className="FormItem" disabled />
                 </Form.Item>
 
                 <Form.Item
                   label="Сургалт явуулсан байгууллага, хүний нэр:"
-                  name="ResponsibleUser"
+                  name="ResponsibleUserName"
                 >
-                  {isEditMode ? (
-                    <Input className="FormItem" disabled />
-                  ) : (
-                    <Input className="FormItem" />
-                  )}
+                  <Input className="FormItem" disabled />
                 </Form.Item>
 
                 <Form.Item label="Гүйцэтгэлийн төсөв:" name="PerformanceBudget">
@@ -289,63 +371,35 @@ export default function TrainingReportModal(props) {
 
               <Col xs={24} md={24} lg={12}>
                 <Form.Item label="Сургалт явагдсан газар:" name="CountryID">
-                  {isEditMode ? (
-                    <AutoCompleteSelect
-                      disabled
-                      valueField="id"
-                      data={stateCountry}
-                      onChange={value => selectCountry(value)}
-                    />
-                  ) : (
-                    <AutoCompleteSelect
-                      valueField="id"
-                      data={stateCountry}
-                      onChange={value => selectCountry(value)}
-                    />
-                  )}
+                  <AutoCompleteSelect
+                    disabled
+                    valueField="id"
+                    data={stateCountry}
+                    onChange={value => selectCountry(value)}
+                  />
                 </Form.Item>
                 <Form.Item label="Аймаг, хот:" name="AimagID">
-                  {isEditMode ? (
-                    <AutoCompleteSelect
-                      disabled
-                      valueField="id"
-                      data={stateAimag}
-                      onChange={value => selectAimag(value)}
-                    />
-                  ) : (
-                    <AutoCompleteSelect
-                      valueField="id"
-                      data={stateAimag}
-                      onChange={value => selectAimag(value)}
-                    />
-                  )}
+                  <AutoCompleteSelect
+                    disabled
+                    valueField="id"
+                    data={stateAimag}
+                    onChange={value => selectAimag(value)}
+                  />
                 </Form.Item>
                 <Form.Item name="SoumID" layout="vertical" label="Сум, Дүүрэг:">
-                  {isEditMode ? (
-                    <AutoCompleteSelect
-                      disabled
-                      valueField="id"
-                      data={stateSum}
-                      onChange={value => selectSum(value)}
-                    />
-                  ) : (
-                    <AutoCompleteSelect
-                      valueField="id"
-                      data={stateSum}
-                      onChange={value => selectSum(value)}
-                    />
-                  )}
+                  <AutoCompleteSelect
+                    disabled
+                    valueField="id"
+                    data={stateSum}
+                    onChange={value => selectSum(value)}
+                  />
                 </Form.Item>
                 <Form.Item name="BagID" layout="vertical" label="Баг, Хороо:">
-                  {isEditMode ? (
-                    <AutoCompleteSelect
-                      disabled
-                      valueField="id"
-                      data={stateBag}
-                    />
-                  ) : (
-                    <AutoCompleteSelect valueField="id" data={stateBag} />
-                  )}
+                  <AutoCompleteSelect
+                    disabled
+                    valueField="id"
+                    data={stateBag}
+                  />
                 </Form.Item>
               </Col>
               <Col xs={24} md={24} lg={3} />
@@ -368,42 +422,50 @@ export default function TrainingReportModal(props) {
                 </h1>
                 <Row gutter={[32, 32]}>
                   <Col xs={24} md={12} lg={12}>
-                    <Input.TextArea
-                      placeholder="(2.1. Суралцагчийн ирцийн мэдээлэл, нэгтгэл, дүгнэлт)"
-                      style={{
-                        width: '100%',
-                        height: '140px',
-                      }}
-                    />
+                    <Form.Item name="PerformedProcess1">
+                      <Input.TextArea
+                        placeholder="(2.1. Суралцагчийн ирцийн мэдээлэл, нэгтгэл, дүгнэлт)"
+                        style={{
+                          width: '100%',
+                          height: '140px',
+                        }}
+                      />
+                    </Form.Item>
                   </Col>
                   <Col xs={24} md={12} lg={12}>
-                    <Input.TextArea
-                      placeholder="(2.2. Хичээлийн явц, сургалтын хэлбэр, аргачлал)"
-                      style={{
-                        width: '100%',
-                        height: '140px',
-                      }}
-                    />
+                    <Form.Item name="PerformedProcess2">
+                      <Input.TextArea
+                        placeholder="(2.2. Хичээлийн явц, сургалтын хэлбэр, аргачлал)"
+                        style={{
+                          width: '100%',
+                          height: '140px',
+                        }}
+                      />
+                    </Form.Item>
                   </Col>
                 </Row>
                 <Row gutter={[32, 32]} style={{ marginTop: '32px' }}>
                   <Col xs={24} md={12} lg={12}>
-                    <Input.TextArea
-                      placeholder="(2.3. Сургалтын тараах материал,  гарын авлагын тухай)"
-                      style={{
-                        width: '100%',
-                        height: '140px',
-                      }}
-                    />
+                    <Form.Item name="PerformedProcess3">
+                      <Input.TextArea
+                        placeholder="(2.3. Сургалтын тараах материал,  гарын авлагын тухай)"
+                        style={{
+                          width: '100%',
+                          height: '140px',
+                        }}
+                      />
+                    </Form.Item>
                   </Col>
                   <Col xs={24} md={12} lg={12}>
-                    <Input.TextArea
-                      placeholder="(2.4. Сургалтын танхим, зохион байгуулалтын тухай)"
-                      style={{
-                        width: '100%',
-                        height: '140px',
-                      }}
-                    />
+                    <Form.Item name="PerformedProcess4">
+                      <Input.TextArea
+                        placeholder="(2.4. Сургалтын танхим, зохион байгуулалтын тухай)"
+                        style={{
+                          width: '100%',
+                          height: '140px',
+                        }}
+                      />
+                    </Form.Item>
                   </Col>
                 </Row>
                 <h1 className="title">3. Амжилт, бэрхшээлийн тойм</h1>
@@ -432,7 +494,7 @@ export default function TrainingReportModal(props) {
                 <h1 className="title">5. Зөвлөмж</h1>
                 <Form.Item name="ReportsTips">
                   <Input.TextArea
-                    placeholder="((Үйлчлүүлэгчдэд шаардлагатай цаашдын сургалт/зөвлөгөө зэрэг)"
+                    placeholder="(Үйлчлүүлэгчдэд шаардлагатай цаашдын сургалт/зөвлөгөө зэрэг)"
                     style={{
                       width: '100%',
                       height: '140px',

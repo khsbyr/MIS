@@ -57,6 +57,13 @@ const ContentWrapper = styled.div`
     > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
     background-color: #fff;
   }
+  .FormItem {
+    width: 100%;
+    height: 40px;
+    @media (max-width: 991px) {
+      width: 100%;
+    }
+  }
 `;
 
 export default ContentWrapper;

@@ -18,7 +18,7 @@ const layout = {
 };
 
 export default function RoadModal(props) {
-  const { Attendancecontroller, isModalVisible, isEditMode } = props;
+  const { Roadcontroller, isModalVisible, isEditMode } = props;
   const [stateController, setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
@@ -31,9 +31,9 @@ export default function RoadModal(props) {
     });
 
     if (isEditMode) {
-      getService(`criteria/get${Attendancecontroller.id}`).then(result => {
-        Attendancecontroller.userServiceId = result.userService.id;
-        form.setFieldsValue({ ...Attendancecontroller });
+      getService(`criteria/get${Roadcontroller.id}`).then(result => {
+        Roadcontroller.userServiceId = result.userService.id;
+        form.setFieldsValue({ ...Roadcontroller });
       });
     }
   }, []);
@@ -43,7 +43,7 @@ export default function RoadModal(props) {
       .then(values => {
         values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService(`criteria/put${Attendancecontroller.id}`, values)
+          putService(`criteria/put${Roadcontroller.id}`, values)
             .then(result => {
               props.close(true);
             })
