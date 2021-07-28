@@ -2,12 +2,7 @@ import React, { useState, useEffect, Suspense, useContext } from 'react';
 import { TreeTable } from 'primereact/treetable';
 import { Column } from 'primereact/column';
 import { Button, message, Layout, Checkbox, Tooltip, Row, Col } from 'antd';
-import {
-  FolderAddFilled,
-  DeleteFilled,
-  CaretUpOutlined,
-  CaretDownOutlined,
-} from '@ant-design/icons';
+import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPlus,
@@ -42,9 +37,7 @@ export default function MenuSettings() {
 
   const convertTree = listArg => {
     const list = listArg;
-    console.log(list);
     list.forEach(menu => {
-      console.log(menu);
       menu.key = menu.id;
       menu.data = menu;
       menu.menus = convertTree(menu.menus);
@@ -57,7 +50,6 @@ export default function MenuSettings() {
     getService(url)
       .then(data => {
         const list = data.content || [];
-        console.log(convertTree(list));
         setMenuList(convertTree(list));
         setSelectedMenus([]);
         toolsStore.setIsShowLoader(false);

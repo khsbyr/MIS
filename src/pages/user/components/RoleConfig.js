@@ -51,8 +51,7 @@ export default function RoleConfig(props) {
     });
   }, []);
 
-  const onCheck = (checkedKeysValue, info) => {
-    console.log('onCheck', info);
+  const onCheck = checkedKeysValue => {
     setCheckedKeys(checkedKeysValue);
   };
 

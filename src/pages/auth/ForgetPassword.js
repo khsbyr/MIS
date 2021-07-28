@@ -32,7 +32,7 @@ function ForgetPassword() {
     if (email.value) {
       toolsStore.setIsShowLoader(true);
       postService('user/forgetPassword', { resetEmailOrUsername: email.value })
-        .then(result => {
+        .then(() => {
           message.success('The email was sent successfully');
           history.push('/login');
         })
