@@ -72,7 +72,7 @@ const Criteria = () => {
       return;
     }
     putService(`criteria/delete/${row.id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })

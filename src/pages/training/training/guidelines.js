@@ -19,9 +19,6 @@ import ContentWrapper from '../../criteria/criteria.style';
 import GuidelinesModal from './components/GuidelinesModal';
 import OrgaStyle from './components/orga.style';
 
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
 const { Content } = Layout;
 
 let editRow;
@@ -30,7 +27,7 @@ const Guidelines = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     page: 0,
   });
   const toolsStore = useContext(ToolsContext);
@@ -106,7 +103,7 @@ const Guidelines = () => {
     }
 
     putService(`training/delete/${row.id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })
@@ -231,7 +228,6 @@ const Guidelines = () => {
                   </Col>
                   <Col xs={8} md={8} lg={4}>
                     <DatePicker
-                      onChange={onChange}
                       bordered={false}
                       suffixIcon={<DownOutlined />}
                       placeholder="Select year"

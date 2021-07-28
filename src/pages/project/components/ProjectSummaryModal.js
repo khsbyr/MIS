@@ -1,15 +1,5 @@
-import {
-  Col,
-  DatePicker,
-  Form,
-  Input,
-  Modal,
-  Row,
-  Select,
-  Table,
-  Upload,
-} from 'antd';
-import React, { useEffect, useState } from 'react';
+import { Col, DatePicker, Form, Input, Modal, Row, Select, Table } from 'antd';
+import React, { useEffect } from 'react';
 import { postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
@@ -67,7 +57,6 @@ const dataa = [
     uureg: 'Албан тушаал',
   },
 ];
-const { Dragger } = Upload;
 
 const layout = {
   labelCol: {
@@ -80,7 +69,6 @@ const layout = {
 
 export default function ProjectSummaryModal(props) {
   const { Guidelinescontroller, isModalVisible, isEditMode } = props;
-  const [stateController, setStateController] = useState([]);
   const [form] = Form.useForm();
   const { Option } = Select;
   const { RangePicker } = DatePicker;
@@ -103,7 +91,7 @@ export default function ProjectSummaryModal(props) {
       .then(values => {
         if (isEditMode) {
           putService(`trainingGuidelines/put${Guidelinescontroller.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -111,7 +99,7 @@ export default function ProjectSummaryModal(props) {
             });
         } else {
           postService('trainingGuidelines/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -120,7 +108,7 @@ export default function ProjectSummaryModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

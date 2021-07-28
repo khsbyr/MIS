@@ -17,9 +17,6 @@ import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ProjectSummaryModal from './components/ProjectSummaryModal';
 
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
 const { Content } = Layout;
 
 let editRow;
@@ -28,7 +25,7 @@ const Briefdraft = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     page: 0,
   });
   const PAGESIZE = 20;
@@ -67,7 +64,7 @@ const Briefdraft = () => {
       return;
     }
     putService(`organization/delete/${selectedRows[0].id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })
@@ -108,7 +105,7 @@ const Briefdraft = () => {
     isEditMode = false;
   };
 
-  const action = row => (
+  const action = () => (
     <>
       <Button
         type="text"
@@ -162,7 +159,6 @@ const Briefdraft = () => {
                 <Row gutter={[0, 15]}>
                   <Col xs={8} md={8} lg={6}>
                     <DatePicker
-                      onChange={onChange}
                       bordered={false}
                       suffixIcon={<DownOutlined />}
                       placeholder="Select year"

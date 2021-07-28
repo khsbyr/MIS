@@ -1,13 +1,13 @@
+import { Form, Input, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, DatePicker } from 'antd';
 import {
   getService,
   postService,
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import ContentWrapper from './cv.styled';
 import validateMessages from '../../../../tools/validateMessage';
+import ContentWrapper from './cv.styled';
 
 const layout = {
   labelCol: {
@@ -20,10 +20,10 @@ const layout = {
 
 export default function StationaryModal(props) {
   const { Stationarycontroller, isModalVisible, isEditMode } = props;
-  const [stateController, setStateController] = useState([]);
+  const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
-    getService('criteria/get', {
+    getService('stationeryExpenses/get', {
       search: 'status:true',
     }).then(result => {
       if (result) {
@@ -32,10 +32,12 @@ export default function StationaryModal(props) {
     });
 
     if (isEditMode) {
-      getService(`criteria/get${Stationarycontroller.id}`).then(result => {
-        Stationarycontroller.userServiceId = result.userService.id;
-        form.setFieldsValue({ ...Stationarycontroller });
-      });
+      getService(`stationeryExpenses/get${Stationarycontroller.id}`).then(
+        result => {
+          Stationarycontroller.userServiceId = result.userService.id;
+          form.setFieldsValue({ ...Stationarycontroller });
+        }
+      );
     }
   }, []);
   const save = () => {
@@ -43,16 +45,16 @@ export default function StationaryModal(props) {
       .validateFields()
       .then(values => {
         if (isEditMode) {
-          putService(`criteria/put${Stationarycontroller.id}`, values)
-            .then(result => {
+          putService(`stationeryExpenses/put${Stationarycontroller.id}`, values)
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService('criteria/post', values)
-            .then(result => {
+          postService('stationeryExpenses/post', values)
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -61,7 +63,9 @@ export default function StationaryModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
+
+        // errorCatch(info);
       });
   };
   return (
@@ -85,7 +89,7 @@ export default function StationaryModal(props) {
             validateMessages={validateMessages}
           >
             <Form.Item
-              name="name"
+              name="costName"
               label="Зардлын нэр:"
               rules={[
                 {
@@ -96,7 +100,7 @@ export default function StationaryModal(props) {
               <Input />
             </Form.Item>
             <Form.Item
-              name="une"
+              name="unitPrice"
               label="Нэгж үнэ:"
               rules={[
                 {
@@ -107,7 +111,7 @@ export default function StationaryModal(props) {
               <Input />
             </Form.Item>
             <Form.Item
-              name="too"
+              name="quantity"
               label="Тоо ширхэг:"
               rules={[
                 {
@@ -118,7 +122,7 @@ export default function StationaryModal(props) {
               <Input />
             </Form.Item>
             <Form.Item
-              name="huniiToo"
+              name="numberOfPeople"
               label="Хүний тоо"
               rules={[
                 {
@@ -129,7 +133,7 @@ export default function StationaryModal(props) {
               <Input />
             </Form.Item>
             <Form.Item
-              name="Dun"
+              name="total"
               label="Дүн"
               rules={[
                 {

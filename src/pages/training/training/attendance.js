@@ -19,9 +19,6 @@ import AttendanceModal from './components/attendanceModal';
 import OrgaStyle from './components/orga.style';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
 const { Content } = Layout;
 
 let editRow;
@@ -30,11 +27,10 @@ const Attendance = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     page: 0,
   });
   const toolsStore = useContext(ToolsContext);
-  const [loading, setLoading] = useState(false);
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateOrga, setStateOrga] = useState([]);
@@ -125,7 +121,7 @@ const Attendance = () => {
       return;
     }
     putService(`participants/delete/${row.id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })
@@ -252,7 +248,6 @@ const Attendance = () => {
                   </Col>
                   <Col xs={8} md={8} lg={4}>
                     <DatePicker
-                      onChange={onChange}
                       bordered={false}
                       suffixIcon={<DownOutlined />}
                       placeholder="Select year"

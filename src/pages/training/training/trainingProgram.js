@@ -110,7 +110,7 @@ const TrainingProgram = () => {
     }
 
     putService(`trainingProgram/delete/${row.id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })

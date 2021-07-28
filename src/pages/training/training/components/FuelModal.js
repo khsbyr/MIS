@@ -1,5 +1,5 @@
+import { Form, Input, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, DatePicker } from 'antd';
 import {
   getService,
   postService,
@@ -19,7 +19,7 @@ const layout = {
 
 export default function FuelModal(props) {
   const { Fuelcontroller, isModalVisible, isEditMode } = props;
-  const [stateController, setStateController] = useState([]);
+  const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
     getService('fuelExpenses/get', {
@@ -44,7 +44,7 @@ export default function FuelModal(props) {
         values.userService = { id: values.userServiceId };
         if (isEditMode) {
           putService(`fuelExpenses/put${Fuelcontroller.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -52,7 +52,7 @@ export default function FuelModal(props) {
             });
         } else {
           postService('fuelExpenses/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -61,7 +61,9 @@ export default function FuelModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
+
+        // errorCatch(info);
       });
   };
   return (

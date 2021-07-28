@@ -1,5 +1,5 @@
+import { Form, Input, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, DatePicker } from 'antd';
 import {
   getService,
   postService,
@@ -19,10 +19,10 @@ const layout = {
 
 export default function RoadModal(props) {
   const { Roadcontroller, isModalVisible, isEditMode } = props;
-  const [stateController, setStateController] = useState([]);
+  const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
-    getService('criteria/get', {
+    getService('hotelTravelExpenses/get', {
       search: 'status:true',
     }).then(result => {
       if (result) {
@@ -31,7 +31,7 @@ export default function RoadModal(props) {
     });
 
     if (isEditMode) {
-      getService(`criteria/get${Roadcontroller.id}`).then(result => {
+      getService(`hotelTravelExpenses/get${Roadcontroller.id}`).then(result => {
         Roadcontroller.userServiceId = result.userService.id;
         form.setFieldsValue({ ...Roadcontroller });
       });
@@ -43,16 +43,16 @@ export default function RoadModal(props) {
       .then(values => {
         values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService(`criteria/put${Roadcontroller.id}`, values)
-            .then(result => {
+          putService(`hotelTravelExpenses/put${Roadcontroller.id}`, values)
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService('criteria/post', values)
-            .then(result => {
+          postService('hotelTravelExpenses/post', values)
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -61,7 +61,9 @@ export default function RoadModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
+
+        // errorCatch(info);
       });
   };
   return (

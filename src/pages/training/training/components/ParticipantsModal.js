@@ -46,7 +46,7 @@ export default function ParticipantsModal(props) {
             `participants/update/${ParticipantsModalController.id}`,
             values
           )
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -54,7 +54,7 @@ export default function ParticipantsModal(props) {
             });
         } else {
           postService('participants/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -63,7 +63,7 @@ export default function ParticipantsModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

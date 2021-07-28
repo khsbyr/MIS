@@ -6,9 +6,8 @@ import {
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import ContentWrapper from './guidelines.style';
-import AutocompleteSelect from '../../../../components/Autocomplete';
 import validateMessages from '../../../../tools/validateMessage';
+import ContentWrapper from './guidelines.style';
 
 const layout = {
   labelCol: {
@@ -23,14 +22,12 @@ export default function TrainingProgramModal(props) {
   const { Trainingprogramcontroller, isModalVisible, isEditMode, trainingID } =
     props;
   const [form] = Form.useForm();
-  const [stateTeam, setStateTeam] = useState([]);
-  const [TrainingTeamID, setTrainingTeamID] = useState([]);
-  // eslint-disable-next-line no-unused-vars
-  const PAGESIZE = 20;
-  // eslint-disable-next-line no-unused-vars
-  const [lazyParams, setLazyParams] = useState({
-    page: 0,
-  });
+  const [setStateTeam] = useState([]);
+  const [TrainingTeamID] = useState([]);
+  // const PAGESIZE = 20;
+  // const [lazyParams, setLazyParams] = useState({
+  //   page: 0,
+  // });
   const loadLazyTimeout = null;
 
   const onInit = () => {
@@ -44,7 +41,6 @@ export default function TrainingProgramModal(props) {
     getService('trainingPlan/get').then(result => {
       if (result) {
         setStateTeam(result.content || []);
-        console.log(result.content);
         // training_plan.id =
         // stateplanID(planID)
       }
@@ -66,10 +62,9 @@ export default function TrainingProgramModal(props) {
     }
   }, []);
 
-  const selectTrainingTeam = trainingTeamID => {
-    console.log(trainingTeamID);
-    setTrainingTeamID(trainingTeamID);
-  };
+  // const selectTrainingTeam = trainingTeamID => {
+  //   setTrainingTeamID(trainingTeamID);
+  // };
 
   const save = () => {
     form
@@ -80,17 +75,15 @@ export default function TrainingProgramModal(props) {
 
         if (isEditMode) {
           putService(`trainingProgram/update/${trainingID}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService(`trainingProgram/post/${trainingID}`, values);
-          console
-            .log(values)
-            .then(result => {
+          postService(`trainingProgram/post/${trainingID}`, values)
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -99,7 +92,7 @@ export default function TrainingProgramModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

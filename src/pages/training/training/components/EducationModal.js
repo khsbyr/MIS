@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { Form, Input, Modal } from 'antd';
 import React, { useEffect } from 'react';
 import { postService, putService } from '../../../../service/service';
@@ -46,7 +45,7 @@ export default function EducationModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
 

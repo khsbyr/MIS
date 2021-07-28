@@ -1,14 +1,13 @@
+import { DatePicker, Form, Input, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, DatePicker } from 'antd';
 import {
   getService,
   postService,
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import AutocompleteSelect from '../../../../components/Autocomplete';
-import ContentWrapper from './cv.styled';
 import validateMessages from '../../../../tools/validateMessage';
+import ContentWrapper from './cv.styled';
 
 const layout = {
   labelCol: {
@@ -20,7 +19,7 @@ const layout = {
 };
 export default function CertificateModal(props) {
   const { Composition, isModalVisible, isEditMode } = props;
-  const [stateController, setStateController] = useState([]);
+  const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
     getService('criteria/get', {
@@ -45,7 +44,7 @@ export default function CertificateModal(props) {
         values.userService = { id: values.userServiceId };
         if (isEditMode) {
           putService(`criteria/put${Composition.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -53,7 +52,7 @@ export default function CertificateModal(props) {
             });
         } else {
           postService('criteria/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -62,7 +61,7 @@ export default function CertificateModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (

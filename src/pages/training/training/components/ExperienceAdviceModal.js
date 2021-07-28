@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, DatePicker } from 'antd';
-import {
-  getService,
-  postService,
-  putService,
-} from '../../../../service/service';
+import { DatePicker, Form, Input, Modal } from 'antd';
+import React, { useEffect } from 'react';
+import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import AutocompleteSelect from '../../../../components/Autocomplete';
-import ContentWrapper from './cv.styled';
 import validateMessages from '../../../../tools/validateMessage';
+import ContentWrapper from './cv.styled';
 
 const layout = {
   labelCol: {
@@ -33,7 +28,7 @@ export default function ExperienceAdviceModal(props) {
         values.userService = { id: values.userServiceId };
         if (isEditMode) {
           putService(`criteria/put${Composition.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -41,7 +36,7 @@ export default function ExperienceAdviceModal(props) {
             });
         } else {
           postService('criteria/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -50,7 +45,7 @@ export default function ExperienceAdviceModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
   return (
