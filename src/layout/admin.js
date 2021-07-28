@@ -19,9 +19,6 @@ import { useTranslation } from 'react-i18next';
 import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom';
 import Attendance from '../pages/training/training/attendance';
 import Composition1 from '../pages/training/trainingplan/composition1';
-import Composition2 from '../pages/training/trainingplan/composition2';
-import Composition3 from '../pages/training/trainingplan/composition3';
-import Composition4 from '../pages/training/trainingplan/composition4';
 import Criteria from '../pages/criteria/criteria';
 import CV from '../pages/training/training/cv';
 import Guidelines from '../pages/training/training/guidelines';
@@ -280,15 +277,6 @@ const Admin = () => {
               </Route>
               <Route path="/admin/composition1">
                 <Composition1 />
-              </Route>
-              <Route path="/admin/composition2">
-                <Composition2 />
-              </Route>
-              <Route path="/admin/composition3">
-                <Composition3 />
-              </Route>
-              <Route path="/admin/composition4">
-                <Composition4 />
               </Route>
               <Route path="/admin/training_program">
                 <TrainingProgram />

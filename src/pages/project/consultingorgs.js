@@ -17,9 +17,6 @@ import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ProjectSummaryModal from './components/ProjectSummaryModal';
 
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
 const { Content } = Layout;
 
 let editRow;
@@ -163,7 +160,6 @@ const Consultinorg = () => {
                 <Row gutter={[0, 15]}>
                   <Col xs={8} md={8} lg={6}>
                     <DatePicker
-                      onChange={onChange}
                       bordered={false}
                       suffixIcon={<DownOutlined />}
                       placeholder="Select year"
