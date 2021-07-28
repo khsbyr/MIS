@@ -39,15 +39,6 @@ module.exports = {
     'jsx-a11y/alt-text': 'off',
 
     'import/prefer-default-export': 'off',
-    'import/no-extraneous-dependencies': [
-      'error',
-      {
-        devDependencies: false,
-        optionalDependencies: false,
-        peerDependencies: false,
-      },
-    ],
-
     'import/extensions': [
       'warn',
       {

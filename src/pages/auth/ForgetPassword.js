@@ -53,10 +53,6 @@ function ForgetPassword() {
     }
   }
 
-  const onFinish = values => {
-    console.log('Received values of form: ', values);
-  };
-
   return (
     <Row>
       <Partner />
@@ -68,7 +64,6 @@ function ForgetPassword() {
             initialValues={{
               remember: true,
             }}
-            onFinish={onFinish}
           >
             <Form.Item>
               <p className="title">{t('forget_password')}</p>

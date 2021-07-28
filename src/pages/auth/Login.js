@@ -60,10 +60,6 @@ function Login() {
     }
   }
 
-  const onFinish = values => {
-    console.log('Received values of form: ', values);
-  };
-
   return (
     <Row>
       <Partner />
@@ -75,7 +71,6 @@ function Login() {
             initialValues={{
               remember: true,
             }}
-            onFinish={onFinish}
           >
             <Form.Item>
               <p className="title">{t('login_system')}</p>

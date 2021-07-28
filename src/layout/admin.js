@@ -52,12 +52,6 @@ const Admin = () => {
           width="300px"
           collapsedWidth="0"
           trigger={<MenuOutlined />}
-          onBreakpoint={broken => {
-            console.log(broken);
-          }}
-          onCollapse={(collapsed, type) => {
-            console.log(collapsed, type);
-          }}
         >
           <Menu
             className="menu"

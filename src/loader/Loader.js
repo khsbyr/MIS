@@ -1,7 +1,7 @@
 import React from 'react';
 import './loader.scss';
 
-function Loader({ isload }) {
+function Loader() {
   return (
     <div
       id="abcd"
@@ -18,7 +18,6 @@ function Loader({ isload }) {
         left: 0,
       }}
     >
-      {/* <Spin style={{ fontSize: 50 }} size="large" /> */}
       <div className="ball-pulse-sync">
         <div />
         <div />

@@ -9,7 +9,6 @@ import {
 import { Col, Layout, Row, Select, Menu, Dropdown, Avatar, Button } from 'antd';
 import 'antd/dist/antd.css';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import i18n from '../i18n';
 import HeaderWrapper from './header.style';
