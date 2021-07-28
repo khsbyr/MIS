@@ -1,18 +1,17 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { useKeycloak } from '@react-keycloak/web';
+import Layouts from '../container/Layout/Layouts';
+import Admin from '../pages/admin';
+import ForgetPassword from '../pages/auth/ForgetPassword';
+import Login from '../pages/auth/Login';
+import Register from '../pages/auth/Register';
+import ResetPassword from '../pages/auth/ResetPassword';
 import {
   ADMIN_PAGE,
-  REGISTER,
   FORGET_PASSWORD,
+  REGISTER,
   RESET_PASSWORD,
 } from '../settings/constantRoutes';
-import Layouts from '../container/Layout/Layouts';
-import Login from '../pages/auth/Login';
-import ForgetPassword from '../pages/auth/ForgetPassword';
-import ResetPassword from '../pages/auth/ResetPassword';
-import Admin from '../pages/admin';
-import Register from '../pages/auth/Register';
 
 export default function Routes() {
   // const { initialized } = useKeycloak();

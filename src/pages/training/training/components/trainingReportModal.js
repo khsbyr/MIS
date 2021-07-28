@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Modal, Row, Upload } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -26,10 +25,10 @@ export default function TrainingReportModal(props) {
   const [tipsID, setTipsID] = useState([]);
   const [resultID, setResultID] = useState([]);
   const [successID, setSuccessID] = useState([]);
-  const [performedProcess1ID, setPerformedProcess1ID] = useState([]);
-  const [performedProcess2ID, setPerformedProcess2ID] = useState([]);
-  const [performedProcess3ID, setPerformedProcess3ID] = useState([]);
-  const [performedProcess4ID, setPerformedProcess4ID] = useState([]);
+  // const [performedProcess1ID, setPerformedProcess1ID] = useState([]);
+  // const [performedProcess2ID, setPerformedProcess2ID] = useState([]);
+  // const [performedProcess3ID, setPerformedProcess3ID] = useState([]);
+  // const [performedProcess4ID, setPerformedProcess4ID] = useState([]);
   // const [selectedTraining, setSelectedTraining] = useState([]);
   console.log(TrainingReportController);
   useEffect(() => {
@@ -110,26 +109,25 @@ export default function TrainingReportModal(props) {
         TrainingName: TrainingReportController.training.name,
         TotalParticipants: TrainingReportController.training.totalParticipants,
         ResponsibleUserName:
-          TrainingReportController.training.organization.responsibleUser
-            .firstname,
+          TrainingReportController.training.organization.users[0].firstname,
         PerformanceBudget: TrainingReportController.training.performanceBudget,
         ReportsAim: TrainingReportController.reportsAim.inputText,
         ReportsSuccessOverview:
           TrainingReportController.reportsSuccessOverview.inputText,
         ReportsResult: TrainingReportController.reportsResult.inputText,
         ReportsTips: TrainingReportController.reportsTips.inputText,
-        // PerformedProcess1:
-        //   TrainingReportController.reportsPerformedProcess1 &&
-        //   TrainingReportController.reportsPerformedProcess1.inputText,
-        // PerformedProcess2:
-        //   TrainingReportController.reportsPerformedProcess2 &&
-        //   TrainingReportController.reportsPerformedProcess2.inputText,
-        // PerformedProcess3:
-        //   TrainingReportController.reportsPerformedProcess3 &&
-        //   TrainingReportController.reportsPerformedProcess3.inputText,
-        // PerformedProcess4:
-        //   TrainingReportController.reportsPerformedProcess4 &&
-        //   TrainingReportController.reportsPerformedProcess4.inputText,
+        PerformedProcess1:
+          TrainingReportController.reportsPerformedProcess1 &&
+          TrainingReportController.reportsPerformedProcess1.inputText,
+        PerformedProcess2:
+          TrainingReportController.reportsPerformedProcess2 &&
+          TrainingReportController.reportsPerformedProcess2.inputText,
+        PerformedProcess3:
+          TrainingReportController.reportsPerformedProcess3 &&
+          TrainingReportController.reportsPerformedProcess3.inputText,
+        PerformedProcess4:
+          TrainingReportController.reportsPerformedProcess4 &&
+          TrainingReportController.reportsPerformedProcess4.inputText,
       });
     }
   }, []);
@@ -189,7 +187,7 @@ export default function TrainingReportModal(props) {
           PerformanceBudget: selectedTraining.performanceBudget,
           ResponsibleUserName:
             selectedTraining.organization &&
-            selectedTraining.organization.responsibleUser.firstname,
+            selectedTraining.organization.users[0].firstname,
         });
       }
     });

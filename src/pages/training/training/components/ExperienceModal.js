@@ -29,7 +29,7 @@ export default function ExperienceModal(props) {
       .then(values => {
         if (isEditMode) {
           putService(`expierence/update/${CvExperienceController.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -37,7 +37,7 @@ export default function ExperienceModal(props) {
             });
         } else {
           postService(`expierence/post/${CvExperienceController.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {

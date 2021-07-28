@@ -1,7 +1,7 @@
 import React from 'react';
 import './loader.scss';
 
-function Loader({ isload }) {
+function Loader() {
   return (
     <div
       id="abcd"

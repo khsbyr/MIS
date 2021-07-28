@@ -30,7 +30,7 @@ const Criteria = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     page: 0,
   });
   const PAGESIZE = 20;
@@ -75,7 +75,7 @@ const Criteria = () => {
       return;
     }
     putService(`criteria/delete/${row.id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })

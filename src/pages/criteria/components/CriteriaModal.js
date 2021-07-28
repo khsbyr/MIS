@@ -57,7 +57,7 @@ export default function CriteriaModal(props) {
         };
         if (isEditMode) {
           putService(`criteria/update/${Criteriacontroller.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -65,7 +65,7 @@ export default function CriteriaModal(props) {
             });
         } else {
           postService('criteria/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {

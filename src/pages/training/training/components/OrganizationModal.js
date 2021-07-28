@@ -1,15 +1,5 @@
 import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Checkbox,
-  Col,
-  Form,
-  Input,
-  Modal,
-  Row,
-  Select,
-  Upload,
-} from 'antd';
+import { Button, Checkbox, Col, Form, Input, Modal, Row, Upload } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
 import {
@@ -28,12 +18,10 @@ function onChange(date, dateString) {
 }
 
 export default function OrganizationModal(props) {
-  console.log(props);
   const { Orgcontroller, isModalVisible, isEditMode } = props;
   const [stateBank, setStateBank] = useState([]);
   const [stateCurrency, setStateCurrency] = useState([]);
   const [form] = Form.useForm();
-  const { Option } = Select;
   const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
   const [stateCountry, setStateCountry] = useState([]);
@@ -112,10 +100,8 @@ export default function OrganizationModal(props) {
   };
 
   const getSum = aimagId => {
-    console.log(`aimagId${aimagId}`);
     getService(`soum/getList/${aimagId}`, {}).then(result => {
       if (result) {
-        console.log(`asd${result}`);
         setStateSum(result || []);
       }
     });
@@ -169,16 +155,15 @@ export default function OrganizationModal(props) {
 
         if (isEditMode) {
           putService(`organization/update/${Orgcontroller.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
               errorCatch(error);
             });
         } else {
-          console.log(values);
           postService('organization/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {

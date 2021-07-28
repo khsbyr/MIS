@@ -7,16 +7,7 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Button,
-  Col,
-  DatePicker,
-  Layout,
-  message,
-  Modal,
-  Row,
-  Select,
-} from 'antd';
+import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState, useContext } from 'react';
@@ -27,8 +18,6 @@ import ContentWrapper from './components/attendance.style';
 import OrgaStyle from './components/orga.style';
 import TrainingReportModal from './components/trainingReportModal';
 import { ToolsContext } from '../../../context/Tools';
-
-const { Option } = Select;
 
 function onChange(date, dateString) {
   console.log(date, dateString);
@@ -42,7 +31,7 @@ const TrainingReport = () => {
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     page: 0,
   });
   const PAGESIZE = 20;
@@ -50,7 +39,6 @@ const TrainingReport = () => {
   const [stateOrga, setStateOrga] = useState([]);
   const [orgID, setOrgID] = useState([]);
 
-  console.log(list);
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
@@ -141,7 +129,6 @@ const TrainingReport = () => {
   }
 
   const pop = row => {
-    console.log(row);
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
@@ -194,7 +181,7 @@ const TrainingReport = () => {
       <span className="p-column-title">
         Сургалт явуулсан байгууллага, хүний нэр
       </span>
-      {row.training.organization.responsibleUser.firstname}
+      {row.training.organization.users[0].firstname}
     </>
   );
 

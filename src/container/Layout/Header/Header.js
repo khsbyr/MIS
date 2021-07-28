@@ -9,7 +9,7 @@ import HeaderWrapper from './Header.style';
 const { Option } = Select;
 const { Header } = Layout;
 const Headers = () => {
-  const { t, i18 } = useTranslation();
+  const { t } = useTranslation();
 
   function handleChange(value) {
     i18n.changeLanguage(value);

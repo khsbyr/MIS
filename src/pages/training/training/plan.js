@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
@@ -49,9 +48,7 @@ const Plan = () => {
     }
     getService('trainingTeam/get', list)
       .then(result => {
-        console.log(result);
         const listResult = result || [];
-        console.log(listResult);
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });

@@ -8,7 +8,6 @@ export default function Partnership() {
     console.log(date, dateString);
   }
   const onSearch = value => console.log(value);
-  // const { Search } = Input;
   const dataSource = [
     {
       key: '1',

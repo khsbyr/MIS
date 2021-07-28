@@ -6,9 +6,8 @@ import {
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import ContentWrapper from './guidelines.style';
-import AutocompleteSelect from '../../../../components/Autocomplete';
 import validateMessages from '../../../../tools/validateMessage';
+import ContentWrapper from './guidelines.style';
 
 const layout = {
   labelCol: {
@@ -23,14 +22,12 @@ export default function TrainingProgramModal(props) {
   const { Trainingprogramcontroller, isModalVisible, isEditMode, trainingID } =
     props;
   const [form] = Form.useForm();
-  const [stateTeam, setStateTeam] = useState([]);
+  const [setStateTeam] = useState([]);
   const [TrainingTeamID, setTrainingTeamID] = useState([]);
-  // eslint-disable-next-line no-unused-vars
-  const PAGESIZE = 20;
-  // eslint-disable-next-line no-unused-vars
-  const [lazyParams, setLazyParams] = useState({
-    page: 0,
-  });
+  // const PAGESIZE = 20;
+  // const [lazyParams, setLazyParams] = useState({
+  //   page: 0,
+  // });
   const loadLazyTimeout = null;
 
   const onInit = () => {
@@ -80,7 +77,7 @@ export default function TrainingProgramModal(props) {
 
         if (isEditMode) {
           putService(`trainingProgram/update/${trainingID}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -90,7 +87,7 @@ export default function TrainingProgramModal(props) {
           postService(`trainingProgram/post/${trainingID}`, values);
           console
             .log(values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {

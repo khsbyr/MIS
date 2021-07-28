@@ -30,11 +30,10 @@ const Attendance = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     page: 0,
   });
   const toolsStore = useContext(ToolsContext);
-  const [loading, setLoading] = useState(false);
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateOrga, setStateOrga] = useState([]);
@@ -125,7 +124,7 @@ const Attendance = () => {
       return;
     }
     putService(`participants/delete/${row.id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })

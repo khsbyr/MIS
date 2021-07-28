@@ -1,13 +1,13 @@
+import { Form, Input, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, DatePicker } from 'antd';
 import {
   getService,
   postService,
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import ContentWrapper from './cv.styled';
 import validateMessages from '../../../../tools/validateMessage';
+import ContentWrapper from './cv.styled';
 
 const layout = {
   labelCol: {
@@ -20,7 +20,7 @@ const layout = {
 
 export default function StationaryModal(props) {
   const { Stationarycontroller, isModalVisible, isEditMode } = props;
-  const [stateController, setStateController] = useState([]);
+  const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
     getService('criteria/get', {
@@ -44,7 +44,7 @@ export default function StationaryModal(props) {
       .then(values => {
         if (isEditMode) {
           putService(`criteria/put${Stationarycontroller.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -52,7 +52,7 @@ export default function StationaryModal(props) {
             });
         } else {
           postService('criteria/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {

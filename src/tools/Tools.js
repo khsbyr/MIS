@@ -1,6 +1,6 @@
 import { message, Tag } from 'antd';
-import { MSG, ORG_STEP, ORG_WISH } from '../constants/Constant';
 import { Warning } from '../components/Confirm';
+import { ORG_STEP, ORG_WISH } from '../constants/Constant';
 
 export const convertLazyParamsToObj = (lazyParams, searchParam = null) => {
   const obj = { search: searchParam || '' };

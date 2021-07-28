@@ -30,7 +30,7 @@ const Guidelines = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     page: 0,
   });
   const toolsStore = useContext(ToolsContext);
@@ -106,7 +106,7 @@ const Guidelines = () => {
     }
 
     putService(`training/delete/${row.id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })

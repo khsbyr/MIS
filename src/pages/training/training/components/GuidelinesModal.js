@@ -1,26 +1,25 @@
-/* eslint-disable no-unused-vars */
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
+  faCalendarAlt,
   faPen,
   faPlus,
   faTrash,
-  faCalendarAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
   Col,
+  DatePicker,
   Form,
   Input,
   message,
   Modal,
   Row,
-  DatePicker,
 } from 'antd';
 import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import AutocompleteSelect from '../../../../components/Autocomplete';
 import { ToolsContext } from '../../../../context/Tools';
 import {
@@ -29,10 +28,10 @@ import {
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
+import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './guidelines.style';
 import ParticipantsModal from './ParticipantsModal';
 import TrainingGuidelinesModal from './TrainingGuidelinesModal';
-import validateMessages from '../../../../tools/validateMessage';
 
 const layout = {
   labelCol: {
@@ -48,8 +47,7 @@ let isEditModeParticipants;
 let isEditModeGuidelines;
 
 export default function GuidelinesModal(props) {
-  const { Guidelinescontroller, isModalVisible, isEditMode, orgID, planID } =
-    props;
+  const { Guidelinescontroller, isModalVisible, isEditMode, orgID } = props;
   const [isModalVisibleParticipants, setIsModalVisibleParticipants] =
     useState(false);
   const [isModalVisibleGuidelines, setIsModalVisibleGuidelines] =
@@ -57,19 +55,18 @@ export default function GuidelinesModal(props) {
   const toolsStore = useContext(ToolsContext);
   const [selectedRows, setSelectedRows] = useState([]);
   const [list, setList] = useState([]);
-  const [listguidelines, setListGuidelines] = useState([]);
+  const [listguidelines] = useState([]);
   const [form] = Form.useForm();
-  const [stateOrga, setStateOrga] = useState([]);
+  const [setStateOrga] = useState([]);
   const [statePlan, setStatePlan] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
-  const [stateplanID, setStateplanID] = useState([]);
   const PAGESIZE = 20;
   const [TrainingPlanID, setTrainingPlanID] = useState([]);
   const [startDate, setStartDate] = useState([]);
   const [endDate, setEndDate] = useState([]);
-  const [valueState, setStateValue] = useState([]);
+  const [setStateValue] = useState([]);
 
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     page: 0,
   });
   const loadLazyTimeout = null;
@@ -172,7 +169,7 @@ export default function GuidelinesModal(props) {
     }
 
     putService(`participants/delete/${row.id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })
@@ -258,7 +255,7 @@ export default function GuidelinesModal(props) {
         if (isEditMode) {
           setTrainingPlanID(Guidelinescontroller.training_plan.id);
           putService(`training/update/${Guidelinescontroller.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -266,7 +263,7 @@ export default function GuidelinesModal(props) {
             });
         } else {
           postService('training/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {

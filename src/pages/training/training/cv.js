@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,

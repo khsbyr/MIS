@@ -29,10 +29,9 @@ const TestAggregation = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     page: 0,
   });
-  const [loading, setLoading] = useState(false);
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const toolsStore = useContext(ToolsContext);
@@ -80,7 +79,7 @@ const TestAggregation = () => {
     }
 
     putService(`testAggregation/delete/${row.id}`)
-      .then(result => {
+      .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
       })
@@ -234,19 +233,6 @@ const TestAggregation = () => {
                       }}
                     />
                   </Col>
-                  {/* <Col xs={8} md={8} lg={6}>
-                                        <Input
-                                            placeholder="Хайлт хийх"
-                                            allowClear
-                                            prefix={<SearchOutlined />}
-                                            bordered={false}
-                                            onSearch={onSearch}
-                                            style={{
-                                                width: 150,
-                                                borderBottom: "1px solid #103154",
-                                            }}
-                                        />
-                                    </Col> */}
                   <Col xs={8} md={8} lg={6}>
                     <Button
                       type="text"
