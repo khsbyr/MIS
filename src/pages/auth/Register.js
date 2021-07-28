@@ -32,7 +32,7 @@ function Register() {
         isActive: true,
       };
       postService(`signUpRequest/post/${values.code}`, saveData)
-        .then(result => {
+        .then(() => {
           message.success('Таны хүсэлтийг хүлээн авлаа. ');
           window.location.href = '/login';
         })

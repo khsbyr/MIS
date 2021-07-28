@@ -43,7 +43,6 @@ export default function CriteriaModal(props) {
   }, []);
 
   const onChange = e => {
-    console.log('radio checked', e.target.value);
     setValue(e.target.value);
   };
 
@@ -51,7 +50,6 @@ export default function CriteriaModal(props) {
     form
       .validateFields()
       .then(values => {
-        console.log(values);
         values.criteriaIndicator = {
           percentIndicator: { value: values.percentIndicator },
         };

@@ -1,23 +1,19 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import Layouts from '../container/Layout/Layouts';
-import Admin from '../pages/admin';
-import ForgetPassword from '../pages/auth/ForgetPassword';
-import Login from '../pages/auth/Login';
-import Register from '../pages/auth/Register';
-import ResetPassword from '../pages/auth/ResetPassword';
 import {
   ADMIN_PAGE,
   FORGET_PASSWORD,
   REGISTER,
   RESET_PASSWORD,
 } from '../settings/constantRoutes';
+import Layouts from '../layout/layouts';
+import Login from '../pages/auth/Login';
+import ForgetPassword from '../pages/auth/ForgetPassword';
+import ResetPassword from '../pages/auth/ResetPassword';
+import Admin from '../layout/admin';
+import Register from '../pages/auth/Register';
 
 export default function Routes() {
-  // const { initialized } = useKeycloak();
-  // if (!initialized) {
-  //   return <div>Түр хүлээнэ үү!</div>;
-  // }
   return (
     <Layouts>
       <Switch>

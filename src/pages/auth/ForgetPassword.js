@@ -32,7 +32,7 @@ function ForgetPassword() {
     if (email.value) {
       toolsStore.setIsShowLoader(true);
       postService('user/forgetPassword', { resetEmailOrUsername: email.value })
-        .then(result => {
+        .then(() => {
           message.success('The email was sent successfully');
           history.push('/login');
         })
@@ -53,10 +53,6 @@ function ForgetPassword() {
     }
   }
 
-  const onFinish = values => {
-    console.log('Received values of form: ', values);
-  };
-
   return (
     <Row>
       <Partner />
@@ -68,7 +64,6 @@ function ForgetPassword() {
             initialValues={{
               remember: true,
             }}
-            onFinish={onFinish}
           >
             <Form.Item>
               <p className="title">{t('forget_password')}</p>

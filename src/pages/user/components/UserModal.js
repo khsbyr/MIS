@@ -119,7 +119,6 @@ export default function UserModal(props) {
   };
 
   const onChange = e => {
-    console.log('radio checked', e.target.value);
     setStateGender(e.target.value);
   };
 
@@ -155,7 +154,7 @@ export default function UserModal(props) {
         values.isTrue = true;
         if (isEditMode) {
           putService(`user/update/${Usercontroller.id}`, values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -163,7 +162,7 @@ export default function UserModal(props) {
             });
         } else {
           postService('user/post', values)
-            .then(result => {
+            .then(() => {
               props.close(true);
             })
             .catch(error => {
@@ -172,7 +171,7 @@ export default function UserModal(props) {
         }
       })
       .catch(info => {
-        console.log('Validate Failed:', info);
+        errorCatch(info);
       });
   };
 

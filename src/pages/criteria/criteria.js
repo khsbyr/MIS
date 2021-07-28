@@ -18,9 +18,6 @@ import { errorCatch } from '../../tools/Tools';
 import CriteriaModal from './components/CriteriaModal';
 import ContentWrapper from './criteria.style';
 
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
 const { Content } = Layout;
 
 let editRow;
@@ -201,7 +198,6 @@ const Criteria = () => {
                 <Row gutter={[0, 15]}>
                   <Col xs={8} md={8} lg={6}>
                     <DatePicker
-                      onChange={onChange}
                       bordered={false}
                       suffixIcon={<DownOutlined />}
                       placeholder="Select year"
@@ -214,19 +210,6 @@ const Criteria = () => {
                       }}
                     />
                   </Col>
-                  {/* <Col xs={8} md={8} lg={6}>
-                                        <Input
-                                            placeholder="Хайлт хийх"
-                                            allowClear
-                                            prefix={<SearchOutlined />}
-                                            bordered={false}
-                                            onSearch={onSearch}
-                                            style={{
-                                                width: 150,
-                                                borderBottom: "1px solid #103154",
-                                            }}
-                                        />
-                                    </Col> */}
                   <Col xs={8} md={8} lg={6}>
                     <Button
                       type="text"

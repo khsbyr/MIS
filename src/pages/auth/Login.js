@@ -43,7 +43,7 @@ function Login() {
         .then(result => {
           localStorage.setItem('token', result.data.token);
           localStorage.setItem('myHID', result.data.userId);
-          history.push('/admin');
+          history.push('/admin/user');
         })
         .finally(() => {
           toolsStore.setIsShowLoader(false);
@@ -60,10 +60,6 @@ function Login() {
     }
   }
 
-  const onFinish = values => {
-    console.log('Received values of form: ', values);
-  };
-
   return (
     <Row>
       <Partner />
@@ -75,7 +71,6 @@ function Login() {
             initialValues={{
               remember: true,
             }}
-            onFinish={onFinish}
           >
             <Form.Item>
               <p className="title">{t('login_system')}</p>
@@ -143,7 +138,6 @@ function Login() {
                 {t('register')}
               </Button>
             </Form.Item>
-
             <Form.Item>
               <p className="copyright">{t('rights_reserved')}</p>
             </Form.Item>

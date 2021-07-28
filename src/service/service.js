@@ -1,5 +1,4 @@
 import { message } from 'antd';
-import { MSG } from '../constants/Constant';
 import { errorCatch } from '../tools/Tools';
 import axios from './axios';
 
@@ -52,8 +51,9 @@ export async function postService(serviceName, data) {
     .catch(error => {
       throw error;
     });
-  if (response.status === 200) console.log(MSG.SUCCESS);
-  else console.log('АМЖИЛТГҮЙ:', response.statusText);
+  if (response.status !== 200) {
+    message.warning('АМЖИЛТГҮЙ:', response.statusText);
+  }
   return response;
 }
 
@@ -62,8 +62,9 @@ export async function putService(serviceName, data = null) {
     errorCatch(error);
     throw error;
   });
-  if (response.status === 200) console.log(MSG.SUCCESS);
-  else message.warning('АМЖИЛТГҮЙ:', response.statusText);
+  if (response.status !== 200) {
+    message.warning('АМЖИЛТГҮЙ:', response.statusText);
+  }
   return response.data;
 }
 
@@ -90,9 +91,6 @@ export function writeFileServer(selectedFile, generateUuid) {
   data.append('file', selectedFile);
   axios
     .post(`gap-file-service/files?parentUuid=${generateUuid}`, data, config())
-    .then(res => {
-      console.log(res.statusText);
-    })
     .catch(error => {
       errorCatch(error);
       throw error;

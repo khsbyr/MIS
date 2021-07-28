@@ -23,13 +23,13 @@ let isEditMode;
 let selectedRole;
 
 export default function Roles() {
-  const [totalRecords, setTotalRecords] = useState(0);
+  const [setTotalRecords] = useState(0);
   const [list, setList] = useState([]);
   const [isShowModal, setIsShowModal] = useState(false);
   const [isShowConfig, setIsShowConfig] = useState(false);
   const [isShowConfigMenu, setIsShowConfigMenu] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     first: 0,
     page: 0,
   });
@@ -68,14 +68,14 @@ export default function Roles() {
   const save = role => {
     if (isEditMode) {
       putService(`role/update/${role.id}`, role)
-        .then(result => {
+        .then(() => {
           setIsShowModal(false);
           loadData();
         })
         .catch(error => errorCatch(error));
     } else {
       postService('role/post', role)
-        .then(result => {
+        .then(() => {
           setIsShowModal(false);
           setSelectedRow({});
           loadData();

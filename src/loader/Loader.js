@@ -18,7 +18,6 @@ function Loader() {
         left: 0,
       }}
     >
-      {/* <Spin style={{ fontSize: 50 }} size="large" /> */}
       <div className="ball-pulse-sync">
         <div />
         <div />
