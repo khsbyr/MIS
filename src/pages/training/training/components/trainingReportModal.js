@@ -108,7 +108,8 @@ export default function TrainingReportModal(props) {
         TrainingName: TrainingReportController.training.name,
         TotalParticipants: TrainingReportController.training.totalParticipants,
         ResponsibleUserName:
-          TrainingReportController.training.organization.users[0].firstname,
+          TrainingReportController.training.organization.responsibleUser
+            .firstname,
         PerformanceBudget: TrainingReportController.training.performanceBudget,
         ReportsAim: TrainingReportController.reportsAim.inputText,
         ReportsSuccessOverview:
@@ -185,7 +186,7 @@ export default function TrainingReportModal(props) {
           PerformanceBudget: selectedTraining.performanceBudget,
           ResponsibleUserName:
             selectedTraining.organization &&
-            selectedTraining.organization.users[0].firstname,
+            selectedTraining.organization.responsibleUser.firstname,
         });
       }
     });
