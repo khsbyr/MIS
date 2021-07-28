@@ -22,7 +22,7 @@ export default function RoadModal(props) {
   const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
-    getService('criteria/get', {
+    getService('hotelTravelExpenses/get', {
       search: 'status:true',
     }).then(result => {
       if (result) {
@@ -31,7 +31,7 @@ export default function RoadModal(props) {
     });
 
     if (isEditMode) {
-      getService(`criteria/get${Roadcontroller.id}`).then(result => {
+      getService(`hotelTravelExpenses/get${Roadcontroller.id}`).then(result => {
         Roadcontroller.userServiceId = result.userService.id;
         form.setFieldsValue({ ...Roadcontroller });
       });
@@ -43,7 +43,7 @@ export default function RoadModal(props) {
       .then(values => {
         values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService(`criteria/put${Roadcontroller.id}`, values)
+          putService(`hotelTravelExpenses/put${Roadcontroller.id}`, values)
             .then(() => {
               props.close(true);
             })
@@ -51,7 +51,7 @@ export default function RoadModal(props) {
               errorCatch(error);
             });
         } else {
-          postService('criteria/post', values)
+          postService('hotelTravelExpenses/post', values)
             .then(() => {
               props.close(true);
             })

@@ -23,7 +23,7 @@ export default function StationaryModal(props) {
   const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
-    getService('criteria/get', {
+    getService('stationeryExpenses/get', {
       search: 'status:true',
     }).then(result => {
       if (result) {
@@ -32,10 +32,12 @@ export default function StationaryModal(props) {
     });
 
     if (isEditMode) {
-      getService(`criteria/get${Stationarycontroller.id}`).then(result => {
-        Stationarycontroller.userServiceId = result.userService.id;
-        form.setFieldsValue({ ...Stationarycontroller });
-      });
+      getService(`stationeryExpenses/get${Stationarycontroller.id}`).then(
+        result => {
+          Stationarycontroller.userServiceId = result.userService.id;
+          form.setFieldsValue({ ...Stationarycontroller });
+        }
+      );
     }
   }, []);
   const save = () => {
@@ -43,7 +45,7 @@ export default function StationaryModal(props) {
       .validateFields()
       .then(values => {
         if (isEditMode) {
-          putService(`criteria/put${Stationarycontroller.id}`, values)
+          putService(`stationeryExpenses/put${Stationarycontroller.id}`, values)
             .then(() => {
               props.close(true);
             })
@@ -51,7 +53,7 @@ export default function StationaryModal(props) {
               errorCatch(error);
             });
         } else {
-          postService('criteria/post', values)
+          postService('stationeryExpenses/post', values)
             .then(() => {
               props.close(true);
             })
@@ -87,7 +89,7 @@ export default function StationaryModal(props) {
             validateMessages={validateMessages}
           >
             <Form.Item
-              name="name"
+              name="costName"
               label="Зардлын нэр:"
               rules={[
                 {
@@ -98,7 +100,7 @@ export default function StationaryModal(props) {
               <Input />
             </Form.Item>
             <Form.Item
-              name="une"
+              name="unitPrice"
               label="Нэгж үнэ:"
               rules={[
                 {
@@ -109,7 +111,7 @@ export default function StationaryModal(props) {
               <Input />
             </Form.Item>
             <Form.Item
-              name="too"
+              name="quantity"
               label="Тоо ширхэг:"
               rules={[
                 {
@@ -120,7 +122,7 @@ export default function StationaryModal(props) {
               <Input />
             </Form.Item>
             <Form.Item
-              name="huniiToo"
+              name="numberOfPeople"
               label="Хүний тоо"
               rules={[
                 {
@@ -131,7 +133,7 @@ export default function StationaryModal(props) {
               <Input />
             </Form.Item>
             <Form.Item
-              name="Dun"
+              name="total"
               label="Дүн"
               rules={[
                 {
