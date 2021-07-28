@@ -178,7 +178,7 @@ const TrainingReport = () => {
       <span className="p-column-title">
         Сургалт явуулсан байгууллага, хүний нэр
       </span>
-      {row.training.organization.users[0].firstname}
+      {row.training.organization.responsibleUser.firstname}
     </>
   );
 
