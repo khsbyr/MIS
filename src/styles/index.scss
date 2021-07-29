@@ -96,27 +96,23 @@ position: none;
 .p-datatable, 
 .p-treetable {
   font-size: 12px !important;
-  text-align: left !important;
-  tr:nth-child(odd) {
+  text-align: center !important;
+  tr:nth-child(even) {
     background: #f8f9fa !important;
   }
-  .p-datatable-thead > tr:first-child > th, 
+  .p-datatable-thead > tr:first-child > th,
   .p-treetable-thead > tr > th {
     padding-bottom: 0 !important;
     text-align: center !important;
     padding: 6px 6px 6px !important;
-    background-color: #ebeef0;
-    color: black;
-
   }
   .p-datatable-tbody > tr > td,
   .p-treetable-tbody > tr > td {
-    padding: 13px 1rem !important;
+    padding: 4px 1rem !important;
     cursor: pointer;
-    border: 1px solid #ebeef0 !important;
-
   }
 }
+
 .p-datatable .p-sortable-column .p-sortable-column-icon {
   font-size: 10px;
 } 

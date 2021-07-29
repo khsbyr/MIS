@@ -38,6 +38,8 @@ export default function MenuSettings() {
   const convertTree = listArg => {
     const list = listArg;
     list.forEach(menu => {
+      console.log('menus');
+      console.log(menu.menus);
       menu.key = menu.id;
       menu.data = menu;
       menu.menus = convertTree(menu.menus);
@@ -49,7 +51,7 @@ export default function MenuSettings() {
     toolsStore.setIsShowLoader(true);
     getService(url)
       .then(data => {
-        const list = data.content || [];
+        const list = data || [];
         setMenuList(convertTree(list));
         setSelectedMenus([]);
         toolsStore.setIsShowLoader(false);

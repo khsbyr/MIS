@@ -1,0 +1,18 @@
+.priority {
+    display: grid;
+    justify-content: center;
+    .ant-btn-icon-only.ant-btn-sm {
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.priorityBtn {
+    height: 16px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: gray;
+}
