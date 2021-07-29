@@ -23,7 +23,6 @@ let isEditMode;
 let selectedRole;
 
 export default function Roles() {
-  const [setTotalRecords] = useState(0);
   const [list, setList] = useState([]);
   const [isShowModal, setIsShowModal] = useState(false);
   const [isShowConfig, setIsShowConfig] = useState(false);
@@ -50,7 +49,6 @@ export default function Roles() {
           listResult.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });
-          setTotalRecords(data.totalElements);
           setList(listResult);
         })
         .finally(toolsStore.setIsShowLoader(false))
@@ -106,16 +104,6 @@ export default function Roles() {
 
   const roleBodyTemplate = rowData => (
     <>
-      <Button
-        onClick={e => {
-          e.preventDefault();
-          e.stopPropagation();
-          setIsShowConfig(true);
-          selectedRole = rowData;
-        }}
-      >
-        Эрх тавих
-      </Button>
       <Button
         style={{ marginLeft: 10 }}
         onClick={e => {
@@ -200,7 +188,7 @@ export default function Roles() {
             <Column
               field=""
               header="Үйлдэл"
-              style={{ width: 300, textAlign: 'right' }}
+              style={{ width: 200, textAlign: 'right' }}
               body={roleBodyTemplate}
             />
           </DataTable>

@@ -29,7 +29,7 @@ export default function MenuModal(props) {
   const [treeValue, setTreeValue] = useState();
 
   const convertTree = listArg => {
-    const list = listArg.filter(row => row.status);
+    const list = listArg;
     list.forEach(menu => {
       menu.value = menu.id;
       menu.title = menu.name;
@@ -40,12 +40,9 @@ export default function MenuModal(props) {
 
   useEffect(() => {
     toolsStore.setIsShowLoader(true);
-    const param = isEditMode
-      ? { search: `id!${editValue.id} AND isParent:true` }
-      : { search: `isParent:true` };
-    getService('/gap-core-service/menus', param)
+    getService('/menus/get')
       .then(result => {
-        const list = result.content || [];
+        const list = result || [];
         setParentMenus(convertTree(list));
         if (isEditMode) {
           form.setFieldsValue(editValue);

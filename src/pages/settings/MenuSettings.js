@@ -1,13 +1,8 @@
 import React, { useState, useEffect, Suspense, useContext } from 'react';
 import { TreeTable } from 'primereact/treetable';
 import { Column } from 'primereact/column';
-import { Button, message, Layout, Checkbox, Tooltip, Row, Col } from 'antd';
-import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
-import {
-  faFileExcel,
-  faPlus,
-  faPrint,
-} from '@fortawesome/free-solid-svg-icons';
+import { Button, message, Layout, Checkbox, Row, Col } from 'antd';
+import { faFileExcel, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ToolsContext } from '../../context/Tools';
 import { errorCatch, isEmptyObject, sortArray } from '../../tools/Tools';
@@ -23,6 +18,7 @@ import { Confirm } from '../../components/Confirm';
 import './style.module.scss';
 import { MSG } from '../../constants/Constant';
 import ContentWrapper from '../criteria/criteria.style';
+import PriorityButton from '../../components/priority/PriorityButton';
 
 const { Content } = Layout;
 let isEditMode;
@@ -40,7 +36,7 @@ export default function MenuSettings() {
     list.forEach(menu => {
       menu.key = menu.id;
       menu.data = menu;
-      menu.menus = convertTree(menu.menus);
+      menu.children = convertTree(menu.menus);
     });
     return sortArray(list, 'priority');
   };
@@ -49,7 +45,7 @@ export default function MenuSettings() {
     toolsStore.setIsShowLoader(true);
     getService(url)
       .then(data => {
-        const list = data.content || [];
+        const list = data || [];
         setMenuList(convertTree(list));
         setSelectedMenus([]);
         toolsStore.setIsShowLoader(false);
@@ -146,40 +142,20 @@ export default function MenuSettings() {
     setSelectedRow(row.node);
   };
 
+  const onPriorityChange = (isUp, row) => {
+    const serviceName = isUp ? 'priorityUp' : 'priorityDown';
+    patchService(`${url}/${serviceName}/${row.id}`).then(() => {
+      loadData();
+    });
+  };
+
   const activeBodyTemplate = rowData => (
     <Checkbox defaultChecked={rowData.isSeparator} disabled />
   );
 
-  const priorityBodyTemplate = row => {
-    const priorityChange = (e, isUp) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const serviceName = isUp ? 'priorityUp' : 'priorityDown';
-      patchService(`${url}/${serviceName}/${row.id}`).then(() => {
-        loadData();
-      });
-    };
-    return (
-      <div className="priority">
-        <Tooltip placement="left" title="Дээш">
-          <Button
-            icon={<CaretUpOutlined />}
-            size="small"
-            className="priorityBtn"
-            onClick={e => priorityChange(e, true)}
-          />
-        </Tooltip>
-        <Tooltip placement="left" title="Доош">
-          <Button
-            icon={<CaretDownOutlined />}
-            size="small"
-            className="priorityBtn"
-            onClick={e => priorityChange(e, false)}
-          />
-        </Tooltip>
-      </div>
-    );
-  };
+  const priorityBodyTemplate = rowData => (
+    <PriorityButton onChange={isUp => onPriorityChange(isUp, rowData)} />
+  );
 
   return (
     <ContentWrapper>
@@ -195,9 +171,11 @@ export default function MenuSettings() {
                   <Col xs={8} md={4} lg={4}>
                     <Button
                       type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faPlus} />}
+                      onClick={add}
                     >
-                      Хэвлэх{' '}
+                      Нэмэх
                     </Button>
                   </Col>
                   <Col xs={8} md={4} lg={4}>
@@ -206,17 +184,7 @@ export default function MenuSettings() {
                       className="export"
                       icon={<FontAwesomeIcon icon={faFileExcel} />}
                     >
-                      Экспорт
-                    </Button>
-                  </Col>
-                  <Col xs={8} md={4} lg={4}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      Нэмэх
+                      Устгах
                     </Button>
                   </Col>
                 </Row>
@@ -224,32 +192,23 @@ export default function MenuSettings() {
             </Row>
           </Content>
         </Layout>
-        <div className="datatable-responsive-demo">
+        <div className="treetable-responsive-demo">
           <TreeTable
             value={menuList}
             selectionMode="checkbox"
-            className="p-datatable-responsive-demo"
+            className="p-treetable-responsive-demo"
             selectionKeys={selectedMenus}
             onSelectionChange={onSelecttion}
             onRowClick={edit}
           >
-            <Column
-              field="priority"
-              header="Дараалал"
-              style={{ width: '60px' }}
-            />
+            <Column field="priority" header="№" style={{ width: 40 }} />
             <Column field="name" header="Цэсний нэр" expander filter />
             <Column field="description" header="Нэр" filter />
-            <Column
-              field="url"
-              header="Цэсний URL хаяг"
-              filter
-              style={{ width: '20%' }}
-            />
+            <Column field="url" header="Цэсний URL хаяг" filter />
             <Column
               field="isSeparator"
               header="Холбоостой эсэх"
-              style={{ width: 80, textAlign: 'center' }}
+              style={{ width: 120, textAlign: 'center' }}
               body={activeBodyTemplate}
             />
             <Column
