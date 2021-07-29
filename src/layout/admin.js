@@ -228,7 +228,7 @@ const Admin = () => {
               icon={<FontAwesomeIcon icon={faUserAlt} />}
               title={t('settings')}
             >
-              <Menu.Item key="1" icon={<FontAwesomeIcon icon={faUserAlt} />}>
+              <Menu.Item key="1223" icon={<FontAwesomeIcon icon={faUserAlt} />}>
                 {' '}
                 <Link to="/admin/menu">{t('menu')}</Link>
               </Menu.Item>

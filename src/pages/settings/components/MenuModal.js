@@ -56,7 +56,7 @@ export default function MenuModal(props) {
   const save = values => {
     if (isEditMode) values.id = editValue.id;
     if (values.parentId) values.parent = { id: values.parentId };
-    props.save(values);
+    props.saveMenu(values);
   };
 
   const onChangeTree = value => {

@@ -9,7 +9,6 @@ import { errorCatch, isEmptyObject, sortArray } from '../../tools/Tools';
 import {
   deleteService,
   getService,
-  patchService,
   postService,
   putService,
 } from '../../service/service';
@@ -60,10 +59,11 @@ export default function MenuSettings() {
     loadData();
   }, []);
 
-  const save = menu => {
+  const saveMenu = menu => {
+    // console.log(menu);
     toolsStore.setIsShowLoader(true);
     if (isEditMode) {
-      putService(`${url}/${menu.id}`, menu)
+      putService(`/menus/update/${menu.id}`, menu)
         .then(() => {
           setIsShowModal(false);
           loadData();
@@ -73,7 +73,7 @@ export default function MenuSettings() {
           toolsStore.setIsShowLoader(false);
         });
     } else {
-      postService(url, menu)
+      postService(`/menus/post`, menu)
         .then(() => {
           setIsShowModal(false);
           setSelectedRow({});
@@ -90,7 +90,7 @@ export default function MenuSettings() {
     return new Promise((resolve, reject) => {
       Object.entries(selectedMenus).forEach(([key, menu]) => {
         if (menu.checked) {
-          deleteService(`${url}/${key}`)
+          deleteService(`/menus/delete/${key}`)
             .then(() => resolve('ok'))
             .catch(error => {
               reject(error);
@@ -144,7 +144,7 @@ export default function MenuSettings() {
 
   const onPriorityChange = (isUp, row) => {
     const serviceName = isUp ? 'priorityUp' : 'priorityDown';
-    patchService(`${url}/${serviceName}/${row.id}`).then(() => {
+    putService(`/menus/${serviceName}/${row.id}`).then(() => {
       loadData();
     });
   };
@@ -182,6 +182,7 @@ export default function MenuSettings() {
                     <Button
                       type="text"
                       className="export"
+                      onClick={remove}
                       icon={<FontAwesomeIcon icon={faFileExcel} />}
                     >
                       Устгах
@@ -226,7 +227,7 @@ export default function MenuSettings() {
               isEditMode={isEditMode}
               editValue={selectedRow}
               close={() => setIsShowModal(false)}
-              save={save}
+              saveMenu={saveMenu}
             />
           </Suspense>
         )}
