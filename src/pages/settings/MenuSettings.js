@@ -2,7 +2,7 @@ import React, { useState, useEffect, Suspense, useContext } from 'react';
 import { TreeTable } from 'primereact/treetable';
 import { Column } from 'primereact/column';
 import { Button, message, Layout, Checkbox, Row, Col } from 'antd';
-import { faFileExcel, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ToolsContext } from '../../context/Tools';
 import { errorCatch, isEmptyObject, sortArray } from '../../tools/Tools';
@@ -60,7 +60,6 @@ export default function MenuSettings() {
   }, []);
 
   const saveMenu = menu => {
-    // console.log(menu);
     toolsStore.setIsShowLoader(true);
     if (isEditMode) {
       putService(`/menus/update/${menu.id}`, menu)
@@ -183,7 +182,7 @@ export default function MenuSettings() {
                       type="text"
                       className="export"
                       onClick={remove}
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
+                      icon={<FontAwesomeIcon icon={faTrash} />}
                     >
                       Устгах
                     </Button>

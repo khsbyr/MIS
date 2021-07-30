@@ -15,7 +15,6 @@ import { PAGESIZE } from '../../constants/Constant';
 import RoleModal from './components/RoleModal';
 import ContentWrapper from '../criteria/criteria.style';
 
-const RoleConfig = React.lazy(() => import('./components/RoleConfig'));
 const MenuConfig = React.lazy(() => import('./components/MenuConfig'));
 const { Content } = Layout;
 
@@ -25,7 +24,6 @@ let selectedRole;
 export default function Roles() {
   const [list, setList] = useState([]);
   const [isShowModal, setIsShowModal] = useState(false);
-  const [isShowConfig, setIsShowConfig] = useState(false);
   const [isShowConfigMenu, setIsShowConfigMenu] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
   const [lazyParams] = useState({
@@ -201,15 +199,6 @@ export default function Roles() {
             close={closeModal}
             save={save}
           />
-        )}
-        {isShowConfig && selectedRole && (
-          <Suspense fallback={<div>...</div>}>
-            <RoleConfig
-              visible={isShowConfig}
-              role={selectedRole}
-              close={() => setIsShowConfig(false)}
-            />
-          </Suspense>
         )}
         {isShowConfigMenu && selectedRole && (
           <Suspense fallback={<div>...</div>}>

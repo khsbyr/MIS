@@ -14,7 +14,7 @@ export default function MenuConfig(props) {
   const toolsStore = useContext(ToolsContext);
 
   const convertTree = list => {
-    const result = list.filter(row => row.status);
+    const result = list;
     result.forEach(menu => {
       menu.key = menu.id;
       menu.title = menu.name;
@@ -25,20 +25,17 @@ export default function MenuConfig(props) {
 
   useEffect(() => {
     toolsStore.setIsShowLoader(true);
-    getService('menu/get').then(result => {
-      const list = result.content || [];
+    getService('/menus/get').then(result => {
+      const list = result || [];
       setRoleTree(convertTree(list));
-      getService('/gap-core-service/menuShows', {
-        search: `userRoleId:${role.id}`,
-        size: 500,
-      })
+      getService(`/menuShows/getByRoleId/${role.id}`)
         .then(Response => {
           if (!Response) return;
-          Response.content.forEach(item => {
+          Response.forEach(item => {
             item.key = item.menu?.id;
             checkedKeys.push(item.key);
           });
-          oldData = Response.content;
+          oldData = Response;
           setCheckedKeys([...checkedKeys]);
         })
         .finally(() => toolsStore.setIsShowLoader(false));
@@ -79,7 +76,7 @@ export default function MenuConfig(props) {
       return;
     }
     toolsStore.setIsShowLoader(true);
-    postService('/gap-core-service/menuShows', saveData)
+    postService('/menuShows/post', saveData)
       .then(() => {
         props.close();
         toolsStore.setIsShowLoader(false);
