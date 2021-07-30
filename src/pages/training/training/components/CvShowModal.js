@@ -25,7 +25,6 @@ import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import CreatableSelect from 'react-select/creatable';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
 import { ToolsContext } from '../../../../context/Tools';
 import {
@@ -43,25 +42,12 @@ import ExperienceModal from './ExperienceModal';
 import MembershipModal from './MembershipModal';
 import PublishedWorkModal from './PublishedWorkModal';
 import TeacherExperienceModal from './TeacherExperienceModal';
-import CvShowModal from './CvShowModal';
-// import { colourOptions } from '../data';
-
-const { Dragger } = Upload;
-const layout = {
-  labelCol: {
-    span: 20,
-  },
-  wrapperCol: {
-    span: 24,
-  },
-};
 
 let editRow;
 let isEditModee;
 let editRowEducation;
-export default function CvModal(props) {
+export default function CvShowModal(props) {
   const { Trainerscontroller, isModalVisible, isEditMode, trainerID } = props;
-  console.log(Trainerscontroller);
   const [isModalVisibleEducation, setIsModalVisibleEducation] = useState(false);
   const [isModalVisibleExperience, setIsModalVisibleExperience] =
     useState(false);
@@ -100,7 +86,7 @@ export default function CvModal(props) {
   const PAGESIZE = 20;
   const [birthDate, setBirthDate] = useState([]);
   const [showResults, setShowResults] = useState(false);
-  const [isOnChange, setIsOnchange] = useState(false);
+
   const ShowModal = () => setShowResults(true);
 
   function onBirthDateChange(date, value) {
@@ -390,7 +376,6 @@ export default function CvModal(props) {
   };
 
   const selectUser = value => {
-    setIsOnchange(true);
     getService(`user/get/${value}`, {}).then(result => {
       if (result) {
         const selectedUser = result;
@@ -822,175 +807,366 @@ export default function CvModal(props) {
   };
   return (
     <div>
-      <Modal
-        title="Сургагч багшийн CV бүртгэх"
-        okText="Хадгалах"
-        cancelText="Буцах"
-        width={1200}
-        alignItems="center"
-        visible={isModalVisible}
-        onOk={save}
-        onCancel={() => props.close()}
-      >
-        <ContentWrapper>
-          <Form
-            form={form}
-            labelAlign="left"
-            {...layout}
-            layout="vertical"
-            name="nest-messages"
-            validateMessages={validateMessages}
+      <h2 className="title">2. Ажлын зорилго</h2>
+      <Row>
+        <Col xs={24} md={24} lg={24}>
+          <Form.Item name="purpose">
+            <Input.TextArea
+              placeholder="(Горилж буй ажлын зорилгоо товч бичнэ үү)"
+              style={{
+                width: '100%',
+                height: '110px',
+              }}
+            />
+          </Form.Item>
+        </Col>
+      </Row>
+
+      <h2 className="title">
+        3. Боловсрол{' '}
+        <Button
+          type="text"
+          className="export"
+          icon={<FontAwesomeIcon icon={faPlus} />}
+          onClick={add}
+          style={{ float: 'right' }}
+        >
+          Нэмэх
+        </Button>
+      </h2>
+      <Row>
+        <Col xs={24} md={24} lg={24}>
+          <DataTable
+            value={listEducation}
+            removableSort
+            rows={10}
+            className="p-datatable-responsive-demo"
+            selection={selectedRows}
+            // onRowClick={edit}
+            onSelectionChange={e => {
+              setSelectedRows(e.value);
+            }}
+            dataKey="id"
           >
-            <h2 className="title">1. Хувь хүний мэдээлэл</h2>
-            <Row gutter={[30, 30]}>
-              <Col xs={24} md={24} lg={4}>
-                <Dragger {...props} style={{}}>
-                  <p className="ant-upload-drag-icon">
-                    <InboxOutlined />
-                  </p>
-                  <p className="ant-upload-hint">Зураг оруулах</p>
-                </Dragger>
-              </Col>
-              <Col xs={24} md={24} lg={2} />
-              <Col xs={24} md={24} lg={9}>
-                <Form.Item name="lastname">
-                  <Input
-                    className="FormItem"
-                    placeholder="Овог:"
-                    prefix={<FontAwesomeIcon icon={faUser} />}
-                  />
-                </Form.Item>
+            <Column field="index" header="№" style={{ width: '50px' }} />
+            <Column field="degree" header="Зэрэг, цол" />
+            <Column field="universityName" header="Их дээд сургуулийн нэр" />
+            <Column field="enrolledDate" header="Элссэн огноо" />
+            <Column field="graduatedDate" header="Төгссөн огноо" />
+            <Column headerStyle={{ width: '7rem' }} body={action} />
+          </DataTable>
+          {isModalVisibleEducation && (
+            <EducationModal
+              CvEducationController={editRowEducation}
+              isModalVisibleEducation={isModalVisibleEducation}
+              close={closeModal}
+              isEditMode={isEditModee}
+              trainerID={trainerID}
+            />
+          )}
+        </Col>
+      </Row>
 
-                <Form.Item name="firstname">
-                  <Input
-                    className="FormItem"
-                    placeholder="Нэр:"
-                    prefix={<FontAwesomeIcon icon={faUser} />}
-                  />
-                </Form.Item>
-                <Form.Item name="registerNumber">
-                  {/* <Input
-                    className="FormItem"
-                    placeholder="Регистрийн дугаар:"
-                    prefix={<FontAwesomeIcon icon={faUserEdit} />}
-                  /> */}
-                  {/* <AutoCompleteSelect
-                    className="FormItem"
-                    placeholder="Бүртгэлтэй регистр"
-                    valueField="id"
-                    data={stateRegister}
-                    onChange={value => selectUser(value)}
-                  /> */}
-                  <CreatableSelect
-                    isClearable
-                    // onChange={this.handleChange}
-                    // onInputChange={this.handleInputChange}
-                    options={stateRegister}
-                  />
-                </Form.Item>
-                <Form.Item name="phoneNumber">
-                  <Input
-                    className="FormItem"
-                    placeholder="Утас, факс:"
-                    prefix={<FontAwesomeIcon icon={faPhone} />}
-                  />
-                </Form.Item>
-                <Form.Item name="email">
-                  <Input
-                    className="FormItem"
-                    placeholder="И-мэйл хаяг:"
-                    prefix={<FontAwesomeIcon icon={faEnvelope} />}
-                  />
-                </Form.Item>
-              </Col>
+      <h2 className="title">
+        4. Ажлын туршлага{' '}
+        <Button
+          type="text"
+          className="export"
+          icon={<FontAwesomeIcon icon={faPlus} />}
+          onClick={addExperience}
+          style={{ float: 'right' }}
+        >
+          Нэмэх
+        </Button>
+      </h2>
+      <Row>
+        <Col xs={24} md={24} lg={24}>
+          <DataTable
+            value={listExperience}
+            removableSort
+            rows={10}
+            className="p-datatable-responsive-demo"
+            selection={selectedRows}
+            onSelectionChange={e => {
+              setSelectedRows(e.value);
+            }}
+            dataKey="id"
+          >
+            <Column field="index" header="№" style={{ width: '50px' }} />
+            <Column field="position" header="Албан тушаал" />
+            <Column field="organizationName" header="Байгууллагын нэр" />
+            <Column field="hiredDate" header="Ажилд орсон огноо" />
+            <Column headerStyle={{ width: '7rem' }} body={actionExperience} />
+          </DataTable>
+          {isModalVisibleExperience && (
+            <ExperienceModal
+              CvExperienceController={editRow}
+              isModalVisibleExperience={isModalVisibleExperience}
+              close={closeModalExperience}
+              isEditMode={isEditModee}
+              trainerID={trainerID}
+            />
+          )}
+        </Col>
+      </Row>
 
-              <Col xs={24} md={24} lg={9}>
-                <Form.Item>
-                  <DatePicker
-                    prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
-                    placeholder="Төрсөн он, сар, өдөр"
-                    className="FormItem"
-                    onChange={onBirthDateChange}
-                    defaultValue={
-                      isEditMode
-                        ? Trainerscontroller &&
-                          moment(Trainerscontroller.birthDate)
-                        : BirthDatee
-                    }
-                  />
-                </Form.Item>
-                <Form.Item name="CountryID">
-                  <AutoCompleteSelect
-                    className="FormItem"
-                    placeholder="Улс сонгох"
-                    valueField="id"
-                    data={stateCountry}
-                    onChange={value => selectCountry(value)}
-                  />
-                </Form.Item>
-                <Form.Item name="AimagID">
-                  <AutoCompleteSelect
-                    className="FormItem"
-                    placeholder="Аймаг, хот сонгох"
-                    valueField="id"
-                    data={stateAimag}
-                    onChange={value => selectAimag(value)}
-                  />
-                </Form.Item>
-                <Form.Item name="SoumID">
-                  <AutoCompleteSelect
-                    className="FormItem"
-                    placeholder="Сум, дүүрэг сонгох"
-                    valueField="id"
-                    data={stateSum}
-                    onChange={value => selectSum(value)}
-                  />
-                </Form.Item>
-                <Form.Item name="BagID">
-                  <AutoCompleteSelect
-                    className="FormItem"
-                    placeholder="Баг, хороо сонгох"
-                    valueField="id"
-                    data={stateBag}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-            {isEditMode ? (
-              <CvShowModal
-                Trainerscontroller={Trainerscontroller}
-                isModalVisible={isModalVisible}
-                close={closeModal}
-                isEditMode={isEditMode}
-                trainerID={trainerID}
-              />
-            ) : (
-              <div>
-                {isOnChange ? (
-                  <CvShowModal
-                    Trainerscontroller={Trainerscontroller}
-                    isModalVisible={isModalVisible}
-                    close={closeModal}
-                    isEditMode={isEditMode}
-                    trainerID={trainerID}
-                  />
-                ) : (
-                  <Button onClick={ShowModal}> Хадгалах </Button>
-                )}
-                {showResults ? (
-                  <CvShowModal
-                    Trainerscontroller={Trainerscontroller}
-                    isModalVisible={isModalVisible}
-                    close={closeModal}
-                    isEditMode={isEditMode}
-                    trainerID={trainerID}
-                  />
-                ) : null}
-              </div>
-            )}
-          </Form>
-        </ContentWrapper>
-      </Modal>
+      <h2 className="title">
+        5. Зөвлөх үйлчилгээний ажлын туршлага{' '}
+        <Button
+          type="text"
+          className="export"
+          icon={<FontAwesomeIcon icon={faPlus} />}
+          onClick={addExperienceAdvice}
+          style={{ float: 'right' }}
+        >
+          Нэмэх
+        </Button>
+      </h2>
+      <Row>
+        <Col xs={24} md={24} lg={24}>
+          <DataTable
+            value={listExperienceAdvice}
+            removableSort
+            rows={10}
+            className="p-datatable-responsive-demo"
+            selection={selectedRows}
+            onSelectionChange={e => {
+              setSelectedRows(e.value);
+            }}
+            dataKey="id"
+          >
+            <Column field="index" header="№" style={{ width: '50px' }} />
+            <Column field="position" header="Албан тушаал" />
+            <Column field="organizationName" header="Байгууллагын нэр" />
+            <Column field="hiredDate" header="Огноо" />
+            <Column
+              headerStyle={{ width: '7rem' }}
+              body={actionExperienceAdvice}
+            />
+          </DataTable>
+          {isModalVisibleExperienceAdvice && (
+            <ExperienceAdviceModal
+              ExperienceAdviceController={editRow}
+              isModalVisible={isModalVisibleExperienceAdvice}
+              close={closeModalExperienceAdvice}
+              isEditMode={isEditModee}
+              trainerID={trainerID}
+            />
+          )}
+        </Col>
+      </Row>
+
+      <h2 className="title">
+        6. Багшийн ажлын туршлага{' '}
+        <Button
+          type="text"
+          className="export"
+          icon={<FontAwesomeIcon icon={faPlus} />}
+          onClick={addTeacherExperience}
+          style={{ float: 'right' }}
+        >
+          Нэмэх
+        </Button>
+      </h2>
+      <Row>
+        <Col xs={24} md={24} lg={24}>
+          <DataTable
+            value={listExperienceTeacher}
+            removableSort
+            rows={10}
+            className="p-datatable-responsive-demo"
+            selection={selectedRows}
+            onSelectionChange={e => {
+              setSelectedRows(e.value);
+            }}
+            dataKey="id"
+          >
+            <Column field="index" header="№" style={{ width: '50px' }} />
+            <Column field="position" header="Албан тушаал" />
+            <Column field="organizationName" header="Байгууллагын нэр" />
+            <Column field="hiredDate" header="Огноо" />
+            <Column
+              headerStyle={{ width: '7rem' }}
+              body={actionTeacherExperience}
+            />
+          </DataTable>
+          {isModalVisibleTeacherExperience && (
+            <TeacherExperienceModal
+              TeacherExperienceController={editRow}
+              isModalVisible={isModalVisibleTeacherExperience}
+              close={closeModalTeacherExperience}
+              isEditMode={isEditModee}
+              trainerID={trainerID}
+            />
+          )}
+        </Col>
+      </Row>
+
+      <h2 className="title">
+        7. Хэвлүүлсэн бүтээл (Эрдэм шинжилгээ, судалгааны бүтээл, ном гарын
+        авлага, хэлэлцүүлсэн илтгэлүүд ){' '}
+        <Button
+          type="text"
+          className="export"
+          icon={<FontAwesomeIcon icon={faPlus} />}
+          onClick={addPublishedWork}
+          style={{ float: 'right' }}
+        >
+          Нэмэх
+        </Button>
+      </h2>
+      <Row>
+        <Col xs={24} md={24} lg={24}>
+          <DataTable
+            value={listPublishedWork}
+            removableSort
+            rows={10}
+            className="p-datatable-responsive-demo"
+            selection={selectedRows}
+            onSelectionChange={e => {
+              setSelectedRows(e.value);
+            }}
+            dataKey="id"
+          >
+            <Column field="index" header="№" style={{ width: '50px' }} />
+            <Column field="name" header="Бүтээлийн нэр" />
+            <Column field="publishedDate" header="Огноо" />
+            <Column
+              headerStyle={{ width: '7rem' }}
+              body={actionPublishedWork}
+            />
+          </DataTable>
+          {isModalVisiblePublishedWork && (
+            <PublishedWorkModal
+              PublishedWorkController={editRow}
+              isModalVisible={isModalVisiblePublishedWork}
+              close={closeModalPublishedWork}
+              isEditMode={isEditModee}
+              trainerID={trainerID}
+            />
+          )}
+        </Col>
+      </Row>
+
+      <h2 className="title">
+        8. Өөрийн нэр дээр бүртгэлтэй оюуны өмч, гэрчилгээ, лиценз, тусгай
+        зөвшөөрөл{' '}
+        <Button
+          type="text"
+          className="export"
+          icon={<FontAwesomeIcon icon={faPlus} />}
+          onClick={addCertificate}
+          style={{ float: 'right' }}
+        >
+          Нэмэх
+        </Button>
+      </h2>
+      <Row>
+        <Col xs={24} md={24} lg={24}>
+          <DataTable
+            value={listLicense}
+            removableSort
+            rows={10}
+            className="p-datatable-responsive-demo"
+            selection={selectedRows}
+            onSelectionChange={e => {
+              setSelectedRows(e.value);
+            }}
+            dataKey="id"
+          >
+            <Column field="index" header="№" style={{ width: '50px' }} />
+            <Column
+              field="propertyName"
+              header="Оюуны өмч, гэрчилгээ, лицензийн нэр"
+            />
+            <Column field="licensedBy" header="Олгосон байгууллагын нэр" />
+            <Column field="licensedDate" header="Огноо" />
+            <Column headerStyle={{ width: '7rem' }} body={actionCertificate} />
+          </DataTable>
+          {isModalVisibleCertificate && (
+            <CertificateModal
+              LicenseController={editRow}
+              isModalVisible={isModalVisibleCertificate}
+              close={closeModalCertificate}
+              isEditMode={isEditModee}
+              trainerID={trainerID}
+            />
+          )}
+        </Col>
+      </Row>
+
+      <h2 className="title">
+        9. Гишүүнчлэл (Олон нийтийн болон төрийн бус байгууллагын гишүүн эсэх){' '}
+        <Button
+          type="text"
+          className="export"
+          icon={<FontAwesomeIcon icon={faPlus} />}
+          onClick={addMembership}
+          style={{ float: 'right' }}
+        >
+          Нэмэх
+        </Button>
+      </h2>
+      <Row>
+        <Col xs={24} md={24} lg={24}>
+          <DataTable
+            value={listMembership}
+            removableSort
+            rows={10}
+            className="p-datatable-responsive-demo"
+            selection={selectedRows}
+            onSelectionChange={e => {
+              setSelectedRows(e.value);
+            }}
+            dataKey="id"
+          >
+            <Column field="index" header="№" style={{ width: '50px' }} />
+            <Column field="position" header="Албан тушаал" />
+            <Column field="organization" header="Байгууллагын нэр" />
+            <Column field="enrolledDate" header="Огноо" />
+            <Column headerStyle={{ width: '7rem' }} body={actionMembership} />
+          </DataTable>
+          {isModalVisibleMembership && (
+            <MembershipModal
+              MembershipController={editRow}
+              isModalVisible={isModalVisibleMembership}
+              close={closeModalMembership}
+              isEditMode={isEditModee}
+              trainerID={trainerID}
+            />
+          )}
+        </Col>
+      </Row>
+
+      <h2 className="title">10. Ур чадвар</h2>
+      <Row>
+        <Col xs={24} md={24} lg={24}>
+          <Form.Item name="skill">
+            <Input.TextArea
+              placeholder="(Өөрийн давуу тал, ур чадвараа нэрлэнэ үү)"
+              style={{
+                width: '100%',
+                height: '140px',
+              }}
+            />
+          </Form.Item>
+        </Col>
+      </Row>
+
+      <h2 className="title">11. Хаягийн дэлгэрэнгүй</h2>
+      <Row>
+        <Col xs={24} md={24} lg={24}>
+          <Form.Item name="AddressDetail">
+            <Input.TextArea
+              placeholder="(Дэлгэрэнгүй хаягаа оруулна уу)"
+              style={{
+                width: '100%',
+                height: '140px',
+              }}
+            />
+          </Form.Item>
+        </Col>
+      </Row>
     </div>
   );
 }

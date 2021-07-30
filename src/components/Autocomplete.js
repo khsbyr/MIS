@@ -18,15 +18,16 @@ export default function AutocompleteSelect(props) {
       optionFilterProp="children"
       maxTagCount="responsive"
       size={size || 'small'}
-      filterOption={(input, option) =>
-        option.children?.toLowerCase().indexOf(input.toLowerCase()) >= 0
-      }
+      // filterOption={(input, option) =>
+      //   option.children?.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      // }
       onChange={props.onChange}
     >
       {data &&
         data.map((z, index) => (
           <Option key={index} value={valueField ? z[valueField] : z.id}>
             {viewField ? z[viewField] : z.name}
+            {viewField ? z[viewField] : z.register}
           </Option>
         ))}
     </Select>

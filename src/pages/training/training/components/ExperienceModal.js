@@ -1,5 +1,6 @@
-import { Form, Input, Modal } from 'antd';
-import React, { useEffect } from 'react';
+import { Form, Input, Modal, DatePicker } from 'antd';
+import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
@@ -15,18 +16,38 @@ const layout = {
 };
 
 export default function ExperienceModal(props) {
-  const { CvExperienceController, isModalVisibleExperience, isEditMode } =
-    props;
+  const {
+    CvExperienceController,
+    isModalVisibleExperience,
+    isEditMode,
+    trainerID,
+  } = props;
   const [form] = Form.useForm();
+  const [hiredDate, setHiredDate] = useState(null);
+  const [firedDate, setFiredDate] = useState(null);
   useEffect(() => {
     if (isEditMode) {
+      setHiredDate(CvExperienceController.hiredDate);
+      setFiredDate(CvExperienceController.firedDate);
       form.setFieldsValue({ ...CvExperienceController });
     }
   }, []);
+
+  function onChangeHiredDate(date, value) {
+    setHiredDate(value);
+  }
+
+  function onChangeFiredDate(date, value) {
+    setFiredDate(value);
+  }
+
   const save = () => {
     form
       .validateFields()
       .then(values => {
+        values.trainer = { id: trainerID };
+        values.hiredDate = hiredDate;
+        values.firedDate = firedDate;
         if (isEditMode) {
           putService(`expierence/update/${CvExperienceController.id}`, values)
             .then(() => {
@@ -36,7 +57,7 @@ export default function ExperienceModal(props) {
               errorCatch(error);
             });
         } else {
-          postService(`expierence/post/${CvExperienceController.id}`, values)
+          postService(`expierence/post`, values)
             .then(() => {
               props.close(true);
             })
@@ -83,16 +104,21 @@ export default function ExperienceModal(props) {
             <Form.Item name="organizationName" label="Байгууллагын нэр:">
               <Input />
             </Form.Item>
-            <Form.Item
-              name="hiredDate"
-              label="Ажилд орсон огноо:"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input />
+            <Form.Item label="Ажилд орсон огноо:">
+              <DatePicker
+                onChange={onChangeHiredDate}
+                defaultValue={
+                  isEditMode ? moment(CvExperienceController.hiredDate) : ''
+                }
+              />
+            </Form.Item>
+            <Form.Item label="Ажлаас гарсан огноо:">
+              <DatePicker
+                onChange={onChangeFiredDate}
+                defaultValue={
+                  isEditMode ? moment(CvExperienceController.firedDate) : ''
+                }
+              />
             </Form.Item>
           </Form>
         </ContentWrapper>

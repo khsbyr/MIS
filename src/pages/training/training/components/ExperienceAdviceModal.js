@@ -1,4 +1,4 @@
-import { DatePicker, Form, Input, Modal } from 'antd';
+import { Form, Input, Modal } from 'antd';
 import React, { useEffect } from 'react';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
@@ -14,20 +14,22 @@ const layout = {
   },
 };
 export default function ExperienceAdviceModal(props) {
-  const { Composition, isModalVisible, isEditMode } = props;
+  const { ExperienceAdviceController, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
   useEffect(() => {
     if (isEditMode) {
-      form.setFieldsValue({ ...Composition });
+      form.setFieldsValue({ ...ExperienceAdviceController });
     }
   }, []);
   const save = () => {
     form
       .validateFields()
       .then(values => {
-        values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService(`criteria/put${Composition.id}`, values)
+          putService(
+            `expierenceForAdvice/update/${ExperienceAdviceController.id}`,
+            values
+          )
             .then(() => {
               props.close(true);
             })
@@ -35,7 +37,7 @@ export default function ExperienceAdviceModal(props) {
               errorCatch(error);
             });
         } else {
-          postService('criteria/post', values)
+          postService('expierenceForAdvice/post', values)
             .then(() => {
               props.close(true);
             })
@@ -69,7 +71,7 @@ export default function ExperienceAdviceModal(props) {
             validateMessages={validateMessages}
           >
             <Form.Item
-              name="role"
+              name="position"
               label="Албан тушаал:"
               rules={[
                 {
@@ -79,11 +81,11 @@ export default function ExperienceAdviceModal(props) {
             >
               <Input />
             </Form.Item>
-            <Form.Item name="nameOfOrga" label="Байгууллагын нэр:">
+            <Form.Item name="organizationName" label="Байгууллагын нэр:">
               <Input />
             </Form.Item>
             <Form.Item
-              name="date"
+              name="hiredDate"
               label="Огноо:"
               rules={[
                 {
@@ -91,7 +93,7 @@ export default function ExperienceAdviceModal(props) {
                 },
               ]}
             >
-              <DatePicker />
+              <Input />
             </Form.Item>
           </Form>
         </ContentWrapper>

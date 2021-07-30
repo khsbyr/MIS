@@ -23,6 +23,7 @@ const { Content } = Layout;
 
 let editRow;
 let isEditMode;
+let trainerID;
 const CV = () => {
   const loadLazyTimeout = null;
   const toolsStore = useContext(ToolsContext);
@@ -36,29 +37,29 @@ const CV = () => {
   const [stateOrg, setStateOrg] = useState([]);
   const [OrgID, setOrgID] = useState([]);
 
-  const onInit = () => {
-    toolsStore.setIsShowLoader(true);
-    if (loadLazyTimeout) {
-      clearTimeout(loadLazyTimeout);
-    }
-    getService('trainers/get', list)
-      .then(result => {
-        const listResult = result.content || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList(listResult);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
-  };
+  // const onInit = () => {
+  //   toolsStore.setIsShowLoader(true);
+  //   if (loadLazyTimeout) {
+  //     clearTimeout(loadLazyTimeout);
+  //   }
+  //   getService('trainers/get', list)
+  //     .then(result => {
+  //       const listResult = result || [];
+  //       listResult.forEach((item, index) => {
+  //         item.index = lazyParams.page * PAGESIZE + index + 1;
+  //       });
+  //       setList(listResult);
+  //       setSelectedRows([]);
+  //     })
+  //     .finally(toolsStore.setIsShowLoader(false))
+  //     .catch(error => {
+  //       errorCatch(error);
+  //       toolsStore.setIsShowLoader(false);
+  //     });
+  // };
 
   useEffect(() => {
-    onInit();
+    // onInit();
     getService('organization/get').then(result => {
       if (result) {
         setStateOrg(result.content || []);
@@ -67,7 +68,7 @@ const CV = () => {
   }, [lazyParams]);
 
   const getGuidelines = orgId => {
-    getService(`trainers/getList/${orgId}`, {}).then(result => {
+    getService(`user/getTrainerListByOrgId/${orgId}`, {}).then(result => {
       if (result) {
         const listResult = result || [];
         listResult.forEach((item, index) => {
@@ -98,7 +99,7 @@ const CV = () => {
     putService(`trainers/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
-        onInit();
+        // onInit();
       })
       .catch(error => {
         errorCatch(error);
@@ -114,7 +115,7 @@ const CV = () => {
       cancelText: 'Буцах',
       onOk() {
         handleDeleted(row);
-        onInit();
+        // onInit();
       },
       onCancel() {},
     });
@@ -129,6 +130,7 @@ const CV = () => {
   };
 
   const edit = row => {
+    trainerID = row.trainers.id;
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
@@ -151,7 +153,7 @@ const CV = () => {
 
   const closeModal = (isSuccess = false) => {
     setIsModalVisible(false);
-    if (isSuccess) onInit();
+    // if (isSuccess) onInit();
   };
 
   const indexBodyTemplate = row => (
@@ -164,14 +166,14 @@ const CV = () => {
   const FirstNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Нэр</span>
-      {row.firstName}
+      {row.firstname}
     </>
   );
 
   const LastNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Овог</span>
-      {row.lastName}
+      {row.lastname}
     </>
   );
 
@@ -179,6 +181,13 @@ const CV = () => {
     <>
       <span className="p-column-title">Утас</span>
       {row.phoneNumber}
+    </>
+  );
+
+  const registerBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Сургагч багшийн регистер</span>
+      {row.register}
     </>
   );
   return (
@@ -269,15 +278,15 @@ const CV = () => {
               sortable
             />
             <Column
-              header="Нэр"
-              body={FirstNameBodyTemplate}
+              header="Овог"
+              body={LastNameBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
             />
             <Column
-              header="Овог"
-              body={LastNameBodyTemplate}
+              header="Нэр"
+              body={FirstNameBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
@@ -292,6 +301,7 @@ const CV = () => {
             <Column
               field="registerNumber"
               header="Сургагч багшийн регистер"
+              body={registerBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
@@ -305,6 +315,7 @@ const CV = () => {
               close={closeModal}
               isEditMode={isEditMode}
               orgId={OrgID}
+              trainerID={trainerID}
             />
           )}
         </div>

@@ -31,9 +31,6 @@ export default function PlanModal(props) {
     if (isEditMode) {
       form.setFieldsValue({
         ...Plancontroller,
-        UserFirstName: Plancontroller.user && Plancontroller.user.firstname,
-        TrainerFirstName:
-          Plancontroller.trainers && Plancontroller.trainers.firstName,
         UserID: Plancontroller.user && Plancontroller.user.id,
         TrainerID: Plancontroller.trainers && Plancontroller.trainers.id,
       });

@@ -30,13 +30,9 @@ const TrainingProgram = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  // eslint-disable-next-line no-unused-vars
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     page: 0,
   });
-  // eslint-disable-next-line no-unused-vars
-  const [loading, setLoading] = useState(false);
-  // eslint-disable-next-line no-unused-vars
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateTraining, setStateTraining] = useState([]);
