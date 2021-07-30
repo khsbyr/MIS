@@ -22,28 +22,24 @@ export default function FuelModal(props) {
   const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
-    getService('fuelExpenses/get', {
-      search: 'status:true',
-    }).then(result => {
-      if (result) {
-        setStateController(result.content || []);
-      }
-    });
+    // getService('fuelExpenses/get', {
+    //   search: 'status:true',
+    // }).then(result => {
+    //   if (result) {
+    //     setStateController(result.content || []);
+    //   }
+    // });
 
     if (isEditMode) {
-      getService(`fuelExpenses/get${Fuelcontroller.id}`).then(result => {
-        Fuelcontroller.userServiceId = result.userService.id;
-        form.setFieldsValue({ ...Fuelcontroller });
-      });
+      form.setFieldsValue({ ...Fuelcontroller });
     }
   }, []);
   const save = () => {
     form
       .validateFields()
       .then(values => {
-        values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService(`fuelExpenses/put${Fuelcontroller.id}`, values)
+          putService(`fuelExpenses/update${Fuelcontroller.id}`, values)
             .then(() => {
               props.close(true);
             })
@@ -86,7 +82,7 @@ export default function FuelModal(props) {
           validateMessages={validateMessages}
         >
           <Form.Item
-            name="fuelExpenses.route"
+            name="route"
             label="Маршрут:"
             rules={[
               {
@@ -97,7 +93,7 @@ export default function FuelModal(props) {
             <Input />
           </Form.Item>
           <Form.Item
-            name="fuelExpenses.roadLength"
+            name="roadLength"
             label="Замын урт /км/:"
             rules={[
               {
@@ -108,7 +104,7 @@ export default function FuelModal(props) {
             <Input />
           </Form.Item>
           <Form.Item
-            name="fuelExpenses.regionalSupplement"
+            name="regionalSupplement"
             label="Бүсийн нэмэгдэл /%/:"
             rules={[
               {
@@ -119,7 +115,7 @@ export default function FuelModal(props) {
             <Input />
           </Form.Item>
           <Form.Item
-            name="fuelExpenses.fuelConsumption"
+            name="fuelConsumption"
             label="Зарцуулах шатахуун /л/"
             rules={[
               {
@@ -130,7 +126,7 @@ export default function FuelModal(props) {
             <Input />
           </Form.Item>
           <Form.Item
-            name="fuelExpenses.fuelCost"
+            name="fuelCost"
             label="Шатахууны үнэ /₮/ A92"
             rules={[
               {
@@ -141,15 +137,7 @@ export default function FuelModal(props) {
             <Input />
           </Form.Item>
 
-          <Form.Item
-            name="fuelExpenses.total"
-            label="Нийт /₮/"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
+          <Form.Item name="total" label="Нийт /₮/">
             <Input />
           </Form.Item>
         </Form>
