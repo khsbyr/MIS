@@ -22,11 +22,20 @@ export default function OrganizationModal(props) {
   const [stateSum, setStateSum] = useState([]);
   const [stateCountry, setStateCountry] = useState([]);
   const [stateBag, setStateBag] = useState([]);
+  const [responsibleUserID, setResponsibleUserID] = useState(null);
+  const [role, setRole] = useState([]);
+  const [, setRoleID] = useState([]);
 
   useEffect(() => {
     getService('bank/get').then(result => {
       if (result) {
         setStateBank(result || []);
+      }
+    });
+
+    getService('role/getAdmin').then(result => {
+      if (result) {
+        setRole(result || []);
       }
     });
 
@@ -62,6 +71,10 @@ export default function OrganizationModal(props) {
       );
     }
     if (isEditMode) {
+      setResponsibleUserID(
+        Orgcontroller.responsibleUser && Orgcontroller.responsibleUser.id
+      );
+      setRoleID(Orgcontroller.roleId);
       form.setFieldsValue({
         ...Orgcontroller,
         bankID: Orgcontroller.bank.id,
@@ -73,15 +86,30 @@ export default function OrganizationModal(props) {
         SoumID: Orgcontroller.address ? Orgcontroller.address.soum.id : '',
         BagID: Orgcontroller.address ? Orgcontroller.address.bag.id : '',
         AddressDetail: Orgcontroller.address.addressDetail,
-        RespoUserFirstName: Orgcontroller.responsibleUser.firstname,
-        RespoUserLastName: Orgcontroller.responsibleUser.lastname,
-        RespoUserRegister: Orgcontroller.responsibleUser.register,
-        RespoUserPosition: Orgcontroller.responsibleUser.position,
-        RespoUserPhone: Orgcontroller.responsibleUser.phoneNumber,
-        RespoUserEmail: Orgcontroller.responsibleUser.email,
+        RespoUserFirstName:
+          Orgcontroller.responsibleUser &&
+          Orgcontroller.responsibleUser.firstname,
+        RespoUserLastName:
+          Orgcontroller.responsibleUser &&
+          Orgcontroller.responsibleUser.lastname,
+        RespoUserRegister:
+          Orgcontroller.responsibleUser &&
+          Orgcontroller.responsibleUser.register,
+        RespoUserPosition:
+          Orgcontroller.responsibleUser &&
+          Orgcontroller.responsibleUser.position,
+        RespoUserPhone:
+          Orgcontroller.responsibleUser &&
+          Orgcontroller.responsibleUser.phoneNumber,
+        RespoUserEmail:
+          Orgcontroller.responsibleUser && Orgcontroller.responsibleUser.email,
       });
     }
   }, []);
+
+  const selectRole = value => {
+    setRoleID(value);
+  };
 
   const getAimag = countryId => {
     getService(`aimag/getList/${countryId}`, {}).then(result => {
@@ -141,6 +169,7 @@ export default function OrganizationModal(props) {
           },
         };
         values.responsibleUser = {
+          id: responsibleUserID,
           firstname: values.RespoUserFirstName,
           lastname: values.RespoUserLastName,
           register: values.RespoUserRegister,
@@ -148,7 +177,6 @@ export default function OrganizationModal(props) {
           phoneNumber: values.RespoUserPhone,
           email: values.RespoUserEmail,
         };
-
         if (isEditMode) {
           putService(`organization/update/${Orgcontroller.id}`, values)
             .then(() => {
@@ -251,6 +279,15 @@ export default function OrganizationModal(props) {
                       />
                     </Form.Item>
                   </Col>
+                  <Col xs={24} md={24} lg={24}>
+                    <Form.Item label="Эрх:" name="roleId">
+                      <AutoCompleteSelect
+                        valueField="id"
+                        data={role}
+                        onChange={value => selectRole(value)}
+                      />
+                    </Form.Item>
+                  </Col>
                 </Row>
 
                 <h2 className="title">Холбоо барих мэдээлэл</h2>
@@ -305,7 +342,7 @@ export default function OrganizationModal(props) {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={24}>
                     <Form.Item label="Веб хаяг:" name="web">
                       <Input />
                     </Form.Item>
