@@ -27,7 +27,7 @@ export default function AutocompleteSelect(props) {
         data.map((z, index) => (
           <Option key={index} value={valueField ? z[valueField] : z.id}>
             {viewField ? z[viewField] : z.name}
-            {viewField ? z[viewField] : z.register}
+            {viewField ? z[viewField] : z.fullName}
           </Option>
         ))}
     </Select>

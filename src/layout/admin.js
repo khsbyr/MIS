@@ -33,6 +33,8 @@ import User from '../pages/user/user';
 import Role from '../pages/user/role';
 import SignUpRequest from '../pages/user/signUpRequest';
 import MenuSettings from '../pages/settings/MenuSettings';
+import TrainingList from '../pages/TrainingList';
+import TrainingInfo from '../pages/TraningInfo';
 import Address from '../pages/directory/address';
 
 const { SubMenu } = Menu;
@@ -93,10 +95,13 @@ const Admin = () => {
                 <Link to="/admin/criteria">{t('criteria_regist')}</Link>
               </Menu.Item>
             </SubMenu>
+            <Menu.Item key="50" icon={<FontAwesomeIcon icon={faLayerGroup} />}>
+              <Link to="/admin/trainingList"> {t('training')}</Link>
+            </Menu.Item>
             <SubMenu
               key="sub3"
               icon={<FontAwesomeIcon icon={faLayerGroup} />}
-              title={t('training')}
+              title={t('training1')}
             >
               <Menu.Item key="8">
                 <Link to="/admin/organization">{t('consulting_orga')}</Link>
@@ -294,6 +299,12 @@ const Admin = () => {
               </Route>
               <Route exact path="/admin/menu">
                 <MenuSettings />
+              </Route>
+              <Route exact path="/admin/trainingList">
+                <TrainingList />
+              </Route>
+              <Route exact path="/admin/trainingList/:id">
+                <TrainingInfo />
               </Route>
               <Route exact path="/admin/address">
                 <Address />

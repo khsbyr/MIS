@@ -26,7 +26,6 @@ const ContentWrapper = styled.div`
 
   Input {
     width: 100%;
-    height: 40px;
     border-radius: 3px;
   }
 

@@ -23,7 +23,7 @@ const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const TrainingReport = () => {
+const TrainingReport = props => {
   const loadLazyTimeout = null;
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
@@ -41,13 +41,14 @@ const TrainingReport = () => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('trainingReport/get', list)
+    getService(`training/get/${props.id}`, list)
       .then(result => {
-        const listResult = result.content || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList(listResult);
+        const listResult = result || [];
+        // listResult.forEach((item, index) => {
+        //   item.index = lazyParams.page * PAGESIZE + index + 1;
+        // });
+        setList([listResult]);
+        setOrgID(result.organization.id);
         setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
@@ -58,31 +59,8 @@ const TrainingReport = () => {
   };
 
   useEffect(() => {
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrga(result.content || []);
-      }
-    });
     onInit();
   }, [lazyParams]);
-
-  const getGuidelines = orgId => {
-    getService(`trainingReport/getList/${orgId}`, {}).then(result => {
-      if (result) {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList(listResult);
-        setSelectedRows([]);
-        setOrgID(orgId);
-      }
-    });
-  };
-
-  const selectOrgs = value => {
-    getGuidelines(value);
-  };
 
   const add = () => {
     setIsModalVisible(true);
@@ -162,7 +140,7 @@ const TrainingReport = () => {
   const trainingnameBodyTemplate = row => (
     <>
       <span className="p-column-title">Сургалтын нэр</span>
-      {row.training.name}
+      {row.name}
     </>
   );
 
@@ -178,7 +156,7 @@ const TrainingReport = () => {
       <span className="p-column-title">
         Сургалт явуулсан байгууллага, хүний нэр
       </span>
-      {row.training.organization.responsibleUser.firstname}
+      {row.organization.responsibleUser.firstname}
     </>
   );
 
@@ -193,32 +171,8 @@ const TrainingReport = () => {
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={5} />
-                  <Col xs={8} md={8} lg={6}>
-                    <OrgaStyle>
-                      <AutoCompleteSelect
-                        valueField="id"
-                        placeholder="Байгууллага сонгох"
-                        data={stateOrga}
-                        onChange={value => selectOrgs(value)}
-                      />
-                    </OrgaStyle>
-                  </Col>
+                  <Col xs={8} md={8} lg={12} />
                   <Col xs={8} md={8} lg={4}>
-                    <DatePicker
-                      bordered={false}
-                      suffixIcon={<DownOutlined />}
-                      placeholder="Select year"
-                      picker="year"
-                      className="DatePicker"
-                      style={{
-                        width: '120px',
-                        color: 'black',
-                        cursor: 'pointer',
-                      }}
-                    />
-                  </Col>
-                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -226,7 +180,7 @@ const TrainingReport = () => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"
@@ -235,7 +189,7 @@ const TrainingReport = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"

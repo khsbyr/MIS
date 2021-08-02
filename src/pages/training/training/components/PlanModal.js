@@ -15,42 +15,39 @@ export default function PlanModal(props) {
     props;
   const [form] = Form.useForm();
   const [stateTrainers, setStateTrainers] = useState(false);
-  const [stateUser, setStateUser] = useState([]);
-
+  const [trainerID, setTrainerID] = useState();
   useEffect(() => {
-    getService(`user/getByOrgId/${orgID}`).then(result => {
-      if (result) {
-        setStateUser(result || []);
-      }
-    });
-    getService(`trainers/getList/${orgID}`).then(result => {
+    getService(`user/getTrainerListByOrgId/${orgID}`).then(result => {
       if (result) {
         setStateTrainers(result || []);
       }
     });
     if (isEditMode) {
+      setTrainerID(Plancontroller.user.id);
       form.setFieldsValue({
         ...Plancontroller,
-        UserID: Plancontroller.user && Plancontroller.user.id,
-        TrainerID: Plancontroller.trainers && Plancontroller.trainers.id,
+        TrainerID: Plancontroller.user.fullName,
       });
     }
   }, []);
-
+  const selectTrainer = value => {
+    setTrainerID(value);
+  };
   const save = () => {
     form
       .validateFields()
       .then(values => {
-        if (values.UserID) {
-          values.user = { id: values.UserID };
-        } else {
-          values.user = null;
-        }
-        if (values.TrainerID) {
-          values.trainers = { id: values.TrainerID };
-        } else {
-          values.trainers = null;
-        }
+        // if (values.UserID) {
+        //   values.user = { id: values.UserID };
+        // } else {
+        //   values.user = null;
+        // }
+        // if (values.TrainerID) {
+        //   values.trainers = { id: values.TrainerID };
+        // } else {
+        //   values.trainers = null;
+        // }
+        values.user = { id: trainerID };
         values.training = { id: trainingID };
         if (isEditMode) {
           putService(`trainingTeam/update/${Plancontroller.id}`, values)
@@ -95,7 +92,7 @@ export default function PlanModal(props) {
             validateMessages={validateMessages}
           >
             <Row gutter={30}>
-              <Col xs={24} md={24} lg={18}>
+              <Col xs={24} md={24} lg={22}>
                 <Form.Item
                   label="Сургалтанд гүйцэтгэх үүрэг:"
                   name="mission"
@@ -107,24 +104,15 @@ export default function PlanModal(props) {
                 >
                   <Input />
                 </Form.Item>
-                <Form.Item name="UserID">
-                  <AutoCompleteSelect
-                    valueField="id"
-                    placeholder="Ажилчдаас сонгох"
-                    data={stateUser}
-                    // onChange={(value) => selectUser(value)}
-                  />
-                </Form.Item>
                 <Form.Item name="TrainerID">
                   <AutoCompleteSelect
                     valueField="id"
                     placeholder="Багшаас сонгох"
                     data={stateTrainers}
-                    // onChange={(value) => selectOrgs(value)}
+                    onChange={value => selectTrainer(value)}
                   />
                 </Form.Item>
               </Col>
-              <Col xs={24} md={24} lg={12} />
             </Row>
           </Form>
         </ContentWrapper>

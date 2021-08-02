@@ -11,42 +11,44 @@ import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import { ToolsContext } from '../../../context/Tools';
-import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from '../../criteria/criteria.style';
-import OrganizationModal from './components/OrganizationModal';
+import { useHistory } from 'react-router-dom';
+import { ToolsContext } from '../context/Tools';
+import { getService, putService } from '../service/service';
+import { errorCatch } from '../tools/Tools';
+import ContentWrapper from './criteria/criteria.style';
+import GuidelinesModal from './training/training/components/GuidelinesModal';
 
-function onChange(date, dateString) {
-  // eslint-disable-next-line no-console
-  console.log(date, dateString);
-}
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const Organization = props => {
+const TrainingList = () => {
   const loadLazyTimeout = null;
-  const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams] = useState({
     page: 0,
   });
-  // const PAGESIZE = 20;
+  const toolsStore = useContext(ToolsContext);
+  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
+  const [, setStateOrga] = useState([]);
+  const [orgID] = useState([]);
+
+  const history = useHistory();
+
   const onInit = () => {
+    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    toolsStore.setIsShowLoader(true);
-    getService(`training/get/${props.id}`, list)
+    getService('training/get', list)
       .then(result => {
-        const listResult = result.organization;
-        // listResult.forEach((item, index) => {
-        //   item.index = lazyParams.page * PAGESIZE + index + 1;
-        // });
-        setList([listResult]);
+        const listResult = result.content || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
         setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
@@ -55,11 +57,13 @@ const Organization = props => {
         toolsStore.setIsShowLoader(false);
       });
   };
+
   useEffect(() => {
     onInit();
   }, [lazyParams]);
 
   const add = () => {
+    editRow = null;
     setIsModalVisible(true);
     isEditMode = false;
   };
@@ -75,7 +79,8 @@ const Organization = props => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`organization/delete/${row.id}`)
+
+    putService(`training/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -135,40 +140,50 @@ const Organization = props => {
     </>
   );
 
-  const nameBodyTemplate = row => (
+  const NameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Байгууллагын нэр</span>
+      <span className="p-column-title">Сургалтын нэр</span>
       {row.name}
     </>
   );
 
-  const registerNumberBodyTemplate = row => (
+  const totalBudgetBodyTemplate = row => (
     <>
-      <span className="p-column-title">Регистрийн дугаар</span>
-      {row.registerNumber}
+      <span className="p-column-title">Төсөв</span>
+      {row.totalBudget}
     </>
   );
 
-  const bankNameBodyTemplate = row => (
+  const performanceBudgetBodyTemplate = row => (
     <>
-      <span className="p-column-title">Банкны нэр</span>
-      {row.bank.name}
+      <span className="p-column-title">Гүйцэтгэлийн төсөв</span>
+      {row.performanceBudget}
     </>
   );
 
-  const accountNameBodyTemplate = row => (
+  const startDateBodyTemplate = row => (
     <>
-      <span className="p-column-title">Дансны нэр</span>
-      {row.accountName}
+      <span className="p-column-title">Эхэлсэн огноо</span>
+      {row.trainingStartDate}
     </>
   );
 
-  const accountNumberBodyTemplate = row => (
+  const endDateBodyTemplate = row => (
     <>
-      <span className="p-column-title">Дансны дугаар</span>
-      {row.accountNumber}
+      <span className="p-column-title">Дууссан огноо</span>
+      {row.trainingEndDate}
     </>
   );
+
+  const participantBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Оролцогчдын тоо</span>
+      {row.participantsNumber}
+    </>
+  );
+
+  const ShowTrainingInfo = row =>
+    history.push(`/admin/trainingList/${row.data.id}`);
 
   return (
     <ContentWrapper>
@@ -177,14 +192,13 @@ const Organization = props => {
           <Content>
             <Row>
               <Col xs={24} md={24} lg={12}>
-                <p className="title">Зөвлөх байгууллага</p>
+                <p className="title">Сургалт</p>
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={7} />
-                  <Col xs={8} md={8} lg={5}>
+                  <Col xs={8} md={8} lg={5} />
+                  <Col xs={8} md={8} lg={4}>
                     <DatePicker
-                      onChange={onChange}
                       bordered={false}
                       suffixIcon={<DownOutlined />}
                       placeholder="Select year"
@@ -197,7 +211,7 @@ const Organization = props => {
                       }}
                     />
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -205,7 +219,7 @@ const Organization = props => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -214,7 +228,7 @@ const Organization = props => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -237,34 +251,58 @@ const Organization = props => {
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            // onRowClick={edit}
+            onRowClick={ShowTrainingInfo}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
           >
-            <Column header="№" body={indexBodyTemplate} />
+            <Column field="index" header="№" body={indexBodyTemplate} />
             <Column
-              header="Байгууллагын нэр"
-              body={nameBodyTemplate}
+              field="name"
+              header="Сургалтын сэдэв"
               filter
-              sortable
+              body={NameBodyTemplate}
             />
             <Column
-              header="Регистрийн дугаар"
-              body={registerNumberBodyTemplate}
+              field="totalBudget"
+              header="Төсөв"
+              filter
+              body={totalBudgetBodyTemplate}
             />
-            <Column header="Банкны нэр" body={bankNameBodyTemplate} />
-            <Column header="Дансны нэр" body={accountNameBodyTemplate} />
-            <Column header="Дансны дугаар" body={accountNumberBodyTemplate} />
+            <Column
+              field="performanceBudget"
+              header="Гүйцэтгэлийн төсөв"
+              filter
+              body={performanceBudgetBodyTemplate}
+            />
+            <Column
+              field="trainingStartDate"
+              header="Эхэлсэн огноо"
+              filter
+              body={startDateBodyTemplate}
+            />
+            <Column
+              field="trainingEndDate"
+              header="Дууссан огноо"
+              filter
+              body={endDateBodyTemplate}
+            />
+            <Column
+              field="participantsNumber"
+              header="Оролцогчдын тоо"
+              filter
+              body={participantBodyTemplate}
+            />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <OrganizationModal
-              Orgcontroller={editRow}
+            <GuidelinesModal
+              Guidelinescontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+              orgID={orgID}
             />
           )}
         </div>
@@ -273,4 +311,4 @@ const Organization = props => {
   );
 };
 
-export default Organization;
+export default TrainingList;
