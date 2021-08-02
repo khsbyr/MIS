@@ -39,7 +39,7 @@ const Criteria = () => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('criteria/get', list)
+    getService('/criteria/get', list)
       .then(result => {
         const listResult = result.content || [];
         listResult.forEach((item, index) => {
@@ -71,7 +71,7 @@ const Criteria = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`criteria/delete/${row.id}`)
+    putService(`/criteria/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
