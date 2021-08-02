@@ -12,19 +12,22 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
 import { ToolsContext } from '../../context/Tools';
-import { getService, putService, deleteService } from '../../service/service';
+import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
+import CriteriaModal from '../criteria/components/CriteriaModal';
 import ContentWrapper from '../criteria/criteria.style';
-import AddressModal from './components/AddressModal';
+import OrgaStyle from '../training/training/components/orga.style';
+import AutoCompleteSelect from '../../components/Autocomplete';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const Address = () => {
+const Organizationadd = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [stateTraining, setStateTraining] = useState([]);
 
   const [lazyParams] = useState({
     page: 0,
@@ -38,7 +41,7 @@ const Address = () => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('address/get', list)
+    getService('organization/get', list)
       .then(result => {
         const listResult = result.content || [];
         listResult.forEach((item, index) => {
@@ -58,6 +61,7 @@ const Address = () => {
     onInit();
   }, [lazyParams]);
 
+  const selectTraining = value => {};
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
@@ -75,7 +79,7 @@ const Address = () => {
       return;
     }
 
-    deleteService(`country/delete/${row.id}`)
+    putService(`testAggregation/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -137,32 +141,8 @@ const Address = () => {
 
   const nameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Улсын нэр</span>
-      {row.country.name}
-    </>
-  );
-  const aimagBodyTemplate = row => (
-    <>
-      <span className="p-column-title">aimag нэр</span>
-      {row.aimag.name}
-    </>
-  );
-  const soumBodyTemplate = row => (
-    <>
-      <span className="p-column-title">soum нэр</span>
-      {row.soum.name}
-    </>
-  );
-  const bagBodyTemplate = row => (
-    <>
-      <span className="p-column-title">bag нэр</span>
-      {row.bag.name}
-    </>
-  );
-  const addressDetailBodyTemplate = row => (
-    <>
-      <span className="p-column-title">address</span>
-      {row.addressDetail}
+      <span className="p-column-title">Байгууллагын нэр</span>
+      {row.name}
     </>
   );
 
@@ -173,12 +153,21 @@ const Address = () => {
           <Content>
             <Row>
               <Col xs={24} md={24} lg={12}>
-                <p className="title">Хаяг</p>
+                <p className="title">Байгууллага бүртгэх</p>
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
                   <Col xs={8} md={8} lg={10} />
-                  <Col xs={8} md={8} lg={5} />
+                  <Col xs={8} md={8} lg={5}>
+                    <OrgaStyle>
+                      <AutoCompleteSelect
+                        valueField="id"
+                        placeholder="Сургалт сонгох"
+                        data={stateTraining}
+                        onChange={value => selectTraining(value)}
+                      />
+                    </OrgaStyle>
+                  </Col>
 
                   <Col xs={8} md={8} lg={3}>
                     <Button
@@ -228,41 +217,9 @@ const Address = () => {
           >
             <Column field="index" body={indexBodyTemplate} sortable />
             <Column
-              field="country.name"
+              field="name"
               body={nameBodyTemplate}
               header="Улсын нэр"
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              field="aimag.name"
-              body={aimagBodyTemplate}
-              header="aimag нэр"
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              field="soum.name"
-              body={soumBodyTemplate}
-              header="sum нэр"
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              field="bag.name"
-              body={bagBodyTemplate}
-              header="bag нэр"
-              sortable
-              filter
-              Placeholder="Хайх"
-            />
-            <Column
-              field="addressDetail"
-              body={addressDetailBodyTemplate}
-              header="address"
               sortable
               filter
               filterPlaceholder="Хайх"
@@ -270,8 +227,8 @@ const Address = () => {
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <AddressModal
-              Addresscontroller={editRow}
+            <CriteriaModal
+              Criteriacontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
@@ -283,4 +240,4 @@ const Address = () => {
   );
 };
 
-export default Address;
+export default Organizationadd;
