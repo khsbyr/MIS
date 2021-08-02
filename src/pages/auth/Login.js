@@ -30,7 +30,7 @@ function Login() {
   const toolsStore = useContext(ToolsContext);
 
   function moveToRegister() {
-    history.push('/register');
+    history.push('/user/userRegistration');
   }
 
   function handleLogin() {
