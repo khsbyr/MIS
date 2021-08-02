@@ -36,6 +36,10 @@ import MenuSettings from '../pages/settings/MenuSettings';
 import TrainingList from '../pages/TrainingList';
 import TrainingInfo from '../pages/TraningInfo';
 import Address from '../pages/directory/address';
+import Scope from '../pages/directory/scope';
+import Customerside from '../pages/directory/customerside';
+import CriteriaType from '../pages/directory/criteriatype';
+import Organizationadd from '../pages/directory/organizationadd';
 
 const { SubMenu } = Menu;
 const { Content, Sider } = Layout;
@@ -208,7 +212,8 @@ const Admin = () => {
                 key="26"
                 icon={<FontAwesomeIcon icon={faLayerGroup} />}
               >
-                {t('scope')}
+                {' '}
+                <Link to="/admin/scope">{t('scope')}</Link>
               </Menu.Item>
               <Menu.Item
                 key="27"
@@ -221,13 +226,32 @@ const Admin = () => {
                 key="28"
                 icon={<FontAwesomeIcon icon={faLayerGroup} />}
               >
-                {t('contact_side')}
+                {' '}
+                <Link to="/admin/customerside">{t('customer_side')}</Link>
               </Menu.Item>
               <Menu.Item
                 key="29"
                 icon={<FontAwesomeIcon icon={faLayerGroup} />}
               >
-                {t('criteria_type')}{' '}
+                {' '}
+                <Link to="/admin/criteriatype">{t('criteria_type')}</Link>
+              </Menu.Item>
+              <Menu.Item
+                key="30"
+                icon={<FontAwesomeIcon icon={faLayerGroup} />}
+              >
+                {' '}
+                <Link to="/admin/organizationadd">{t('organization')}</Link>
+              </Menu.Item>
+            </SubMenu>
+            <SubMenu
+              key="sub11"
+              icon={<FontAwesomeIcon icon={faUserAlt} />}
+              title={t('settings')}
+            >
+              <Menu.Item key="1" icon={<FontAwesomeIcon icon={faUserAlt} />}>
+                {' '}
+                <Link to="/admin/menu">{t('menu')}</Link>
               </Menu.Item>
             </SubMenu>
             <SubMenu
@@ -308,6 +332,18 @@ const Admin = () => {
               </Route>
               <Route exact path="/admin/address">
                 <Address />
+              </Route>
+              <Route exact path="/admin/scope">
+                <Scope />
+              </Route>
+              <Route exact path="/admin/customerside">
+                <Customerside />
+              </Route>
+              <Route exact path="/admin/criteriatype">
+                <CriteriaType />
+              </Route>
+              <Route exact path="/admin/organizationadd">
+                <Organizationadd />
               </Route>
             </Switch>{' '}
           </Content>
