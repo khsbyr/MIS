@@ -12,19 +12,19 @@ import { Column } from 'primereact/column';
 import { ColumnGroup } from 'primereact/columngroup';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import { ToolsContext } from '../../../context/Tools';
-import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
-import CriteriaModal from '../../criteria/components/CriteriaModal';
-import ContentWrapper from '../../criteria/criteria.style';
-import OrgaStyle from './components/orga.style';
-import AutoCompleteSelect from '../../../components/Autocomplete';
+import { ToolsContext } from '../../context/Tools';
+import { getService, putService } from '../../service/service';
+import { errorCatch } from '../../tools/Tools';
+import CriteriaModal from '../criteria/components/CriteriaModal';
+import ContentWrapper from '../criteria/criteria.style';
+import OrgaStyle from '../training/training/components/orga.style';
+import AutoCompleteSelect from '../../components/Autocomplete';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const TestAggregation = () => {
+const Address = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -221,7 +221,7 @@ const TestAggregation = () => {
           <Content>
             <Row>
               <Col xs={24} md={24} lg={12}>
-                <p className="title">Сорилын нэгтгэл</p>
+                <p className="title">Хаяг</p>
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
@@ -322,4 +322,4 @@ const TestAggregation = () => {
   );
 };
 
-export default TestAggregation;
+export default Address;

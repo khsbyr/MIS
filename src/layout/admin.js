@@ -35,6 +35,7 @@ import SignUpRequest from '../pages/user/signUpRequest';
 import MenuSettings from '../pages/settings/MenuSettings';
 import TrainingList from '../pages/TrainingList';
 import TrainingInfo from '../pages/TraningInfo';
+import Address from '../pages/directory/address';
 
 const { SubMenu } = Menu;
 const { Content, Sider } = Layout;
@@ -213,7 +214,8 @@ const Admin = () => {
                 key="27"
                 icon={<FontAwesomeIcon icon={faLayerGroup} />}
               >
-                {t('address')}
+                {' '}
+                <Link to="/admin/address">{t('address')}</Link>
               </Menu.Item>
               <Menu.Item
                 key="28"
@@ -303,6 +305,9 @@ const Admin = () => {
               </Route>
               <Route exact path="/admin/trainingList/:id">
                 <TrainingInfo />
+              </Route>
+              <Route exact path="/admin/address">
+                <Address />
               </Route>
             </Switch>{' '}
           </Content>

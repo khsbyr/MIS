@@ -39,15 +39,15 @@ const Budget = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisibleFuel, setIsModalVisibleFuel] = useState(false);
   const [isModalVisibleRoad, setIsModalVisibleRoad] = useState(false);
+  const [budgetID, setBudgetID] = useState([]);
   const [lazyParams] = useState({
     page: 0,
   });
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateTraining, setStateTraining] = useState([]);
-  const [setTrainingID] = useState([]);
+  // const [setTrainingID] = useState([]);
   const toolsStore = useContext(ToolsContext);
-
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
@@ -68,7 +68,7 @@ const Budget = () => {
         toolsStore.setIsShowLoader(false);
       });
   };
-
+  console.log(budgetID);
   useEffect(() => {
     onInit();
     getService('training/get').then(result => {
@@ -77,12 +77,14 @@ const Budget = () => {
       }
     });
     getService('stationeryExpenses/get', list1).then(result => {
-      const listResult = result.content || [];
-      listResult.forEach((item, index) => {
-        item.index = lazyParams.page * PAGESIZE + index + 1;
-      });
-      setList1(listResult);
-      setSelectedRows([]);
+      if (result) {
+        const listResult = result.content || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList1(listResult);
+        setSelectedRows([]);
+      }
     });
     getService('hotelTravelExpenses/get', list2).then(result => {
       const listResult = result.content || [];
@@ -107,19 +109,52 @@ const Budget = () => {
       result => {
         if (result) {
           const listResult = result.content || [];
+          const Id = result.id || [];
+          setBudgetID(result.id);
           listResult.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });
           setList(listResult);
           setSelectedRows([]);
-          setTrainingID(trainingId);
         }
       }
     );
   };
+  getService(`stationeryExpenses/getListBy/${budgetID}`).then(result => {
+    const listResult = result || [];
+    listResult.forEach((item, index) => {
+      item.index = lazyParams.page * PAGESIZE + index + 1;
+    });
+    setList1(listResult);
+    setSelectedRows([]);
+  });
+  const getTrainingProgram2 = trainingId => {
+    getService(`hotelTravelExpenses/getListBy/${trainingId}`, list2).then(
+      result => {
+        const listResult = result || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList2(listResult);
+        setSelectedRows([]);
+      }
+    );
+  };
+  const getTrainingProgram3 = trainingId => {
+    getService(`fuelExpenses/getListBy/${trainingId}`, list3).then(result => {
+      const listResult = result || [];
+      listResult.forEach((item, index) => {
+        item.index = lazyParams.page * PAGESIZE + index + 1;
+      });
+      setList3(listResult);
+      setSelectedRows([]);
+    });
+  };
 
   const selectTraining = value => {
     getTrainingProgram(value);
+    getTrainingProgram2(value);
+    getTrainingProgram3(value);
   };
 
   const add = () => {
@@ -140,7 +175,7 @@ const Budget = () => {
       return;
     }
 
-    putService(`trainingBudget/delete/${row.id}`)
+    putService(`stationeryExpenses/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -205,7 +240,7 @@ const Budget = () => {
       return;
     }
 
-    putService(`trainingBudget/delete/${row.id}`)
+    putService(`fuelExpenses/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -268,7 +303,7 @@ const Budget = () => {
       return;
     }
 
-    putService(`trainingBudget/delete/${row.id}`)
+    putService(`hotelTravelExpenses/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -536,9 +571,9 @@ const Budget = () => {
 
             <Column field="numberOfPeople" header="МЗҮБ хүний тоо" />
             <Column field="costPerDay" header="Хоногт /₮/" />
-            <Column field="total" header="Нийт /₮/" />
-            <Column field="costType.name" header=" Төлбөрийн төрөл" />
+            <Column field="costType.name" header="Төлбөрийн төрөл" />
             <Column field="days" header="Хоног" />
+            <Column field="total" header="Нийт /₮/" />
             <Column headerStyle={{ width: '7rem' }} body={actionRoad} />
           </DataTable>
           {isModalVisibleRoad && (

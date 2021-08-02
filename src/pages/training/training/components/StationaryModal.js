@@ -1,10 +1,6 @@
 import { Form, Input, Modal } from 'antd';
-import React, { useEffect, useState } from 'react';
-import {
-  getService,
-  postService,
-  putService,
-} from '../../../../service/service';
+import React, { useEffect } from 'react';
+import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './cv.styled';
@@ -20,24 +16,19 @@ const layout = {
 
 export default function StationaryModal(props) {
   const { Stationarycontroller, isModalVisible, isEditMode } = props;
-  const [setStateController] = useState([]);
+  // const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
-    getService('stationeryExpenses/get', {
-      search: 'status:true',
-    }).then(result => {
-      if (result) {
-        setStateController(result.content || []);
-      }
-    });
+    // getService('stationeryExpenses/get', {
+    //   search: 'status:true',
+    // }).then(result => {
+    //   if (result) {
+    //     setStateController(result.content || []);
+    //   }
+    // });
 
     if (isEditMode) {
-      getService(`stationeryExpenses/get${Stationarycontroller.id}`).then(
-        result => {
-          Stationarycontroller.userServiceId = result.userService.id;
-          form.setFieldsValue({ ...Stationarycontroller });
-        }
-      );
+      form.setFieldsValue({ ...Stationarycontroller });
     }
   }, []);
   const save = () => {
@@ -45,7 +36,10 @@ export default function StationaryModal(props) {
       .validateFields()
       .then(values => {
         if (isEditMode) {
-          putService(`stationeryExpenses/put${Stationarycontroller.id}`, values)
+          putService(
+            `stationeryExpenses/update/${Stationarycontroller.id}`,
+            values
+          )
             .then(() => {
               props.close(true);
             })
@@ -132,15 +126,7 @@ export default function StationaryModal(props) {
             >
               <Input />
             </Form.Item>
-            <Form.Item
-              name="total"
-              label="Дүн"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
+            <Form.Item name="total" label="Дүн">
               <Input />
             </Form.Item>
           </Form>

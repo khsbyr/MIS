@@ -19,31 +19,30 @@ const layout = {
 
 export default function RoadModal(props) {
   const { Roadcontroller, isModalVisible, isEditMode } = props;
-  const [setStateController] = useState([]);
+  // const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
-    getService('hotelTravelExpenses/get', {
-      search: 'status:true',
-    }).then(result => {
-      if (result) {
-        setStateController(result.content || []);
-      }
-    });
+    // getService('hotelTravelExpenses/get', {
+    //   search: 'status:true',
+    // }).then(result => {
+    //   if (result) {
+    //     setStateController(result.content || []);
+    //   }
+    // });
 
     if (isEditMode) {
-      getService(`hotelTravelExpenses/get${Roadcontroller.id}`).then(result => {
-        Roadcontroller.userServiceId = result.userService.id;
-        form.setFieldsValue({ ...Roadcontroller });
-      });
+      // getService(`hotelTravelExpenses/get${Roadcontroller.id}`).then(result => {
+      //   Roadcontroller.userServiceId = result.userService.id;
+      form.setFieldsValue({ ...Roadcontroller });
+      // });
     }
   }, []);
   const save = () => {
     form
       .validateFields()
       .then(values => {
-        values.userService = { id: values.userServiceId };
         if (isEditMode) {
-          putService(`hotelTravelExpenses/put${Roadcontroller.id}`, values)
+          putService(`hotelTravelExpenses/update/${Roadcontroller.id}`, values)
             .then(() => {
               props.close(true);
             })
@@ -86,29 +85,7 @@ export default function RoadModal(props) {
           validateMessages={validateMessages}
         >
           <Form.Item
-            name="name"
-            label="Зардлын нэр:"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="turul"
-            label="Зардлын төрөл:"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="hiniiToo"
+            name="numberOfPeople"
             label="МЗҮБ хүний тоо:"
             rules={[
               {
@@ -119,8 +96,8 @@ export default function RoadModal(props) {
             <Input />
           </Form.Item>
           <Form.Item
-            name="honogt"
-            label="Хоногт"
+            name="costPerDay"
+            label="Хоногт /₮/"
             rules={[
               {
                 required: true,
@@ -130,7 +107,18 @@ export default function RoadModal(props) {
             <Input />
           </Form.Item>
           <Form.Item
-            name="honog"
+            label="Төлбөрийн төрөл"
+            name="costType.name"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="days"
             label="Хоног"
             rules={[
               {
@@ -141,15 +129,7 @@ export default function RoadModal(props) {
             <Input />
           </Form.Item>
 
-          <Form.Item
-            name="niit"
-            label="Нийт"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
+          <Form.Item name="total" label="Нийт">
             <Input />
           </Form.Item>
         </Form>

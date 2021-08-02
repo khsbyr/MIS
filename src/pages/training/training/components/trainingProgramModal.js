@@ -22,7 +22,7 @@ export default function TrainingProgramModal(props) {
   const { Trainingprogramcontroller, isModalVisible, isEditMode, trainingID } =
     props;
   const [form] = Form.useForm();
-  const [setStateTeam] = useState([]);
+  // const [setStateTeam] = useState([]);
   const [TrainingTeamID] = useState([]);
   // const PAGESIZE = 20;
   // const [lazyParams, setLazyParams] = useState({
@@ -38,13 +38,13 @@ export default function TrainingProgramModal(props) {
 
   useEffect(() => {
     onInit();
-    getService('trainingPlan/get').then(result => {
-      if (result) {
-        setStateTeam(result.content || []);
-        // training_plan.id =
-        // stateplanID(planID)
-      }
-    });
+    // getService('trainingPlan/get').then(result => {
+    //   if (result) {
+    //     setStateTeam(result.content || []);
+    //     // training_plan.id =
+    //     // stateplanID(planID)
+    //   }
+    // });
     if (Trainingprogramcontroller !== null) {
       getService(`training/get/${Trainingprogramcontroller.id}`).then(
         result => {
