@@ -9,7 +9,7 @@ import { errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
 import { Confirm } from '../../components/Confirm';
 
-const User = () => {
+const signUpRequest = () => {
   const toolsStore = useContext(ToolsContext);
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
@@ -195,4 +195,4 @@ const User = () => {
   );
 };
 
-export default User;
+export default signUpRequest;

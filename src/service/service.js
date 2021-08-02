@@ -3,9 +3,11 @@ import { errorCatch } from '../tools/Tools';
 import axios from './axios';
 
 const config = () => ({
+  withCredentials: false,
   headers: {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': '*',
+    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
     AccessToken: `${localStorage.getItem('token')}`,
   },
 });

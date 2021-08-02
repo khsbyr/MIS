@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import {
   ADMIN_PAGE,
   FORGET_PASSWORD,
@@ -14,6 +14,11 @@ import Admin from '../layout/admin';
 import Register from '../pages/auth/Register';
 
 export default function Routes() {
+  const isLoggged = localStorage.getItem('token');
+  const history = useHistory();
+  if (!isLoggged) {
+    history.push('/login');
+  }
   return (
     <Layouts>
       <Switch>
