@@ -43,6 +43,9 @@ code {
 .p-datatable-wrapper table {
   width: 100%;
 }
+.p-treetable-wrapper table {
+  width: 100%;
+}
 
 .ant-row-rtl .logo {
   float: right;
@@ -96,27 +99,23 @@ position: none;
 .p-datatable, 
 .p-treetable {
   font-size: 12px !important;
-  text-align: left !important;
-  tr:nth-child(odd) {
+  text-align: center !important;
+  tr:nth-child(even) {
     background: #f8f9fa !important;
   }
-  .p-datatable-thead > tr:first-child > th, 
+  .p-datatable-thead > tr:first-child > th,
   .p-treetable-thead > tr > th {
     padding-bottom: 0 !important;
     text-align: center !important;
     padding: 6px 6px 6px !important;
-    background-color: #ebeef0;
-    color: black;
-
   }
   .p-datatable-tbody > tr > td,
   .p-treetable-tbody > tr > td {
-    padding: 13px 1rem !important;
+    padding: 4px 1rem !important;
     cursor: pointer;
-    border: 1px solid #ebeef0 !important;
-
   }
 }
+
 .p-datatable .p-sortable-column .p-sortable-column-icon {
   font-size: 10px;
 } 
@@ -150,7 +149,7 @@ position: none;
       padding-bottom: 0 !important;
       text-align: center !important;
       border: 1px solid #ebeef0 !important;
-      padding: 15px 15px 15px !important;
+      padding: 10px 10px 10px !important;
       background-color: #103154;
       color: white;
     }
@@ -160,7 +159,44 @@ position: none;
   border-width: 0 1px 0px 0 !important;
   }
 
+.p-treetable .p-sortable-column .p-sortable-column-icon {
+  font-size: 10px;
+} 
+.p-treetable .p-treetable-tbody > tr > td .p-row-toggler,
+.p-treetable .p-treetable-tbody > tr > td .p-row-editor-init,
+.p-treetable .p-treetable-tbody > tr > td .p-row-editor-save,
+.p-treetable .p-treetable-tbody > tr > td .p-row-editor-cancel {
+  width: 20px !important;
+  height: 20px !important;
+}
+.treetable table > thead > tr > th,
+.treetable table > tbody,
+.treetable table > tbody > tr,
+.treetable table > tbody > tr > td {
+    border: none !important;
+}
 
+.p-treetable {
+    font-size: 13px !important;
+    text-align: center !important;
+    tr:nth-child(odd) {
+      background: #f8f9fa !important;
+      text-align: center !important;
+    }
+    .p-treetable-thead > tr:first-child > th {
+      padding-bottom: 0 !important;
+      text-align: center !important;
+      border: 1px solid #ebeef0 !important;
+      padding: 5px 5px 5px !important;
+      background-color: #103154;
+      color: white;
+    }
+  }
+  .p-treetable .p-treetable-thead > tr:first-child > th{
+  text-align: center !important;
+  border-width: 0 1px 0px 0 !important;
+  }
+  
   .ant-input:hover {
     border-right-width: 1px !important;
   }
@@ -262,6 +298,39 @@ position: none;
   }
 
   .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tbody > tr > td:last-child {
+      border-bottom: 1px solid var(--surface-d);
+  }
+}
+
+.treetable-responsive-demo .p-treetable-responsive-demo .p-treetable-tbody > tr > td .p-column-title {
+  display: none;
+}
+
+@media screen and (max-width: 40em) {
+  .treetable-responsive-demo .p-treetable.p-treetable-responsive-demo .p-treetable-thead > tr > th,
+  .treetable-responsive-demo .p-treetable.p-treetable-responsive-demo .p-treetable-tfoot > tr > td {
+      display: none !important;
+  }
+
+  .treetable-responsive-demo .p-treetable.p-treetable-responsive-demo .p-treetable-tbody > tr > td {
+      text-align: left;
+      display: block;
+      width: 100%;
+      float: left;
+      clear: left;
+      border: 0 none;
+  }
+
+  .treetable-responsive-demo .p-treetable.p-treetable-responsive-demo .p-treetable-tbody > tr > td .p-column-title {
+      padding: .4rem;
+      text-align: left;
+      min-width: 55%;
+      display: inline-block;
+      margin: -.4em 1em -.4em -.4rem;
+      font-weight: bold;
+  }
+
+  .treetable-responsive-demo .p-treetable.p-treetable-responsive-demo .p-treetable-tbody > tr > td:last-child {
       border-bottom: 1px solid var(--surface-d);
   }
 }
