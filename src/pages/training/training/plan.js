@@ -11,19 +11,17 @@ import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import AutoCompleteSelect from '../../../components/Autocomplete';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import ContentWrapper from '../../criteria/criteria.style';
-import OrgaStyle from './components/orga.style';
 import PlanModal from './components/PlanModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const Plan = () => {
+const Plan = props => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -32,20 +30,19 @@ const Plan = () => {
   });
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [stateOrga, setStateOrga] = useState([]);
-  const [stateGuide, setStateGuide] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
   const [orgID, setOrgID] = useState([]);
   const toolsStore = useContext(ToolsContext);
-
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('trainingTeam/get', list)
+    getService(`training/get/${props.id}`, list)
       .then(result => {
-        const listResult = result || [];
+        const listResult = result.trainingTeams || [];
+        setOrgID(result.organization.id);
+        setTrainingID(result.id);
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
@@ -62,47 +59,7 @@ const Plan = () => {
 
   useEffect(() => {
     onInit();
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrga(result.content || []);
-      }
-    });
-    getService('training/get').then(result => {
-      if (result) {
-        setStateGuide(result.content || []);
-      }
-    });
   }, [lazyParams]);
-
-  const getGuidelines = orgId => {
-    getService(`training/getList/${orgId}`, {}).then(result => {
-      if (result) {
-        setStateGuide(result || []);
-        setOrgID(orgId);
-      }
-    });
-  };
-  const selectOrgs = value => {
-    getGuidelines(value);
-  };
-
-  const getParti = TrainingID => {
-    getService(`trainingTeam/getList/${TrainingID}`, {}).then(result => {
-      if (result) {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList(listResult);
-        setTrainingID(TrainingID);
-        setSelectedRows([]);
-      }
-    });
-  };
-
-  const selectGuide = value => {
-    getParti(value);
-  };
 
   const add = () => {
     setIsModalVisible(true);
@@ -187,17 +144,10 @@ const Plan = () => {
     </>
   );
 
-  const nameUserBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Ажилчдын нэрс</span>
-      {row.user && row.user.firstname}
-    </>
-  );
-
   const nameTrainerBodyTemplate = row => (
     <>
       <span className="p-column-title">Багшийн нэрс</span>
-      {row.trainers && row.trainers.firstName}
+      {row.user && row.user.fullName}
     </>
   );
 
@@ -212,27 +162,8 @@ const Plan = () => {
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={6}>
-                    <OrgaStyle>
-                      <AutoCompleteSelect
-                        valueField="id"
-                        placeholder="Байгууллага сонгох"
-                        data={stateOrga}
-                        onChange={value => selectOrgs(value)}
-                      />
-                    </OrgaStyle>
-                  </Col>
+                  <Col xs={8} md={8} lg={7} />
                   <Col xs={8} md={8} lg={5}>
-                    <OrgaStyle>
-                      <AutoCompleteSelect
-                        valueField="id"
-                        placeholder="Сургалт сонгох"
-                        data={stateGuide}
-                        onChange={value => selectGuide(value)}
-                      />
-                    </OrgaStyle>
-                  </Col>
-                  <Col xs={8} md={8} lg={4}>
                     <DatePicker
                       bordered={false}
                       suffixIcon={<DownOutlined />}
@@ -246,7 +177,7 @@ const Plan = () => {
                       }}
                     />
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -254,7 +185,7 @@ const Plan = () => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"
@@ -263,7 +194,7 @@ const Plan = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"
@@ -301,13 +232,6 @@ const Plan = () => {
             <Column
               header="Сургалтанд гүйцэтгэх үүрэг"
               body={missionBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              header="Ажилчдын нэрс"
-              body={nameUserBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"

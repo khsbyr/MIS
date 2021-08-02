@@ -25,17 +25,12 @@ export default function TrainingReportModal(props) {
   const [tipsID, setTipsID] = useState([]);
   const [resultID, setResultID] = useState([]);
   const [successID, setSuccessID] = useState([]);
-  // const [performedProcess1ID, setPerformedProcess1ID] = useState([]);
-  // const [performedProcess2ID, setPerformedProcess2ID] = useState([]);
-  // const [performedProcess3ID, setPerformedProcess3ID] = useState([]);
-  // const [performedProcess4ID, setPerformedProcess4ID] = useState([]);
+  const [performedProcess1ID, setPerformedProcess1ID] = useState([]);
+  const [performedProcess2ID, setPerformedProcess2ID] = useState([]);
+  const [performedProcess3ID, setPerformedProcess3ID] = useState([]);
+  const [performedProcess4ID, setPerformedProcess4ID] = useState([]);
   // const [selectedTraining, setSelectedTraining] = useState([]);
   useEffect(() => {
-    getService(`training/getListForReport/${orgID}`).then(result => {
-      if (result) {
-        setTraining(result || []);
-      }
-    });
     getService('country/get').then(result => {
       if (result) {
         setStateCountry(result || []);
@@ -49,14 +44,14 @@ export default function TrainingReportModal(props) {
 
     if (TrainingReportController !== undefined) {
       getService(
-        `soum/getList/${TrainingReportController.training.training_guidelines.address.aimag.id}`
+        `soum/getList/${TrainingReportController.training_guidelines.address.aimag.id}`
       ).then(result => {
         if (result) {
           setStateSum(result || []);
         }
       });
       getService(
-        `bag/getList/${TrainingReportController.training.training_guidelines.address.soum.id}`
+        `bag/getList/${TrainingReportController.training_guidelines.address.soum.id}`
       ).then(result => {
         if (result) {
           setStateBag(result || []);
@@ -65,69 +60,70 @@ export default function TrainingReportModal(props) {
     }
 
     if (isEditMode) {
-      setTrainingID(TrainingReportController.training.id);
-      setGuidelinesID(TrainingReportController.training.training_guidelines.id);
-      setReportsAimID(TrainingReportController.reportsAim.id);
-      setTipsID(TrainingReportController.reportsTips.id);
-      setResultID(TrainingReportController.reportsResult.id);
-      setSuccessID(TrainingReportController.reportsSuccessOverview.id);
-      // setPerformedProcess1ID(
-      //   TrainingReportController.reportsPerformedProcess1 &&
-      //     TrainingReportController.reportsPerformedProcess1.id
-      // );
-      // setPerformedProcess2ID(
-      //   TrainingReportController.reportsPerformedProcess2 &&
-      //     TrainingReportController.reportsPerformedProcess2.id
-      // );
-      // setPerformedProcess3ID(
-      //   TrainingReportController.reportsPerformedProcess3 &&
-      //     TrainingReportController.reportsPerformedProcess3.id
-      // );
-      // setPerformedProcess4ID(
-      //   TrainingReportController.reportsPerformedProcess4 &&
-      //     TrainingReportController.reportsPerformedProcess4.id
-      // );
+      setTrainingID(TrainingReportController.id);
+      setGuidelinesID(TrainingReportController.training_guidelines.id);
+      setReportsAimID(TrainingReportController.trainingReport.reportsAim.id);
+      setTipsID(TrainingReportController.trainingReport.reportsTips.id);
+      setResultID(TrainingReportController.trainingReport.reportsResult.id);
+      setSuccessID(
+        TrainingReportController.trainingReport.reportsSuccessOverview.id
+      );
+      setPerformedProcess1ID(
+        TrainingReportController.trainingReport.reportsPerformedProcess1.id
+      );
+      setPerformedProcess2ID(
+        TrainingReportController.trainingReport.reportsPerformedProcess2.id
+      );
+      setPerformedProcess3ID(
+        TrainingReportController.trainingReport.reportsPerformedProcess3.id
+      );
+      setPerformedProcess4ID(
+        TrainingReportController.trainingReport.reportsPerformedProcess4.id
+      );
 
       form.setFieldsValue({
         ...TrainingReportController,
-        CountryID: TrainingReportController.training.training_guidelines.address
-          ? TrainingReportController.training.training_guidelines.address
-              .country.id
+        CountryID: TrainingReportController.training_guidelines.address
+          ? TrainingReportController.training_guidelines.address.country.id
           : '',
-        AimagID: TrainingReportController.training.training_guidelines.address
-          ? TrainingReportController.training.training_guidelines.address.aimag
-              .id
+        AimagID: TrainingReportController.training_guidelines.address
+          ? TrainingReportController.training_guidelines.address.aimag.id
           : '',
-        SoumID: TrainingReportController.training.training_guidelines.address
-          ? TrainingReportController.training.training_guidelines.address.soum
-              .id
+        SoumID: TrainingReportController.training_guidelines.address
+          ? TrainingReportController.training_guidelines.address.soum.id
           : '',
-        BagID: TrainingReportController.training.training_guidelines.address
-          ? TrainingReportController.training.training_guidelines.address.bag.id
+        BagID: TrainingReportController.training_guidelines.address
+          ? TrainingReportController.training_guidelines.address.bag.id
           : '',
-        TrainingName: TrainingReportController.training.name,
-        TotalParticipants: TrainingReportController.training.totalParticipants,
+        TrainingName: TrainingReportController.name,
+        TotalParticipants: TrainingReportController.totalParticipants,
         ResponsibleUserName:
-          TrainingReportController.training.organization.responsibleUser
-            .firstname,
-        PerformanceBudget: TrainingReportController.training.performanceBudget,
-        ReportsAim: TrainingReportController.reportsAim.inputText,
+          TrainingReportController.organization.responsibleUser.firstname,
+        PerformanceBudget: TrainingReportController.performanceBudget,
+        ReportsAim:
+          TrainingReportController.trainingReport.reportsAim.inputText,
         ReportsSuccessOverview:
-          TrainingReportController.reportsSuccessOverview.inputText,
-        ReportsResult: TrainingReportController.reportsResult.inputText,
-        ReportsTips: TrainingReportController.reportsTips.inputText,
+          TrainingReportController.trainingReport.reportsSuccessOverview
+            .inputText,
+        ReportsResult:
+          TrainingReportController.trainingReport.reportsResult.inputText,
+        ReportsTips:
+          TrainingReportController.trainingReport.reportsTips.inputText,
         PerformedProcess1:
-          TrainingReportController.reportsPerformedProcess1 &&
-          TrainingReportController.reportsPerformedProcess1.inputText,
+          TrainingReportController.trainingReport.reportsPerformedProcess1
+            .inputText,
         PerformedProcess2:
-          TrainingReportController.reportsPerformedProcess2 &&
-          TrainingReportController.reportsPerformedProcess2.inputText,
+          TrainingReportController.trainingReport.reportsPerformedProcess2 &&
+          TrainingReportController.trainingReport.reportsPerformedProcess2
+            .inputText,
         PerformedProcess3:
-          TrainingReportController.reportsPerformedProcess3 &&
-          TrainingReportController.reportsPerformedProcess3.inputText,
+          TrainingReportController.trainingReport.reportsPerformedProcess3 &&
+          TrainingReportController.trainingReport.reportsPerformedProcess3
+            .inputText,
         PerformedProcess4:
-          TrainingReportController.reportsPerformedProcess4 &&
-          TrainingReportController.reportsPerformedProcess4.inputText,
+          TrainingReportController.trainingReport.reportsPerformedProcess4 &&
+          TrainingReportController.trainingReport.reportsPerformedProcess4
+            .inputText,
       });
     }
   }, []);
@@ -267,25 +263,25 @@ export default function TrainingReportModal(props) {
           id: successID,
           inputText: values.ReportsSuccessOverview,
         };
-        // values.reportsPerformedProcess1 = {
-        //   id: performedProcess1ID,
-        //   inputText: values.PerformedProcess1,
-        // };
-        // values.reportsPerformedProcess2 = {
-        //   id: performedProcess2ID,
-        //   inputText: values.PerformedProcess2,
-        // };
-        // values.reportsPerformedProcess3 = {
-        //   id: performedProcess3ID,
-        //   inputText: values.PerformedProcess3,
-        // };
-        // values.reportsPerformedProcess4 = {
-        //   id: performedProcess4ID,
-        //   inputText: values.PerformedProcess4,
-        // };
+        values.reportsPerformedProcess1 = {
+          id: performedProcess1ID,
+          inputText: values.PerformedProcess1,
+        };
+        values.reportsPerformedProcess2 = {
+          id: performedProcess2ID,
+          inputText: values.PerformedProcess2,
+        };
+        values.reportsPerformedProcess3 = {
+          id: performedProcess3ID,
+          inputText: values.PerformedProcess3,
+        };
+        values.reportsPerformedProcess4 = {
+          id: performedProcess4ID,
+          inputText: values.PerformedProcess4,
+        };
         if (isEditMode) {
           putService(
-            `trainingReport/update/${TrainingReportController.id}`,
+            `trainingReport/update/${TrainingReportController.trainingReport.id}`,
             values
           )
             .then(() => {
@@ -305,7 +301,6 @@ export default function TrainingReportModal(props) {
         }
       })
       .catch(info => {
-        // eslint-disable-next-line no-console
         errorCatch(info);
       });
   };
