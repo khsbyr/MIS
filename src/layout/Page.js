@@ -28,6 +28,11 @@ const Criteria = loadable({
   loading: Loader,
 });
 
+const TrainingList = loadable({
+  loader: () => import('../pages/training/TrainingList'),
+  loading: Loader,
+});
+
 const Page = ({ route }) => {
   const PageContent = () => {
     console.log(route);
@@ -49,8 +54,8 @@ const Page = ({ route }) => {
         return <Criteria />;
 
       /** Сургалт */
-      case 'trainning'.toLowerCase():
-        return <Criteria />;
+      case 'training'.toLowerCase():
+        return <TrainingList />;
 
       /** Лавлах */
 

@@ -12,11 +12,11 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { ToolsContext } from '../context/Tools';
-import { getService, putService } from '../service/service';
-import { errorCatch } from '../tools/Tools';
-import ContentWrapper from './criteria/criteria.style';
-import GuidelinesModal from 'components/GuidelinesModal';
+import { ToolsContext } from '../../context/Tools';
+import { getService, putService } from '../../service/service';
+import { errorCatch } from '../../tools/Tools';
+import ContentWrapper from '../criteria/criteria.style';
+import GuidelinesModal from './tabs/components/GuidelinesModal';
 
 const { Content } = Layout;
 
