@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Modal, Tree, Alert, message } from 'antd';
 import { CheckSquareFilled } from '@ant-design/icons';
-import { getService, postService } from '../../../service/service';
+import { getService, putService } from '../../../service/service';
 import { ToolsContext } from '../../../context/Tools';
 import { errorCatch } from '../../../tools/Tools';
 
-let oldData = [];
+let allData = [];
 
 export default function MenuConfig(props) {
   const { visible, role } = props;
@@ -27,15 +27,15 @@ export default function MenuConfig(props) {
     toolsStore.setIsShowLoader(true);
     getService('/menus/get').then(result => {
       const list = result || [];
+      allData = convertTree(list);
       setRoleTree(convertTree(list));
       getService(`/menuShows/getByRoleId/${role.id}`)
         .then(Response => {
           if (!Response) return;
           Response.forEach(item => {
             item.key = item.menu?.id;
-            checkedKeys.push(item.key);
+            if (item.isAccess) checkedKeys.push(item.key);
           });
-          oldData = Response;
           setCheckedKeys([...checkedKeys]);
         })
         .finally(() => toolsStore.setIsShowLoader(false));
@@ -48,35 +48,17 @@ export default function MenuConfig(props) {
 
   const save = () => {
     const saveData = [];
-    checkedKeys.forEach(key => {
-      const findObj = oldData.find(item => item.key === key);
-      if (!findObj) {
-        saveData.push({
-          isAccess: true,
-          userRoleId: role.id,
-          menu: { id: key },
-        });
-      }
+    allData.forEach(item => {
+      const isAccess = !!checkedKeys.includes(item.id);
+      saveData.push({
+        isAccess,
+        role: { id: role.id },
+        menu: { id: item.id },
+      });
     });
 
-    // check boliulsan bol isAccess=false bolgoj bn
-    oldData.forEach(item => {
-      if (!checkedKeys.includes(item.key)) {
-        saveData.push({
-          isAccess: false,
-          id: item.id,
-          userRoleId: role.id,
-          menu: { id: item.key },
-        });
-      }
-    });
-
-    if (!saveData.length) {
-      message.warn('Өөрчлөгдсөн өгөгдөл олдсонгүй');
-      return;
-    }
     toolsStore.setIsShowLoader(true);
-    postService('/menuShows/post', saveData)
+    putService('/menuShows/update', saveData)
       .then(() => {
         props.close();
         toolsStore.setIsShowLoader(false);

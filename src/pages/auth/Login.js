@@ -43,6 +43,7 @@ function Login() {
         .then(result => {
           localStorage.setItem('token', result.data.token);
           localStorage.setItem('myHID', result.data.userId);
+          toolsStore.setUser(result.data.user);
           history.push('/admin/user');
         })
         .finally(() => {
