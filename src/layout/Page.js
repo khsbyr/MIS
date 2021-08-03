@@ -37,6 +37,25 @@ const TrainingInfo = loadable({
   loader: () => import('../pages/training/more/TraningInfo'),
   loading: Loader,
 });
+const Scope = loadable({
+  loader: () => import('../pages/directory/scope'),
+  loading: Loader,
+});
+
+const Address = loadable({
+  loader: () => import('../pages/directory/address'),
+  loading: Loader,
+});
+
+const Customerside = loadable({
+  loader: () => import('../pages/directory/customerside'),
+  loading: Loader,
+});
+
+const Criteriatype = loadable({
+  loader: () => import('../pages/directory/criteriatype'),
+  loading: Loader,
+});
 
 const Page = ({ route }) => {
   const PageContent = () => {
@@ -63,7 +82,14 @@ const Page = ({ route }) => {
         return <TrainingInfo />;
 
       /** Лавлах */
-
+      case 'scope'.toLowerCase():
+        return <Scope />;
+      case 'address'.toLowerCase():
+        return <Address />;
+      case 'Party in charge'.toLowerCase():
+        return <Customerside />;
+      case 'Types of indicators'.toLowerCase():
+        return <Criteriatype />;
       /** Байгууллагын мэдээлэл */
 
       /** Тайлан */
