@@ -35,13 +35,13 @@ const Criteria = () => {
   const toolsStore = useContext(ToolsContext);
 
   const onInit = () => {
-    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('/criteria/get', list)
+    toolsStore.setIsShowLoader(true);
+    getService('/criteria/get')
       .then(result => {
-        const listResult = result.content || [];
+        const listResult = result || [];
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
