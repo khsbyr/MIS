@@ -1,5 +1,5 @@
 import { UploadOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Input, Modal, Row, Upload } from 'antd';
+import { Button, Col, Form, Input, Modal, Row, Upload, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
 import {
@@ -12,7 +12,13 @@ import ContentWrapper from './trainingReport.style';
 import validateMessages from '../../../../tools/validateMessage';
 
 export default function TrainingReportModal(props) {
-  const { TrainingReportController, isModalVisible, isEditMode, orgID } = props;
+  const {
+    TrainingReportController,
+    isModalVisible,
+    isEditMode,
+    orgID,
+    trainingIDD,
+  } = props;
   const [form] = Form.useForm();
   const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
@@ -25,12 +31,17 @@ export default function TrainingReportModal(props) {
   const [tipsID, setTipsID] = useState([]);
   const [resultID, setResultID] = useState([]);
   const [successID, setSuccessID] = useState([]);
-  const [performedProcess1ID, setPerformedProcess1ID] = useState([]);
-  const [performedProcess2ID, setPerformedProcess2ID] = useState([]);
-  const [performedProcess3ID, setPerformedProcess3ID] = useState([]);
-  const [performedProcess4ID, setPerformedProcess4ID] = useState([]);
-  // const [selectedTraining, setSelectedTraining] = useState([]);
+  const [performedProcess1ID, setPerformedProcess1ID] = useState();
+  const [performedProcess2ID, setPerformedProcess2ID] = useState();
+  const [performedProcess3ID, setPerformedProcess3ID] = useState();
+  const [performedProcess4ID, setPerformedProcess4ID] = useState();
+
   useEffect(() => {
+    getService(`training/getListForReport/${orgID}`).then(result => {
+      if (result) {
+        setTraining(result || []);
+      }
+    });
     getService('country/get').then(result => {
       if (result) {
         setStateCountry(result || []);
@@ -62,23 +73,37 @@ export default function TrainingReportModal(props) {
     if (isEditMode) {
       setTrainingID(TrainingReportController.id);
       setGuidelinesID(TrainingReportController.training_guidelines.id);
-      setReportsAimID(TrainingReportController.trainingReport.reportsAim.id);
-      setTipsID(TrainingReportController.trainingReport.reportsTips.id);
-      setResultID(TrainingReportController.trainingReport.reportsResult.id);
+      setReportsAimID(
+        TrainingReportController.trainingReport &&
+          TrainingReportController.trainingReport.reportsAim.id
+      );
+      setTipsID(
+        TrainingReportController.trainingReport &&
+          TrainingReportController.trainingReport.reportsTips.id
+      );
+      setResultID(
+        TrainingReportController.trainingReport &&
+          TrainingReportController.trainingReport.reportsResult.id
+      );
       setSuccessID(
-        TrainingReportController.trainingReport.reportsSuccessOverview.id
+        TrainingReportController.trainingReport &&
+          TrainingReportController.trainingReport.reportsSuccessOverview.id
       );
       setPerformedProcess1ID(
-        TrainingReportController.trainingReport.reportsPerformedProcess1.id
+        TrainingReportController.trainingReport &&
+          TrainingReportController.trainingReport.reportsPerformedProcess1.id
       );
       setPerformedProcess2ID(
-        TrainingReportController.trainingReport.reportsPerformedProcess2.id
+        TrainingReportController.trainingReport &&
+          TrainingReportController.trainingReport.reportsPerformedProcess2.id
       );
       setPerformedProcess3ID(
-        TrainingReportController.trainingReport.reportsPerformedProcess3.id
+        TrainingReportController.trainingReport &&
+          TrainingReportController.trainingReport.reportsPerformedProcess3.id
       );
       setPerformedProcess4ID(
-        TrainingReportController.trainingReport.reportsPerformedProcess4.id
+        TrainingReportController.trainingReport &&
+          TrainingReportController.trainingReport.reportsPerformedProcess4.id
       );
 
       form.setFieldsValue({
@@ -99,29 +124,35 @@ export default function TrainingReportModal(props) {
         TotalParticipants: TrainingReportController.totalParticipants,
         ResponsibleUserName:
           TrainingReportController.organization.responsibleUser.firstname,
-        PerformanceBudget: TrainingReportController.performanceBudget,
+        PerformanceBudget:
+          TrainingReportController.trainingBudget.performanceBudget,
         ReportsAim:
+          TrainingReportController.trainingReport &&
           TrainingReportController.trainingReport.reportsAim.inputText,
         ReportsSuccessOverview:
+          TrainingReportController.trainingReport &&
           TrainingReportController.trainingReport.reportsSuccessOverview
             .inputText,
         ReportsResult:
+          TrainingReportController.trainingReport &&
           TrainingReportController.trainingReport.reportsResult.inputText,
         ReportsTips:
+          TrainingReportController.trainingReport &&
           TrainingReportController.trainingReport.reportsTips.inputText,
         PerformedProcess1:
+          TrainingReportController.trainingReport &&
           TrainingReportController.trainingReport.reportsPerformedProcess1
             .inputText,
         PerformedProcess2:
-          TrainingReportController.trainingReport.reportsPerformedProcess2 &&
+          TrainingReportController.trainingReport &&
           TrainingReportController.trainingReport.reportsPerformedProcess2
             .inputText,
         PerformedProcess3:
-          TrainingReportController.trainingReport.reportsPerformedProcess3 &&
+          TrainingReportController.trainingReport &&
           TrainingReportController.trainingReport.reportsPerformedProcess3
             .inputText,
         PerformedProcess4:
-          TrainingReportController.trainingReport.reportsPerformedProcess4 &&
+          TrainingReportController.trainingReport &&
           TrainingReportController.trainingReport.reportsPerformedProcess4
             .inputText,
       });
@@ -150,18 +181,22 @@ export default function TrainingReportModal(props) {
           selectedTraining.reportsSuccessOverview &&
             selectedTraining.reportsSuccessOverview.id
         );
-        // setPerformedProcess1ID(
-        //   TrainingReportController.reportsPerformedProcess1.id
-        // );
-        // setPerformedProcess2ID(
-        //   TrainingReportController.reportsPerformedProcess2.id
-        // );
-        // setPerformedProcess3ID(
-        //   TrainingReportController.reportsPerformedProcess3.id
-        // );
-        // setPerformedProcess4ID(
-        //   TrainingReportController.reportsPerformedProcess4.id
-        // );
+        setPerformedProcess1ID(
+          selectedTraining.reportsPerformedProcess1 &&
+            selectedTraining.reportsPerformedProcess1.id
+        );
+        setPerformedProcess2ID(
+          selectedTraining.reportsPerformedProcess1 &&
+            selectedTraining.reportsPerformedProcess2.id
+        );
+        setPerformedProcess3ID(
+          selectedTraining.reportsPerformedProcess1 &&
+            selectedTraining.reportsPerformedProcess3.id
+        );
+        setPerformedProcess4ID(
+          selectedTraining.reportsPerformedProcess1 &&
+            selectedTraining.reportsPerformedProcess4.id
+        );
 
         form.setFieldsValue({
           ...selectedTraining,
@@ -179,7 +214,7 @@ export default function TrainingReportModal(props) {
             : '',
           TrainingName: selectedTraining.name,
           TotalParticipants: selectedTraining.totalParticipants,
-          PerformanceBudget: selectedTraining.performanceBudget,
+          PerformanceBudget: selectedTraining.trainingBudget.performanceBudget,
           ResponsibleUserName:
             selectedTraining.organization &&
             selectedTraining.organization.responsibleUser.firstname,
@@ -234,7 +269,6 @@ export default function TrainingReportModal(props) {
           organization: {
             id: orgID,
           },
-          performanceBudget: values.PerformanceBudget,
           training_guidelines: {
             id: guidelinesID,
             address: {
@@ -285,14 +319,16 @@ export default function TrainingReportModal(props) {
             values
           )
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService('trainingReport/post', values)
+          postService(`trainingReport/post/${trainingIDD}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -357,7 +393,7 @@ export default function TrainingReportModal(props) {
                 </Form.Item>
 
                 <Form.Item label="Гүйцэтгэлийн төсөв:" name="PerformanceBudget">
-                  <Input className="FormItem" />
+                  <Input className="FormItem" disabled />
                 </Form.Item>
               </Col>
 

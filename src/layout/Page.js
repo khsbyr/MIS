@@ -33,6 +33,11 @@ const TrainingList = loadable({
   loading: Loader,
 });
 
+const TrainingInfo = loadable({
+  loader: () => import('../pages/training/more/TraningInfo'),
+  loading: Loader,
+});
+
 const Page = ({ route }) => {
   const PageContent = () => {
     console.log(route);
@@ -55,7 +60,7 @@ const Page = ({ route }) => {
 
       /** Сургалт */
       case 'training'.toLowerCase():
-        return <TrainingList />;
+        return <TrainingInfo />;
 
       /** Лавлах */
 

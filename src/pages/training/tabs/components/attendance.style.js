@@ -69,10 +69,14 @@ const ContentWrapper = styled.div`
     width: 60%;
     border-bottom: 1px solid #103154;
   }
+
   .ant-input-number {
-    border: none;
-    width: 60%;
-    border-bottom: 1px solid #103154;
+    width: 100%;
+    border-radius: 3px;
+    height: 33px;
+  }
+  .ant-input-number-handler-wrap {
+    display: none;
   }
 `;
 
