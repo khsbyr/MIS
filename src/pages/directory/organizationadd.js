@@ -16,7 +16,7 @@ import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import CriteriaModal from '../criteria/components/CriteriaModal';
 import ContentWrapper from '../criteria/criteria.style';
-import OrgaStyle from '../training/training/components/orga.style';
+import OrgaStyle from '../training/tabs/components/orga.style';
 import AutoCompleteSelect from '../../components/Autocomplete';
 
 const { Content } = Layout;

@@ -16,8 +16,8 @@ import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import CriteriaModal from '../criteria/components/CriteriaModal';
 import ContentWrapper from '../criteria/criteria.style';
-import OrgaStyle from '../training/training/components/orga.style';
-import AutoCompleteSelect from '../../components/Autocomplete';
+// import OrgaStyle from '../training/tabs/components/orga.style';
+// import AutoCompleteSelect from '../../components/Autocomplete';
 
 const { Content } = Layout;
 
@@ -27,7 +27,7 @@ const CriteriaType = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [stateTraining, setStateTraining] = useState([]);
+  // const [stateTraining, setStateTraining] = useState([]);
 
   const [lazyParams] = useState({
     page: 0,
@@ -61,7 +61,6 @@ const CriteriaType = () => {
     onInit();
   }, [lazyParams]);
 
-  const selectTraining = value => {};
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
@@ -159,14 +158,14 @@ const CriteriaType = () => {
                 <Row gutter={[0, 15]}>
                   <Col xs={8} md={8} lg={10} />
                   <Col xs={8} md={8} lg={5}>
-                    <OrgaStyle>
+                    {/* <OrgaStyle>
                       <AutoCompleteSelect
                         valueField="id"
                         placeholder="Сургалт сонгох"
                         data={stateTraining}
                         onChange={value => selectTraining(value)}
                       />
-                    </OrgaStyle>
+                    </OrgaStyle> */}
                   </Col>
 
                   <Col xs={8} md={8} lg={3}>

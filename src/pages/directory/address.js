@@ -12,9 +12,11 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
 import { ToolsContext } from '../../context/Tools';
-import { getService, putService, deleteService } from '../../service/service';
+import { getService, deleteService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
+import OrgaStyle from '../training/tabs/components/orga.style';
+import AutoCompleteSelect from '../../components/Autocomplete';
 import AddressModal from './components/AddressModal';
 
 const { Content } = Layout;
@@ -25,7 +27,12 @@ const Address = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const [stateCountry, setStateCountry] = useState([]);
+  const [countryID, setCountryID] = useState([]);
+  const [stateAimag, setStateAimag] = useState([]);
+  const [aimagID, setAimagID] = useState([]);
+  const [stateSoum, setStateSoum] = useState([]);
+  const [soumID, setSoumID] = useState([]);
   const [lazyParams] = useState({
     page: 0,
   });
@@ -38,9 +45,9 @@ const Address = () => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('address/get', list)
+    getService('country/get', list)
       .then(result => {
-        const listResult = result.content || [];
+        const listResult = result || [];
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
@@ -56,8 +63,67 @@ const Address = () => {
 
   useEffect(() => {
     onInit();
+    getService('country/get').then(result => {
+      if (result) {
+        setStateCountry(result || []);
+      }
+    });
+    getService('aimag/get').then(result => {
+      if (result) {
+        setStateAimag(result || []);
+      }
+    });
   }, [lazyParams]);
 
+  const getAimag = countryId => {
+    getService(`aimag/getList/${countryId}`, {}).then(result => {
+      if (result) {
+        const listResult = result || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
+        setSelectedRows([]);
+        setCountryID(countryID);
+      }
+    });
+  };
+  const getSoum = aimagId => {
+    getService(`soum/getList/${aimagId}`, {}).then(result => {
+      if (result) {
+        const listResult = result || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
+        setStateSoum(result || []);
+        setSelectedRows([]);
+        setAimagID(aimagID);
+      }
+    });
+  };
+  const getbag = soumId => {
+    getService(`bag/getList/${soumId}`, {}).then(result => {
+      if (result) {
+        const listResult = result || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
+        setSelectedRows([]);
+        setSoumID(soumID);
+      }
+    });
+  };
+  const selectCountry = value => {
+    getAimag(value);
+  };
+  const selectAimag = value => {
+    getSoum(value);
+  };
+  const selectSoum = value => {
+    getbag(value);
+  };
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
@@ -138,31 +204,7 @@ const Address = () => {
   const nameBodyTemplate = row => (
     <>
       <span className="p-column-title">Улсын нэр</span>
-      {row.country.name}
-    </>
-  );
-  const aimagBodyTemplate = row => (
-    <>
-      <span className="p-column-title">aimag нэр</span>
-      {row.aimag.name}
-    </>
-  );
-  const soumBodyTemplate = row => (
-    <>
-      <span className="p-column-title">soum нэр</span>
-      {row.soum.name}
-    </>
-  );
-  const bagBodyTemplate = row => (
-    <>
-      <span className="p-column-title">bag нэр</span>
-      {row.bag.name}
-    </>
-  );
-  const addressDetailBodyTemplate = row => (
-    <>
-      <span className="p-column-title">address</span>
-      {row.addressDetail}
+      {row.name}
     </>
   );
 
@@ -177,9 +219,36 @@ const Address = () => {
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={10} />
-                  <Col xs={8} md={8} lg={5} />
-
+                  <Col xs={8} md={8} lg={5}>
+                    <OrgaStyle>
+                      <AutoCompleteSelect
+                        valueField="id"
+                        placeholder="Улс сонгох"
+                        data={stateCountry}
+                        onChange={value => selectCountry(value)}
+                      />
+                    </OrgaStyle>
+                  </Col>
+                  <Col xs={8} md={8} lg={5}>
+                    <OrgaStyle>
+                      <AutoCompleteSelect
+                        valueField="id"
+                        placeholder="Аймаг сонгох"
+                        data={stateAimag}
+                        onChange={value => selectAimag(value)}
+                      />
+                    </OrgaStyle>
+                  </Col>
+                  <Col xs={8} md={8} lg={5}>
+                    <OrgaStyle>
+                      <AutoCompleteSelect
+                        valueField="id"
+                        placeholder="Сум сонгох"
+                        data={stateSoum}
+                        onChange={value => selectSoum(value)}
+                      />
+                    </OrgaStyle>
+                  </Col>
                   <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
@@ -228,41 +297,9 @@ const Address = () => {
           >
             <Column field="index" body={indexBodyTemplate} sortable />
             <Column
-              field="country.name"
+              field="name"
               body={nameBodyTemplate}
               header="Улсын нэр"
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              field="aimag.name"
-              body={aimagBodyTemplate}
-              header="aimag нэр"
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              field="soum.name"
-              body={soumBodyTemplate}
-              header="sum нэр"
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              field="bag.name"
-              body={bagBodyTemplate}
-              header="bag нэр"
-              sortable
-              filter
-              Placeholder="Хайх"
-            />
-            <Column
-              field="addressDetail"
-              body={addressDetailBodyTemplate}
-              header="address"
               sortable
               filter
               filterPlaceholder="Хайх"

@@ -2,11 +2,11 @@ import { Tabs } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import ContentWrapper from './training/training/components/guidelines.style';
-import Organization from './training/training/organization';
-import TrainingTeam from './training/training/plan';
-import Attendance from './training/training/attendance';
-import TrainingReport from './training/training/trainingReport';
+import ContentWrapper from './tabs/components/guidelines.style';
+import Organization from './tabs/organization';
+import TrainingTeam from './tabs/plan';
+import Attendance from './tabs/attendance';
+import TrainingReport from './tabs/trainingReport';
 
 const { TabPane } = Tabs;
 const tabPosition = 'left';

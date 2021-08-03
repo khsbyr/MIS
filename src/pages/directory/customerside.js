@@ -12,11 +12,11 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState, useContext } from 'react';
 import { ToolsContext } from '../../context/Tools';
-import { getService, putService } from '../../service/service';
+import { getService, deleteService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
-import ContentWrapper from '../training/training/components/trainingProgram.style';
-import OrgaStyle from '../training/training/components/orga.style';
-import AutoCompleteSelect from '../../components/Autocomplete';
+import ContentWrapper from '../training/tabs/components/trainingProgram.style';
+// import OrgaStyle from '../training/tabs/components/orga.style';
+// import AutoCompleteSelect from '../../components/Autocomplete';
 import CustomerSideModal from './components/CustomerSideModal';
 
 // function onChange(date, dateString) {
@@ -35,8 +35,6 @@ const Customerside = () => {
   });
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [stateParent, setStateParent] = useState([]);
-  const [parentID, setParentID] = useState([]);
   const toolsStore = useContext(ToolsContext);
 
   const onInit = () => {
@@ -62,30 +60,7 @@ const Customerside = () => {
 
   useEffect(() => {
     onInit();
-    getService('customerSide/getParents').then(result => {
-      if (result) {
-        setStateParent(result || []);
-      }
-    });
   }, [lazyParams]);
-
-  const getParent = parentId => {
-    getService(`customerSide/getByParent/${parentId}`, {}).then(result => {
-      if (result) {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList(listResult);
-        setSelectedRows([]);
-        setParentID(parentID);
-      }
-    });
-  };
-
-  const selectParent = value => {
-    getParent(value);
-  };
 
   const add = () => {
     editRow = null;
@@ -105,7 +80,7 @@ const Customerside = () => {
       return;
     }
 
-    putService(`trainingProgram/delete/${row.id}`)
+    deleteService(`customerSide/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -172,13 +147,6 @@ const Customerside = () => {
     </>
   );
 
-  const timeBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Хэрэгжих хугацаа</span>
-      {row.duration}
-    </>
-  );
-
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -191,16 +159,7 @@ const Customerside = () => {
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
                   <Col xs={8} md={8} lg={10} />
-                  <Col xs={8} md={8} lg={5}>
-                    <OrgaStyle>
-                      <AutoCompleteSelect
-                        valueField="id"
-                        placeholder="Сонгох"
-                        data={stateParent}
-                        onChange={value => selectParent(value)}
-                      />
-                    </OrgaStyle>
-                  </Col>
+                  <Col xs={8} md={8} lg={5} />
 
                   <Col xs={8} md={8} lg={3}>
                     <Button
@@ -253,12 +212,6 @@ const Customerside = () => {
               header="Харилцах тал"
               filter
               body={activityBodyTemplate}
-            />
-            <Column
-              field="duration"
-              header="Хэрэгжих хугацаа"
-              filter
-              body={timeBodyTemplate}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

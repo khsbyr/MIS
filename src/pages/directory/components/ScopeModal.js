@@ -1,9 +1,8 @@
 import { Col, Form, Input, Modal, Row } from 'antd';
-import React, { useEffect, useState } from 'react';
-import AutoCompleteSelect from '../../../components/Autocomplete';
-import { getService, postService, putService } from '../../../service/service';
+import React, { useEffect } from 'react';
+import { postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from '../../training/training/components/guidelines.style';
+import ContentWrapper from '../../training/tabs/components/guidelines.style';
 import validateMessages from '../../../tools/validateMessage';
 
 export default function ScopeModal(props) {
@@ -50,7 +49,7 @@ export default function ScopeModal(props) {
         title="Улс бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
-        width={400}
+        width={600}
         alignItems="center"
         visible={isModalVisible}
         onOk={save}
@@ -65,7 +64,7 @@ export default function ScopeModal(props) {
             validateMessages={validateMessages}
           >
             <Row gutter={30}>
-              <Col xs={24} md={24} lg={18}>
+              <Col xs={24} md={24} lg={22}>
                 <Form.Item
                   label="Хамрах хүрээ:"
                   name="name"
