@@ -24,7 +24,7 @@ const { Content } = Layout;
 let editRow;
 let isEditMode;
 let trainerID;
-const CV = () => {
+const CV = props => {
   const loadLazyTimeout = null;
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
@@ -37,34 +37,29 @@ const CV = () => {
   const [stateOrg, setStateOrg] = useState([]);
   const [OrgID, setOrgID] = useState([]);
 
-  // const onInit = () => {
-  //   toolsStore.setIsShowLoader(true);
-  //   if (loadLazyTimeout) {
-  //     clearTimeout(loadLazyTimeout);
-  //   }
-  //   getService('trainers/get', list)
-  //     .then(result => {
-  //       const listResult = result || [];
-  //       listResult.forEach((item, index) => {
-  //         item.index = lazyParams.page * PAGESIZE + index + 1;
-  //       });
-  //       setList(listResult);
-  //       setSelectedRows([]);
-  //     })
-  //     .finally(toolsStore.setIsShowLoader(false))
-  //     .catch(error => {
-  //       errorCatch(error);
-  //       toolsStore.setIsShowLoader(false);
-  //     });
-  // };
+  const onInit = () => {
+    toolsStore.setIsShowLoader(true);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    getService(`trainers/getListByTrainingId/${props.id}`, list)
+      .then(result => {
+        const listResult = result || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
+        setSelectedRows([]);
+      })
+      .finally(toolsStore.setIsShowLoader(false))
+      .catch(error => {
+        errorCatch(error);
+        toolsStore.setIsShowLoader(false);
+      });
+  };
 
   useEffect(() => {
-    // onInit();
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrg(result.content || []);
-      }
-    });
+    onInit();
   }, [lazyParams]);
 
   const getGuidelines = orgId => {
@@ -201,18 +196,8 @@ const CV = () => {
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={5} />
-                  <Col xs={8} md={8} lg={6}>
-                    <OrgaStyle>
-                      <AutoCompleteSelect
-                        valueField="id"
-                        placeholder="Байгууллага сонгох"
-                        data={stateOrg}
-                        onChange={value => selectOrgs(value)}
-                      />
-                    </OrgaStyle>
-                  </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col xs={8} md={8} lg={7} />
+                  <Col xs={8} md={8} lg={5}>
                     <DatePicker
                       bordered={false}
                       suffixIcon={<DownOutlined />}
@@ -226,7 +211,7 @@ const CV = () => {
                       }}
                     />
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -234,7 +219,7 @@ const CV = () => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"
@@ -243,7 +228,7 @@ const CV = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"

@@ -57,7 +57,7 @@ export default function GuidelinesModal(props) {
   const [list, setList] = useState([]);
   const [listguidelines] = useState([]);
   const [form] = Form.useForm();
-  const [stateOrga, setStateOrga] = useState([]);
+  const [, setStateOrga] = useState([]);
   const [statePlan, setStatePlan] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
   const PAGESIZE = 20;

@@ -1,4 +1,4 @@
-import { Form, Input, Modal, Select } from 'antd';
+import { Form, Input, Modal, Select, message, InputNumber } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
@@ -43,6 +43,7 @@ export default function TrainingProgramModal(props) {
         if (isEditMode) {
           putService(`participants/update/${Attendancecontroller.id}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -51,6 +52,7 @@ export default function TrainingProgramModal(props) {
         } else {
           postService('participants/post', values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -105,10 +107,13 @@ export default function TrainingProgramModal(props) {
               <Input />
             </Form.Item>
             <Form.Item name="phone" label="Холбогдох утас:">
-              <Input />
+              <InputNumber
+                parser={value => value.substring(0, 12)}
+                type="number"
+              />
             </Form.Item>
             <Form.Item name="register" label="Регистрийн дугаар">
-              <Input />
+              <Input maxLength={10} />
             </Form.Item>
 
             <Form.Item label="Хүйс" name="Gender">

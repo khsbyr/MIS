@@ -45,6 +45,15 @@ const ContentWrapper = styled.div`
     width: 110px;
     border-radius: 8px;
   }
+
+  .ant-input-number {
+    width: 100%;
+    border-radius: 3px;
+    height: 39px;
+  }
+  .ant-input-number-handler-wrap {
+    display: none;
+  }
 `;
 
 export default ContentWrapper;

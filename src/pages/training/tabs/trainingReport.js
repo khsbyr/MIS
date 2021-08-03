@@ -1,4 +1,4 @@
-import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
@@ -7,17 +7,15 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
+import { Button, Col, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useContext } from 'react';
-import AutoCompleteSelect from '../../../components/Autocomplete';
+import React, { useContext, useEffect, useState } from 'react';
+import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import ContentWrapper from './components/attendance.style';
-import OrgaStyle from './components/orga.style';
 import TrainingReportModal from './components/trainingReportModal';
-import { ToolsContext } from '../../../context/Tools';
 
 const { Content } = Layout;
 
@@ -31,11 +29,9 @@ const TrainingReport = props => {
   const [lazyParams] = useState({
     page: 0,
   });
-  const PAGESIZE = 20;
+  // const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [stateOrga, setStateOrga] = useState([]);
   const [orgID, setOrgID] = useState([]);
-
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
@@ -257,6 +253,7 @@ const TrainingReport = props => {
               close={closeModal}
               isEditMode={isEditMode}
               orgID={orgID}
+              trainingIDD={props.id}
             />
           )}
         </div>

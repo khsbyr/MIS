@@ -1,4 +1,4 @@
-import { Col, Form, Input, Modal, Row } from 'antd';
+import { Col, Form, Input, Modal, Row, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
 import {
@@ -52,6 +52,7 @@ export default function PlanModal(props) {
         if (isEditMode) {
           putService(`trainingTeam/update/${Plancontroller.id}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -60,6 +61,7 @@ export default function PlanModal(props) {
         } else {
           postService('trainingTeam/post', values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {

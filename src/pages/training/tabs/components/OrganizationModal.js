@@ -1,5 +1,16 @@
 import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Col, Form, Input, Modal, Row, Upload } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Col,
+  Form,
+  Input,
+  Modal,
+  Row,
+  Upload,
+  message,
+  InputNumber,
+} from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
 import {
@@ -180,6 +191,7 @@ export default function OrganizationModal(props) {
         if (isEditMode) {
           putService(`organization/update/${Orgcontroller.id}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -188,6 +200,7 @@ export default function OrganizationModal(props) {
         } else {
           postService('organization/post', values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -268,7 +281,7 @@ export default function OrganizationModal(props) {
                 <Row gutter={32}>
                   <Col xs={24} md={24} lg={12}>
                     <Form.Item label="Дансны дугаар:" name="accountNumber">
-                      <Input />
+                      <InputNumber type="number" />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={12}>
@@ -334,7 +347,10 @@ export default function OrganizationModal(props) {
                   </Col>
                   <Col xs={24} md={24} lg={12}>
                     <Form.Item label="Утас:" name="phone">
-                      <Input />
+                      <InputNumber
+                        parser={value => value.substring(0, 12)}
+                        type="number"
+                      />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={12}>
@@ -381,7 +397,7 @@ export default function OrganizationModal(props) {
                       label="Регистрийн дугаар:"
                       name="RespoUserRegister"
                     >
-                      <Input />
+                      <Input maxLength={10} />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -395,7 +411,10 @@ export default function OrganizationModal(props) {
                 <Row>
                   <Col xs={24} md={24} lg={12}>
                     <Form.Item label="Утасны дугаар:" name="RespoUserPhone">
-                      <Input />
+                      <InputNumber
+                        parser={value => value.substring(0, 12)}
+                        type="number"
+                      />
                     </Form.Item>
                   </Col>
                 </Row>

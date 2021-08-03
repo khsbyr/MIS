@@ -32,7 +32,7 @@ const TrainingList = () => {
   const toolsStore = useContext(ToolsContext);
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [, setStateOrga] = useState([]);
+  // const [, setStateOrga] = useState([]);
   const [orgID] = useState([]);
 
   const history = useHistory();
@@ -182,8 +182,7 @@ const TrainingList = () => {
     </>
   );
 
-  const ShowTrainingInfo = row =>
-    history.push(`/admin/trainingList/${row.data.id}`);
+  const ShowTrainingInfo = row => history.push(`/trainingList/${row.data.id}`);
 
   return (
     <ContentWrapper>
@@ -191,11 +190,11 @@ const TrainingList = () => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={12}>
+              <Col xs={24} md={24} lg={14}>
                 <p className="title">Сургалт</p>
               </Col>
-              <Col xs={24} md={24} lg={12}>
-                <Row gutter={[0, 15]}>
+              <Col xs={24} md={24} lg={10}>
+                <Row justify="end" gutter={[16, 16]}>
                   <Col xs={8} md={8} lg={5} />
                   <Col xs={8} md={8} lg={4}>
                     <DatePicker
@@ -211,7 +210,7 @@ const TrainingList = () => {
                       }}
                     />
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -219,7 +218,7 @@ const TrainingList = () => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"
@@ -228,7 +227,7 @@ const TrainingList = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"
