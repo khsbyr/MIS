@@ -59,7 +59,6 @@ const CriteriaReference = loadable({
 
 const Page = ({ route }) => {
   const PageContent = () => {
-    console.log(route);
     switch (route.code.toLowerCase()) {
       /* тохиргоо */
       case 'menu'.toLowerCase():

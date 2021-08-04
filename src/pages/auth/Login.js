@@ -4,7 +4,7 @@ import { Button, Row, Col, Form, Input, message } from 'antd';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LogIn } from './Login.style';
-import { postService } from '../../service/service';
+import { postService, getService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import { ToolsContext } from '../../context/Tools';
 import Partner from './components/Partner';
@@ -30,21 +30,24 @@ function Login() {
   const toolsStore = useContext(ToolsContext);
 
   function moveToRegister() {
-    history.push('/user/userRegistration');
+    history.push('/register');
   }
 
   function handleLogin() {
     if (username.value && password.value) {
       toolsStore.setIsShowLoader(true);
-      postService('user/login', {
+      postService('/user/login', {
         username: username.value,
         password: password.value,
       })
         .then(result => {
-          localStorage.setItem('token', result.data.token);
-          localStorage.setItem('myHID', result.data.userId);
-          toolsStore.setUser(result.data.user);
-          history.push('/admin/user');
+          getService(`/user/get/${result.data.userId}`).then(user => {
+            if (!user) return;
+            localStorage.setItem('token', result.data.token);
+            localStorage.setItem('name', user.firstname);
+            toolsStore.setUser(user);
+            history.push('/admin/user');
+          });
         })
         .finally(() => {
           toolsStore.setIsShowLoader(false);

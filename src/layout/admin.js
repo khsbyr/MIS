@@ -37,7 +37,18 @@ function Admin() {
           collapsedWidth="0"
           trigger={<MenuOutlined />}
         >
-          <Menu menus={buildPaths(menus)} collapsed={collapsed} />
+          <Menu
+            className="menu"
+            mode="inline"
+            style={{
+              height: '100%',
+              borderRight: 0,
+              marginTop: '300px',
+              background: '#fff',
+            }}
+            menus={buildPaths(menus)}
+            collapsed={collapsed}
+          />
         </Sider>
         <Layout className="site-layout">
           <Content
