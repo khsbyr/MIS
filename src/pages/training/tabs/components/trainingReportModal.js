@@ -55,14 +55,14 @@ export default function TrainingReportModal(props) {
 
     if (TrainingReportController !== undefined) {
       getService(
-        `soum/getList/${TrainingReportController.training_guidelines.address.aimag.id}`
+        `soum/getList/${TrainingReportController.address.aimag.id}`
       ).then(result => {
         if (result) {
           setStateSum(result || []);
         }
       });
       getService(
-        `bag/getList/${TrainingReportController.training_guidelines.address.soum.id}`
+        `bag/getList/${TrainingReportController.address.soum.id}`
       ).then(result => {
         if (result) {
           setStateBag(result || []);
@@ -72,7 +72,10 @@ export default function TrainingReportModal(props) {
 
     if (isEditMode) {
       setTrainingID(TrainingReportController.id);
-      setGuidelinesID(TrainingReportController.training_guidelines.id);
+      setGuidelinesID(
+        TrainingReportController.training_guidelines &&
+          TrainingReportController.training_guidelines.id
+      );
       setReportsAimID(
         TrainingReportController.trainingReport &&
           TrainingReportController.trainingReport.reportsAim.id
@@ -108,17 +111,17 @@ export default function TrainingReportModal(props) {
 
       form.setFieldsValue({
         ...TrainingReportController,
-        CountryID: TrainingReportController.training_guidelines.address
-          ? TrainingReportController.training_guidelines.address.country.id
+        CountryID: TrainingReportController.address
+          ? TrainingReportController.address.country.id
           : '',
-        AimagID: TrainingReportController.training_guidelines.address
-          ? TrainingReportController.training_guidelines.address.aimag.id
+        AimagID: TrainingReportController.address
+          ? TrainingReportController.address.aimag.id
           : '',
-        SoumID: TrainingReportController.training_guidelines.address
-          ? TrainingReportController.training_guidelines.address.soum.id
+        SoumID: TrainingReportController.address
+          ? TrainingReportController.address.soum.id
           : '',
-        BagID: TrainingReportController.training_guidelines.address
-          ? TrainingReportController.training_guidelines.address.bag.id
+        BagID: TrainingReportController.address
+          ? TrainingReportController.address.bag.id
           : '',
         TrainingName: TrainingReportController.name,
         TotalParticipants: TrainingReportController.totalParticipants,
@@ -200,18 +203,10 @@ export default function TrainingReportModal(props) {
 
         form.setFieldsValue({
           ...selectedTraining,
-          CountryID:
-            selectedTraining.training_guidelines &&
-            selectedTraining.training_guidelines.address.country.id,
-          AimagID: selectedTraining.training_guidelines
-            ? selectedTraining.training_guidelines.address.aimag.id
-            : '',
-          SoumID: selectedTraining.training_guidelines
-            ? selectedTraining.training_guidelines.address.soum.id
-            : '',
-          BagID: selectedTraining.training_guidelines
-            ? selectedTraining.training_guidelines.address.bag.id
-            : '',
+          CountryID: selectedTraining && selectedTraining.address.country.id,
+          AimagID: selectedTraining ? selectedTraining.address.aimag.id : '',
+          SoumID: selectedTraining ? selectedTraining.address.soum.id : '',
+          BagID: selectedTraining ? selectedTraining.address.bag.id : '',
           TrainingName: selectedTraining.name,
           TotalParticipants: selectedTraining.totalParticipants,
           PerformanceBudget: selectedTraining.trainingBudget.performanceBudget,
