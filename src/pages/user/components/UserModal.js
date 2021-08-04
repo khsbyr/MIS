@@ -151,6 +151,9 @@ export default function UserModal(props) {
           },
           addressDetail: values.AddressDetail,
         };
+        values.organization = {
+          id: values.organizationId,
+        };
         values.isTrue = true;
         if (isEditMode) {
           putService(`user/update/${Usercontroller.id}`, values)
@@ -161,7 +164,7 @@ export default function UserModal(props) {
               errorCatch(error);
             });
         } else {
-          postService('user/post', values)
+          postService('/user/post', values)
             .then(() => {
               props.close(true);
             })

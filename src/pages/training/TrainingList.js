@@ -1,4 +1,3 @@
-import React, { useEffect, useState, useContext } from 'react';
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
@@ -11,36 +10,41 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
+import React, { useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
-import CriteriaModal from './components/CriteriaModal';
-import ContentWrapper from './criteria.style';
+import ContentWrapper from '../criteria/criteria.style';
+import GuidelinesModal from './tabs/components/GuidelinesModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-
-const Criteria = () => {
+const TrainingList = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams] = useState({
     page: 0,
   });
+  const toolsStore = useContext(ToolsContext);
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const toolsStore = useContext(ToolsContext);
+  // const [, setStateOrga] = useState([]);
+  const [orgID] = useState([]);
+
+  const history = useHistory();
 
   const onInit = () => {
+    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    toolsStore.setIsShowLoader(true);
-    getService('/criteria/get')
+    getService('training/get', list)
       .then(result => {
-        const listResult = result || [];
+        const listResult = result.content || [];
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
@@ -54,7 +58,12 @@ const Criteria = () => {
       });
   };
 
+  useEffect(() => {
+    onInit();
+  }, [lazyParams]);
+
   const add = () => {
+    editRow = null;
     setIsModalVisible(true);
     isEditMode = false;
   };
@@ -70,7 +79,8 @@ const Criteria = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`/criteria/delete/${row.id}`)
+
+    putService(`training/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -103,15 +113,6 @@ const Criteria = () => {
     }
   };
 
-  const closeModal = (isSuccess = false) => {
-    setIsModalVisible(false);
-    if (isSuccess) onInit();
-  };
-
-  useEffect(() => {
-    onInit();
-  }, [lazyParams]);
-
   const action = row => (
     <>
       <Button
@@ -127,6 +128,11 @@ const Criteria = () => {
     </>
   );
 
+  const closeModal = (isSuccess = false) => {
+    setIsModalVisible(false);
+    if (isSuccess) onInit();
+  };
+
   const indexBodyTemplate = row => (
     <>
       <span className="p-column-title">№</span>
@@ -134,26 +140,49 @@ const Criteria = () => {
     </>
   );
 
-  const nameBodyTemplate = row => (
+  const NameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Шалгуур үзүүлэлтийн нэр</span>
+      <span className="p-column-title">Сургалтын нэр</span>
       {row.name}
     </>
   );
 
-  const indicatorProcessBodyTemplate = row => (
+  const totalBudgetBodyTemplate = row => (
     <>
-      <span className="p-column-title">Хүрэх үр дүн</span>
-      {row.upIndicator}
+      <span className="p-column-title">Төсөв</span>
+      {row.totalBudget}
     </>
   );
 
-  const upIndicatorBodyTemplate = row => (
+  const performanceBudgetBodyTemplate = row => (
     <>
-      <span className="p-column-title">Үр дүнгийн биелэлт</span>
-      {row.indicatorProcess}
+      <span className="p-column-title">Гүйцэтгэлийн төсөв</span>
+      {row.performanceBudget}
     </>
   );
+
+  const startDateBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Эхэлсэн огноо</span>
+      {row.trainingStartDate}
+    </>
+  );
+
+  const endDateBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дууссан огноо</span>
+      {row.trainingEndDate}
+    </>
+  );
+
+  const participantBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Оролцогчдын тоо</span>
+      {row.participantsNumber}
+    </>
+  );
+
+  const ShowTrainingInfo = row => history.push(`/trainingList/${row.data.id}`);
 
   return (
     <ContentWrapper>
@@ -162,11 +191,12 @@ const Criteria = () => {
           <Content>
             <Row>
               <Col xs={24} md={24} lg={14}>
-                <p className="title">Шалгуур үзүүлэлтийн бүртгэл</p>
+                <p className="title">Сургалт</p>
               </Col>
               <Col xs={24} md={24} lg={10}>
-                <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={6}>
+                <Row justify="end" gutter={[16, 16]}>
+                  <Col xs={8} md={8} lg={5} />
+                  <Col xs={8} md={8} lg={4}>
                     <DatePicker
                       bordered={false}
                       suffixIcon={<DownOutlined />}
@@ -180,7 +210,7 @@ const Criteria = () => {
                       }}
                     />
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -188,7 +218,7 @@ const Criteria = () => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"
@@ -197,7 +227,7 @@ const Criteria = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"
@@ -220,7 +250,7 @@ const Criteria = () => {
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            // onRowClick={edit}
+            onRowClick={ShowTrainingInfo}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
@@ -229,31 +259,49 @@ const Criteria = () => {
             <Column field="index" header="№" body={indexBodyTemplate} />
             <Column
               field="name"
-              header="Шалгуур үзүүлэлтийн нэр"
-              body={nameBodyTemplate}
+              header="Сургалтын сэдэв"
+              filter
+              body={NameBodyTemplate}
             />
             <Column
-              field="indicatorProcess"
-              header="Хүрэх үр дүн"
-              body={indicatorProcessBodyTemplate}
+              field="totalBudget"
+              header="Төсөв"
+              filter
+              body={totalBudgetBodyTemplate}
             />
             <Column
-              field="upIndicator"
-              header="Үр дүнгийн биелэлт"
-              body={upIndicatorBodyTemplate}
+              field="performanceBudget"
+              header="Гүйцэтгэлийн төсөв"
+              filter
+              body={performanceBudgetBodyTemplate}
             />
             <Column
-              field="criteriaIndicator.percentIndicator.value"
-              header="Хувь"
+              field="trainingStartDate"
+              header="Эхэлсэн огноо"
+              filter
+              body={startDateBodyTemplate}
+            />
+            <Column
+              field="trainingEndDate"
+              header="Дууссан огноо"
+              filter
+              body={endDateBodyTemplate}
+            />
+            <Column
+              field="participantsNumber"
+              header="Оролцогчдын тоо"
+              filter
+              body={participantBodyTemplate}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <CriteriaModal
-              Criteriacontroller={editRow}
+            <GuidelinesModal
+              Guidelinescontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+              orgID={orgID}
             />
           )}
         </div>
@@ -262,4 +310,4 @@ const Criteria = () => {
   );
 };
 
-export default Criteria;
+export default TrainingList;

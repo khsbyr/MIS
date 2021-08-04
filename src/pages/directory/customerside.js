@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
@@ -8,21 +7,26 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
+import { Button, Col, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
+import React, { useEffect, useState, useContext } from 'react';
 import { ToolsContext } from '../../context/Tools';
-import { getService, putService } from '../../service/service';
+import { getService, deleteService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
-import CriteriaModal from './components/CriteriaModal';
-import ContentWrapper from './criteria.style';
+import ContentWrapper from '../training/tabs/components/trainingProgram.style';
+// import OrgaStyle from '../training/tabs/components/orga.style';
+// import AutoCompleteSelect from '../../components/Autocomplete';
+import CustomerSideModal from './components/CustomerSideModal';
 
+// function onChange(date, dateString) {
+//   console.log(date, dateString);
+// }
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-
-const Criteria = () => {
+const Customerside = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -34,11 +38,11 @@ const Criteria = () => {
   const toolsStore = useContext(ToolsContext);
 
   const onInit = () => {
+    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    toolsStore.setIsShowLoader(true);
-    getService('/criteria/get')
+    getService('customerSide/get', list)
       .then(result => {
         const listResult = result || [];
         listResult.forEach((item, index) => {
@@ -54,7 +58,12 @@ const Criteria = () => {
       });
   };
 
+  useEffect(() => {
+    onInit();
+  }, [lazyParams]);
+
   const add = () => {
+    editRow = null;
     setIsModalVisible(true);
     isEditMode = false;
   };
@@ -70,7 +79,8 @@ const Criteria = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`/criteria/delete/${row.id}`)
+
+    deleteService(`customerSide/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -103,15 +113,6 @@ const Criteria = () => {
     }
   };
 
-  const closeModal = (isSuccess = false) => {
-    setIsModalVisible(false);
-    if (isSuccess) onInit();
-  };
-
-  useEffect(() => {
-    onInit();
-  }, [lazyParams]);
-
   const action = row => (
     <>
       <Button
@@ -127,6 +128,11 @@ const Criteria = () => {
     </>
   );
 
+  const closeModal = (isSuccess = false) => {
+    setIsModalVisible(false);
+    if (isSuccess) onInit();
+  };
+
   const indexBodyTemplate = row => (
     <>
       <span className="p-column-title">№</span>
@@ -134,24 +140,10 @@ const Criteria = () => {
     </>
   );
 
-  const nameBodyTemplate = row => (
+  const activityBodyTemplate = row => (
     <>
-      <span className="p-column-title">Шалгуур үзүүлэлтийн нэр</span>
+      <span className="p-column-title">Хариуцах тал</span>
       {row.name}
-    </>
-  );
-
-  const indicatorProcessBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Хүрэх үр дүн</span>
-      {row.upIndicator}
-    </>
-  );
-
-  const upIndicatorBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Үр дүнгийн биелэлт</span>
-      {row.indicatorProcess}
     </>
   );
 
@@ -161,26 +153,15 @@ const Criteria = () => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={14}>
-                <p className="title">Шалгуур үзүүлэлтийн бүртгэл</p>
+              <Col xs={24} md={24} lg={12}>
+                <p className="title">Харилцах тал</p>
               </Col>
-              <Col xs={24} md={24} lg={10}>
+              <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={6}>
-                    <DatePicker
-                      bordered={false}
-                      suffixIcon={<DownOutlined />}
-                      placeholder="Select year"
-                      picker="year"
-                      className="DatePicker"
-                      style={{
-                        width: '120px',
-                        color: 'black',
-                        cursor: 'pointer',
-                      }}
-                    />
-                  </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={10} />
+                  <Col xs={8} md={8} lg={5} />
+
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -188,7 +169,7 @@ const Criteria = () => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -197,7 +178,7 @@ const Criteria = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -220,7 +201,6 @@ const Criteria = () => {
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            // onRowClick={edit}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
@@ -229,31 +209,19 @@ const Criteria = () => {
             <Column field="index" header="№" body={indexBodyTemplate} />
             <Column
               field="name"
-              header="Шалгуур үзүүлэлтийн нэр"
-              body={nameBodyTemplate}
-            />
-            <Column
-              field="indicatorProcess"
-              header="Хүрэх үр дүн"
-              body={indicatorProcessBodyTemplate}
-            />
-            <Column
-              field="upIndicator"
-              header="Үр дүнгийн биелэлт"
-              body={upIndicatorBodyTemplate}
-            />
-            <Column
-              field="criteriaIndicator.percentIndicator.value"
-              header="Хувь"
+              header="Харилцах тал"
+              filter
+              body={activityBodyTemplate}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <CriteriaModal
-              Criteriacontroller={editRow}
+            <CustomerSideModal
+              Customersidecontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+              // trainingID={trainingID}
             />
           )}
         </div>
@@ -262,4 +230,4 @@ const Criteria = () => {
   );
 };
 
-export default Criteria;
+export default Customerside;

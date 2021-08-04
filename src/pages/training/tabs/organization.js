@@ -1,4 +1,3 @@
-import React, { useEffect, useState, useContext } from 'react';
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
@@ -11,40 +10,43 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { ToolsContext } from '../../context/Tools';
-import { getService, putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
-import CriteriaModal from './components/CriteriaModal';
-import ContentWrapper from './criteria.style';
+import React, { useContext, useEffect, useState } from 'react';
+import { ToolsContext } from '../../../context/Tools';
+import { getService, putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import ContentWrapper from '../../criteria/criteria.style';
+import OrganizationModal from './components/OrganizationModal';
 
+function onChange(date, dateString) {
+  // eslint-disable-next-line no-console
+  console.log(date, dateString);
+}
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-
-const Criteria = () => {
+const Organization = props => {
   const loadLazyTimeout = null;
+  const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams] = useState({
     page: 0,
   });
-  const PAGESIZE = 20;
+  // const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const toolsStore = useContext(ToolsContext);
-
   const onInit = () => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService('/criteria/get')
+    getService(`training/get/${props.id}`, list)
       .then(result => {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList(listResult);
+        const listResult = result.organization;
+        // listResult.forEach((item, index) => {
+        //   item.index = lazyParams.page * PAGESIZE + index + 1;
+        // });
+        setList([listResult]);
         setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
@@ -53,6 +55,9 @@ const Criteria = () => {
         toolsStore.setIsShowLoader(false);
       });
   };
+  useEffect(() => {
+    onInit();
+  }, [lazyParams]);
 
   const add = () => {
     setIsModalVisible(true);
@@ -70,7 +75,7 @@ const Criteria = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`/criteria/delete/${row.id}`)
+    putService(`organization/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -103,15 +108,6 @@ const Criteria = () => {
     }
   };
 
-  const closeModal = (isSuccess = false) => {
-    setIsModalVisible(false);
-    if (isSuccess) onInit();
-  };
-
-  useEffect(() => {
-    onInit();
-  }, [lazyParams]);
-
   const action = row => (
     <>
       <Button
@@ -127,6 +123,11 @@ const Criteria = () => {
     </>
   );
 
+  const closeModal = (isSuccess = false) => {
+    setIsModalVisible(false);
+    if (isSuccess) onInit();
+  };
+
   const indexBodyTemplate = row => (
     <>
       <span className="p-column-title">№</span>
@@ -136,22 +137,36 @@ const Criteria = () => {
 
   const nameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Шалгуур үзүүлэлтийн нэр</span>
+      <span className="p-column-title">Байгууллагын нэр</span>
       {row.name}
     </>
   );
 
-  const indicatorProcessBodyTemplate = row => (
+  const registerNumberBodyTemplate = row => (
     <>
-      <span className="p-column-title">Хүрэх үр дүн</span>
-      {row.upIndicator}
+      <span className="p-column-title">Регистрийн дугаар</span>
+      {row.registerNumber}
     </>
   );
 
-  const upIndicatorBodyTemplate = row => (
+  const bankNameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Үр дүнгийн биелэлт</span>
-      {row.indicatorProcess}
+      <span className="p-column-title">Банкны нэр</span>
+      {row.bank.name}
+    </>
+  );
+
+  const accountNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дансны нэр</span>
+      {row.accountName}
+    </>
+  );
+
+  const accountNumberBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дансны дугаар</span>
+      {row.accountNumber}
     </>
   );
 
@@ -161,13 +176,15 @@ const Criteria = () => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={14}>
-                <p className="title">Шалгуур үзүүлэлтийн бүртгэл</p>
+              <Col xs={24} md={24} lg={12}>
+                <p className="title">Зөвлөх байгууллага</p>
               </Col>
-              <Col xs={24} md={24} lg={10}>
+              <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={7} />
+                  <Col xs={8} md={8} lg={5}>
                     <DatePicker
+                      onChange={onChange}
                       bordered={false}
                       suffixIcon={<DownOutlined />}
                       placeholder="Select year"
@@ -180,7 +197,7 @@ const Criteria = () => {
                       }}
                     />
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -188,7 +205,7 @@ const Criteria = () => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"
@@ -197,7 +214,7 @@ const Criteria = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"
@@ -226,31 +243,25 @@ const Criteria = () => {
             }}
             dataKey="id"
           >
-            <Column field="index" header="№" body={indexBodyTemplate} />
+            <Column header="№" body={indexBodyTemplate} />
             <Column
-              field="name"
-              header="Шалгуур үзүүлэлтийн нэр"
+              header="Байгууллагын нэр"
               body={nameBodyTemplate}
+              filter
+              sortable
             />
             <Column
-              field="indicatorProcess"
-              header="Хүрэх үр дүн"
-              body={indicatorProcessBodyTemplate}
+              header="Регистрийн дугаар"
+              body={registerNumberBodyTemplate}
             />
-            <Column
-              field="upIndicator"
-              header="Үр дүнгийн биелэлт"
-              body={upIndicatorBodyTemplate}
-            />
-            <Column
-              field="criteriaIndicator.percentIndicator.value"
-              header="Хувь"
-            />
+            <Column header="Банкны нэр" body={bankNameBodyTemplate} />
+            <Column header="Дансны нэр" body={accountNameBodyTemplate} />
+            <Column header="Дансны дугаар" body={accountNumberBodyTemplate} />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <CriteriaModal
-              Criteriacontroller={editRow}
+            <OrganizationModal
+              Orgcontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
@@ -262,4 +273,4 @@ const Criteria = () => {
   );
 };
 
-export default Criteria;
+export default Organization;

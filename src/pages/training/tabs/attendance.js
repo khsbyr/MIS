@@ -1,4 +1,3 @@
-import React, { useEffect, useState, useContext } from 'react';
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
@@ -11,36 +10,39 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { ToolsContext } from '../../context/Tools';
-import { getService, putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
-import CriteriaModal from './components/CriteriaModal';
-import ContentWrapper from './criteria.style';
+import React, { useContext, useEffect, useState } from 'react';
+import { ToolsContext } from '../../../context/Tools';
+import { getService, putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import ContentWrapper from './components/attendance.style';
+import AttendanceModal from './components/attendanceModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-
-const Criteria = () => {
+const Attendance = props => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams] = useState({
     page: 0,
   });
+  const toolsStore = useContext(ToolsContext);
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const toolsStore = useContext(ToolsContext);
+  const [trainingID, setTrainingID] = useState([]);
+  const [orgID] = useState([]);
 
   const onInit = () => {
+    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    toolsStore.setIsShowLoader(true);
-    getService('/criteria/get')
+    getService(`training/get/${props.id}`, list)
       .then(result => {
-        const listResult = result || [];
+        const listResult = result.participants || [];
+        setTrainingID(result.id);
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
@@ -53,6 +55,10 @@ const Criteria = () => {
         toolsStore.setIsShowLoader(false);
       });
   };
+
+  useEffect(() => {
+    onInit();
+  }, [lazyParams]);
 
   const add = () => {
     setIsModalVisible(true);
@@ -70,7 +76,7 @@ const Criteria = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`/criteria/delete/${row.id}`)
+    putService(`participants/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -103,15 +109,6 @@ const Criteria = () => {
     }
   };
 
-  const closeModal = (isSuccess = false) => {
-    setIsModalVisible(false);
-    if (isSuccess) onInit();
-  };
-
-  useEffect(() => {
-    onInit();
-  }, [lazyParams]);
-
   const action = row => (
     <>
       <Button
@@ -127,6 +124,11 @@ const Criteria = () => {
     </>
   );
 
+  const closeModal = (isSuccess = false) => {
+    setIsModalVisible(false);
+    if (isSuccess) onInit();
+  };
+
   const indexBodyTemplate = row => (
     <>
       <span className="p-column-title">№</span>
@@ -136,22 +138,36 @@ const Criteria = () => {
 
   const nameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Шалгуур үзүүлэлтийн нэр</span>
+      <span className="p-column-title">Суралцагчийн нэр</span>
       {row.name}
     </>
   );
 
-  const indicatorProcessBodyTemplate = row => (
+  const jobDescBodyTemplate = row => (
     <>
-      <span className="p-column-title">Хүрэх үр дүн</span>
-      {row.upIndicator}
+      <span className="p-column-title">Ажил эрхлэлт</span>
+      {row.jobDescription}
     </>
   );
 
-  const upIndicatorBodyTemplate = row => (
+  const contactBodyTemplate = row => (
     <>
-      <span className="p-column-title">Үр дүнгийн биелэлт</span>
-      {row.indicatorProcess}
+      <span className="p-column-title">Холбогдох утас</span>
+      {row.phone}
+    </>
+  );
+
+  const registerNumberBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Регистрийн дугаар</span>
+      {row.register}
+    </>
+  );
+
+  const genderBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Хүйс</span>
+      {row.gender.gender}
     </>
   );
 
@@ -161,12 +177,13 @@ const Criteria = () => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={14}>
-                <p className="title">Шалгуур үзүүлэлтийн бүртгэл</p>
+              <Col xs={24} md={24} lg={12}>
+                <p className="title">Ирцийн бүртгэл</p>
               </Col>
-              <Col xs={24} md={24} lg={10}>
+              <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={7} />
+                  <Col xs={8} md={8} lg={5}>
                     <DatePicker
                       bordered={false}
                       suffixIcon={<DownOutlined />}
@@ -180,7 +197,7 @@ const Criteria = () => {
                       }}
                     />
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -188,7 +205,7 @@ const Criteria = () => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"
@@ -197,7 +214,7 @@ const Criteria = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"
@@ -229,31 +246,54 @@ const Criteria = () => {
             <Column field="index" header="№" body={indexBodyTemplate} />
             <Column
               field="name"
-              header="Шалгуур үзүүлэлтийн нэр"
+              header="Суралцагчийн нэр"
+              sortable
+              filter
+              filterPlaceholder="Хайх"
               body={nameBodyTemplate}
             />
             <Column
-              field="indicatorProcess"
-              header="Хүрэх үр дүн"
-              body={indicatorProcessBodyTemplate}
+              field="jobDescription"
+              header="Ажил эрхлэлт"
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              body={jobDescBodyTemplate}
             />
             <Column
-              field="upIndicator"
-              header="Үр дүнгийн биелэлт"
-              body={upIndicatorBodyTemplate}
+              field=""
+              header="Холбогдох утас"
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              body={contactBodyTemplate}
             />
             <Column
-              field="criteriaIndicator.percentIndicator.value"
-              header="Хувь"
+              field=""
+              header="Регистрийн дугаар"
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              body={registerNumberBodyTemplate}
+            />
+            <Column
+              field=""
+              header="Хүйс"
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              body={genderBodyTemplate}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <CriteriaModal
-              Criteriacontroller={editRow}
+            <AttendanceModal
+              Attendancecontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+              trainingID={trainingID}
+              orgID={orgID}
             />
           )}
         </div>
@@ -262,4 +302,4 @@ const Criteria = () => {
   );
 };
 
-export default Criteria;
+export default Attendance;
