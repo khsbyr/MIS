@@ -42,18 +42,18 @@ const Scope = loadable({
   loading: Loader,
 });
 
-const Address = loadable({
-  loader: () => import('../pages/directory/address'),
-  loading: Loader,
-});
+// const Address = loadable({
+//   loader: () => import('../pages/directory/address'),
+//   loading: Loader,
+// });
 
 const Customerside = loadable({
   loader: () => import('../pages/directory/customerside'),
   loading: Loader,
 });
 
-const Criteriatype = loadable({
-  loader: () => import('../pages/directory/criteriatype'),
+const CriteriaReference = loadable({
+  loader: () => import('../pages/directory/criteriareference'),
   loading: Loader,
 });
 
@@ -83,12 +83,12 @@ const Page = ({ route }) => {
       /** Лавлах */
       case 'scope'.toLowerCase():
         return <Scope />;
-      case 'address'.toLowerCase():
-        return <Address />;
+      // case 'address'.toLowerCase():
+      //   return <Address />;
       case 'Party in charge'.toLowerCase():
         return <Customerside />;
       case 'Types of indicators'.toLowerCase():
-        return <Criteriatype />;
+        return <CriteriaReference />;
       /** Байгууллагын мэдээлэл */
 
       /** Тайлан */

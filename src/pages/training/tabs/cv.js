@@ -36,7 +36,6 @@ const CV = props => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateOrg, setStateOrg] = useState([]);
   const [OrgID, setOrgID] = useState([]);
-
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
@@ -56,6 +55,11 @@ const CV = props => {
         errorCatch(error);
         toolsStore.setIsShowLoader(false);
       });
+    getService(`training/get/${props.id}`, {}).then(result => {
+      if (result) {
+        setOrgID(result.organization.id);
+      }
+    });
   };
 
   useEffect(() => {
@@ -70,7 +74,6 @@ const CV = props => {
           item.index = index + 1;
         });
         setList(listResult);
-        setOrgID(orgId);
         setSelectedRows([]);
       }
     });

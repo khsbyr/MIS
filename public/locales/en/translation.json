@@ -52,7 +52,7 @@
     "scope": "Scope",
     "address": "Address",
     "customer_side": "Customer side",
-    "criteria_type": "Types of indicators",
+    "criteria_reference": "Types of indicators",
     "role_permission": "Types of indicators",
     "organization": "Organizations",
     "project_summary": "Project summary",

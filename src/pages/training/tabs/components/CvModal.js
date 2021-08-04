@@ -20,6 +20,8 @@ import {
   Modal,
   Row,
   Upload,
+  Select,
+  AutoComplete,
 } from 'antd';
 import moment from 'moment';
 import { Column } from 'primereact/column';
@@ -47,6 +49,7 @@ import CvShowModal from './CvShowModal';
 // import { colourOptions } from '../data';
 
 const { Dragger } = Upload;
+const { Option } = Select;
 const layout = {
   labelCol: {
     span: 20,
@@ -60,7 +63,8 @@ let editRow;
 let isEditModee;
 let editRowEducation;
 export default function CvModal(props) {
-  const { Trainerscontroller, isModalVisible, isEditMode, trainerID } = props;
+  const { Trainerscontroller, isModalVisible, isEditMode, trainerID, orgId } =
+    props;
   const [isModalVisibleEducation, setIsModalVisibleEducation] = useState(false);
   const [isModalVisibleExperience, setIsModalVisibleExperience] =
     useState(false);
@@ -98,11 +102,24 @@ export default function CvModal(props) {
   });
   const PAGESIZE = 20;
   const [birthDate, setBirthDate] = useState([]);
+  console.log(orgId);
   const [showResults, setShowResults] = useState(false);
   const [isOnChange, setIsOnchange] = useState(false);
+  const [valueData, setValueData] = useState('');
+  const [options, setOptions] = useState([]);
   const [valueRegister, setRegisterValue] = useState(false);
   const ShowModal = () => setShowResults(true);
+  // const filter = createFilterOptions();
 
+  const onSearch = searchText => {};
+
+  const onSelect = data => {
+    console.log('onSelect', data);
+  };
+
+  const onChange = data => {
+    setValueData(data);
+  };
   function onBirthDateChange(date, value) {
     setBirthDate(value);
   }
@@ -126,7 +143,6 @@ export default function CvModal(props) {
     //     toolsStore.setIsShowLoader(false);
     //   });
   };
-
   const onInitEducation = () => {
     toolsStore.setIsShowLoader(false);
     if (loadLazyTimeout) {
@@ -318,9 +334,9 @@ export default function CvModal(props) {
     onInitPublishedWork();
     onInitLicense();
     onInitMembership();
-    getService('user/get').then(result => {
+    getService(`user/getNotTrainerUserListByOrgId/${orgId}`).then(result => {
       if (result) {
-        setStateRegister(result.content || []);
+        setOptions(result || []);
       }
     });
     getService('country/get').then(result => {
@@ -352,7 +368,6 @@ export default function CvModal(props) {
 
     if (isEditMode) {
       setBirthDate(Trainerscontroller.birthDate);
-      setUserID(Trainerscontroller.id);
       form.setFieldsValue({
         ...Trainerscontroller,
         lastName: Trainerscontroller.lastname,
@@ -389,13 +404,13 @@ export default function CvModal(props) {
     });
   };
 
-  const selectUser = value => {
+  const selectUser = (value, option) => {
     setIsOnchange(true);
-    getService(`user/get/${value.newValue.id}`, {}).then(result => {
+    getService(`user/get/${option.key}`, {}).then(result => {
       if (result) {
         const selectedUser = result;
-        console.log(selectedUser);
         setBirthDatee(selectedUser.birthDate);
+        setUserID(selectedUser.id);
         form.setFieldsValue({
           ...selectedUser,
           CountryID: selectedUser.address
@@ -769,7 +784,7 @@ export default function CvModal(props) {
     if (isSuccess) onInit();
   };
 
-  const save = () => {
+  const saveNewTrainer = () => {
     form
       .validateFields()
       .then(values => {
@@ -800,7 +815,10 @@ export default function CvModal(props) {
         // values.organization = { id: orgId };
         values.user.birthDate = birthDate;
         if (isEditMode) {
-          putService(`trainers/update/${Trainerscontroller.id}`, values)
+          putService(
+            `trainers/update/${Trainerscontroller.trainers.id}`,
+            values
+          )
             .then(() => {
               props.close(true);
             })
@@ -809,6 +827,36 @@ export default function CvModal(props) {
             });
         } else {
           postService('trainers/post', values)
+            .then(() => {
+              props.close(true);
+            })
+            .catch(error => {
+              errorCatch(error);
+            });
+        }
+      })
+      .catch(info => {
+        errorCatch(info);
+      });
+  };
+
+  const save = () => {
+    form
+      .validateFields()
+      .then(values => {
+        if (isEditMode) {
+          putService(
+            `trainers/update/${Trainerscontroller.trainers.id}`,
+            values
+          )
+            .then(() => {
+              props.close(true);
+            })
+            .catch(error => {
+              errorCatch(error);
+            });
+        } else {
+          postService(`trainers/post/${userID}`, values)
             .then(() => {
               props.close(true);
             })
@@ -854,19 +902,30 @@ export default function CvModal(props) {
               </Col>
               <Col xs={24} md={24} lg={2} />
               <Col xs={24} md={24} lg={9}>
-                <Form.Item name="registerNumber">
-                  {/* <Input
-                    className="FormItem"
-                    placeholder="Регистрийн дугаар:"
-                    prefix={<FontAwesomeIcon icon={faUserEdit} />}
-                  /> */}
-                  {/* <AutoCompleteSelect
-                    className="FormItem"
-                    placeholder="Бүртгэлтэй регистр"
-                    valueField="id"
-                    data={stateRegister}
-                    onChange={value => selectUser(value)}
-                  /> */}
+                <Form.Item
+                  name="registerNumber"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <AutoComplete
+                    placeholder="Регистрын дугаар"
+                    onSelect={selectUser}
+                    filterOption={(inputValue, option) =>
+                      option.children
+                        .toUpperCase()
+                        .indexOf(inputValue.toUpperCase()) !== -1
+                    }
+                    // onChange={value => console.log(value)}
+                  >
+                    {options.map(value => (
+                      <Option key={value.id} value={value.register}>
+                        {value.register}
+                      </Option>
+                    ))}
+                  </AutoComplete>
                 </Form.Item>
                 <Form.Item name="lastname">
                   <Input
@@ -951,7 +1010,37 @@ export default function CvModal(props) {
                 </Form.Item>
               </Col>
             </Row>
-            {isEditMode ? (
+            <h2 className="title">1. Ажлын зорилго</h2>
+
+            <Row>
+              <Col xs={24} md={24} lg={24}>
+                <Form.Item name="purpose">
+                  <Input.TextArea
+                    placeholder="(Горилж буй ажлын зорилгоо товч бичнэ үү)"
+                    style={{
+                      width: '100%',
+                      height: '110px',
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <h2 className="title">2. Ур чадвар</h2>
+            <Row>
+              <Col xs={24} md={24} lg={24}>
+                <Form.Item name="skill">
+                  <Input.TextArea
+                    placeholder="(Өөрийн давуу тал, ур чадвараа нэрлэнэ үү)"
+                    style={{
+                      width: '100%',
+                      height: '140px',
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            {/* {isEditMode ? (
               <CvShowModal
                 Trainerscontroller={Trainerscontroller}
                 isModalVisible={isModalVisible}
@@ -970,7 +1059,14 @@ export default function CvModal(props) {
                     trainerID={trainerID}
                   />
                 ) : (
-                  <Button onClick={ShowModal}> Хадгалах </Button>
+                  <Button
+                    onClick={() => {
+                      saveNewTrainer();
+                    }}
+                  >
+                    {' '}
+                    Хадгалах{' '}
+                  </Button>
                 )}
                 {showResults ? (
                   <CvShowModal
@@ -982,7 +1078,7 @@ export default function CvModal(props) {
                   />
                 ) : null}
               </div>
-            )}
+            )} */}
           </Form>
         </ContentWrapper>
       </Modal>

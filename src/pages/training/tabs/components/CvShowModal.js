@@ -807,21 +807,6 @@ export default function CvShowModal(props) {
   };
   return (
     <div>
-      <h2 className="title">2. Ажлын зорилго</h2>
-      <Row>
-        <Col xs={24} md={24} lg={24}>
-          <Form.Item name="purpose">
-            <Input.TextArea
-              placeholder="(Горилж буй ажлын зорилгоо товч бичнэ үү)"
-              style={{
-                width: '100%',
-                height: '110px',
-              }}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-
       <h2 className="title">
         3. Боловсрол{' '}
         <Button
@@ -1107,6 +1092,21 @@ export default function CvShowModal(props) {
           Нэмэх
         </Button>
       </h2>
+
+      <h2 className="title">10. Хаягийн дэлгэрэнгүй</h2>
+      <Row>
+        <Col xs={24} md={24} lg={24}>
+          <Form.Item name="AddressDetail">
+            <Input.TextArea
+              placeholder="(Дэлгэрэнгүй хаягаа оруулна уу)"
+              style={{
+                width: '100%',
+                height: '140px',
+              }}
+            />
+          </Form.Item>
+        </Col>
+      </Row>
       <Row>
         <Col xs={24} md={24} lg={24}>
           <DataTable
@@ -1135,36 +1135,6 @@ export default function CvShowModal(props) {
               trainerID={trainerID}
             />
           )}
-        </Col>
-      </Row>
-
-      <h2 className="title">10. Ур чадвар</h2>
-      <Row>
-        <Col xs={24} md={24} lg={24}>
-          <Form.Item name="skill">
-            <Input.TextArea
-              placeholder="(Өөрийн давуу тал, ур чадвараа нэрлэнэ үү)"
-              style={{
-                width: '100%',
-                height: '140px',
-              }}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-
-      <h2 className="title">11. Хаягийн дэлгэрэнгүй</h2>
-      <Row>
-        <Col xs={24} md={24} lg={24}>
-          <Form.Item name="AddressDetail">
-            <Input.TextArea
-              placeholder="(Дэлгэрэнгүй хаягаа оруулна уу)"
-              style={{
-                width: '100%',
-                height: '140px',
-              }}
-            />
-          </Form.Item>
         </Col>
       </Row>
     </div>

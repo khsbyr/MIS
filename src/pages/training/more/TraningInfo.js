@@ -8,6 +8,9 @@ import TrainingTeam from '../tabs/plan';
 import Attendance from '../tabs/attendance';
 import TrainingReport from '../tabs/trainingReport';
 import CV from '../tabs/cv';
+import Guidelines from '../tabs/guidelines';
+import TrainingProgram from '../tabs/trainingProgram';
+import Budget from '../tabs/budget';
 
 const { TabPane } = Tabs;
 const tabPosition = 'left';
@@ -22,7 +25,7 @@ export default function TraningInfo() {
           <Organization id={2} />
         </TabPane>
         <TabPane tab={t('training_intro')} key="2">
-          Content of Tab 2
+          <Guidelines id={2} />
         </TabPane>
         <TabPane tab={t('training_team')} key="3">
           <TrainingTeam id={2} />
@@ -31,7 +34,7 @@ export default function TraningInfo() {
           <CV id={2} />
         </TabPane>
         <TabPane tab={t('training_program')} key="5">
-          Content of Tab 2
+          <TrainingProgram />
         </TabPane>
         <TabPane tab={t('attendance_registration')} key="6">
           <Attendance id={2} />
@@ -43,7 +46,7 @@ export default function TraningInfo() {
           <TrainingReport id={2} />
         </TabPane>
         <TabPane tab={t('training_budget')} key="9">
-          Content of Tab 3
+          <Budget id={2} />
         </TabPane>
       </Tabs>
     </ContentWrapper>

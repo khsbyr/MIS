@@ -1,13 +1,10 @@
-import { Col, Form, Input, Modal, Row } from 'antd';
+import { Col, Form, Modal, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
-// import ReactInputSelect from 'react-input-select';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import { getService, postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import ContentWrapper from '../../training/tabs/components/guidelines.style';
 import validateMessages from '../../../tools/validateMessage';
-
-const [values1, callback, selected] = useState([]);
 
 export default function AddressModal(props) {
   const { Addresscontroller, isModalVisible, isEditMode } = props;
@@ -16,6 +13,7 @@ export default function AddressModal(props) {
   const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
+
   useEffect(() => {
     getService('country/get').then(result => {
       if (result) {
@@ -129,7 +127,7 @@ export default function AddressModal(props) {
               errorCatch(error);
             });
         } else {
-          postService('country/post', values)
+          postService('address/post', values)
             .then(() => {
               props.close(true);
             })
@@ -164,7 +162,7 @@ export default function AddressModal(props) {
           >
             <Row gutter={32}>
               <Col xs={24} md={24} lg={12}>
-                <Form.Item label="Улс:" name="CountryID">
+                <Form.Item label="Улс:" name="name">
                   <AutoCompleteSelect
                     valueField="id"
                     data={stateCountry}
@@ -204,18 +202,6 @@ export default function AddressModal(props) {
                     data={stateBag}
                     size="medium"
                   />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={24} lg={12}>
-                <Form.Item name="BagID" layout="vertical" label="Баг, Хороо:">
-                  <select
-                    defaultValue={selected}
-                    onChange={({ target: { value } }) => callback(value)}
-                  >
-                    {values1.map(([value, text]) => (
-                      <option value={value}>{text}</option>
-                    ))}
-                  </select>{' '}
                 </Form.Item>
               </Col>
             </Row>

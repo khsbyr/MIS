@@ -11,6 +11,7 @@ import { Button, Col, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { ToolsContext } from '../../context/Tools';
 import { getService, deleteService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
@@ -39,6 +40,7 @@ const Address = () => {
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const toolsStore = useContext(ToolsContext);
+  const history = useHistory();
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
@@ -207,6 +209,7 @@ const Address = () => {
       {row.name}
     </>
   );
+  const ShowCountryInfo = row => history.push(`/aimag/getList${row.data.id}`);
 
   return (
     <ContentWrapper>
@@ -290,6 +293,7 @@ const Address = () => {
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             // onRowClick={edit}
+            onRowClick={ShowCountryInfo}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
