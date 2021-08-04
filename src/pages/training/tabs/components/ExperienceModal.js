@@ -25,7 +25,6 @@ export default function ExperienceModal(props) {
   const [form] = Form.useForm();
   const [hiredDate, setHiredDate] = useState(null);
   const [firedDate, setFiredDate] = useState(null);
-  console.log(trainerID);
   useEffect(() => {
     if (isEditMode) {
       setHiredDate(CvExperienceController.hiredDate);
