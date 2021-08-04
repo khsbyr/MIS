@@ -61,7 +61,7 @@ const ContentWrapper = styled.div`
   }
   .ant-form-item .ant-select,
   .ant-form-item .ant-cascader-picker {
-    width: 60%;
+    width: 100%;
     border-bottom: 1px solid #103154;
   }
 
