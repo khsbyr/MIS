@@ -19,9 +19,6 @@ import TrainingProgramModal from './components/trainingProgramModal';
 import OrgaStyle from './components/orga.style';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 
-// function onChange(date, dateString) {
-//   console.log(date, dateString);
-// }
 const { Content } = Layout;
 
 let editRow;
