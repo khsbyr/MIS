@@ -25,10 +25,6 @@ import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import CreatableSelect from 'react-select/creatable';
-import Autocomplete, {
-  createFilterOptions,
-} from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
 import { ToolsContext } from '../../../../context/Tools';
@@ -107,8 +103,6 @@ export default function CvModal(props) {
   const [isOnChange, setIsOnchange] = useState(false);
   const [valueRegister, setRegisterValue] = useState(false);
   const ShowModal = () => setShowResults(true);
-
-  const filter = createFilterOptions();
 
   function onBirthDateChange(date, value) {
     setBirthDate(value);
@@ -874,78 +868,6 @@ export default function CvModal(props) {
                     data={stateRegister}
                     onChange={value => selectUser(value)}
                   /> */}
-                  <Autocomplete
-                    value={valueRegister}
-                    // onChange={(event, newValue) => {
-                    //   if (typeof newValue === 'string') {
-                    //     setRegisterValue({
-                    //       register: newValue,
-                    //     });
-                    //   } else if (newValue && newValue.inputValue) {
-                    //     // Create a new value from the user input
-                    //     setRegisterValue({
-                    //       register: newValue.inputValue,
-                    //     });
-                    //   } else {
-                    //     setRegisterValue(newValue);
-                    //   }
-                    // }}
-                    onChange={(event, newValue) => {
-                      if (typeof newValue === 'string') {
-                        setRegisterValue({
-                          register: newValue,
-                        });
-                      } else if (newValue && newValue.inputValue) {
-                        // Create a new value from the user input
-                        setRegisterValue({
-                          register: newValue.inputValue,
-                        });
-                      } else {
-                        selectUser({
-                          newValue,
-                        });
-                      }
-                    }}
-                    filterOptions={(options, params) => {
-                      const filtered = filter(options, params);
-
-                      // Suggest the creation of a new value
-                      if (params.inputValue !== '') {
-                        filtered.push({
-                          inputValue: params.inputValue,
-                          register: `Нэмэх "${params.inputValue}"`,
-                        });
-                      }
-                      return filtered;
-                    }}
-                    selectOnFocus
-                    clearOnBlur
-                    handleHomeEndKeys
-                    id="free-solo-with-text-demo"
-                    options={stateRegister}
-                    getOptionLabel={option => {
-                      // Value selected with enter, right from the input
-                      if (typeof option === 'string') {
-                        return option;
-                      }
-                      // Add "xxx" option created dynamically
-                      if (option.inputValue) {
-                        return option.inputValue;
-                      }
-                      // Regular option
-                      return option.register;
-                    }}
-                    renderOption={option => option.register}
-                    style={{ width: 300 }}
-                    freeSolo
-                    renderInput={params => (
-                      <TextField
-                        {...params}
-                        label="Регистр"
-                        variant="outlined"
-                      />
-                    )}
-                  />
                 </Form.Item>
                 <Form.Item name="lastname">
                   <Input
