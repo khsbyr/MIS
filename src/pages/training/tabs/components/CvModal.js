@@ -109,7 +109,7 @@ export default function CvModal(props) {
   const [options, setOptions] = useState([]);
   const [valueRegister, setRegisterValue] = useState(false);
   const ShowModal = () => setShowResults(true);
-  const filter = createFilterOptions();
+  // const filter = createFilterOptions();
 
   const onSearch = searchText => {};
 
