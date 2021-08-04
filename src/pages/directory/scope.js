@@ -149,7 +149,7 @@ const Scope = () => {
           <Content>
             <Row>
               <Col xs={24} md={24} lg={12}>
-                <p className="title">Scope</p>
+                <p className="title">Хамрах хүрээ</p>
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>

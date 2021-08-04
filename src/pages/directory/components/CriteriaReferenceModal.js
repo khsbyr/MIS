@@ -1,35 +1,31 @@
-import { Col, Form, Input, Modal, Row } from 'antd';
+import { Col, Form, Input, InputNumber, Modal, Row } from 'antd';
 import React, { useEffect } from 'react';
-// import AutoCompleteSelect from '../../../components/Autocomplete';
 import { postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import ContentWrapper from '../../training/tabs/components/guidelines.style';
 import validateMessages from '../../../tools/validateMessage';
 
-export default function CustomerSideModal(props) {
-  const { Customersidecontroller, isModalVisible, isEditMode } = props;
+export default function CriteriaReferenceModal(props) {
+  const { Criteriareferencecontroller, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
-  // const [stateGender, setStateGender] = useState([]);
 
   useEffect(() => {
     if (isEditMode) {
       form.setFieldsValue({
-        ...Customersidecontroller,
+        ...Criteriareferencecontroller,
       });
     }
   }, []);
-
-  // const onChange = e => {
-  //   setStateGender(e.target.value);
-  // };
 
   const save = () => {
     form
       .validateFields()
       .then(values => {
-        values.isTrue = true;
         if (isEditMode) {
-          putService(`customerSide/update/${Customersidecontroller.id}`, values)
+          putService(
+            `criteriaReference/update/${Criteriareferencecontroller.id}`,
+            values
+          )
             .then(() => {
               props.close(true);
             })
@@ -37,8 +33,7 @@ export default function CustomerSideModal(props) {
               errorCatch(error);
             });
         } else {
-          console.log(values);
-          postService('customerSide/post', values)
+          postService('criteriaReference/post', values)
             .then(() => {
               props.close(true);
             })
@@ -54,7 +49,7 @@ export default function CustomerSideModal(props) {
   return (
     <div>
       <Modal
-        title="Харилцах тал бүртгэх"
+        title="Бүрэлдэхүүн бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
         width={600}
@@ -72,17 +67,9 @@ export default function CustomerSideModal(props) {
             validateMessages={validateMessages}
           >
             <Row gutter={30}>
-              {/* <Col xs={24} md={24} lg={6}>
-                <Form.Item name="isParent" layout="vertical" label="isparent:">
-                  <Radio.Group onChange={onChange} value={stateGender}>
-                    <Radio value={0}>false</Radio>
-                    <Radio value={1}>true</Radio>
-                  </Radio.Group>
-                </Form.Item>
-              </Col> */}
               <Col xs={24} md={24} lg={22}>
                 <Form.Item
-                  label="Харилцах тал:"
+                  label="Бүрэлдэхүүний нэр:"
                   name="name"
                   rules={[
                     {
@@ -91,6 +78,19 @@ export default function CustomerSideModal(props) {
                   ]}
                 >
                   <Input />
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={24} lg={22}>
+                <Form.Item
+                  label="Түвшин:"
+                  name="level"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <InputNumber />
                 </Form.Item>
               </Col>
               <Col xs={24} md={24} lg={12} />

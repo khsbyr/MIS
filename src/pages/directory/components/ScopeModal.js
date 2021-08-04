@@ -46,7 +46,7 @@ export default function ScopeModal(props) {
   return (
     <div>
       <Modal
-        title="Улс бүртгэх"
+        title="Хамрах хүрээ бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
         width={600}

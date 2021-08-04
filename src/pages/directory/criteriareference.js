@@ -12,10 +12,10 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
 import { ToolsContext } from '../../context/Tools';
-import { getService, putService } from '../../service/service';
+import { getService, deleteService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
-import CriteriaModal from '../criteria/components/CriteriaModal';
 import ContentWrapper from '../criteria/criteria.style';
+import CriteriaReferenceModal from './components/CriteriaReferenceModal';
 // import OrgaStyle from '../training/tabs/components/orga.style';
 // import AutoCompleteSelect from '../../components/Autocomplete';
 
@@ -23,7 +23,7 @@ const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const CriteriaType = () => {
+const CriteriaReference = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -41,7 +41,7 @@ const CriteriaType = () => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('country/get', list)
+    getService('criteriaReference/get', list)
       .then(result => {
         const listResult = result || [];
         listResult.forEach((item, index) => {
@@ -78,7 +78,7 @@ const CriteriaType = () => {
       return;
     }
 
-    putService(`testAggregation/delete/${row.id}`)
+    deleteService(`criteriaReference/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -140,8 +140,15 @@ const CriteriaType = () => {
 
   const nameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Улсын нэр</span>
+      <span className="p-column-title">Бүрэлдэхүүний нэр</span>
       {row.name}
+    </>
+  );
+
+  const levelBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Түвшин</span>
+      {row.level}
     </>
   );
 
@@ -152,7 +159,7 @@ const CriteriaType = () => {
           <Content>
             <Row>
               <Col xs={24} md={24} lg={12}>
-                <p className="title">Criteria type</p>
+                <p className="title">Бүрэлдэхүүн</p>
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
@@ -218,7 +225,15 @@ const CriteriaType = () => {
             <Column
               field="name"
               body={nameBodyTemplate}
-              header="Улсын нэр"
+              header="Бүрэлдэхүүний нэр"
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              field="level"
+              body={levelBodyTemplate}
+              header="Түвшин"
               sortable
               filter
               filterPlaceholder="Хайх"
@@ -226,8 +241,8 @@ const CriteriaType = () => {
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <CriteriaModal
-              Criteriacontroller={editRow}
+            <CriteriaReferenceModal
+              Criteriareferencecontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
@@ -239,4 +254,4 @@ const CriteriaType = () => {
   );
 };
 
-export default CriteriaType;
+export default CriteriaReference;
