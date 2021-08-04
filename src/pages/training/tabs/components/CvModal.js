@@ -102,7 +102,6 @@ export default function CvModal(props) {
   });
   const PAGESIZE = 20;
   const [birthDate, setBirthDate] = useState([]);
-  console.log(orgId);
   const [showResults, setShowResults] = useState(false);
   const [isOnChange, setIsOnchange] = useState(false);
   const [valueData, setValueData] = useState('');
@@ -112,10 +111,6 @@ export default function CvModal(props) {
   // const filter = createFilterOptions();
 
   const onSearch = searchText => {};
-
-  const onSelect = data => {
-    console.log('onSelect', data);
-  };
 
   const onChange = data => {
     setValueData(data);

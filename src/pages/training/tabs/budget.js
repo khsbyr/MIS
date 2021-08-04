@@ -68,7 +68,6 @@ const Budget = () => {
         toolsStore.setIsShowLoader(false);
       });
   };
-  console.log(budgetID);
   useEffect(() => {
     onInit();
     getService('training/get').then(result => {
