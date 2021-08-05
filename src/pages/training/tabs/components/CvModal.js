@@ -1,31 +1,24 @@
-import { ExclamationCircleOutlined, InboxOutlined } from '@ant-design/icons';
+import { InboxOutlined } from '@ant-design/icons';
 import {
   faCalendarAlt,
   faEnvelope,
-  faPen,
   faPhone,
-  faPlus,
-  faTrash,
   faUser,
-  faUserEdit,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  Button,
+  AutoComplete,
   Col,
   DatePicker,
   Form,
   Input,
-  message,
   Modal,
   Row,
-  Upload,
   Select,
-  AutoComplete,
+  Upload,
+  InputNumber,
 } from 'antd';
 import moment from 'moment';
-import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
 import { ToolsContext } from '../../../../context/Tools';
@@ -36,14 +29,7 @@ import {
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
-import CertificateModal from './CertificateModal';
-import ExperienceAdviceModal from './ExperienceAdviceModal';
 import ContentWrapper from './cv.styled';
-import EducationModal from './EducationModal';
-import ExperienceModal from './ExperienceModal';
-import MembershipModal from './MembershipModal';
-import PublishedWorkModal from './PublishedWorkModal';
-import TeacherExperienceModal from './TeacherExperienceModal';
 import CvShowModal from './CvShowModal';
 
 // import { colourOptions } from '../data';
@@ -59,35 +45,17 @@ const layout = {
   },
 };
 
-let editRow;
-let isEditModee;
-let editRowEducation;
 export default function CvModal(props) {
   const { Trainerscontroller, isModalVisible, isEditMode, trainerID, orgId } =
     props;
-  const [isModalVisibleEducation, setIsModalVisibleEducation] = useState(false);
-  const [isModalVisibleExperience, setIsModalVisibleExperience] =
-    useState(false);
-  const [isModalVisibleExperienceAdvice, setIsModalVisibleExperienceAdvice] =
-    useState(false);
-  const [isModalVisibleTeacherExperience, setIsModalVisibleTeacherExperience] =
-    useState(false);
-  const [isModalVisiblePublishedWork, setIsModalVisiblePublishedWork] =
-    useState(false);
-  const [isModalVisibleCertificate, setIsModalVisibleCertificate] =
-    useState(false);
-  const [isModalVisibleMembership, setIsModalVisibleMembership] =
-    useState(false);
   const [form] = Form.useForm();
   const toolsStore = useContext(ToolsContext);
   const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
   const [stateCountry, setStateCountry] = useState([]);
   const [stateBag, setStateBag] = useState([]);
-  const [stateRegister, setStateRegister] = useState([]);
-  const [selectedRows, setSelectedRows] = useState([]);
+  const [, setSelectedRows] = useState([]);
   const loadLazyTimeout = null;
-  const [list, setList] = useState([]);
   const [listEducation, setListEducation] = useState([]);
   const [listExperience, setListExperience] = useState([]);
   const [listExperienceAdvice, setListExperienceAdvice] = useState([]);
@@ -101,25 +69,11 @@ export default function CvModal(props) {
     page: 0,
   });
   const PAGESIZE = 20;
-  const [birthDate, setBirthDate] = useState([]);
-  console.log(orgId);
-  const [showResults, setShowResults] = useState(false);
-  const [isOnChange, setIsOnchange] = useState(false);
-  const [valueData, setValueData] = useState('');
+  const [, setBirthDate] = useState([]);
+  const [, setIsOnchange] = useState(false);
   const [options, setOptions] = useState([]);
-  const [valueRegister, setRegisterValue] = useState(false);
-  const ShowModal = () => setShowResults(true);
-  // const filter = createFilterOptions();
-
-  const onSearch = searchText => {};
-
-  const onSelect = data => {
-    console.log('onSelect', data);
-  };
-
-  const onChange = data => {
-    setValueData(data);
-  };
+  const [, setIsSaved] = useState(false);
+  const [count, setCount] = useState(0);
   function onBirthDateChange(date, value) {
     setBirthDate(value);
   }
@@ -368,6 +322,7 @@ export default function CvModal(props) {
 
     if (isEditMode) {
       setBirthDate(Trainerscontroller.birthDate);
+      setUserID(Trainerscontroller.id);
       form.setFieldsValue({
         ...Trainerscontroller,
         lastName: Trainerscontroller.lastname,
@@ -394,7 +349,7 @@ export default function CvModal(props) {
         skill: Trainerscontroller.trainers.skill,
       });
     }
-  }, [lazyParams]);
+  }, []);
 
   const getAimag = countryId => {
     getService(`aimag/getList/${countryId}`, {}).then(result => {
@@ -452,373 +407,30 @@ export default function CvModal(props) {
     getBag(value);
   };
 
-  const edit = row => {
-    editRowEducation = row;
-    isEditModee = true;
-    setIsModalVisibleEducation(true);
-  };
-
-  const add = () => {
-    setIsModalVisibleEducation(true);
-    isEditModee = false;
-  };
-
-  const handleDeletedEducation = row => {
-    if (row.length === 0) {
-      message.warning('Устгах өгөгдлөө сонгоно уу');
-      return;
-    }
-    putService(`education/delete/${row.id}`)
-      .then(() => {
-        message.success('Амжилттай устлаа');
-        onInitExperience();
-      })
-      .catch(error => {
-        errorCatch(error);
-      });
-  };
-
-  function confirmEducation(row) {
-    Modal.confirm({
-      title: 'Та устгахдаа итгэлтэй байна уу ?',
-      icon: <ExclamationCircleOutlined />,
-      okButtonProps: {},
-      okText: 'Устгах',
-      cancelText: 'Буцах',
-      onOk() {
-        handleDeletedEducation(row);
-        onInit();
-      },
-      onCancel() {},
-    });
-  }
-
-  const pop = row => {
-    if (row.length === 0) {
-      message.warning('Устгах өгөгдлөө сонгоно уу');
-    } else {
-      confirmEducation(row);
-    }
-  };
-
-  const action = row => (
-    <>
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
-      />
-    </>
-  );
-
-  const closeModal = (isSuccess = false) => {
-    setIsModalVisibleEducation(false);
-    if (isSuccess) onInit();
-  };
-
-  const editExperience = row => {
-    editRow = row;
-    isEditModee = true;
-    setIsModalVisibleExperience(true);
-  };
-
-  const handleDeletedExperience = row => {
-    if (row.length === 0) {
-      message.warning('Устгах өгөгдлөө сонгоно уу');
-      return;
-    }
-    putService(`expierence/delete/${row.id}`)
-      .then(() => {
-        message.success('Амжилттай устлаа');
-        onInitExperience();
-      })
-      .catch(error => {
-        errorCatch(error);
-      });
-  };
-
-  function confirm(row) {
-    Modal.confirm({
-      title: 'Та устгахдаа итгэлтэй байна уу ?',
-      icon: <ExclamationCircleOutlined />,
-      okButtonProps: {},
-      okText: 'Устгах',
-      cancelText: 'Буцах',
-      onOk() {
-        handleDeletedExperience(row);
-        onInit();
-      },
-      onCancel() {},
-    });
-  }
-
-  const popExperience = row => {
-    if (row.length === 0) {
-      message.warning('Устгах өгөгдлөө сонгоно уу');
-    } else {
-      confirm(row);
-    }
-  };
-
-  const actionExperience = row => (
-    <>
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => editExperience(row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => popExperience(row)}
-      />
-    </>
-  );
-
-  const addExperience = () => {
-    setIsModalVisibleExperience(true);
-    isEditModee = false;
-  };
-
-  const closeModalExperience = (isSuccess = false) => {
-    setIsModalVisibleExperience(false);
-    if (isSuccess) onInit();
-  };
-
-  const editExperienceAdvice = row => {
-    editRow = row;
-    isEditModee = true;
-    setIsModalVisibleExperienceAdvice(true);
-  };
-
-  const popExperienceAdvice = () => {
-    if (selectedRows.length === 0) {
-      message.warning('Устгах өгөгдлөө сонгоно уу');
-    } else {
-      confirm();
-    }
-  };
-
-  const actionExperienceAdvice = row => (
-    <>
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => editExperienceAdvice(row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => popExperienceAdvice(row)}
-      />
-    </>
-  );
-
-  const addExperienceAdvice = () => {
-    setIsModalVisibleExperienceAdvice(true);
-    isEditModee = false;
-  };
-
-  const closeModalExperienceAdvice = (isSuccess = false) => {
-    setIsModalVisibleExperienceAdvice(false);
-    if (isSuccess) onInit();
-  };
-
-  const editTeacherExperience = row => {
-    editRow = row;
-    isEditModee = true;
-    setIsModalVisibleTeacherExperience(true);
-  };
-
-  const popTeacherExperience = () => {
-    if (selectedRows.length === 0) {
-      message.warning('Устгах өгөгдлөө сонгоно уу');
-    } else {
-      confirm();
-    }
-  };
-  const actionTeacherExperience = row => (
-    <>
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => editTeacherExperience(row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => popTeacherExperience(row)}
-      />
-    </>
-  );
-
-  const addTeacherExperience = () => {
-    setIsModalVisibleTeacherExperience(true);
-    isEditModee = false;
-  };
-
-  const closeModalTeacherExperience = (isSuccess = false) => {
-    setIsModalVisibleTeacherExperience(false);
-    if (isSuccess) onInit();
-  };
-
-  const editPublishedWork = row => {
-    editRow = row;
-    isEditModee = true;
-    setIsModalVisiblePublishedWork(true);
-  };
-
-  const popPublishedWork = () => {
-    if (selectedRows.length === 0) {
-      message.warning('Устгах өгөгдлөө сонгоно уу');
-    } else {
-      confirm();
-    }
-  };
-
-  const actionPublishedWork = row => (
-    <>
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => editPublishedWork(row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => popPublishedWork(row)}
-      />
-    </>
-  );
-
-  const addPublishedWork = () => {
-    setIsModalVisiblePublishedWork(true);
-    isEditModee = false;
-  };
-
-  const closeModalPublishedWork = (isSuccess = false) => {
-    setIsModalVisiblePublishedWork(false);
-    if (isSuccess) onInit();
-  };
-
-  const editCertificate = row => {
-    editRow = row;
-    isEditModee = true;
-    setIsModalVisibleCertificate(true);
-  };
-
-  const popCertificate = () => {
-    if (selectedRows.length === 0) {
-      message.warning('Устгах өгөгдлөө сонгоно уу');
-    } else {
-      confirm();
-    }
-  };
-
-  const actionCertificate = row => (
-    <>
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => editCertificate(row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => popCertificate(row)}
-      />
-    </>
-  );
-
-  const addCertificate = () => {
-    setIsModalVisibleCertificate(true);
-    isEditModee = false;
-  };
-
-  const closeModalCertificate = (isSuccess = false) => {
-    setIsModalVisibleCertificate(false);
-    if (isSuccess) onInit();
-  };
-
-  const editMembership = row => {
-    editRow = row;
-    isEditModee = true;
-    setIsModalVisibleMembership(true);
-  };
-
-  const popMembership = () => {
-    if (selectedRows.length === 0) {
-      message.warning('Устгах өгөгдлөө сонгоно уу');
-    } else {
-      confirm();
-    }
-  };
-
-  const actionMembership = row => (
-    <>
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => editMembership(row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => popMembership(row)}
-      />
-    </>
-  );
-
-  const addMembership = () => {
-    setIsModalVisibleMembership(true);
-    isEditModee = false;
-  };
-
-  const closeModalMembership = (isSuccess = false) => {
-    setIsModalVisibleMembership(false);
-    if (isSuccess) onInit();
-  };
-
-  const saveNewTrainer = () => {
+  const save = () => {
+    setIsSaved(true);
+    setCount(count + 1);
     form
       .validateFields()
       .then(values => {
-        values.user = {
-          id: userID,
-          lastname: values.lastName,
-          firstname: values.firstName,
-          register: values.registerNumber,
-          phoneNumber: values.phoneNumber,
-          email: values.email,
-          address: {
-            addressDetail: values.AddressDetail,
-            country: {
-              id: values.CountryID,
-            },
-            aimag: {
-              id: values.AimagID,
-            },
-            soum: {
-              id: values.SoumID,
-            },
-            bag: {
-              id: values.BagID,
-            },
+        values.trainers = { purpose: values.purpose, skill: values.skill };
+        values.user = { id: userID };
+        values.address = {
+          country: {
+            id: values.CountryID,
+          },
+          aimag: {
+            id: values.AimagID,
+          },
+          soum: {
+            id: values.SoumID,
+          },
+          bag: {
+            id: values.BagID,
           },
         };
-
-        // values.organization = { id: orgId };
-        values.user.birthDate = birthDate;
         if (isEditMode) {
-          putService(
-            `trainers/update/${Trainerscontroller.trainers.id}`,
-            values
-          )
+          putService(`user/update/${Trainerscontroller.id}`, values)
             .then(() => {
               props.close(true);
             })
@@ -826,37 +438,7 @@ export default function CvModal(props) {
               errorCatch(error);
             });
         } else {
-          postService('trainers/post', values)
-            .then(() => {
-              props.close(true);
-            })
-            .catch(error => {
-              errorCatch(error);
-            });
-        }
-      })
-      .catch(info => {
-        errorCatch(info);
-      });
-  };
-
-  const save = () => {
-    form
-      .validateFields()
-      .then(values => {
-        if (isEditMode) {
-          putService(
-            `trainers/update/${Trainerscontroller.trainers.id}`,
-            values
-          )
-            .then(() => {
-              props.close(true);
-            })
-            .catch(error => {
-              errorCatch(error);
-            });
-        } else {
-          postService(`trainers/post/${userID}`, values)
+          postService(`trainers/post`, values)
             .then(() => {
               props.close(true);
             })
@@ -931,7 +513,7 @@ export default function CvModal(props) {
                   <Input
                     className="FormItem"
                     placeholder="Овог:"
-                    prefix={<FontAwesomeIcon icon={faUser} />}
+                    // prefix={<FontAwesomeIcon icon={faUser} />}
                   />
                 </Form.Item>
 
@@ -939,11 +521,13 @@ export default function CvModal(props) {
                   <Input
                     className="FormItem"
                     placeholder="Нэр:"
-                    prefix={<FontAwesomeIcon icon={faUser} />}
+                    // prefix={<FontAwesomeIcon icon={faUser} />}
                   />
                 </Form.Item>
                 <Form.Item name="phoneNumber">
-                  <Input
+                  <InputNumber
+                    parser={value => value.substring(0, 12)}
+                    type="number"
                     className="FormItem"
                     placeholder="Утас, факс:"
                     prefix={<FontAwesomeIcon icon={faPhone} />}
@@ -953,7 +537,7 @@ export default function CvModal(props) {
                   <Input
                     className="FormItem"
                     placeholder="И-мэйл хаяг:"
-                    prefix={<FontAwesomeIcon icon={faEnvelope} />}
+                    // prefix={<FontAwesomeIcon icon={faEnvelope} />}
                   />
                 </Form.Item>
               </Col>
@@ -1040,45 +624,14 @@ export default function CvModal(props) {
               </Col>
             </Row>
 
-            {/* {isEditMode ? (
+            {isEditMode ? (
               <CvShowModal
                 Trainerscontroller={Trainerscontroller}
                 isModalVisible={isModalVisible}
-                close={closeModal}
                 isEditMode={isEditMode}
                 trainerID={trainerID}
               />
-            ) : (
-              <div>
-                {isOnChange ? (
-                  <CvShowModal
-                    Trainerscontroller={Trainerscontroller}
-                    isModalVisible={isModalVisible}
-                    close={closeModal}
-                    isEditMode={isEditMode}
-                    trainerID={trainerID}
-                  />
-                ) : (
-                  <Button
-                    onClick={() => {
-                      saveNewTrainer();
-                    }}
-                  >
-                    {' '}
-                    Хадгалах{' '}
-                  </Button>
-                )}
-                {showResults ? (
-                  <CvShowModal
-                    Trainerscontroller={Trainerscontroller}
-                    isModalVisible={isModalVisible}
-                    close={closeModal}
-                    isEditMode={isEditMode}
-                    trainerID={trainerID}
-                  />
-                ) : null}
-              </div>
-            )} */}
+            ) : null}
           </Form>
         </ContentWrapper>
       </Modal>

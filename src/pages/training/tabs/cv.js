@@ -24,7 +24,7 @@ const { Content } = Layout;
 let editRow;
 let isEditMode;
 let trainerID;
-const CV = props => {
+const CV = () => {
   const loadLazyTimeout = null;
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
@@ -41,7 +41,7 @@ const CV = props => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`trainers/getListByTrainingId/${props.id}`, list)
+    getService(`user/getAllTrainerUserList`, list)
       .then(result => {
         const listResult = result || [];
         listResult.forEach((item, index) => {
@@ -55,32 +55,29 @@ const CV = props => {
         errorCatch(error);
         toolsStore.setIsShowLoader(false);
       });
-    getService(`training/get/${props.id}`, {}).then(result => {
-      if (result) {
-        setOrgID(result.organization.id);
-      }
-    });
   };
 
   useEffect(() => {
     onInit();
+    getService('organization/get').then(result => {
+      if (result) {
+        setStateOrg(result.content || []);
+      }
+    });
   }, [lazyParams]);
 
-  const getGuidelines = orgId => {
-    getService(`user/getTrainerListByOrgId/${orgId}`, {}).then(result => {
+  const selectOrg = value => {
+    getService(`user/getTrainerListByOrgId/${value}`, {}).then(result => {
       if (result) {
         const listResult = result || [];
         listResult.forEach((item, index) => {
           item.index = index + 1;
         });
         setList(listResult);
+        setOrgID(value);
         setSelectedRows([]);
       }
     });
-  };
-
-  const selectOrgs = value => {
-    getGuidelines(value);
   };
 
   const add = () => {
@@ -94,10 +91,10 @@ const CV = props => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`trainers/delete/${row.id}`)
+    putService(`trainers/delete/${row.trainers.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
-        // onInit();
+        onInit();
       })
       .catch(error => {
         errorCatch(error);
@@ -151,7 +148,7 @@ const CV = props => {
 
   const closeModal = (isSuccess = false) => {
     setIsModalVisible(false);
-    // if (isSuccess) onInit();
+    if (isSuccess) onInit();
   };
 
   const indexBodyTemplate = row => (
@@ -199,7 +196,16 @@ const CV = props => {
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={7} />
+                  <Col xs={8} md={8} lg={7}>
+                    <OrgaStyle>
+                      <AutoCompleteSelect
+                        valueField="id"
+                        placeholder="Сургалт сонгох"
+                        data={stateOrg}
+                        onChange={value => selectOrg(value)}
+                      />
+                    </OrgaStyle>
+                  </Col>
                   <Col xs={8} md={8} lg={5}>
                     <DatePicker
                       bordered={false}

@@ -1,4 +1,4 @@
-import { Form, Input, Modal, DatePicker } from 'antd';
+import { Form, Input, Modal, DatePicker, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { postService, putService } from '../../../../service/service';
@@ -25,7 +25,6 @@ export default function ExperienceModal(props) {
   const [form] = Form.useForm();
   const [hiredDate, setHiredDate] = useState(null);
   const [firedDate, setFiredDate] = useState(null);
-  console.log(trainerID);
   useEffect(() => {
     if (isEditMode) {
       setHiredDate(CvExperienceController.hiredDate);
@@ -52,6 +51,7 @@ export default function ExperienceModal(props) {
         if (isEditMode) {
           putService(`expierence/update/${CvExperienceController.id}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -60,6 +60,7 @@ export default function ExperienceModal(props) {
         } else {
           postService(`expierence/post`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {

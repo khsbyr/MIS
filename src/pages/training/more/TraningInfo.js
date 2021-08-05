@@ -7,7 +7,6 @@ import Organization from '../tabs/organization';
 import TrainingTeam from '../tabs/plan';
 import Attendance from '../tabs/attendance';
 import TrainingReport from '../tabs/trainingReport';
-import CV from '../tabs/cv';
 import Guidelines from '../tabs/guidelines';
 import TrainingProgram from '../tabs/trainingProgram';
 import Budget from '../tabs/budget';
@@ -30,22 +29,19 @@ export default function TraningInfo() {
         <TabPane tab={t('training_team')} key="3">
           <TrainingTeam id={2} />
         </TabPane>
-        <TabPane tab={t('cv_teachers')} key="4">
-          <CV id={2} />
-        </TabPane>
-        <TabPane tab={t('training_program')} key="5">
+        <TabPane tab={t('training_program')} key="4">
           <TrainingProgram />
         </TabPane>
-        <TabPane tab={t('attendance_registration')} key="6">
+        <TabPane tab={t('attendance_registration')} key="5">
           <Attendance id={2} />
         </TabPane>
-        <TabPane tab={t('test_aggregation')} key="7">
+        <TabPane tab={t('test_aggregation')} key="6">
           Content of Tab 1
         </TabPane>
-        <TabPane tab={t('training_report')} key="8">
+        <TabPane tab={t('training_report')} key="7">
           <TrainingReport id={2} />
         </TabPane>
-        <TabPane tab={t('training_budget')} key="9">
+        <TabPane tab={t('training_budget')} key="8">
           <Budget id={2} />
         </TabPane>
       </Tabs>

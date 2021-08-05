@@ -1,5 +1,6 @@
-import { Form, Input, Modal } from 'antd';
-import React, { useEffect } from 'react';
+import { Form, Input, Modal, message, DatePicker } from 'antd';
+import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
@@ -14,8 +15,14 @@ const layout = {
   },
 };
 export default function PublishedWorkModal(props) {
-  const { PublishedWorkController, isModalVisible, isEditMode } = props;
+  const { PublishedWorkController, isModalVisible, isEditMode, trainerID } =
+    props;
   const [form] = Form.useForm();
+  const [publishedDate, setPublishedDate] = useState(null);
+
+  function onChangePublishedDate(date, value) {
+    setPublishedDate(value);
+  }
   useEffect(() => {
     if (isEditMode) {
       form.setFieldsValue({ ...PublishedWorkController });
@@ -25,12 +32,15 @@ export default function PublishedWorkModal(props) {
     form
       .validateFields()
       .then(values => {
+        values.trainer = { id: trainerID };
+        values.publishedDate = publishedDate;
         if (isEditMode) {
           putService(
             `publishedWork/update/${PublishedWorkController.id}`,
             values
           )
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -39,6 +49,7 @@ export default function PublishedWorkModal(props) {
         } else {
           postService('publishedWork/post', values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -73,16 +84,15 @@ export default function PublishedWorkModal(props) {
             <Form.Item name="name" label="Бүтээлийн нэр:">
               <Input />
             </Form.Item>
-            <Form.Item
-              name="publishedDate"
-              label="Огноо:"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input />
+            <Form.Item label="Огноо:">
+              <DatePicker
+                onChange={onChangePublishedDate}
+                defaultValue={
+                  isEditMode
+                    ? moment(PublishedWorkController.publishedDate)
+                    : ''
+                }
+              />
             </Form.Item>
           </Form>
         </ContentWrapper>

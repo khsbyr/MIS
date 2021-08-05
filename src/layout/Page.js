@@ -2,6 +2,7 @@ import React from 'react';
 import loadable from 'react-loadable';
 import Breadcrump from './Breadcrump';
 import Loader from '../loader/Loader';
+import CV from '../pages/training/tabs/cv';
 
 const MenuSettings = loadable({
   loader: () => import('../pages/settings/MenuSettings'),
@@ -77,8 +78,11 @@ const Page = ({ route }) => {
         return <Criteria />;
 
       /** Сургалт */
-      case 'training'.toLowerCase():
+      case 'Training List'.toLowerCase():
         return <TrainingInfo />;
+
+      case 'Human resources'.toLowerCase():
+        return <CV />;
 
       /** Лавлах */
       case 'scope'.toLowerCase():

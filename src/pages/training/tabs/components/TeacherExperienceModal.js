@@ -1,5 +1,6 @@
-import { Form, Input, Modal } from 'antd';
-import React, { useEffect } from 'react';
+import { Form, Input, Modal, DatePicker, message } from 'antd';
+import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
@@ -14,10 +15,22 @@ const layout = {
   },
 };
 export default function TeacherExperienceModal(props) {
-  const { TeacherExperienceController, isModalVisible, isEditMode } = props;
+  const { TeacherExperienceController, isModalVisible, isEditMode, trainerID } =
+    props;
   const [form] = Form.useForm();
+  const [hiredDate, setHiredDate] = useState(null);
+  const [firedDate, setFiredDate] = useState(null);
+  function onChangeHiredDate(date, value) {
+    setHiredDate(value);
+  }
+
+  function onChangeFiredDate(date, value) {
+    setFiredDate(value);
+  }
   useEffect(() => {
     if (isEditMode) {
+      setHiredDate(TeacherExperienceController.hiredDate);
+      setFiredDate(TeacherExperienceController.firedDate);
       form.setFieldsValue({ ...TeacherExperienceController });
     }
   }, []);
@@ -25,12 +38,16 @@ export default function TeacherExperienceModal(props) {
     form
       .validateFields()
       .then(values => {
+        values.trainer = { id: trainerID };
+        values.hiredDate = hiredDate;
+        values.firedDate = firedDate;
         if (isEditMode) {
           putService(
             `expierenceForTeach/update/${TeacherExperienceController.id}`,
             values
           )
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -39,6 +56,7 @@ export default function TeacherExperienceModal(props) {
         } else {
           postService('expierenceForTeach/post', values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -84,16 +102,25 @@ export default function TeacherExperienceModal(props) {
             <Form.Item name="organizationName" label="Байгууллагын нэр:">
               <Input />
             </Form.Item>
-            <Form.Item
-              name="hiredDate"
-              label="Огноо:"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input />
+            <Form.Item label="Ажилд орсон огноо:">
+              <DatePicker
+                onChange={onChangeHiredDate}
+                defaultValue={
+                  isEditMode
+                    ? moment(TeacherExperienceController.hiredDate)
+                    : ''
+                }
+              />
+            </Form.Item>
+            <Form.Item label="Ажлаас гарсан огноо:">
+              <DatePicker
+                onChange={onChangeFiredDate}
+                defaultValue={
+                  isEditMode
+                    ? moment(TeacherExperienceController.firedDate)
+                    : ''
+                }
+              />
             </Form.Item>
           </Form>
         </ContentWrapper>

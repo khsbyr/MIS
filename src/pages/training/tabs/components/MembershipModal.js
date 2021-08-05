@@ -1,5 +1,6 @@
-import { Form, Input, Modal } from 'antd';
-import React, { useEffect } from 'react';
+import { Form, Input, Modal, message, DatePicker } from 'antd';
+import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
@@ -14,9 +15,14 @@ const layout = {
   },
 };
 export default function MembershipModal(props) {
-  const { MembershipController, isModalVisible, isEditMode } = props;
+  const { MembershipController, isModalVisible, isEditMode, trainerID } = props;
   const [form] = Form.useForm();
+  const [enrolledDate, setEnrolledDate] = useState(null);
+  function onChangeEnrolledDate(date, value) {
+    setEnrolledDate(value);
+  }
   useEffect(() => {
+    setEnrolledDate(MembershipController && MembershipController.enrolledDate);
     if (isEditMode) {
       form.setFieldsValue({ ...MembershipController });
     }
@@ -25,9 +31,12 @@ export default function MembershipModal(props) {
     form
       .validateFields()
       .then(values => {
+        values.trainer = { id: trainerID };
+        values.enrolledDate = enrolledDate;
         if (isEditMode) {
           putService(`membership/update/${MembershipController.id}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -36,6 +45,7 @@ export default function MembershipModal(props) {
         } else {
           postService('membership/post', values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -81,16 +91,13 @@ export default function MembershipModal(props) {
             <Form.Item name="organization" label="Байгууллагын нэр:">
               <Input />
             </Form.Item>
-            <Form.Item
-              name="enrolledDate"
-              label="Огноо:"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input />
+            <Form.Item label="Огноо:">
+              <DatePicker
+                onChange={onChangeEnrolledDate}
+                defaultValue={
+                  isEditMode ? moment(MembershipController.enrolledDate) : ''
+                }
+              />
             </Form.Item>
           </Form>
         </ContentWrapper>
