@@ -1,4 +1,4 @@
-import { Form, Input, Modal, DatePicker } from 'antd';
+import { Form, Input, Modal, DatePicker, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { postService, putService } from '../../../../service/service';
@@ -32,7 +32,6 @@ export default function EducationModal(props) {
       form.setFieldsValue({ ...CvEducationController });
     }
   }, []);
-
   function onChangeEnrolledDate(date, value) {
     setEnrolledDate(value);
   }
@@ -51,17 +50,16 @@ export default function EducationModal(props) {
         if (isEditMode) {
           putService(`education/update/${CvEducationController.id}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService(
-            `education/post/${CvEducationController.trainer.id}`,
-            values
-          )
+          postService(`education/post`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
