@@ -37,7 +37,6 @@ export default function CustomerSideModal(props) {
               errorCatch(error);
             });
         } else {
-          console.log(values);
           postService('customerSide/post', values)
             .then(() => {
               props.close(true);

@@ -69,11 +69,20 @@ export default function CvModal(props) {
     page: 0,
   });
   const PAGESIZE = 20;
-  const [, setBirthDate] = useState([]);
-  const [, setIsOnchange] = useState(false);
+  const [birthDate, setBirthDate] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+  const [isOnChange, setIsOnchange] = useState(false);
+  const [valueData, setValueData] = useState('');
   const [options, setOptions] = useState([]);
-  const [, setIsSaved] = useState(false);
-  const [count, setCount] = useState(0);
+  const [valueRegister, setRegisterValue] = useState(false);
+  const ShowModal = () => setShowResults(true);
+  // const filter = createFilterOptions();
+
+  const onSearch = searchText => {};
+
+  const onChange = data => {
+    setValueData(data);
+  };
   function onBirthDateChange(date, value) {
     setBirthDate(value);
   }
