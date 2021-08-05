@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import React, { useEffect } from 'react';
 import { Modal, Form, Input, Radio, Space, InputNumber } from 'antd';
 import { postService, putService } from '../../../service/service';
@@ -56,6 +55,7 @@ export default function CriteriaModal(props) {
         errorCatch(info);
       });
   };
+
   return (
     <div>
       <Modal
