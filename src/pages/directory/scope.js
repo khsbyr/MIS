@@ -215,7 +215,7 @@ const Scope = () => {
               field="index"
               header="№"
               body={indexBodyTemplate}
-              sortable
+              style={{ width: 40 }}
             />
             <Column
               field="name"

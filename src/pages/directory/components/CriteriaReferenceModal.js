@@ -1,4 +1,4 @@
-import { Col, Form, Input, InputNumber, Modal, Row } from 'antd';
+import { Col, Form, Input, Modal, Row } from 'antd';
 import React, { useEffect } from 'react';
 import { postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
@@ -66,7 +66,7 @@ export default function CriteriaReferenceModal(props) {
             name="nest-messages"
             validateMessages={validateMessages}
           >
-            <Row gutter={30}>
+            <Row>
               <Col xs={24} md={24} lg={22}>
                 <Form.Item
                   label="Бүрэлдэхүүний нэр:"
@@ -80,20 +80,6 @@ export default function CriteriaReferenceModal(props) {
                   <Input />
                 </Form.Item>
               </Col>
-              <Col xs={24} md={24} lg={22}>
-                <Form.Item
-                  label="Түвшин:"
-                  name="level"
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={24} lg={12} />
             </Row>
           </Form>
         </ContentWrapper>

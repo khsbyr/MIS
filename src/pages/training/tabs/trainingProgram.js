@@ -1,4 +1,4 @@
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
@@ -7,23 +7,21 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row } from 'antd';
+import { Button, Col, Layout, message, Modal, Row, DatePicker } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from './components/trainingProgram.style';
+import ContentWrapper from '../../criteria/criteria.style';
 import TrainingProgramModal from './components/trainingProgramModal';
-import OrgaStyle from './components/orga.style';
-import AutoCompleteSelect from '../../../components/Autocomplete';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const TrainingProgram = () => {
+const TrainingProgram = props => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -32,18 +30,19 @@ const TrainingProgram = () => {
   });
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [stateTraining, setStateTraining] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
+  const [orgID, setOrgID] = useState([]);
   const toolsStore = useContext(ToolsContext);
-
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('trainingProgram/get', list)
+    getService(`training/get/${props.id}`, list)
       .then(result => {
-        const listResult = result || [];
+        const listResult = result.trainingPrograms || [];
+        setTrainingID(result.id);
+        setOrgID(result.organization.id);
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
@@ -59,41 +58,11 @@ const TrainingProgram = () => {
 
   useEffect(() => {
     onInit();
-    getService('training/get').then(result => {
-      if (result) {
-        setStateTraining(result.content || []);
-      }
-    });
   }, [lazyParams]);
 
-  const getTrainingProgram = trainingId => {
-    getService(`trainingProgram/get/${trainingId}`, {}).then(result => {
-      if (result) {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList(listResult);
-        setSelectedRows([]);
-        setTrainingID(trainingId);
-      }
-    });
-  };
-
-  const selectTraining = value => {
-    getTrainingProgram(value);
-  };
-
   const add = () => {
-    editRow = null;
     setIsModalVisible(true);
     isEditMode = false;
-  };
-
-  const edit = row => {
-    editRow = row;
-    isEditMode = true;
-    setIsModalVisible(true);
   };
 
   const handleDeleted = row => {
@@ -101,7 +70,6 @@ const TrainingProgram = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-
     putService(`trainingProgram/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
@@ -126,6 +94,12 @@ const TrainingProgram = () => {
       onCancel() {},
     });
   }
+
+  const edit = row => {
+    editRow = row;
+    isEditMode = true;
+    setIsModalVisible(true);
+  };
 
   const pop = row => {
     if (row.length === 0) {
@@ -162,28 +136,27 @@ const TrainingProgram = () => {
     </>
   );
 
-  const activityBodyTemplate = row => (
+  const operationBodyTemplate = row => (
     <>
       <span className="p-column-title">Үйл ажиллагаа</span>
       {row.operation}
     </>
   );
 
-  const timeBodyTemplate = row => (
+  const durationtrainerBodyTemplate = row => (
     <>
       <span className="p-column-title">Хэрэгжих хугацаа</span>
       {row.duration}
     </>
   );
-
-  const ownerBodyTemplate = row => (
+  const responsiblepersonameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Хариуцах эзэн</span>
+      <span className="p-column-title">Сургалтын материал</span>
       {row.responsiblePersonName}
     </>
   );
 
-  const materialsBodyTemplate = row => (
+  const trainingmaterialTrainerBodyTemplate = row => (
     <>
       <span className="p-column-title">Сургалтын материал</span>
       {row.trainingMaterial}
@@ -201,19 +174,22 @@ const TrainingProgram = () => {
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={10} />
+                  <Col xs={8} md={8} lg={7} />
                   <Col xs={8} md={8} lg={5}>
-                    <OrgaStyle>
-                      <AutoCompleteSelect
-                        valueField="id"
-                        placeholder="Сургалт сонгох"
-                        data={stateTraining}
-                        onChange={value => selectTraining(value)}
-                      />
-                    </OrgaStyle>
+                    <DatePicker
+                      bordered={false}
+                      suffixIcon={<DownOutlined />}
+                      placeholder="Select year"
+                      picker="year"
+                      className="DatePicker"
+                      style={{
+                        width: '120px',
+                        color: 'black',
+                        cursor: 'pointer',
+                      }}
+                    />
                   </Col>
-
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -221,7 +197,7 @@ const TrainingProgram = () => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"
@@ -230,7 +206,7 @@ const TrainingProgram = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"
@@ -253,35 +229,45 @@ const TrainingProgram = () => {
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
+            // onRowClick={edit}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
           >
-            <Column field="index" header="№" body={indexBodyTemplate} />
             <Column
-              field="operation"
+              field="index"
+              header="№"
+              body={indexBodyTemplate}
+              sortable
+            />
+            <Column
               header="Үйл ажиллагаа"
+              body={operationBodyTemplate}
+              sortable
               filter
-              body={activityBodyTemplate}
+              filterPlaceholder="Хайх"
             />
             <Column
-              field="duration"
               header="Хэрэгжих хугацаа"
+              body={durationtrainerBodyTemplate}
+              sortable
               filter
-              body={timeBodyTemplate}
+              filterPlaceholder="Хайх"
             />
             <Column
-              field="responsiblePersonName"
               header="Хариуцах эзэн"
               filter
-              body={ownerBodyTemplate}
+              filterPlaceholder="Хайх"
+              sortable
+              body={responsiblepersonameBodyTemplate}
             />
             <Column
-              field="trainingMaterial"
               header="Сургалтын материал"
+              body={trainingmaterialTrainerBodyTemplate}
+              sortable
               filter
-              body={materialsBodyTemplate}
+              filterPlaceholder="Хайх"
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
@@ -292,6 +278,7 @@ const TrainingProgram = () => {
               close={closeModal}
               isEditMode={isEditMode}
               trainingID={trainingID}
+              orgID={orgID}
             />
           )}
         </div>
@@ -299,5 +286,4 @@ const TrainingProgram = () => {
     </ContentWrapper>
   );
 };
-
 export default TrainingProgram;

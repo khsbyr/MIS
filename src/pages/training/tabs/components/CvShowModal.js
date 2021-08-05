@@ -1,43 +1,16 @@
-import { ExclamationCircleOutlined, InboxOutlined } from '@ant-design/icons';
-import {
-  faCalendarAlt,
-  faEnvelope,
-  faPen,
-  faPhone,
-  faPlus,
-  faTrash,
-  faUser,
-  faUserEdit,
-} from '@fortawesome/free-solid-svg-icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Button,
-  Col,
-  DatePicker,
-  Form,
-  Input,
-  message,
-  Modal,
-  Row,
-  Upload,
-} from 'antd';
-import moment from 'moment';
+import { Button, Col, Form, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import AutoCompleteSelect from '../../../../components/Autocomplete';
 import { ToolsContext } from '../../../../context/Tools';
-import {
-  getService,
-  postService,
-  putService,
-} from '../../../../service/service';
+import { getService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import validateMessages from '../../../../tools/validateMessage';
 import CertificateModal from './CertificateModal';
-import ExperienceAdviceModal from './ExperienceAdviceModal';
-import ContentWrapper from './cv.styled';
 import EducationModal from './EducationModal';
+import ExperienceAdviceModal from './ExperienceAdviceModal';
 import ExperienceModal from './ExperienceModal';
 import MembershipModal from './MembershipModal';
 import PublishedWorkModal from './PublishedWorkModal';
@@ -47,7 +20,7 @@ let editRow;
 let isEditModee;
 let editRowEducation;
 export default function CvShowModal(props) {
-  const { Trainerscontroller, isModalVisible, isEditMode, trainerID } = props;
+  const { Trainerscontroller, isEditMode, trainerID } = props;
   const [isModalVisibleEducation, setIsModalVisibleEducation] = useState(false);
   const [isModalVisibleExperience, setIsModalVisibleExperience] =
     useState(false);
@@ -63,14 +36,8 @@ export default function CvShowModal(props) {
     useState(false);
   const [form] = Form.useForm();
   const toolsStore = useContext(ToolsContext);
-  const [stateAimag, setStateAimag] = useState([]);
-  const [stateSum, setStateSum] = useState([]);
-  const [stateCountry, setStateCountry] = useState([]);
-  const [stateBag, setStateBag] = useState([]);
-  const [stateRegister, setStateRegister] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const loadLazyTimeout = null;
-  const [list, setList] = useState([]);
   const [listEducation, setListEducation] = useState([]);
   const [listExperience, setListExperience] = useState([]);
   const [listExperienceAdvice, setListExperienceAdvice] = useState([]);
@@ -78,40 +45,32 @@ export default function CvShowModal(props) {
   const [listPublishedWork, setListPublishedWork] = useState([]);
   const [listLicense, setListLicense] = useState([]);
   const [listMembership, setListMembership] = useState([]);
-  const [userID, setUserID] = useState();
-  const [BirthDatee, setBirthDatee] = useState();
+  const [, setUserID] = useState();
   const [lazyParams] = useState({
     page: 0,
   });
   const PAGESIZE = 20;
-  const [birthDate, setBirthDate] = useState([]);
-  const [showResults, setShowResults] = useState(false);
-
-  const ShowModal = () => setShowResults(true);
-
-  function onBirthDateChange(date, value) {
-    setBirthDate(value);
-  }
-  const onInit = () => {
-    toolsStore.setIsShowLoader(false);
-    if (loadLazyTimeout) {
-      clearTimeout(loadLazyTimeout);
-    }
-    // getService('trainers/get', list)
-    //   .then(result => {
-    //     const listResult = result.content || [];
-    //     listResult.forEach((item, index) => {
-    //       item.index = lazyParams.page * PAGESIZE + index + 1;
-    //     });
-    //     setList(listResult);
-    //     setSelectedRows([]);
-    //   })
-    //   .finally(toolsStore.setIsShowLoader(false))
-    //   .catch(error => {
-    //     errorCatch(error);
-    //     toolsStore.setIsShowLoader(false);
-    //   });
-  };
+  const [, setBirthDate] = useState([]);
+  // const onInit = () => {
+  //   toolsStore.setIsShowLoader(false);
+  //   if (loadLazyTimeout) {
+  //     clearTimeout(loadLazyTimeout);
+  //   }
+  //   // getService('trainers/get', list)
+  //   //   .then(result => {
+  //   //     const listResult = result.content || [];
+  //   //     listResult.forEach((item, index) => {
+  //   //       item.index = lazyParams.page * PAGESIZE + index + 1;
+  //   //     });
+  //   //     setList(listResult);
+  //   //     setSelectedRows([]);
+  //   //   })
+  //   //   .finally(toolsStore.setIsShowLoader(false))
+  //   //   .catch(error => {
+  //   //     errorCatch(error);
+  //   //     toolsStore.setIsShowLoader(false);
+  //   //   });
+  // };
 
   const onInitEducation = () => {
     toolsStore.setIsShowLoader(false);
@@ -172,7 +131,7 @@ export default function CvShowModal(props) {
     }
     if (Trainerscontroller !== null) {
       getService(
-        `expierenceForAdvice/getByTrainerId/${Trainerscontroller.id}`,
+        `expierenceForAdvice/getByTrainerId/${Trainerscontroller.trainers.id}`,
         listExperienceAdvice
       )
         .then(result => {
@@ -198,7 +157,7 @@ export default function CvShowModal(props) {
     }
     if (Trainerscontroller !== null) {
       getService(
-        `expierenceForTeach/getByTrainerId/${Trainerscontroller.id}`,
+        `expierenceForTeach/getByTrainerId/${Trainerscontroller.trainers.id}`,
         listExperienceTeacher
       )
         .then(result => {
@@ -224,7 +183,7 @@ export default function CvShowModal(props) {
     }
     if (Trainerscontroller !== null) {
       getService(
-        `publishedWork/getByTrainerId/${Trainerscontroller.id}`,
+        `publishedWork/getByTrainerId/${Trainerscontroller.trainers.id}`,
         listPublishedWork
       )
         .then(result => {
@@ -250,7 +209,7 @@ export default function CvShowModal(props) {
     }
     if (Trainerscontroller !== null) {
       getService(
-        `propertyLicense/getByTrainerId/${Trainerscontroller.id}`,
+        `propertyLicense/getByTrainerId/${Trainerscontroller.trainers.id}`,
         listLicense
       )
         .then(result => {
@@ -276,7 +235,7 @@ export default function CvShowModal(props) {
     }
     if (Trainerscontroller !== null) {
       getService(
-        `membership/getByTrainerId/${Trainerscontroller.id}`,
+        `membership/getByTrainerId/${Trainerscontroller.trainers.id}`,
         listMembership
       )
         .then(result => {
@@ -296,7 +255,7 @@ export default function CvShowModal(props) {
   };
 
   useEffect(() => {
-    onInit();
+    // onInit();
     onInitEducation();
     onInitExperience();
     onInitExperienceAdvice();
@@ -304,37 +263,6 @@ export default function CvShowModal(props) {
     onInitPublishedWork();
     onInitLicense();
     onInitMembership();
-    getService('user/get').then(result => {
-      if (result) {
-        setStateRegister(result.content || []);
-      }
-    });
-    getService('country/get').then(result => {
-      if (result) {
-        setStateCountry(result || []);
-      }
-    });
-    getService('aimag/get').then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-    if (Trainerscontroller !== null) {
-      getService(`soum/getList/${Trainerscontroller.address.aimag.id}`).then(
-        result => {
-          if (result) {
-            setStateSum(result || []);
-          }
-        }
-      );
-      getService(`bag/getList/${Trainerscontroller.address.soum.id}`).then(
-        result => {
-          if (result) {
-            setStateBag(result || []);
-          }
-        }
-      );
-    }
 
     if (isEditMode) {
       setBirthDate(Trainerscontroller.birthDate);
@@ -367,60 +295,6 @@ export default function CvShowModal(props) {
     }
   }, [lazyParams]);
 
-  const getAimag = countryId => {
-    getService(`aimag/getList/${countryId}`, {}).then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-  };
-
-  const selectUser = value => {
-    getService(`user/get/${value}`, {}).then(result => {
-      if (result) {
-        const selectedUser = result;
-        setBirthDatee(selectedUser.birthDate);
-        form.setFieldsValue({
-          ...selectedUser,
-          CountryID: selectedUser.address
-            ? selectedUser.address.country.id
-            : '',
-          AimagID: selectedUser.address ? selectedUser.address.aimag.id : '',
-          SoumID: selectedUser.address ? selectedUser.address.soum.id : '',
-          BagID: selectedUser.address ? selectedUser.address.bag.id : '',
-        });
-      }
-    });
-  };
-
-  const selectCountry = value => {
-    getAimag(value);
-  };
-
-  const getSum = aimagId => {
-    getService(`soum/getList/${aimagId}`, {}).then(result => {
-      if (result) {
-        setStateSum(result || []);
-      }
-    });
-  };
-
-  const selectAimag = value => {
-    getSum(value);
-  };
-
-  const getBag = sumID => {
-    getService(`bag/getList/${sumID}`, {}).then(result => {
-      if (result) {
-        setStateBag(result || []);
-      }
-    });
-  };
-
-  const selectSum = value => {
-    getBag(value);
-  };
-
   const edit = row => {
     editRowEducation = row;
     isEditModee = true;
@@ -440,7 +314,7 @@ export default function CvShowModal(props) {
     putService(`education/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
-        onInitExperience();
+        onInitEducation();
       })
       .catch(error => {
         errorCatch(error);
@@ -456,7 +330,7 @@ export default function CvShowModal(props) {
       cancelText: 'Буцах',
       onOk() {
         handleDeletedEducation(row);
-        onInit();
+        onInitEducation();
       },
       onCancel() {},
     });
@@ -487,7 +361,7 @@ export default function CvShowModal(props) {
 
   const closeModal = (isSuccess = false) => {
     setIsModalVisibleEducation(false);
-    if (isSuccess) onInit();
+    if (isSuccess) onInitEducation();
   };
 
   const editExperience = row => {
@@ -520,7 +394,7 @@ export default function CvShowModal(props) {
       cancelText: 'Буцах',
       onOk() {
         handleDeletedExperience(row);
-        onInit();
+        onInitExperience();
       },
       onCancel() {},
     });
@@ -556,7 +430,7 @@ export default function CvShowModal(props) {
 
   const closeModalExperience = (isSuccess = false) => {
     setIsModalVisibleExperience(false);
-    if (isSuccess) onInit();
+    if (isSuccess) onInitExperience();
   };
 
   const editExperienceAdvice = row => {
@@ -565,11 +439,41 @@ export default function CvShowModal(props) {
     setIsModalVisibleExperienceAdvice(true);
   };
 
-  const popExperienceAdvice = () => {
-    if (selectedRows.length === 0) {
+  const handleDeletedExperienceAdvice = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+      return;
+    }
+    putService(`expierenceForAdvice/delete/${row.id}`)
+      .then(() => {
+        message.success('Амжилттай устлаа');
+        onInitExperienceAdvice();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+  };
+
+  function confirmExperienceAdvice(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeletedExperienceAdvice(row);
+        onInitExperienceAdvice();
+      },
+      onCancel() {},
+    });
+  }
+
+  const popExperienceAdvice = row => {
+    if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
-      confirm();
+      confirmExperienceAdvice(row);
     }
   };
 
@@ -595,7 +499,7 @@ export default function CvShowModal(props) {
 
   const closeModalExperienceAdvice = (isSuccess = false) => {
     setIsModalVisibleExperienceAdvice(false);
-    if (isSuccess) onInit();
+    if (isSuccess) onInitExperienceAdvice();
   };
 
   const editTeacherExperience = row => {
@@ -604,11 +508,41 @@ export default function CvShowModal(props) {
     setIsModalVisibleTeacherExperience(true);
   };
 
-  const popTeacherExperience = () => {
-    if (selectedRows.length === 0) {
+  const handleDeletedTeacherExperience = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+      return;
+    }
+    putService(`expierenceForTeach/delete/${row.id}`)
+      .then(() => {
+        message.success('Амжилттай устлаа');
+        onInitExperienceTeacher();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+  };
+
+  function confirmTeacherExperience(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeletedTeacherExperience(row);
+        onInitExperienceTeacher();
+      },
+      onCancel() {},
+    });
+  }
+
+  const popTeacherExperience = row => {
+    if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
-      confirm();
+      confirmTeacherExperience(row);
     }
   };
   const actionTeacherExperience = row => (
@@ -633,7 +567,7 @@ export default function CvShowModal(props) {
 
   const closeModalTeacherExperience = (isSuccess = false) => {
     setIsModalVisibleTeacherExperience(false);
-    if (isSuccess) onInit();
+    if (isSuccess) onInitExperienceTeacher();
   };
 
   const editPublishedWork = row => {
@@ -642,11 +576,41 @@ export default function CvShowModal(props) {
     setIsModalVisiblePublishedWork(true);
   };
 
-  const popPublishedWork = () => {
-    if (selectedRows.length === 0) {
+  const handleDeletedPublishedWork = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+      return;
+    }
+    putService(`publishedWork/delete/${row.id}`)
+      .then(() => {
+        message.success('Амжилттай устлаа');
+        onInitPublishedWork();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+  };
+
+  function confirmPublishedWork(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeletedPublishedWork(row);
+        onInitPublishedWork();
+      },
+      onCancel() {},
+    });
+  }
+
+  const popPublishedWork = row => {
+    if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
-      confirm();
+      confirmPublishedWork(row);
     }
   };
 
@@ -672,7 +636,7 @@ export default function CvShowModal(props) {
 
   const closeModalPublishedWork = (isSuccess = false) => {
     setIsModalVisiblePublishedWork(false);
-    if (isSuccess) onInit();
+    if (isSuccess) onInitPublishedWork();
   };
 
   const editCertificate = row => {
@@ -681,11 +645,41 @@ export default function CvShowModal(props) {
     setIsModalVisibleCertificate(true);
   };
 
-  const popCertificate = () => {
-    if (selectedRows.length === 0) {
+  const handleDeletedLicense = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+      return;
+    }
+    putService(`propertyLicense/delete/${row.id}`)
+      .then(() => {
+        message.success('Амжилттай устлаа');
+        onInitLicense();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+  };
+
+  function confirmCertificate(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeletedLicense(row);
+        onInitLicense();
+      },
+      onCancel() {},
+    });
+  }
+
+  const popCertificate = row => {
+    if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
-      confirm();
+      confirmCertificate(row);
     }
   };
 
@@ -711,7 +705,7 @@ export default function CvShowModal(props) {
 
   const closeModalCertificate = (isSuccess = false) => {
     setIsModalVisibleCertificate(false);
-    if (isSuccess) onInit();
+    if (isSuccess) onInitLicense();
   };
 
   const editMembership = row => {
@@ -720,11 +714,41 @@ export default function CvShowModal(props) {
     setIsModalVisibleMembership(true);
   };
 
-  const popMembership = () => {
-    if (selectedRows.length === 0) {
+  const handleDeletedMembership = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+      return;
+    }
+    putService(`membership/delete/${row.id}`)
+      .then(() => {
+        message.success('Амжилттай устлаа');
+        onInitMembership();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+  };
+
+  function confirmMembership(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeletedMembership(row);
+        onInitMembership();
+      },
+      onCancel() {},
+    });
+  }
+
+  const popMembership = row => {
+    if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
-      confirm();
+      confirmMembership(row);
     }
   };
 
@@ -750,61 +774,9 @@ export default function CvShowModal(props) {
 
   const closeModalMembership = (isSuccess = false) => {
     setIsModalVisibleMembership(false);
-    if (isSuccess) onInit();
+    if (isSuccess) onInitMembership();
   };
 
-  const save = () => {
-    form
-      .validateFields()
-      .then(values => {
-        values.user = {
-          id: userID,
-          lastname: values.lastName,
-          firstname: values.firstName,
-          register: values.registerNumber,
-          phoneNumber: values.phoneNumber,
-          email: values.email,
-          address: {
-            addressDetail: values.AddressDetail,
-            country: {
-              id: values.CountryID,
-            },
-            aimag: {
-              id: values.AimagID,
-            },
-            soum: {
-              id: values.SoumID,
-            },
-            bag: {
-              id: values.BagID,
-            },
-          },
-        };
-
-        // values.organization = { id: orgId };
-        values.user.birthDate = birthDate;
-        if (isEditMode) {
-          putService(`trainers/update/${Trainerscontroller.id}`, values)
-            .then(() => {
-              props.close(true);
-            })
-            .catch(error => {
-              errorCatch(error);
-            });
-        } else {
-          postService('trainers/post', values)
-            .then(() => {
-              props.close(true);
-            })
-            .catch(error => {
-              errorCatch(error);
-            });
-        }
-      })
-      .catch(info => {
-        errorCatch(info);
-      });
-  };
   return (
     <div>
       <h2 className="title">
@@ -881,6 +853,7 @@ export default function CvShowModal(props) {
             <Column field="position" header="Албан тушаал" />
             <Column field="organizationName" header="Байгууллагын нэр" />
             <Column field="hiredDate" header="Ажилд орсон огноо" />
+            <Column field="firedDate" header="Ажлаас гарсан огноо" />
             <Column headerStyle={{ width: '7rem' }} body={actionExperience} />
           </DataTable>
           {isModalVisibleExperience && (
@@ -923,7 +896,8 @@ export default function CvShowModal(props) {
             <Column field="index" header="№" style={{ width: '50px' }} />
             <Column field="position" header="Албан тушаал" />
             <Column field="organizationName" header="Байгууллагын нэр" />
-            <Column field="hiredDate" header="Огноо" />
+            <Column field="hiredDate" header="Ажилд орсон огноо" />
+            <Column field="firedDate" header="Ажлаас гарсан огноо" />
             <Column
               headerStyle={{ width: '7rem' }}
               body={actionExperienceAdvice}
@@ -969,7 +943,8 @@ export default function CvShowModal(props) {
             <Column field="index" header="№" style={{ width: '50px' }} />
             <Column field="position" header="Албан тушаал" />
             <Column field="organizationName" header="Байгууллагын нэр" />
-            <Column field="hiredDate" header="Огноо" />
+            <Column field="hiredDate" header="Ажилд орсон огноо" />
+            <Column field="firedDate" header="Ажлаас гарсан огноо" />
             <Column
               headerStyle={{ width: '7rem' }}
               body={actionTeacherExperience}
@@ -1092,21 +1067,6 @@ export default function CvShowModal(props) {
           Нэмэх
         </Button>
       </h2>
-
-      <h2 className="title">10. Хаягийн дэлгэрэнгүй</h2>
-      <Row>
-        <Col xs={24} md={24} lg={24}>
-          <Form.Item name="AddressDetail">
-            <Input.TextArea
-              placeholder="(Дэлгэрэнгүй хаягаа оруулна уу)"
-              style={{
-                width: '100%',
-                height: '140px',
-              }}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
       <Row>
         <Col xs={24} md={24} lg={24}>
           <DataTable
