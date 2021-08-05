@@ -145,13 +145,6 @@ const CriteriaReference = () => {
     </>
   );
 
-  const levelBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Түвшин</span>
-      {row.level}
-    </>
-  );
-
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -221,19 +214,16 @@ const CriteriaReference = () => {
             }}
             dataKey="id"
           >
-            <Column field="index" body={indexBodyTemplate} sortable />
+            <Column
+              header="№"
+              field="index"
+              body={indexBodyTemplate}
+              style={{ width: 40 }}
+            />
             <Column
               field="name"
               body={nameBodyTemplate}
               header="Бүрэлдэхүүний нэр"
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              field="level"
-              body={levelBodyTemplate}
-              header="Түвшин"
               sortable
               filter
               filterPlaceholder="Хайх"
