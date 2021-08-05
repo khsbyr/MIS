@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
@@ -8,12 +8,13 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
+import { Button, Col, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
+import { errorCatch, formatIndicator } from '../../tools/Tools';
+import AutoCompleteSelect from '../../components/Autocomplete';
 import CriteriaModal from './components/CriteriaModal';
 import ContentWrapper from './criteria.style';
 
@@ -26,6 +27,7 @@ const Criteria = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [stateComposition, setStateComposition] = useState([]);
   const [lazyParams] = useState({
     page: 0,
   });
@@ -110,7 +112,31 @@ const Criteria = () => {
 
   useEffect(() => {
     onInit();
+    getService('/criteriaReference/get').then(result => {
+      if (result) {
+        setStateComposition(result || []);
+      }
+    });
   }, [lazyParams]);
+
+  const getComposition = compId => {
+    getService(`criteria/getListByCriteriaReferenceId/${compId}`).then(
+      result => {
+        if (result) {
+          const listResult = result || [];
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setList(listResult);
+          setSelectedRows([]);
+        }
+      }
+    );
+  };
+
+  const selectComposition = value => {
+    getComposition(value);
+  };
 
   const action = row => (
     <>
@@ -144,14 +170,14 @@ const Criteria = () => {
   const indicatorProcessBodyTemplate = row => (
     <>
       <span className="p-column-title">Хүрэх үр дүн</span>
-      {row.upIndicator}
+      {row.resultTobeAchieved + formatIndicator(row.indicator)}
     </>
   );
 
   const upIndicatorBodyTemplate = row => (
     <>
       <span className="p-column-title">Үр дүнгийн биелэлт</span>
-      {row.indicatorProcess}
+      {row.processResult + formatIndicator(row.indicator)}
     </>
   );
 
@@ -161,26 +187,20 @@ const Criteria = () => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={14}>
-                <p className="title">Шалгуур үзүүлэлтийн бүртгэл</p>
+              <Col xs={24} md={24} lg={12}>
+                <p className="title">Сургалт</p>
               </Col>
-              <Col xs={24} md={24} lg={10}>
-                <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={6}>
-                    <DatePicker
-                      bordered={false}
-                      suffixIcon={<DownOutlined />}
-                      placeholder="Select year"
-                      picker="year"
-                      className="DatePicker"
-                      style={{
-                        width: '120px',
-                        color: 'black',
-                        cursor: 'pointer',
-                      }}
+              <Col xs={24} md={24} lg={12}>
+                <Row justify="end" gutter={[0, 15]}>
+                  <Col xs={8} md={8} lg={12}>
+                    <AutoCompleteSelect
+                      valueField="id"
+                      data={stateComposition}
+                      placeholder="Бүрэлдэхүүн сонгох"
+                      onChange={value => selectComposition(value)}
                     />
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -188,7 +208,7 @@ const Criteria = () => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -197,7 +217,7 @@ const Criteria = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={8} md={8} lg={3}>
                     <Button
                       type="text"
                       className="export"
@@ -226,14 +246,20 @@ const Criteria = () => {
             }}
             dataKey="id"
           >
-            <Column field="index" header="№" body={indexBodyTemplate} />
+            <Column
+              field="index"
+              header="№"
+              headerStyle={{ width: '4rem' }}
+              body={indexBodyTemplate}
+            />
             <Column
               field="name"
+              headerStyle={{ width: '30rem' }}
               header="Шалгуур үзүүлэлтийн нэр"
               body={nameBodyTemplate}
             />
             <Column
-              field="indicatorProcess"
+              field="resultTobeAchieved"
               header="Хүрэх үр дүн"
               body={indicatorProcessBodyTemplate}
             />
@@ -241,10 +267,6 @@ const Criteria = () => {
               field="upIndicator"
               header="Үр дүнгийн биелэлт"
               body={upIndicatorBodyTemplate}
-            />
-            <Column
-              field="criteriaIndicator.percentIndicator.value"
-              header="Хувь"
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
