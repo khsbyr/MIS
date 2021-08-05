@@ -30,7 +30,7 @@ export default function TraningInfo() {
           <TrainingTeam id={2} />
         </TabPane>
         <TabPane tab={t('training_program')} key="4">
-          <TrainingProgram />
+          <TrainingProgram id={2} />
         </TabPane>
         <TabPane tab={t('attendance_registration')} key="5">
           <Attendance id={2} />
