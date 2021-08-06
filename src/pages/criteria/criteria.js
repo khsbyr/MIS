@@ -11,7 +11,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { ColumnGroup } from 'primereact/columngroup';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
@@ -156,35 +155,6 @@ const Criteria = () => {
     </>
   );
 
-  const indicatorTypeBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Шалгуур үзүүлэлтийн төрөл</span>
-      {row.indicatorProcess}
-    </>
-  );
-
-  const headerGroup = (
-    <ColumnGroup>
-      <Row>
-        <Column header="№" rowSpan={2} />
-        <Column header="Шалгуур үзүүлэлтийн нэр" rowSpan={2} />
-        <Column header="Хүрэх үр дүн" rowSpan={2} />
-        <Column header="Үр дүнгийн биелэлт" rowSpan={2} />
-        <Column
-          header="Шалгуур үзүүлэлтийн төрөл"
-          body={indicatorTypeBodyTemplate}
-          colSpan={3}
-        />
-        <Column headerStyle={{ width: '7rem' }} body={action} rowSpan={2} />
-      </Row>
-      <Row>
-        <Column header="Хувь /%/" />
-        <Column header="Тоо" />
-        <Column header="Томъёо" />
-      </Row>
-    </ColumnGroup>
-  );
-
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -247,7 +217,6 @@ const Criteria = () => {
             value={list}
             removableSort
             paginator
-            headerColumnGroup={headerGroup}
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
@@ -275,15 +244,7 @@ const Criteria = () => {
             />
             <Column
               field="criteriaIndicator.percentIndicator.value"
-              header="Хувь /%/"
-            />
-            <Column
-              field="criteriaIndicator.quantityIndicator.value"
-              header="Тоо"
-            />
-            <Column
-              field="criteriaIndicator.formulaIndicator.value"
-              header="Томъёо"
+              header="Хувь"
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
