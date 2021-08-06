@@ -34,10 +34,10 @@ const TrainingList = loadable({
   loading: Loader,
 });
 
-const TrainingInfo = loadable({
-  loader: () => import('../pages/training/more/TraningInfo'),
-  loading: Loader,
-});
+// const TrainingInfo = loadable({
+//   loader: () => import('../pages/training/more/TraningInfo'),
+//   loading: Loader,
+// });
 const Scope = loadable({
   loader: () => import('../pages/directory/scope'),
   loading: Loader,
@@ -79,7 +79,7 @@ const Page = ({ route }) => {
 
       /** Сургалт */
       case 'Training List'.toLowerCase():
-        return <TrainingInfo />;
+        return <TrainingList />;
 
       case 'Human resources'.toLowerCase():
         return <CV />;

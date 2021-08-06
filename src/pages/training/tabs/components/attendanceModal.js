@@ -214,49 +214,99 @@ export default function TrainingProgramModal(props) {
                 >
                   <Input />
                 </Form.Item>
+                <Form.Item
+                  name="register"
+                  label="Регистрийн дугаар"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Input maxLength={10} />
+                </Form.Item>
                 <Form.Item name="phone" label="Холбогдох утас:">
                   <InputNumber
                     parser={value => value.substring(0, 12)}
                     type="number"
                   />
                 </Form.Item>
-                <Form.Item name="register" label="Регистрийн дугаар">
-                  <Input maxLength={10} />
-                </Form.Item>
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Form.Item name="email" label="Email хаяг:">
                   <Input />
                 </Form.Item>
-                <Form.Item label="Улс:" name="CountryID">
+                <Form.Item
+                  label="Улс:"
+                  name="CountryID"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
                   <AutoCompleteSelect
                     valueField="id"
                     data={stateCountry}
                     onChange={value => selectCountry(value)}
                   />
                 </Form.Item>
-                <Form.Item label="Аймаг, хот:" name="AimagID">
+                <Form.Item
+                  label="Аймаг, хот:"
+                  name="AimagID"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
                   <AutoCompleteSelect
                     valueField="id"
                     data={stateAimag}
                     onChange={value => selectAimag(value)}
                   />
                 </Form.Item>
-                <Form.Item name="SoumID" layout="vertical" label="Сум, Дүүрэг:">
+                <Form.Item
+                  name="SoumID"
+                  layout="vertical"
+                  label="Сум, Дүүрэг:"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
                   <AutoCompleteSelect
                     valueField="id"
                     data={stateSum}
                     onChange={value => selectSum(value)}
                   />
                 </Form.Item>
-                <Form.Item name="BagID" layout="vertical" label="Баг, Хороо:">
+                <Form.Item
+                  name="BagID"
+                  layout="vertical"
+                  label="Баг, Хороо:"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
                   <AutoCompleteSelect valueField="id" data={stateBag} />
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col xs={24} md={24} lg={24}>
-                <Form.Item name="addressDetail" label="Дэлгэрэнгүй хаяг">
+                <Form.Item
+                  name="addressDetail"
+                  label="Дэлгэрэнгүй хаяг"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
                   <TextArea />
                 </Form.Item>
               </Col>

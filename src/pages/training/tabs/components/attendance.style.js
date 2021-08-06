@@ -6,7 +6,7 @@ const ContentWrapper = styled.div`
   margin-top: 30px;
 
   .title {
-    font-size: 14px;
+    font-size: 24px;
     font-weight: bold;
     color: #0d0d0d;
   }
@@ -64,6 +64,9 @@ const ContentWrapper = styled.div`
   }
   .ant-input-number-handler-wrap {
     display: none;
+  }
+  .ant-select-selection-search {
+    margin-top: 8px;
   }
 `;
 

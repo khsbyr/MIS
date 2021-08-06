@@ -8,6 +8,7 @@ import Page from './Page';
 import Menu from './Menu';
 import { buildPaths, generateRoutes } from './utils';
 import CriteriaDetail from '../pages/criteria/more/CriteriaDetail';
+import TrainingInfo from '../pages/training/more/TraningInfo';
 
 const { Sider, Content } = Layout;
 
@@ -68,6 +69,9 @@ function Admin() {
               ))}
               <Route path="/criteriaDetail/:id">
                 <CriteriaDetail />
+              </Route>
+              <Route path="/trainingList/:id">
+                <TrainingInfo />
               </Route>
             </Switch>
           </Content>

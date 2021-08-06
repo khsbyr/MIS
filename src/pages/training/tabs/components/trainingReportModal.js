@@ -357,7 +357,15 @@ export default function TrainingReportModal(props) {
           >
             <Row gutter={[72]}>
               <Col xs={24} md={24} lg={12}>
-                <Form.Item label="Сургалтын нэр:" name="TrainingName">
+                <Form.Item
+                  label="Сургалтын нэр:"
+                  name="TrainingName"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
                   {isEditMode ? (
                     <AutoCompleteSelect
                       disabled

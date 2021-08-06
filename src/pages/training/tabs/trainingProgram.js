@@ -58,6 +58,21 @@ const TrainingProgram = props => {
 
   useEffect(() => {
     onInit();
+    getService(`training/get/${props.id}`)
+      .then(result => {
+        const listResult = result.trainingPrograms || [];
+        setTrainingID(result.id);
+        setOrgID(result.organization.id);
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setSelectedRows([]);
+      })
+      .finally(toolsStore.setIsShowLoader(false))
+      .catch(error => {
+        errorCatch(error);
+        toolsStore.setIsShowLoader(false);
+      });
   }, [lazyParams]);
 
   const add = () => {
@@ -169,13 +184,9 @@ const TrainingProgram = props => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={12}>
-                <p className="title">Сургалтын хөтөлбөр</p>
-              </Col>
-              <Col xs={24} md={24} lg={12}>
-                <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={7} />
-                  <Col xs={8} md={8} lg={5}>
+              <Col xs={24} md={24} lg={24}>
+                <Row justify="end" gutter={[16, 16]}>
+                  <Col>
                     <DatePicker
                       bordered={false}
                       suffixIcon={<DownOutlined />}
@@ -189,31 +200,31 @@ const TrainingProgram = props => {
                       }}
                     />
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
                     >
-                      Хэвлэх{' '}
+                      {' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col>
                     <Button
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faFileExcel} />}
                     >
-                      Экспорт
+                      {' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col>
                     <Button
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faPlus} />}
                       onClick={add}
                     >
-                      Нэмэх
+                      {' '}
                     </Button>
                   </Col>
                 </Row>
@@ -240,6 +251,7 @@ const TrainingProgram = props => {
               header="№"
               body={indexBodyTemplate}
               sortable
+              style={{ width: 40 }}
             />
             <Column
               header="Үйл ажиллагаа"

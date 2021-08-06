@@ -176,13 +176,9 @@ const Organization = props => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={12}>
-                <p className="title">Зөвлөх байгууллага</p>
-              </Col>
-              <Col xs={24} md={24} lg={12}>
-                <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={7} />
-                  <Col xs={8} md={8} lg={5}>
+              <Col xs={24} md={24} lg={24}>
+                <Row justify="end" gutter={[16, 16]}>
+                  <Col>
                     <DatePicker
                       onChange={onChange}
                       bordered={false}
@@ -197,31 +193,31 @@ const Organization = props => {
                       }}
                     />
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
                     >
-                      Хэвлэх{' '}
+                      {' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col>
                     <Button
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faFileExcel} />}
                     >
-                      Экспорт
+                      {' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col>
                     <Button
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faPlus} />}
                       onClick={add}
                     >
-                      Нэмэх
+                      {' '}
                     </Button>
                   </Col>
                 </Row>
@@ -243,7 +239,7 @@ const Organization = props => {
             }}
             dataKey="id"
           >
-            <Column header="№" body={indexBodyTemplate} />
+            {/* <Column header="№" body={indexBodyTemplate} /> */}
             <Column
               header="Байгууллагын нэр"
               body={nameBodyTemplate}

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
-import ContentWrapper from './cv.styled';
+import ContentWrapper from './CvModal.style';
 
 const layout = {
   labelCol: {
@@ -104,6 +104,7 @@ export default function ExperienceAdviceModal(props) {
             </Form.Item>
             <Form.Item label="Ажилд орсон огноо:">
               <DatePicker
+                placeholder="Огноо сонгох"
                 onChange={onChangeHiredDate}
                 defaultValue={
                   isEditMode ? moment(ExperienceAdviceController.hiredDate) : ''
@@ -112,6 +113,7 @@ export default function ExperienceAdviceModal(props) {
             </Form.Item>
             <Form.Item label="Ажлаас гарсан огноо:">
               <DatePicker
+                placeholder="Огноо сонгох"
                 onChange={onChangeFiredDate}
                 defaultValue={
                   isEditMode ? moment(ExperienceAdviceController.firedDate) : ''
