@@ -251,6 +251,7 @@ const TrainingProgram = props => {
               header="№"
               body={indexBodyTemplate}
               sortable
+              style={{ width: 40 }}
             />
             <Column
               header="Үйл ажиллагаа"

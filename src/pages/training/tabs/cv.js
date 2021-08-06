@@ -269,6 +269,7 @@ const CV = () => {
               header="№"
               body={indexBodyTemplate}
               sortable
+              style={{ width: 40 }}
             />
             <Column
               header="Овог"

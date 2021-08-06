@@ -246,7 +246,12 @@ const Attendance = props => {
             }}
             dataKey="id"
           >
-            <Column field="index" header="№" body={indexBodyTemplate} />
+            <Column
+              field="index"
+              header="№"
+              body={indexBodyTemplate}
+              style={{ width: 40 }}
+            />
             <Column
               field="name"
               header="Овог"

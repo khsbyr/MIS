@@ -290,7 +290,12 @@ const TrainingList = () => {
             }}
             dataKey="id"
           >
-            <Column field="index" header="№" body={indexBodyTemplate} />
+            <Column
+              field="index"
+              header="№"
+              body={indexBodyTemplate}
+              style={{ width: 40 }}
+            />
             <Column header="Сургалтын сэдэв" filter body={NameBodyTemplate} />
             <Column header="Төсөв" filter body={totalBudgetBodyTemplate} />
             <Column

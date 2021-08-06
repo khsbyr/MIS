@@ -485,7 +485,12 @@ const Budget = () => {
             }}
             dataKey="id"
           >
-            <Column field="index" header="№" body={indexBodyTemplate} />
+            <Column
+              field="index"
+              header="№"
+              body={indexBodyTemplate}
+              style={{ width: 40 }}
+            />
 
             <Column
               field="costName"
@@ -561,7 +566,7 @@ const Budget = () => {
             }}
             dataKey="id"
           >
-            <Column field="index" header="№" />
+            <Column field="index" header="№" style={{ width: 40 }} />
 
             <Column field="numberOfPeople" header="МЗҮБ хүний тоо" />
             <Column field="costPerDay" header="Хоногт /₮/" />
@@ -617,7 +622,12 @@ const Budget = () => {
             }}
             dataKey="id"
           >
-            <Column field="index" header="№" body={indexBodyTemplate} />
+            <Column
+              field="index"
+              header="№"
+              body={indexBodyTemplate}
+              style={{ width: 40 }}
+            />
             <Column field="route" header="Маршрут" />
             <Column field="roadLength" header="Замын урт /км/" />
             <Column field="regionalSupplement" header="Бүсийн нэмэгдэл /%/" />

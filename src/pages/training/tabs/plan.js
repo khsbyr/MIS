@@ -255,6 +255,7 @@ const Plan = props => {
               header="№"
               body={indexBodyTemplate}
               sortable
+              style={{ width: 40 }}
             />
             <Column
               header="Сургалтанд гүйцэтгэх үүрэг"
