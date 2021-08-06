@@ -243,7 +243,7 @@ const Organization = props => {
             }}
             dataKey="id"
           >
-            <Column header="№" body={indexBodyTemplate} />
+            {/* <Column header="№" body={indexBodyTemplate} /> */}
             <Column
               header="Байгууллагын нэр"
               body={nameBodyTemplate}

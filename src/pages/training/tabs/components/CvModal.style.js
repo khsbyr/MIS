@@ -3,21 +3,6 @@ import styled from 'styled-components';
 const ContentWrapper = styled.div`
   margin-left: 45px;
   margin-right: 45px;
-  .ant-upload.ant-upload-drag {
-    width: 150px;
-    height: 150px;
-    border: 1px solid #d9d9d9;
-    border-radius: 15px;
-    @media (max-width: 991px) {
-      width: 100%;
-    }
-  }
-
-  .title {
-    font-size: 16px;
-    font-weight: bold;
-    color: #103154;
-  }
 
   label {
     color: #7d7d7d;
@@ -57,6 +42,10 @@ const ContentWrapper = styled.div`
   }
   .ant-select-selection-search {
     margin-top: 8px;
+  }
+  .ant-picker {
+    width: 100%;
+    height: 40px;
   }
 `;
 

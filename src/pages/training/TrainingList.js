@@ -284,7 +284,7 @@ const TrainingList = () => {
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            // onRowClick={ShowTrainingInfo}
+            onRowClick={ShowTrainingInfo}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}

@@ -217,12 +217,12 @@ const TrainingReport = props => {
             dataKey="id"
           >
             {/* <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column> */}
-            <Column
+            {/* <Column
               field="index"
               header="№"
               body={indexBodyTemplate}
               sortable
-            />
+            /> */}
             <Column
               field="trainerFor"
               header="Сургалтын нэр"

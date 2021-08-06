@@ -4,7 +4,7 @@ import moment from 'moment';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
-import ContentWrapper from './cv.styled';
+import ContentWrapper from './CvModal.style';
 
 const layout = {
   labelCol: {
@@ -93,6 +93,7 @@ export default function MembershipModal(props) {
             </Form.Item>
             <Form.Item label="Огноо:">
               <DatePicker
+                placeholder="Огноо сонгох"
                 onChange={onChangeEnrolledDate}
                 defaultValue={
                   isEditMode ? moment(MembershipController.enrolledDate) : ''
