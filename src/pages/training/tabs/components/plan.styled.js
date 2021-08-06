@@ -1,20 +1,6 @@
 import styled from 'styled-components';
 
-const HeaderWrapper = styled.div`
-  margin-top: 30px;
-
-  .title {
-    font-size: 24px;
-    font-weight: Bold;
-    margin-left: 45px;
-  }
-
-  .ant-btn {
-    border: none;
-    font-size: 15px;
-  }
-`;
-export const ContentWrapper = styled.div`
+const ContentWrapper = styled.div`
   margin-left: 45px;
   margin-right: 45px;
   .ant-upload.ant-upload-drag {
@@ -39,6 +25,11 @@ export const ContentWrapper = styled.div`
     color: #7d7d7d;
     font-size: 13px;
   }
+  Input {
+    width: 100%;
+    border-radius: 3px;
+    height: 39px;
+  }
 
   .FormItem {
     width: 60%;
@@ -56,7 +47,7 @@ export const ContentWrapper = styled.div`
 
   .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
     height: 40px;
-    padding-top: 4px;
+    padding-top: 8px;
   }
 
   .button {
@@ -81,6 +72,9 @@ export const ContentWrapper = styled.div`
     color: #103154;
     margin-right: 25px;
   }
+  .ant-select-selection-search {
+    margin-top: 8px;
+  }
 `;
 
-export default HeaderWrapper;
+export default ContentWrapper;

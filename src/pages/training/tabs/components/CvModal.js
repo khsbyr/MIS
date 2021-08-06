@@ -1,10 +1,5 @@
 import { InboxOutlined } from '@ant-design/icons';
-import {
-  faCalendarAlt,
-  faEnvelope,
-  faPhone,
-  faUser,
-} from '@fortawesome/free-solid-svg-icons';
+import { faCalendarAlt, faPhone } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   AutoComplete,
@@ -12,11 +7,12 @@ import {
   DatePicker,
   Form,
   Input,
+  InputNumber,
   Modal,
   Row,
   Select,
   Upload,
-  InputNumber,
+  message,
 } from 'antd';
 import moment from 'moment';
 import React, { useContext, useEffect, useState } from 'react';
@@ -65,26 +61,19 @@ export default function CvModal(props) {
   const [listMembership, setListMembership] = useState([]);
   const [userID, setUserID] = useState();
   const [BirthDatee, setBirthDatee] = useState();
+  const [, setStateOrg] = useState([]);
   const [lazyParams] = useState({
     page: 0,
   });
   const PAGESIZE = 20;
-  const [birthDate, setBirthDate] = useState([]);
-  const [showResults, setShowResults] = useState(false);
-  const [isOnChange, setIsOnchange] = useState(false);
-  const [valueData, setValueData] = useState('');
+  const [changedBirthDate, setChangedBirthDate] = useState();
+  const [, setIsOnchange] = useState(false);
+  // const [isOnChange, setIsOnchange] = useState(false);
   const [options, setOptions] = useState([]);
-  const [valueRegister, setRegisterValue] = useState(false);
-  const ShowModal = () => setShowResults(true);
   // const filter = createFilterOptions();
 
-  const onSearch = searchText => {};
-
-  const onChange = data => {
-    setValueData(data);
-  };
   function onBirthDateChange(date, value) {
-    setBirthDate(value);
+    setChangedBirthDate(value);
   }
   const onInit = () => {
     toolsStore.setIsShowLoader(false);
@@ -297,6 +286,11 @@ export default function CvModal(props) {
     onInitPublishedWork();
     onInitLicense();
     onInitMembership();
+    getService('organization/get').then(result => {
+      if (result) {
+        setStateOrg(result.content || []);
+      }
+    });
     getService(`user/getNotTrainerUserListByOrgId/${orgId}`).then(result => {
       if (result) {
         setOptions(result || []);
@@ -330,15 +324,17 @@ export default function CvModal(props) {
     }
 
     if (isEditMode) {
-      setBirthDate(Trainerscontroller.birthDate);
+      setChangedBirthDate(Trainerscontroller.birthDate);
       setUserID(Trainerscontroller.id);
       form.setFieldsValue({
         ...Trainerscontroller,
-        lastName: Trainerscontroller.lastname,
-        firstName: Trainerscontroller.firstname,
+        lastname: Trainerscontroller.lastname,
+        firstname: Trainerscontroller.firstname,
         registerNumber: Trainerscontroller.register,
         phoneNumber: Trainerscontroller.phoneNumber,
         email: Trainerscontroller.email,
+        OrganizationName: Trainerscontroller.orgName,
+        birthDateNew: Trainerscontroller.birthDate,
         AddressDetail: Trainerscontroller.address
           ? Trainerscontroller.address.addressDetail
           : '',
@@ -383,6 +379,9 @@ export default function CvModal(props) {
           AimagID: selectedUser.address ? selectedUser.address.aimag.id : '',
           SoumID: selectedUser.address ? selectedUser.address.soum.id : '',
           BagID: selectedUser.address ? selectedUser.address.bag.id : '',
+          AddressDetail: selectedUser.address
+            ? selectedUser.address.addressDetail
+            : '',
         });
       }
     });
@@ -417,38 +416,66 @@ export default function CvModal(props) {
   };
 
   const save = () => {
-    setIsSaved(true);
-    setCount(count + 1);
     form
       .validateFields()
       .then(values => {
-        values.trainers = { purpose: values.purpose, skill: values.skill };
-        values.user = { id: userID };
-        values.address = {
-          country: {
-            id: values.CountryID,
-          },
-          aimag: {
-            id: values.AimagID,
-          },
-          soum: {
-            id: values.SoumID,
-          },
-          bag: {
-            id: values.BagID,
-          },
-        };
+        values.organizationId = orgId;
         if (isEditMode) {
+          values.trainers = { purpose: values.purpose, skill: values.skill };
+          values.id = userID;
+          values.birthDate = changedBirthDate;
+          values.address = {
+            addressDetail: values.AddressDetail,
+            country: {
+              id: values.CountryID,
+            },
+            aimag: {
+              id: values.AimagID,
+            },
+            soum: {
+              id: values.SoumID,
+            },
+            bag: {
+              id: values.BagID,
+            },
+          };
           putService(`user/update/${Trainerscontroller.id}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
               errorCatch(error);
             });
         } else {
+          values.trainers = { purpose: values.purpose, skill: values.skill };
+          values.user = {
+            id: userID,
+            firstname: values.firstname,
+            lastname: values.lastname,
+            register: values.registerNumber,
+            phoneNumber: values.phoneNumber,
+            email: values.email,
+            birthDate: changedBirthDate,
+            address: {
+              addressDetail: values.AddressDetail,
+              country: {
+                id: values.CountryID,
+              },
+              aimag: {
+                id: values.AimagID,
+              },
+              soum: {
+                id: values.SoumID,
+              },
+              bag: {
+                id: values.BagID,
+              },
+            },
+          };
           postService(`trainers/post`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -549,6 +576,16 @@ export default function CvModal(props) {
                     // prefix={<FontAwesomeIcon icon={faEnvelope} />}
                   />
                 </Form.Item>
+                {/* <Form.Item name="OrganizationName">
+                  <OrgaStyle>
+                    <AutoCompleteSelect
+                      valueField="id"
+                      placeholder="Байгууллага сонгох"
+                      data={stateOrg}
+                      onChange={value => selectOrg(value)}
+                    />
+                  </OrgaStyle>
+                </Form.Item> */}
               </Col>
 
               <Col xs={24} md={24} lg={9}>
@@ -604,7 +641,6 @@ export default function CvModal(props) {
               </Col>
             </Row>
             <h2 className="title">1. Ажлын зорилго</h2>
-
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Form.Item name="purpose">
@@ -612,7 +648,7 @@ export default function CvModal(props) {
                     placeholder="(Горилж буй ажлын зорилгоо товч бичнэ үү)"
                     style={{
                       width: '100%',
-                      height: '110px',
+                      height: '100px',
                     }}
                   />
                 </Form.Item>
@@ -626,13 +662,26 @@ export default function CvModal(props) {
                     placeholder="(Өөрийн давуу тал, ур чадвараа нэрлэнэ үү)"
                     style={{
                       width: '100%',
-                      height: '140px',
+                      height: '100px',
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>{' '}
+            <h2 className="title">3. Дэлгэрэнгүй хаяг</h2>
+            <Row>
+              <Col xs={24} md={24} lg={24}>
+                <Form.Item name="AddressDetail">
+                  <Input.TextArea
+                    placeholder="(Дэлгэрэнгүй хаягаа оруулна уу)"
+                    style={{
+                      width: '100%',
+                      height: '100px',
                     }}
                   />
                 </Form.Item>
               </Col>
             </Row>
-
             {isEditMode ? (
               <CvShowModal
                 Trainerscontroller={Trainerscontroller}

@@ -79,7 +79,6 @@ const CV = () => {
       }
     });
   };
-
   const add = () => {
     editRow = null;
     setIsModalVisible(true);
@@ -200,7 +199,7 @@ const CV = () => {
                     <OrgaStyle>
                       <AutoCompleteSelect
                         valueField="id"
-                        placeholder="Сургалт сонгох"
+                        placeholder="Байгууллага сонгох"
                         data={stateOrg}
                         onChange={value => selectOrg(value)}
                       />
@@ -270,6 +269,7 @@ const CV = () => {
               header="№"
               body={indexBodyTemplate}
               sortable
+              style={{ width: 40 }}
             />
             <Column
               header="Овог"

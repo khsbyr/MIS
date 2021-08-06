@@ -1,4 +1,4 @@
-import { Col, Form, Input, Modal, Row } from 'antd';
+import { Col, Form, Input, Modal, Row, message } from 'antd';
 import React, { useEffect } from 'react';
 import { postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
@@ -27,6 +27,7 @@ export default function CriteriaReferenceModal(props) {
             values
           )
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -35,6 +36,7 @@ export default function CriteriaReferenceModal(props) {
         } else {
           postService('criteriaReference/post', values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
