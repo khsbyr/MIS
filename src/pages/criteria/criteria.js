@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
+import { useHistory } from 'react-router-dom';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch, formatIndicator } from '../../tools/Tools';
@@ -34,6 +35,7 @@ const Criteria = () => {
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const toolsStore = useContext(ToolsContext);
+  const history = useHistory();
 
   const onInit = () => {
     if (loadLazyTimeout) {
@@ -65,6 +67,10 @@ const Criteria = () => {
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
+  };
+
+  const more = row => {
+    history.push(`/criteriaDetail/${row.data.id}`);
   };
 
   const handleDeleted = row => {
@@ -120,7 +126,7 @@ const Criteria = () => {
   }, [lazyParams]);
 
   const getComposition = compId => {
-    getService(`criteria/getListByCriteriaReferenceId/${compId}`).then(
+    getService(`/criteria/getListByCriteriaReferenceId/${compId}`).then(
       result => {
         if (result) {
           const listResult = result || [];
@@ -240,7 +246,7 @@ const Criteria = () => {
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            // onRowClick={edit}
+            onRowClick={more}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}

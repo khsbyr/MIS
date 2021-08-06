@@ -417,8 +417,8 @@ export default function CvModal(props) {
   };
 
   const save = () => {
-    setIsSaved(true);
-    setCount(count + 1);
+    // setIsSaved(true);
+    // setCount(count + 1);
     form
       .validateFields()
       .then(values => {

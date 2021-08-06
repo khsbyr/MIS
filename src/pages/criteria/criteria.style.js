@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 const ContentWrapper = styled.div`
-  margin-left: 45px;
-  margin-right: 45px;
+  margin-left: 35px;
+  margin-right: 35px;
   margin-top: 30px;
 
   .title {

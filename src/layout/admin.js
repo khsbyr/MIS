@@ -7,6 +7,7 @@ import { ToolsContext } from '../context/Tools';
 import Page from './Page';
 import Menu from './Menu';
 import { buildPaths, generateRoutes } from './utils';
+import CriteriaDetail from '../pages/criteria/more/CriteriaDetail';
 
 const { Sider, Content } = Layout;
 
@@ -65,6 +66,9 @@ function Admin() {
                   <Page route={route} />
                 </Route>
               ))}
+              <Route path="/criteriaDetail/:id">
+                <CriteriaDetail />
+              </Route>
             </Switch>
           </Content>
         </Layout>
