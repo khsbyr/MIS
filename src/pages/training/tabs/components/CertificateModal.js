@@ -1,19 +1,11 @@
-import { Form, Input, Modal, message, DatePicker } from 'antd';
+import { Form, Input, Modal, message, DatePicker, Row, Col } from 'antd';
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
-import ContentWrapper from './cv.styled';
+import ContentWrapper from './CvModal.style';
 
-const layout = {
-  labelCol: {
-    span: 10,
-  },
-  wrapperCol: {
-    span: 14,
-  },
-};
 export default function CertificateModal(props) {
   const { LicenseController, isModalVisible, isEditMode, trainerID } = props;
   const [form] = Form.useForm();
@@ -73,32 +65,44 @@ export default function CertificateModal(props) {
           <Form
             form={form}
             labelAlign="left"
-            {...layout}
+            // {...layout}
+            layout="vertical"
             name="nest-messages"
             validateMessages={validateMessages}
           >
-            <Form.Item
-              name="propertyName"
-              label="Оюуны өмч, гэрчилгээ, лицензийн нэр:"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item name="licensedBy" label="Олгосон байгууллагын нэр:">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Огноо:">
-              <DatePicker
-                onChange={onChangeDate}
-                defaultValue={
-                  isEditMode ? moment(LicenseController.licensedDate) : ''
-                }
-              />
-            </Form.Item>
+            <Row>
+              <Col xs={24} md={24} lg={24}>
+                <Form.Item
+                  name="propertyName"
+                  label="Оюуны өмч, гэрчилгээ, лицензийн нэр:"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={[20]}>
+              <Col xs={24} md={24} lg={12}>
+                <Form.Item name="licensedBy" label="Олгосон байгууллагын нэр:">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={24} lg={12}>
+                <Form.Item label="Огноо:">
+                  <DatePicker
+                    placeholder="Огноо сонгох"
+                    onChange={onChangeDate}
+                    defaultValue={
+                      isEditMode ? moment(LicenseController.licensedDate) : ''
+                    }
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
           </Form>
         </ContentWrapper>
       </Modal>

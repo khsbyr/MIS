@@ -7,10 +7,20 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
+import {
+  Button,
+  Col,
+  DatePicker,
+  Layout,
+  message,
+  Modal,
+  Row,
+  Input,
+} from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
+import { InputText } from 'primereact/inputtext';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
@@ -47,7 +57,6 @@ const Plan = props => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
-
         setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
@@ -60,6 +69,26 @@ const Plan = props => {
   useEffect(() => {
     onInit();
   }, [lazyParams]);
+
+  const dataTableFuncMap = {
+    list: setList,
+  };
+
+  const onEditorValueChange = (productKey, editData, value) => {
+    const updatedProducts = [...editData.value];
+    updatedProducts[editData.rowIndex][editData.field] = value;
+    dataTableFuncMap[`${productKey}`](updatedProducts);
+  };
+
+  const inputTextEditor = (productKey, editData, field) => (
+    <Input
+      type="text"
+      value={editData.rowData[field]}
+      onChange={e => onEditorValueChange(productKey, editData, e.target.value)}
+    />
+  );
+  const missionEditor = (productKey, editData) =>
+    inputTextEditor(productKey, editData, 'mission');
 
   const add = () => {
     setIsModalVisible(true);
@@ -132,21 +161,21 @@ const Plan = props => {
 
   const indexBodyTemplate = row => (
     <>
-      <span className="p-column-title">№</span>
+      {/* <span className="p-column-title">№</span> */}
       {row.index}
     </>
   );
 
   const missionBodyTemplate = row => (
     <>
-      <span className="p-column-title">Сургалтанд гүйцэтгэх үүрэг</span>
+      {/* <span className="p-column-title">Сургалтанд гүйцэтгэх үүрэг</span> */}
       {row.mission}
     </>
   );
 
   const nameTrainerBodyTemplate = row => (
     <>
-      <span className="p-column-title">Багшийн нэрс</span>
+      {/* <span className="p-column-title">Багшийн нэрс</span> */}
       {row.user && row.user.fullName}
     </>
   );
@@ -211,11 +240,13 @@ const Plan = props => {
         </Layout>
         <div className="datatable-responsive-demo">
           <DataTable
+            editMode="cell"
+            className="editable-cells-table"
             value={list}
             removableSort
             paginator
             rows={10}
-            className="p-datatable-responsive-demo"
+            // className="p-datatable-responsive-demo"
             selection={selectedRows}
             // onRowClick={edit}
             onSelectionChange={e => {
@@ -235,6 +266,8 @@ const Plan = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              field="mission"
+              editor={editData => missionEditor('list', editData)}
             />
             <Column
               header="Багшийн нэрс"
