@@ -132,10 +132,13 @@ export default function CriteriaModal(props) {
             <Radio.Group
               value={value}
               onChange={onChange}
+              defaultValue={value}
               className="radioButton"
             >
               <Space direction="vertical">
-                <Radio value={1}>Тоо</Radio>
+                <Radio value={1} defaultChecked>
+                  Тоо
+                </Radio>
                 <Radio value={2}>Хувь</Radio>
                 <Radio value={3}>Томъё</Radio>
               </Space>

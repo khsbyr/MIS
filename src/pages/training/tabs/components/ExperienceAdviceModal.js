@@ -1,5 +1,6 @@
-import { Form, Input, Modal } from 'antd';
-import React, { useEffect } from 'react';
+import { DatePicker, Form, Input, Modal, message } from 'antd';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
@@ -14,10 +15,22 @@ const layout = {
   },
 };
 export default function ExperienceAdviceModal(props) {
-  const { ExperienceAdviceController, isModalVisible, isEditMode } = props;
+  const { ExperienceAdviceController, isModalVisible, isEditMode, trainerID } =
+    props;
   const [form] = Form.useForm();
+  const [hiredDate, setHiredDate] = useState(null);
+  const [firedDate, setFiredDate] = useState(null);
+  function onChangeHiredDate(date, value) {
+    setHiredDate(value);
+  }
+
+  function onChangeFiredDate(date, value) {
+    setFiredDate(value);
+  }
   useEffect(() => {
     if (isEditMode) {
+      setHiredDate(ExperienceAdviceController.hiredDate);
+      setFiredDate(ExperienceAdviceController.firedDate);
       form.setFieldsValue({ ...ExperienceAdviceController });
     }
   }, []);
@@ -25,12 +38,16 @@ export default function ExperienceAdviceModal(props) {
     form
       .validateFields()
       .then(values => {
+        values.trainer = { id: trainerID };
+        values.hiredDate = hiredDate;
+        values.firedDate = firedDate;
         if (isEditMode) {
           putService(
             `expierenceForAdvice/update/${ExperienceAdviceController.id}`,
             values
           )
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -39,6 +56,7 @@ export default function ExperienceAdviceModal(props) {
         } else {
           postService('expierenceForAdvice/post', values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -84,16 +102,21 @@ export default function ExperienceAdviceModal(props) {
             <Form.Item name="organizationName" label="Байгууллагын нэр:">
               <Input />
             </Form.Item>
-            <Form.Item
-              name="hiredDate"
-              label="Огноо:"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input />
+            <Form.Item label="Ажилд орсон огноо:">
+              <DatePicker
+                onChange={onChangeHiredDate}
+                defaultValue={
+                  isEditMode ? moment(ExperienceAdviceController.hiredDate) : ''
+                }
+              />
+            </Form.Item>
+            <Form.Item label="Ажлаас гарсан огноо:">
+              <DatePicker
+                onChange={onChangeFiredDate}
+                defaultValue={
+                  isEditMode ? moment(ExperienceAdviceController.firedDate) : ''
+                }
+              />
             </Form.Item>
           </Form>
         </ContentWrapper>

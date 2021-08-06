@@ -1,5 +1,6 @@
-import { Form, Input, Modal } from 'antd';
-import React, { useEffect } from 'react';
+import { Form, Input, Modal, message, DatePicker } from 'antd';
+import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
@@ -14,9 +15,14 @@ const layout = {
   },
 };
 export default function CertificateModal(props) {
-  const { LicenseController, isModalVisible, isEditMode } = props;
+  const { LicenseController, isModalVisible, isEditMode, trainerID } = props;
   const [form] = Form.useForm();
+  const [date, setDate] = useState(null);
+  function onChangeDate(datee, value) {
+    setDate(value);
+  }
   useEffect(() => {
+    setDate(LicenseController && LicenseController.licensedDate);
     if (isEditMode) {
       form.setFieldsValue({ ...LicenseController });
     }
@@ -25,9 +31,12 @@ export default function CertificateModal(props) {
     form
       .validateFields()
       .then(values => {
+        values.trainer = { id: trainerID };
+        values.licensedDate = date;
         if (isEditMode) {
           putService(`propertyLicense/update/${LicenseController.id}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -36,6 +45,7 @@ export default function CertificateModal(props) {
         } else {
           postService('propertyLicense/post', values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -81,16 +91,13 @@ export default function CertificateModal(props) {
             <Form.Item name="licensedBy" label="Олгосон байгууллагын нэр:">
               <Input />
             </Form.Item>
-            <Form.Item
-              name="licensedDate"
-              label="Огноо:"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input />
+            <Form.Item label="Огноо:">
+              <DatePicker
+                onChange={onChangeDate}
+                defaultValue={
+                  isEditMode ? moment(LicenseController.licensedDate) : ''
+                }
+              />
             </Form.Item>
           </Form>
         </ContentWrapper>
