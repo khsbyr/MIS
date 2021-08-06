@@ -206,11 +206,17 @@ const Customerside = () => {
             }}
             dataKey="id"
           >
-            <Column field="index" header="№" body={indexBodyTemplate} />
+            <Column
+              field="index"
+              header="№"
+              body={indexBodyTemplate}
+              style={{ width: 40 }}
+            />
             <Column
               field="name"
               header="Харилцах тал"
               filter
+              filterPlaceholder="Хайх"
               body={activityBodyTemplate}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />

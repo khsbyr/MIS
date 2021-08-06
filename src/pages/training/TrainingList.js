@@ -16,7 +16,9 @@ import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
-import GuidelinesModal from './tabs/components/GuidelinesModal';
+import TrainingModal from './TrainingModal';
+import OrgaStyle from './tabs/components/orga.style';
+import AutoCompleteSelect from '../../components/Autocomplete';
 
 const { Content } = Layout;
 
@@ -34,6 +36,7 @@ const TrainingList = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   // const [, setStateOrga] = useState([]);
   const [orgID] = useState([]);
+  const [stateOrga, setStateOrga] = useState([]);
 
   const history = useHistory();
 
@@ -60,7 +63,29 @@ const TrainingList = () => {
 
   useEffect(() => {
     onInit();
+    getService('organization/get').then(result => {
+      if (result) {
+        setStateOrga(result.content || []);
+      }
+    });
   }, [lazyParams]);
+
+  const getTraining = orgId => {
+    getService(`training/getList/${orgId}`, {}).then(result => {
+      if (result) {
+        const listResult = result || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
+        setSelectedRows([]);
+      }
+    });
+  };
+
+  const selectOrgs = value => {
+    getTraining(value);
+  };
 
   const add = () => {
     editRow = null;
@@ -150,14 +175,14 @@ const TrainingList = () => {
   const totalBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Төсөв</span>
-      {row.totalBudget}
+      {row.trainingBudget && row.trainingBudget.totalBudget}
     </>
   );
 
   const performanceBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Гүйцэтгэлийн төсөв</span>
-      {row.performanceBudget}
+      {row.trainingBudget && row.trainingBudget.performanceBudget}
     </>
   );
 
@@ -178,7 +203,7 @@ const TrainingList = () => {
   const participantBodyTemplate = row => (
     <>
       <span className="p-column-title">Оролцогчдын тоо</span>
-      {row.participantsNumber}
+      {row.totalParticipants}
     </>
   );
 
@@ -195,7 +220,16 @@ const TrainingList = () => {
               </Col>
               <Col xs={24} md={24} lg={10}>
                 <Row justify="end" gutter={[16, 16]}>
-                  <Col xs={8} md={8} lg={5} />
+                  <Col xs={8} md={8} lg={6}>
+                    <OrgaStyle>
+                      <AutoCompleteSelect
+                        valueField="id"
+                        placeholder="Байгууллага сонгох"
+                        data={stateOrga}
+                        onChange={value => selectOrgs(value)}
+                      />
+                    </OrgaStyle>
+                  </Col>{' '}
                   <Col xs={8} md={8} lg={4}>
                     <DatePicker
                       bordered={false}
@@ -250,45 +284,27 @@ const TrainingList = () => {
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            onRowClick={ShowTrainingInfo}
+            // onRowClick={ShowTrainingInfo}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
           >
             <Column field="index" header="№" body={indexBodyTemplate} />
+            <Column header="Сургалтын сэдэв" filter body={NameBodyTemplate} />
+            <Column header="Төсөв" filter body={totalBudgetBodyTemplate} />
             <Column
-              field="name"
-              header="Сургалтын сэдэв"
-              filter
-              body={NameBodyTemplate}
-            />
-            <Column
-              field="totalBudget"
-              header="Төсөв"
-              filter
-              body={totalBudgetBodyTemplate}
-            />
-            <Column
-              field="performanceBudget"
               header="Гүйцэтгэлийн төсөв"
               filter
               body={performanceBudgetBodyTemplate}
             />
             <Column
-              field="trainingStartDate"
               header="Эхэлсэн огноо"
               filter
               body={startDateBodyTemplate}
             />
+            <Column header="Дууссан огноо" filter body={endDateBodyTemplate} />
             <Column
-              field="trainingEndDate"
-              header="Дууссан огноо"
-              filter
-              body={endDateBodyTemplate}
-            />
-            <Column
-              field="participantsNumber"
               header="Оролцогчдын тоо"
               filter
               body={participantBodyTemplate}
@@ -296,6 +312,15 @@ const TrainingList = () => {
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
+            <TrainingModal
+              Trainingcontroller={editRow}
+              isModalVisible={isModalVisible}
+              close={closeModal}
+              isEditMode={isEditMode}
+              orgID={orgID}
+            />
+          )}
+          {/* {isModalVisible && (
             <GuidelinesModal
               Guidelinescontroller={editRow}
               isModalVisible={isModalVisible}
@@ -303,7 +328,7 @@ const TrainingList = () => {
               isEditMode={isEditMode}
               orgID={orgID}
             />
-          )}
+          )} */}
         </div>
       </div>
     </ContentWrapper>

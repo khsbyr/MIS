@@ -1,4 +1,4 @@
-import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
@@ -7,47 +7,47 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
+import { Button, Col, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useContext } from 'react';
-import AutoCompleteSelect from '../../../components/Autocomplete';
+import React, { useContext, useEffect, useState } from 'react';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import ContentWrapper from '../../criteria/criteria.style';
 import GuidelinesModal from './components/GuidelinesModal';
-import OrgaStyle from './components/orga.style';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const Guidelines = () => {
+const Guidelines = props => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams] = useState({
     page: 0,
   });
-  const toolsStore = useContext(ToolsContext);
-  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [stateOrga, setStateOrga] = useState([]);
+  const [trainingID, setTrainingID] = useState([]);
   const [orgID, setOrgID] = useState([]);
-
+  const toolsStore = useContext(ToolsContext);
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('training/get', list)
+    getService(`training/get/${props.id}`, list)
       .then(result => {
-        const listResult = result.content || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList(listResult);
+        const listResult = result.training_guidelines || [];
+        setTrainingID(result.id);
+        setOrgID(result.organization.id);
+
+        // listResult.forEach((item, index) => {
+        //   item.index = lazyParams.page * PAGESIZE + index + 1;
+        // });
+        setList([listResult]);
+
         setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
@@ -59,41 +59,11 @@ const Guidelines = () => {
 
   useEffect(() => {
     onInit();
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrga(result.content || []);
-      }
-    });
   }, [lazyParams]);
 
-  const getGuidelines = orgId => {
-    getService(`training/getList/${orgId}`, {}).then(result => {
-      if (result) {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList(listResult);
-        setSelectedRows([]);
-        setOrgID(orgId);
-      }
-    });
-  };
-
-  const selectOrgs = value => {
-    getGuidelines(value);
-  };
-
   const add = () => {
-    editRow = null;
     setIsModalVisible(true);
     isEditMode = false;
-  };
-
-  const edit = row => {
-    editRow = row;
-    isEditMode = true;
-    setIsModalVisible(true);
   };
 
   const handleDeleted = row => {
@@ -101,8 +71,7 @@ const Guidelines = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-
-    putService(`training/delete/${row.id}`)
+    putService(`trainingGuidelines/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -126,6 +95,12 @@ const Guidelines = () => {
       onCancel() {},
     });
   }
+
+  const edit = row => {
+    editRow = row;
+    isEditMode = true;
+    setIsModalVisible(true);
+  };
 
   const pop = row => {
     if (row.length === 0) {
@@ -155,55 +130,39 @@ const Guidelines = () => {
     if (isSuccess) onInit();
   };
 
-  const indexBodyTemplate = row => (
+  const subjectBodyTemplate = row => (
     <>
-      <span className="p-column-title">№</span>
-      {row.index}
+      <span className="p-column-title">Сургалтын сэдэв:</span>
+      {row.subject}
     </>
   );
 
-  const NameBodyTemplate = row => (
+  const reasonTrainerBodyTemplate = row => (
     <>
-      <span className="p-column-title">Сургалтын нэр</span>
-      {row.name}
+      <span className="p-column-title">Сургалт зохион байгуулах үндэслэл:</span>
+      {row.reason}
+    </>
+  );
+  const aimtBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Сургалтын зорилго:</span>
+      {row.aim}
     </>
   );
 
-  const totalBudgetBodyTemplate = row => (
+  const operationTrainerBodyTemplate = row => (
     <>
-      <span className="p-column-title">Төсөв</span>
-      {row.totalBudget}
+      <span className="p-column-title">Хэрэгжүүлэх үйл ажиллагаа:</span>
+      {row.operation}
     </>
   );
 
-  const performanceBudgetBodyTemplate = row => (
+  const resultTrainerBodyTemplate = row => (
     <>
-      <span className="p-column-title">Гүйцэтгэлийн төсөв</span>
-      {row.performanceBudget}
+      <span className="p-column-title">Хүлээгдэж буй үр дүн:</span>
+      {row.result}
     </>
   );
-
-  const startDateBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Эхэлсэн огноо</span>
-      {row.trainingStartDate}
-    </>
-  );
-
-  const endDateBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Дууссан огноо</span>
-      {row.trainingEndDate}
-    </>
-  );
-
-  const participantBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Оролцогчдын тоо</span>
-      {row.participantsNumber}
-    </>
-  );
-
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -211,23 +170,13 @@ const Guidelines = () => {
           <Content>
             <Row>
               <Col xs={24} md={24} lg={12}>
-                <p className="title">Сургалт</p>
+                <p className="title">Сургалтын удирдамж</p>
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={5} />
-                  <Col xs={8} md={8} lg={6}>
-                    <OrgaStyle>
-                      <AutoCompleteSelect
-                        valueField="id"
-                        placeholder="Байгууллага сонгох"
-                        data={stateOrga}
-                        onChange={value => selectOrgs(value)}
-                      />
-                    </OrgaStyle>
-                  </Col>
-                  <Col xs={8} md={8} lg={4}>
-                    <DatePicker
+                  <Col xs={8} md={8} lg={7} />
+                  <Col xs={8} md={8} lg={5}>
+                    {/* <DatePicker
                       bordered={false}
                       suffixIcon={<DownOutlined />}
                       placeholder="Select year"
@@ -238,9 +187,9 @@ const Guidelines = () => {
                         color: 'black',
                         cursor: 'pointer',
                       }}
-                    />
+                    /> */}
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -248,7 +197,7 @@ const Guidelines = () => {
                       Хэвлэх{' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"
@@ -257,7 +206,7 @@ const Guidelines = () => {
                       Экспорт
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
+                  <Col xs={8} md={8} lg={4}>
                     <Button
                       type="text"
                       className="export"
@@ -280,47 +229,25 @@ const Guidelines = () => {
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
+            // onRowClick={edit}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
           >
-            <Column field="index" header="№" body={indexBodyTemplate} />
+            <Column header="Сургалтын сэдэв" body={subjectBodyTemplate} />
             <Column
-              field="name"
-              header="Сургалтын сэдэв"
-              filter
-              body={NameBodyTemplate}
+              header="Сургалт зохион байгуулах үндэслэл"
+              body={reasonTrainerBodyTemplate}
+            />
+            <Column header="Сургалтын зорилго" body={aimtBodyTemplate} />
+            <Column
+              header="Хэрэгжүүлэх үйл ажиллагаа"
+              body={operationTrainerBodyTemplate}
             />
             <Column
-              field="totalBudget"
-              header="Төсөв"
-              filter
-              body={totalBudgetBodyTemplate}
-            />
-            <Column
-              field="performanceBudget"
-              header="Гүйцэтгэлийн төсөв"
-              filter
-              body={performanceBudgetBodyTemplate}
-            />
-            <Column
-              field="trainingStartDate"
-              header="Эхэлсэн огноо"
-              filter
-              body={startDateBodyTemplate}
-            />
-            <Column
-              field="trainingEndDate"
-              header="Дууссан огноо"
-              filter
-              body={endDateBodyTemplate}
-            />
-            <Column
-              field="participantsNumber"
-              header="Оролцогчдын тоо"
-              filter
-              body={participantBodyTemplate}
+              header="Хүлээгдэж буй үр дүн"
+              body={resultTrainerBodyTemplate}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
@@ -330,6 +257,7 @@ const Guidelines = () => {
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+              trainingID={trainingID}
               orgID={orgID}
             />
           )}
@@ -338,5 +266,4 @@ const Guidelines = () => {
     </ContentWrapper>
   );
 };
-
 export default Guidelines;

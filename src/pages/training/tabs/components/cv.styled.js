@@ -74,6 +74,9 @@ const ContentWrapper = styled.div`
     color: #103154;
     margin-right: 25px;
   }
+  .ant-input-number-handler-wrap {
+    display: none;
+  }
   /* .ant-form-item-control-input-content {
         border-bottom: 1px solid #103154;
     } */

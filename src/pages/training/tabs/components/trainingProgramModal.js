@@ -1,10 +1,6 @@
 import { Col, Form, Input, Modal, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
-import {
-  getService,
-  postService,
-  putService,
-} from '../../../../service/service';
+import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './guidelines.style';
@@ -22,49 +18,15 @@ export default function TrainingProgramModal(props) {
   const { Trainingprogramcontroller, isModalVisible, isEditMode, trainingID } =
     props;
   const [form] = Form.useForm();
-  // const [setStateTeam] = useState([]);
   const [TrainingTeamID] = useState([]);
-  // const PAGESIZE = 20;
-  // const [lazyParams, setLazyParams] = useState({
-  //   page: 0,
-  // });
-  const loadLazyTimeout = null;
-
-  const onInit = () => {
-    if (loadLazyTimeout) {
-      clearTimeout(loadLazyTimeout);
-    }
-  };
 
   useEffect(() => {
-    onInit();
-    // getService('trainingPlan/get').then(result => {
-    //   if (result) {
-    //     setStateTeam(result.content || []);
-    //     // training_plan.id =
-    //     // stateplanID(planID)
-    //   }
-    // });
-    if (Trainingprogramcontroller !== null) {
-      getService(`training/get/${Trainingprogramcontroller.id}`).then(
-        result => {
-          if (result) {
-            // setTrainingID(Trainingprogramcontroller.id);
-          }
-        }
-      );
-
-      if (isEditMode) {
-        form.setFieldsValue({
-          ...Trainingprogramcontroller,
-        });
-      }
+    if (isEditMode) {
+      form.setFieldsValue({
+        ...Trainingprogramcontroller,
+      });
     }
   }, []);
-
-  // const selectTrainingTeam = trainingTeamID => {
-  //   setTrainingTeamID(trainingTeamID);
-  // };
 
   const save = () => {
     form
@@ -74,7 +36,10 @@ export default function TrainingProgramModal(props) {
         values.training_team = { id: TrainingTeamID };
 
         if (isEditMode) {
-          putService(`trainingProgram/update/${trainingID}`, values)
+          putService(
+            `trainingProgram/update/${Trainingprogramcontroller.id}`,
+            values
+          )
             .then(() => {
               props.close(true);
             })

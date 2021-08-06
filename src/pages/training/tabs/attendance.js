@@ -136,10 +136,17 @@ const Attendance = props => {
     </>
   );
 
+  const FirstNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Нэр</span>
+      {row.user.firstname}
+    </>
+  );
+
   const nameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Суралцагчийн нэр</span>
-      {row.name}
+      <span className="p-column-title">Овог</span>
+      {row.user.lastname}
     </>
   );
 
@@ -153,14 +160,14 @@ const Attendance = props => {
   const contactBodyTemplate = row => (
     <>
       <span className="p-column-title">Холбогдох утас</span>
-      {row.phone}
+      {row.user.phoneNumber}
     </>
   );
 
   const registerNumberBodyTemplate = row => (
     <>
       <span className="p-column-title">Регистрийн дугаар</span>
-      {row.register}
+      {row.user.register}
     </>
   );
 
@@ -246,11 +253,19 @@ const Attendance = props => {
             <Column field="index" header="№" body={indexBodyTemplate} />
             <Column
               field="name"
-              header="Суралцагчийн нэр"
+              header="Овог"
               sortable
               filter
               filterPlaceholder="Хайх"
               body={nameBodyTemplate}
+            />
+            <Column
+              field="name"
+              header="Нэр"
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              body={FirstNameBodyTemplate}
             />
             <Column
               field="jobDescription"
