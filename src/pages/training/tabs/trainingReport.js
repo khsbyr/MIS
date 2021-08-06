@@ -162,37 +162,33 @@ const TrainingReport = props => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={12}>
-                <p className="title">Сургалтын тайлан</p>
-              </Col>
-              <Col xs={24} md={24} lg={12}>
-                <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={12} />
-                  <Col xs={8} md={8} lg={4}>
+              <Col xs={24} md={24} lg={24}>
+                <Row justify="end" gutter={[16, 16]}>
+                  <Col>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
                     >
-                      Хэвлэх{' '}
+                      {' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col>
                     <Button
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faFileExcel} />}
                     >
-                      Экспорт
+                      {' '}
                     </Button>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  <Col>
                     <Button
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faPlus} />}
                       onClick={add}
                     >
-                      Нэмэх
+                      {' '}
                     </Button>
                   </Col>
                 </Row>

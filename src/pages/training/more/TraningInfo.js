@@ -12,7 +12,7 @@ import TrainingProgram from '../tabs/trainingProgram';
 import Budget from '../tabs/budget';
 
 const { TabPane } = Tabs;
-const tabPosition = 'left';
+const tabPosition = 'top';
 
 export default function TraningInfo() {
   const { t } = useTranslation();
