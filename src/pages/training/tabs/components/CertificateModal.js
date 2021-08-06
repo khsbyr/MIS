@@ -6,14 +6,6 @@ import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './CvModal.style';
 
-const layout = {
-  labelCol: {
-    span: 10,
-  },
-  wrapperCol: {
-    span: 14,
-  },
-};
 export default function CertificateModal(props) {
   const { LicenseController, isModalVisible, isEditMode, trainerID } = props;
   const [form] = Form.useForm();
