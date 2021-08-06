@@ -58,6 +58,21 @@ const TrainingProgram = props => {
 
   useEffect(() => {
     onInit();
+    getService(`training/get/${props.id}`)
+      .then(result => {
+        const listResult = result.trainingPrograms || [];
+        setTrainingID(result.id);
+        setOrgID(result.organization.id);
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setSelectedRows([]);
+      })
+      .finally(toolsStore.setIsShowLoader(false))
+      .catch(error => {
+        errorCatch(error);
+        toolsStore.setIsShowLoader(false);
+      });
   }, [lazyParams]);
 
   const add = () => {
