@@ -225,7 +225,7 @@ const Scope = () => {
               filter
               filterPlaceholder="Хайх"
             />
-            <Column headerStyle={{ width: '7rem' }} body={action} />
+            <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <ScopeModal

@@ -36,6 +36,7 @@ const TrainingList = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   // const [, setStateOrga] = useState([]);
   const [orgID] = useState([]);
+  const [trainingID, setTrainingID] = useState([]);
   const [stateOrga, setStateOrga] = useState([]);
 
   const history = useHistory();
@@ -52,6 +53,7 @@ const TrainingList = () => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
+        setTrainingID(result.id);
         setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
@@ -66,6 +68,11 @@ const TrainingList = () => {
     getService('organization/get').then(result => {
       if (result) {
         setStateOrga(result.content || []);
+      }
+    });
+    getService(`criteria/getListByForWhatId/1`).then(result => {
+      if (result) {
+        // setStateCriteria(result.content || []);
       }
     });
   }, [lazyParams]);
@@ -193,14 +200,14 @@ const TrainingList = () => {
   const startDateBodyTemplate = row => (
     <>
       <span className="p-column-title">Эхэлсэн огноо</span>
-      {row.trainingStartDate}
+      {row.startDateFormat}
     </>
   );
 
   const endDateBodyTemplate = row => (
     <>
       <span className="p-column-title">Дууссан огноо</span>
-      {row.trainingEndDate}
+      {row.endDateFormat}
     </>
   );
 
@@ -301,24 +308,37 @@ const TrainingList = () => {
               style={{ width: 40 }}
             />
             <Column header="Сургалтын сэдэв" filter body={NameBodyTemplate} />
-            <Column header="Төсөв" filter body={totalBudgetBodyTemplate} />
+            <Column
+              header="Төсөв"
+              headerStyle={{ width: '10rem' }}
+              filter
+              body={totalBudgetBodyTemplate}
+            />
             <Column
               header="Гүйцэтгэлийн төсөв"
+              headerStyle={{ width: '10rem' }}
               filter
               body={performanceBudgetBodyTemplate}
             />
             <Column
               header="Эхэлсэн огноо"
+              headerStyle={{ width: '10rem' }}
               filter
               body={startDateBodyTemplate}
             />
-            <Column header="Дууссан огноо" filter body={endDateBodyTemplate} />
+            <Column
+              header="Дууссан огноо"
+              headerStyle={{ width: '10rem' }}
+              filter
+              body={endDateBodyTemplate}
+            />
             <Column
               header="Оролцогчдын тоо"
+              headerStyle={{ width: '10rem' }}
               filter
               body={participantBodyTemplate}
             />
-            <Column headerStyle={{ width: '7rem' }} body={action} />
+            <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <TrainingModal

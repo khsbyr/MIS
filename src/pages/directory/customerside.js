@@ -219,7 +219,7 @@ const Customerside = () => {
               filterPlaceholder="Хайх"
               body={activityBodyTemplate}
             />
-            <Column headerStyle={{ width: '7rem' }} body={action} />
+            <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <CustomerSideModal

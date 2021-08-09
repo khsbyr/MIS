@@ -1,10 +1,18 @@
-import { Col, Form, Input, Modal, Row, message } from 'antd';
+import { Form, Input, Modal, message } from 'antd';
 import React, { useEffect } from 'react';
 import { postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from '../../training/tabs/components/guidelines.style';
+import ContentWrapper from '../../training/tabs/components/CvModal.style';
 import validateMessages from '../../../tools/validateMessage';
 
+const layout = {
+  labelCol: {
+    span: 10,
+  },
+  wrapperCol: {
+    span: 18,
+  },
+};
 export default function CriteriaReferenceModal(props) {
   const { Criteriareferencecontroller, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
@@ -64,25 +72,21 @@ export default function CriteriaReferenceModal(props) {
           <Form
             form={form}
             labelAlign="left"
-            layout="vertical"
+            {...layout}
             name="nest-messages"
             validateMessages={validateMessages}
           >
-            <Row>
-              <Col xs={24} md={24} lg={22}>
-                <Form.Item
-                  label="Бүрэлдэхүүний нэр:"
-                  name="name"
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-              </Col>
-            </Row>
+            <Form.Item
+              label="Бүрэлдэхүүний нэр:"
+              name="name"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
           </Form>
         </ContentWrapper>
       </Modal>
