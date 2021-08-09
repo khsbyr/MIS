@@ -8,6 +8,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
@@ -143,7 +144,7 @@ const TrainingReport = props => {
   const teacherBodyTemplate = row => (
     <>
       <span className="p-column-title">Огноо</span>
-      {row.createdDate}
+      {moment(row.createdDate).format('YYYY-M-D h цаг m минут')}
     </>
   );
 
@@ -234,17 +235,17 @@ const TrainingReport = props => {
               filterPlaceholder="Хайх"
             />
             <Column
-              field="registerNumber"
-              header="Огноо"
-              body={teacherBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
               field=""
               header="Сургалт явуулсан байгууллага, хүний нэр"
               body={respoUserBodyTemplate}
+            />
+            <Column
+              header="Огноо"
+              body={teacherBodyTemplate}
+              style={{ width: 200 }}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

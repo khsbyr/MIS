@@ -69,12 +69,12 @@ const Headers = () => {
                   <MailFilled /> info@lcp.mn
                 </p>
               </Col>
-              <Col xs={12} lg={6} md={12}>
+              <Col xs={8} lg={6} md={8}>
                 <p className="textshow">
                   <PhoneFilled /> 70104041
                 </p>
               </Col>
-              <Col xs={12} lg={6} md={12}>
+              <Col xs={8} lg={6} md={8}>
                 <Select
                   defaultValue="MN"
                   style={{ width: 80, color: 'blue' }}
@@ -85,7 +85,7 @@ const Headers = () => {
                 </Select>
               </Col>
               {localStorage.getItem('token') ? (
-                <Col xs={12} lg={6} md={12}>
+                <Col xs={8} lg={6} md={8}>
                   <Dropdown
                     className="list-inline-item"
                     overlay={<AvatarDropdown />}
