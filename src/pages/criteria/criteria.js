@@ -13,6 +13,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { useHistory } from 'react-router-dom';
 import { ToolsContext } from '../../context/Tools';
+import { useCriteriaStore } from '../../context/CriteriaContext';
 import { getService, putService } from '../../service/service';
 import { errorCatch, formatIndicator } from '../../tools/Tools';
 import AutoCompleteSelect from '../../components/Autocomplete';
@@ -28,7 +29,8 @@ const Criteria = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [stateComposition, setStateComposition] = useState([]);
+  const { criteriaReferenceList, setCriteriaReferenceList } =
+    useCriteriaStore();
   const [lazyParams] = useState({
     page: 0,
   });
@@ -63,7 +65,9 @@ const Criteria = () => {
     isEditMode = false;
   };
 
-  const edit = row => {
+  const edit = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
@@ -103,7 +107,9 @@ const Criteria = () => {
     });
   }
 
-  const pop = row => {
+  const pop = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
@@ -120,7 +126,7 @@ const Criteria = () => {
     onInit();
     getService('/criteriaReference/get').then(result => {
       if (result) {
-        setStateComposition(result || []);
+        setCriteriaReferenceList(result || []);
       }
     });
   }, [lazyParams]);
@@ -149,12 +155,12 @@ const Criteria = () => {
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
+        onClick={event => edit(event, row)}
       />
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
+        onClick={event => pop(event, row)}
       />
     </>
   );
@@ -201,7 +207,7 @@ const Criteria = () => {
                   <Col xs={8} md={8} lg={12}>
                     <AutoCompleteSelect
                       valueField="id"
-                      data={stateComposition}
+                      data={criteriaReferenceList}
                       placeholder="Бүрэлдэхүүн сонгох"
                       onChange={value => selectComposition(value)}
                     />

@@ -7,8 +7,9 @@ import { ToolsContext } from '../context/Tools';
 import Page from './Page';
 import Menu from './Menu';
 import { buildPaths, generateRoutes } from './utils';
-import CriteriaDetail from '../pages/criteria/more/CriteriaDetail';
+import CriteriaMore from '../pages/criteria/more/CriteriaMore';
 import TrainingInfo from '../pages/training/more/TraningInfo';
+import CriteriaContextProvider from '../context/CriteriaContext';
 
 const { Sider, Content } = Layout;
 
@@ -61,19 +62,21 @@ function Admin() {
               minHeight: '100%',
             }}
           >
-            <Switch>
-              {routes.map(route => (
-                <Route key={route.code} path={route.path}>
-                  <Page route={route} />
+            <CriteriaContextProvider>
+              <Switch>
+                {routes.map(route => (
+                  <Route key={route.code} path={route.path}>
+                    <Page route={route} />
+                  </Route>
+                ))}
+                <Route path="/criteriaDetail/:id">
+                  <CriteriaMore />
                 </Route>
-              ))}
-              <Route path="/criteriaDetail/:id">
-                <CriteriaDetail />
-              </Route>
-              <Route path="/trainingList/:id">
-                <TrainingInfo />
-              </Route>
-            </Switch>
+                <Route path="/trainingList/:id">
+                  <TrainingInfo />
+                </Route>
+              </Switch>
+            </CriteriaContextProvider>
           </Content>
         </Layout>
       </Layout>
