@@ -2,42 +2,23 @@ import styled from 'styled-components';
 
 const ContentWrapper = styled.div`
   margin-left: 45px;
-  .ant-upload.ant-upload-drag {
-    width: 100%;
-    height: 200px;
-    //margin: 50px 20px 20px 40px;
-
-    /* top: 10%;
-        bottom: 20%; */
-    border: 1px solid #d9d9d9;
-    border-radius: 15px;
-  }
+  margin-right: 45px;
+  margin-top: 30px;
 
   .title {
-    font-size: 14px;
+    font-size: 24px;
     font-weight: bold;
     color: #0d0d0d;
-    margin: 20px 0px 20px 0px;
   }
 
   label {
     color: #7d7d7d;
     font-size: 13px;
   }
+
   Input {
     width: 100%;
     border-radius: 3px;
-    height: 39px;
-  }
-
-  .FormItem {
-    width: 60%;
-    height: 40px;
-    border: none;
-    border-bottom: 1px solid #103154;
-    @media (max-width: 991px) {
-      width: 100%;
-    }
   }
 
   Select {
@@ -46,7 +27,11 @@ const ContentWrapper = styled.div`
 
   .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
     height: 40px;
-    padding-top: 8px;
+    padding-top: 5px;
+  }
+
+  .ant-input {
+    height: 40px;
   }
 
   .button {
@@ -71,8 +56,32 @@ const ContentWrapper = styled.div`
     color: #103154;
     margin-right: 25px;
   }
+
+  .ant-input-number {
+    width: 100%;
+    border-radius: 3px;
+    height: 40px;
+  }
+  .ant-input-number-handler-wrap {
+    display: none;
+  }
   .ant-select-selection-search {
     margin-top: 8px;
+  }
+  .ant-picker {
+    width: 100%;
+    height: 40px;
+  }
+  .ant-form-item .ant-mentions,
+  .ant-form-item textarea.ant-input {
+    height: 70px;
+  }
+  .p-multiselect-token {
+    padding: 0px;
+  }
+  .p-multiselect .p-multiselect-label.p-placeholder {
+    color: #c2c2c2;
+    font-size: 14px;
   }
 `;
 

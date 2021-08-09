@@ -1,14 +1,17 @@
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Col, DatePicker, Form, Input, Modal, Row, Checkbox } from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import React, { useContext, useEffect, useState } from 'react';
+import { MultiSelect } from 'primereact/multiselect';
 import AutoCompleteSelect from '../../components/Autocomplete';
+import MulticompleteSelect from '../../components/MulticompleteSelect';
 import { ToolsContext } from '../../context/Tools';
 import { getService, postService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import validateMessages from '../../tools/validateMessage';
-import ContentWrapper from './tabs/components/guidelines.style';
+import ContentWrapper from './tabs/components/training.style';
 
 const layout = {
   labelCol: {
@@ -28,9 +31,12 @@ export default function TrainingModal(props) {
   const [startDate, setStartDate] = useState([]);
   const [endDate, setEndDate] = useState([]);
   const [stateCountry, setStateCountry] = useState([]);
+  const [stateCriteria, setStateCriteria] = useState([]);
   const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
+  const [selectedCriteria, setSelectedCriteria] = useState([]);
+  const [CriteriaID, setCriteriaID] = useState([]);
 
   function onStartDateChange(date, value) {
     setStartDate(value);
@@ -45,6 +51,13 @@ export default function TrainingModal(props) {
   }
 
   useEffect(() => {
+    getService(`criteria/getListByForWhatId/1`).then(result => {
+      if (result) {
+        setStateCriteria(result || []);
+        console.log(stateCriteria);
+      }
+    });
+
     getService('organization/get').then(result => {
       if (result) {
         setStateOrg(result.content || []);
@@ -86,8 +99,13 @@ export default function TrainingModal(props) {
     }
 
     if (isEditMode) {
+      console.log(CriteriaID);
+
       form.setFieldsValue({
         ...Trainingcontroller,
+        CriteriaID: Trainingcontroller.criteria
+          ? Trainingcontroller.criteria.id
+          : '',
         OrgID: Trainingcontroller.organization
           ? Trainingcontroller.organization.id
           : '',
@@ -115,6 +133,15 @@ export default function TrainingModal(props) {
       });
     }
   }, [Trainingcontroller, form, isEditMode]);
+
+  const SelectedCriteria = value => {
+    setSelectedCriteria(value);
+    console.log(CriteriaID);
+  };
+  const selectCriterias = (value, criteriaID) => {
+    setSelectedCriteria([value]);
+    console.log(value);
+  };
 
   const getAimag = countryId => {
     getService(`aimag/getList/${countryId}`, {}).then(result => {
@@ -157,6 +184,7 @@ export default function TrainingModal(props) {
       .validateFields()
       .then(values => {
         values.organization = { id: orgID };
+        values.criteria = { id: CriteriaID };
         values.trainingStartDate = startDate;
         values.trainingEndDate = endDate;
         values.address = {
@@ -225,7 +253,7 @@ export default function TrainingModal(props) {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Row>
-                  <h4>Шалгуур үзүүлэлт сонгох</h4>
+                  {/* <h4>Шалгуур үзүүлэлт сонгох</h4>
                   <Col xs={24} md={24} lg={24}>
                     <Checkbox.Group
                       style={{ width: '100%' }}
@@ -269,10 +297,34 @@ export default function TrainingModal(props) {
                       </Row>{' '}
                       <br />
                     </Checkbox.Group>
+                  </Col> */}
+                  <Col xs={24} md={24} lg={8}>
+                    <Form.Item label="Шалгуур үзүүлэлт:">
+                      <MultiSelect
+                        name="criteriaIds"
+                        valueField="id"
+                        style={{ width: '100%', height: '40px' }}
+                        value={selectedCriteria}
+                        options={stateCriteria}
+                        onChange={e => SelectedCriteria(e.value)}
+                        placeholder="Сонгох"
+                        display="chip"
+                      />
+                    </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={8}>
+                    <Form.Item label="shalguur:" name="CriteriaID">
+                      <MulticompleteSelect
+                        valueField="id"
+                        data={stateCriteria}
+                        size="medium"
+                        onChange={value => selectCriterias(value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={24} lg={8}>
                     <Form.Item
-                      label="Сургалтын нэр:"
+                      label="Сургалтын сэдэв:"
                       name="name"
                       rules={[
                         {
@@ -283,7 +335,7 @@ export default function TrainingModal(props) {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={8}>
                     <Form.Item
                       label="Төсөв:"
                       name="totalBudget"
@@ -296,7 +348,7 @@ export default function TrainingModal(props) {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={8}>
                     <Form.Item
                       label="Гүйцэтгэлийн төсөв:"
                       name="performanceBudget"
@@ -309,7 +361,7 @@ export default function TrainingModal(props) {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={8}>
                     <Form.Item
                       label="Оролцогчдын тоо:"
                       name="totalParticipants"
@@ -322,10 +374,11 @@ export default function TrainingModal(props) {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={8}>
                     <Form.Item label="Эхэлсэн огноо:">
                       <DatePicker
                         prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
+                        style={{ width: '100%' }}
                         placeholder="Эхэлсэн огноо:"
                         className="FormItem"
                         onChange={onStartDateChange}
@@ -336,10 +389,11 @@ export default function TrainingModal(props) {
                       />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={8}>
                     <Form.Item label="Дууссан огноо:">
                       <DatePicker
                         prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
+                        style={{ width: '100%' }}
                         placeholder="Дууссан огноо:"
                         className="FormItem"
                         onChange={onEndDateChange}
@@ -350,7 +404,7 @@ export default function TrainingModal(props) {
                       />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={8}>
                     <Form.Item label="Улс:" name="CountryID">
                       <AutoCompleteSelect
                         valueField="id"
@@ -360,7 +414,7 @@ export default function TrainingModal(props) {
                       />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={8}>
                     <Form.Item
                       name="AimagID"
                       layout="vertical"
@@ -374,7 +428,7 @@ export default function TrainingModal(props) {
                       />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={8}>
                     <Form.Item
                       name="SoumID"
                       layout="vertical"
@@ -388,7 +442,7 @@ export default function TrainingModal(props) {
                       />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={8}>
                     <Form.Item
                       name="BagID"
                       layout="vertical"
@@ -401,7 +455,7 @@ export default function TrainingModal(props) {
                       />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={8}>
                     <Form.Item
                       name="OrgID"
                       layout="vertical"
@@ -418,12 +472,7 @@ export default function TrainingModal(props) {
                 <Row>
                   <Col xs={24} md={24} lg={24}>
                     <Form.Item label="Хаяг:" name="AddressDetail">
-                      <Input.TextArea
-                        style={{
-                          width: '100%',
-                          height: '110px',
-                        }}
-                      />
+                      <TextArea style={{ width: '100%', height: '80px' }} />
                     </Form.Item>
                   </Col>
                 </Row>

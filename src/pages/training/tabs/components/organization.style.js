@@ -4,12 +4,16 @@ const ContentWrapper = styled.div`
   margin-left: 45px;
   margin-right: 45px;
   .ant-upload.ant-upload-drag {
+    margin-left: 30px;
     width: 150px;
     height: 150px;
     border: 1px solid #d9d9d9;
     border-radius: 15px;
     @media (max-width: 991px) {
-      width: 100%;
+      width: 50%;
+      margin-left: 0px;
+      margin-bottom: 30px;
+      left: 20%;
     }
   }
 

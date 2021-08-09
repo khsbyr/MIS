@@ -1,4 +1,4 @@
-import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
@@ -7,7 +7,7 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row, DatePicker } from 'antd';
+import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
@@ -187,45 +187,37 @@ const TrainingProgram = props => {
               <Col xs={24} md={24} lg={24}>
                 <Row justify="end" gutter={[16, 16]}>
                   <Col>
-                    <DatePicker
-                      bordered={false}
-                      suffixIcon={<DownOutlined />}
-                      placeholder="Select year"
-                      picker="year"
-                      className="DatePicker"
-                      style={{
-                        width: '120px',
-                        color: 'black',
-                        cursor: 'pointer',
-                      }}
-                    />
+                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        icon={<FontAwesomeIcon icon={faPrint} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
                   <Col>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      {' '}
-                    </Button>
+                    <Tooltip title="Экспорт" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFileExcel} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
                   <Col>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Col>
-                  <Col>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      {' '}
-                    </Button>
+                    <Tooltip title="Нэмэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={add}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
                 </Row>
               </Col>
@@ -250,7 +242,6 @@ const TrainingProgram = props => {
               field="index"
               header="№"
               body={indexBodyTemplate}
-              sortable
               style={{ width: 40 }}
             />
             <Column
