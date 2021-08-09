@@ -7,7 +7,16 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
+import {
+  Button,
+  Col,
+  DatePicker,
+  Layout,
+  message,
+  Modal,
+  Row,
+  Tooltip,
+} from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
@@ -227,11 +236,11 @@ const TrainingList = () => {
           <Content>
             <Row>
               <Col xs={24} md={24} lg={14}>
-                <p className="title">Сургалт</p>
+                <p className="title">Сургалтын жагсаалт</p>
               </Col>
-              <Col xs={24} md={24} lg={10}>
+              <Col xs={24} md={18} lg={10}>
                 <Row justify="end" gutter={[16, 16]}>
-                  <Col xs={8} md={8} lg={6}>
+                  <Col xs={12} md={6} lg={7}>
                     <OrgaStyle>
                       <AutoCompleteSelect
                         valueField="id"
@@ -240,8 +249,8 @@ const TrainingList = () => {
                         onChange={value => selectOrgs(value)}
                       />
                     </OrgaStyle>
-                  </Col>{' '}
-                  <Col xs={8} md={8} lg={4}>
+                  </Col>
+                  <Col xs={12} md={5} lg={5}>
                     <DatePicker
                       bordered={false}
                       suffixIcon={<DownOutlined />}
@@ -255,32 +264,38 @@ const TrainingList = () => {
                       }}
                     />
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      Хэвлэх{' '}
-                    </Button>
+                  <Col xs={8} md={2} lg={2}>
+                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        icon={<FontAwesomeIcon icon={faPrint} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      Экспорт
-                    </Button>
+                  <Col xs={8} md={2} lg={2}>
+                    <Tooltip title="Экспорт" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFileExcel} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      Нэмэх
-                    </Button>
+                  <Col xs={8} md={2} lg={2}>
+                    <Tooltip title="Нэмэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={add}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
                 </Row>
               </Col>
@@ -307,7 +322,12 @@ const TrainingList = () => {
               body={indexBodyTemplate}
               style={{ width: 40 }}
             />
-            <Column header="Сургалтын сэдэв" filter body={NameBodyTemplate} />
+            <Column
+              header="Сургалтын сэдэв"
+              filter
+              body={NameBodyTemplate}
+              sortable
+            />
             <Column
               header="Төсөв"
               headerStyle={{ width: '10rem' }}
