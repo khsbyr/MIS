@@ -47,14 +47,14 @@ export default function TrainingModal(props) {
   }
 
   function onChange(checkedValues) {
-    console.log('checked = ', checkedValues);
+    // console.log('checked = ', checkedValues);
   }
 
   useEffect(() => {
     getService(`criteria/getListByForWhatId/1`).then(result => {
       if (result) {
         setStateCriteria(result || []);
-        console.log(stateCriteria);
+        // console.log(stateCriteria);
       }
     });
 
@@ -99,8 +99,6 @@ export default function TrainingModal(props) {
     }
 
     if (isEditMode) {
-      console.log(CriteriaID);
-
       form.setFieldsValue({
         ...Trainingcontroller,
         CriteriaID: Trainingcontroller.criteria
@@ -136,11 +134,9 @@ export default function TrainingModal(props) {
 
   const SelectedCriteria = value => {
     setSelectedCriteria(value);
-    console.log(CriteriaID);
   };
   const selectCriterias = (value, criteriaID) => {
     setSelectedCriteria([value]);
-    console.log(value);
   };
 
   const getAimag = countryId => {
