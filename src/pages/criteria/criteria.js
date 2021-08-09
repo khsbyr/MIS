@@ -192,58 +192,52 @@ const Criteria = () => {
       {row.processResult + formatIndicator(row.indicator)}
     </>
   );
-
   return (
     <ContentWrapper>
       <div className="button-demo">
-        <Layout className="btn-layout">
-          <Content>
-            <Row>
-              <Col xs={24} md={24} lg={12}>
-                <p className="title">Сургалт</p>
-              </Col>
-              <Col xs={24} md={24} lg={12}>
-                <Row justify="end" gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={12}>
-                    <AutoCompleteSelect
-                      valueField="id"
-                      data={criteriaReferenceList}
-                      placeholder="Бүрэлдэхүүн сонгох"
-                      onChange={value => selectComposition(value)}
-                    />
-                  </Col>
-                  <Col xs={8} md={8} lg={3}>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      Хэвлэх{' '}
-                    </Button>
-                  </Col>
-                  <Col xs={8} md={8} lg={3}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      Экспорт
-                    </Button>
-                  </Col>
-                  <Col xs={8} md={8} lg={3}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      Нэмэх
-                    </Button>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Content>
-        </Layout>
+        <Content>
+          <Row>
+            <Col xs={24} md={24} lg={12}>
+              <p className="title">Сургалт</p>
+            </Col>
+            <Col xs={24} md={24} lg={12}>
+              <Row justify="end" gutter={[0, 15]}>
+                <Col xs={8} md={8} lg={12}>
+                  <AutoCompleteSelect
+                    valueField="id"
+                    data={criteriaReferenceList}
+                    placeholder="Бүрэлдэхүүн сонгох"
+                    onChange={value => selectComposition(value)}
+                  />
+                </Col>
+                <Col xs={8} md={8} lg={3}>
+                  <Button type="text" icon={<FontAwesomeIcon icon={faPrint} />}>
+                    {' '}
+                  </Button>
+                </Col>
+                <Col xs={8} md={8} lg={3}>
+                  <Button
+                    type="text"
+                    className="export"
+                    icon={<FontAwesomeIcon icon={faFileExcel} />}
+                  >
+                    {' '}
+                  </Button>
+                </Col>
+                <Col xs={8} md={8} lg={3}>
+                  <Button
+                    type="text"
+                    className="export"
+                    icon={<FontAwesomeIcon icon={faPlus} />}
+                    onClick={add}
+                  >
+                    {' '}
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Content>
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}

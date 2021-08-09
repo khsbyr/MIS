@@ -2,9 +2,9 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
+  faPlus,
   faPrint,
   faTrash,
-  faPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
@@ -12,35 +12,34 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
 import { ToolsContext } from '../../context/Tools';
-import { getService, deleteService } from '../../service/service';
+import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
-import ScopeModal from './components/ScopeModal';
+import OrganizationModal from '../training/tabs/components/OrganizationModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const Scope = () => {
+const ConsultingOrg = () => {
   const loadLazyTimeout = null;
+  const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
+  const PAGESIZE = 20;
   const [isModalVisible, setIsModalVisible] = useState(false);
-
   const [lazyParams] = useState({
     page: 0,
   });
-  const PAGESIZE = 20;
+  // const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const toolsStore = useContext(ToolsContext);
-
   const onInit = () => {
-    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('scope/get', list)
+    toolsStore.setIsShowLoader(true);
+    getService(`organization/get`, list)
       .then(result => {
-        const listResult = result || [];
+        const listResult = result.content;
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
@@ -53,7 +52,6 @@ const Scope = () => {
         toolsStore.setIsShowLoader(false);
       });
   };
-
   useEffect(() => {
     onInit();
   }, [lazyParams]);
@@ -74,8 +72,7 @@ const Scope = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-
-    deleteService(`scope/delete/${row.id}`)
+    putService(`organization/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -137,8 +134,36 @@ const Scope = () => {
 
   const nameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Хамрах хүрээ</span>
+      <span className="p-column-title">Байгууллагын нэр</span>
       {row.name}
+    </>
+  );
+
+  const registerNumberBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Регистрийн дугаар</span>
+      {row.registerNumber}
+    </>
+  );
+
+  const bankNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Банкны нэр</span>
+      {row.bank.name}
+    </>
+  );
+
+  const accountNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дансны нэр</span>
+      {row.accountName}
+    </>
+  );
+
+  const accountNumberBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дансны дугаар</span>
+      {row.accountNumber}
     </>
   );
 
@@ -148,7 +173,7 @@ const Scope = () => {
         <Content>
           <Row>
             <Col xs={24} md={12} lg={14}>
-              <p className="title">Хамрах хүрээ</p>
+              <p className="title">Зөвлөх байгууллага</p>
             </Col>
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
@@ -203,25 +228,25 @@ const Scope = () => {
             }}
             dataKey="id"
           >
+            <Column header="№" body={indexBodyTemplate} style={{ width: 40 }} />
             <Column
-              field="index"
-              header="№"
-              body={indexBodyTemplate}
-              style={{ width: 40 }}
-            />
-            <Column
-              field="name"
+              header="Байгууллагын нэр"
               body={nameBodyTemplate}
-              header="Хамрах хүрээ"
-              sortable
               filter
-              filterPlaceholder="Хайх"
+              sortable
             />
-            <Column headerStyle={{ width: '6rem' }} body={action} />
+            <Column
+              header="Регистрийн дугаар"
+              body={registerNumberBodyTemplate}
+            />
+            <Column header="Банкны нэр" body={bankNameBodyTemplate} />
+            <Column header="Дансны нэр" body={accountNameBodyTemplate} />
+            <Column header="Дансны дугаар" body={accountNumberBodyTemplate} />
+            <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <ScopeModal
-              Scopecontroller={editRow}
+            <OrganizationModal
+              Orgcontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
@@ -233,4 +258,4 @@ const Scope = () => {
   );
 };
 
-export default Scope;
+export default ConsultingOrg;

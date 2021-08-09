@@ -7,7 +7,8 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row } from 'antd';
+import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
@@ -143,7 +144,7 @@ const TrainingReport = props => {
   const teacherBodyTemplate = row => (
     <>
       <span className="p-column-title">Огноо</span>
-      {row.createdDate}
+      {moment(row.createdDate).format('YYYY-M-D h цаг m минут')}
     </>
   );
 
@@ -165,31 +166,37 @@ const TrainingReport = props => {
               <Col xs={24} md={24} lg={24}>
                 <Row justify="end" gutter={[16, 16]}>
                   <Col>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      {' '}
-                    </Button>
+                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        icon={<FontAwesomeIcon icon={faPrint} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
                   <Col>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      {' '}
-                    </Button>
+                    <Tooltip title="Экспорт" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFileExcel} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
                   <Col>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      {' '}
-                    </Button>
+                    <Tooltip title="Нэмэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={add}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
                 </Row>
               </Col>
@@ -228,17 +235,17 @@ const TrainingReport = props => {
               filterPlaceholder="Хайх"
             />
             <Column
-              field="registerNumber"
-              header="Огноо"
-              body={teacherBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
               field=""
               header="Сургалт явуулсан байгууллага, хүний нэр"
               body={respoUserBodyTemplate}
+            />
+            <Column
+              header="Огноо"
+              body={teacherBodyTemplate}
+              style={{ width: 200 }}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

@@ -7,7 +7,16 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
+import {
+  Button,
+  Col,
+  DatePicker,
+  Layout,
+  message,
+  Modal,
+  Row,
+  Tooltip,
+} from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState, useContext } from 'react';
@@ -187,70 +196,74 @@ const CV = () => {
   return (
     <ContentWrapper>
       <div className="button-demo">
-        <Layout className="btn-layout">
-          <Content>
-            <Row>
-              <Col xs={24} md={24} lg={12}>
-                <p className="title">Сургагч багшийн CV</p>
-              </Col>
-              <Col xs={24} md={24} lg={12}>
-                <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={7}>
-                    <OrgaStyle>
-                      <AutoCompleteSelect
-                        valueField="id"
-                        placeholder="Байгууллага сонгох"
-                        data={stateOrg}
-                        onChange={value => selectOrg(value)}
-                      />
-                    </OrgaStyle>
-                  </Col>
-                  <Col xs={8} md={8} lg={5}>
-                    <DatePicker
-                      bordered={false}
-                      suffixIcon={<DownOutlined />}
-                      placeholder="Select year"
-                      picker="year"
-                      className="DatePicker"
-                      style={{
-                        width: '120px',
-                        color: 'black',
-                        cursor: 'pointer',
-                      }}
+        <Content>
+          <Row>
+            <Col xs={24} md={24} lg={14}>
+              <p className="title">Хүний нөөц</p>
+            </Col>
+            <Col xs={24} md={18} lg={10}>
+              <Row justify="end" gutter={[16, 16]}>
+                <Col xs={12} md={6} lg={7}>
+                  <OrgaStyle>
+                    <AutoCompleteSelect
+                      valueField="id"
+                      placeholder="Байгууллага сонгох"
+                      data={stateOrg}
+                      onChange={value => selectOrg(value)}
                     />
-                  </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  </OrgaStyle>
+                </Col>
+                <Col xs={12} md={5} lg={5}>
+                  <DatePicker
+                    bordered={false}
+                    suffixIcon={<DownOutlined />}
+                    placeholder="Select year"
+                    picker="year"
+                    className="DatePicker"
+                    style={{
+                      width: '120px',
+                      color: 'black',
+                      cursor: 'pointer',
+                    }}
+                  />
+                </Col>
+                <Col xs={8} md={2} lg={2}>
+                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
                     >
-                      Хэвлэх{' '}
+                      {' '}
                     </Button>
-                  </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  </Tooltip>
+                </Col>
+                <Col xs={8} md={2} lg={2}>
+                  <Tooltip title="Экспорт" arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faFileExcel} />}
                     >
-                      Экспорт
+                      {' '}
                     </Button>
-                  </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  </Tooltip>
+                </Col>
+                <Col xs={8} md={2} lg={2}>
+                  <Tooltip title="Нэмэх" arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faPlus} />}
                       onClick={add}
                     >
-                      Нэмэх
+                      {' '}
                     </Button>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Content>
-        </Layout>
+                  </Tooltip>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Content>
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}
@@ -268,7 +281,6 @@ const CV = () => {
               field="index"
               header="№"
               body={indexBodyTemplate}
-              sortable
               style={{ width: 40 }}
             />
             <Column

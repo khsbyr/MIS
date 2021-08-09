@@ -1,52 +1,51 @@
-import { Form, Input, Modal } from 'antd';
-import React, { useEffect } from 'react';
-// import AutoCompleteSelect from '../../../components/Autocomplete';
+import { Form, Input, Modal, message, DatePicker } from 'antd';
+import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 import { postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from '../../training/tabs/components/CvModal.style';
 import validateMessages from '../../../tools/validateMessage';
+import ContentWrapper from '../../training/tabs/components/CvModal.style';
 
 const layout = {
   labelCol: {
     span: 10,
   },
   wrapperCol: {
-    span: 18,
+    span: 14,
   },
 };
-export default function CustomerSideModal(props) {
-  const { Customersidecontroller, isModalVisible, isEditMode } = props;
+export default function MembershipModal(props) {
+  const { MembershipController, isModalVisible, isEditMode, trainerID } = props;
   const [form] = Form.useForm();
-  // const [stateGender, setStateGender] = useState([]);
-
+  const [enrolledDate, setEnrolledDate] = useState(null);
+  function onChangeEnrolledDate(date, value) {
+    setEnrolledDate(value);
+  }
   useEffect(() => {
+    setEnrolledDate(MembershipController && MembershipController.enrolledDate);
     if (isEditMode) {
-      form.setFieldsValue({
-        ...Customersidecontroller,
-      });
+      form.setFieldsValue({ ...MembershipController });
     }
   }, []);
-
-  // const onChange = e => {
-  //   setStateGender(e.target.value);
-  // };
-
   const save = () => {
     form
       .validateFields()
       .then(values => {
-        values.isTrue = true;
+        values.person = { id: trainerID };
+        values.enrolledDate = enrolledDate;
         if (isEditMode) {
-          putService(`customerSide/update/${Customersidecontroller.id}`, values)
+          putService(`membership/update/${MembershipController.id}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService('customerSide/post', values)
+          postService('membership/post', values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -61,7 +60,7 @@ export default function CustomerSideModal(props) {
   return (
     <div>
       <Modal
-        title="Харилцах тал бүртгэх"
+        title="Гишүүнчлэл"
         okText="Хадгалах"
         cancelText="Буцах"
         width={600}
@@ -78,17 +77,9 @@ export default function CustomerSideModal(props) {
             name="nest-messages"
             validateMessages={validateMessages}
           >
-            {/* <Col xs={24} md={24} lg={6}>
-                <Form.Item name="isParent" layout="vertical" label="isparent:">
-                  <Radio.Group onChange={onChange} value={stateGender}>
-                    <Radio value={0}>false</Radio>
-                    <Radio value={1}>true</Radio>
-                  </Radio.Group>
-                </Form.Item>
-              </Col> */}
             <Form.Item
-              label="Харилцах тал:"
-              name="name"
+              name="position"
+              label="Албан тушаал:"
               rules={[
                 {
                   required: true,
@@ -96,6 +87,18 @@ export default function CustomerSideModal(props) {
               ]}
             >
               <Input />
+            </Form.Item>
+            <Form.Item name="organization" label="Байгууллагын нэр:">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Огноо:">
+              <DatePicker
+                placeholder="Огноо сонгох"
+                onChange={onChangeEnrolledDate}
+                defaultValue={
+                  isEditMode ? moment(MembershipController.enrolledDate) : ''
+                }
+              />
             </Form.Item>
           </Form>
         </ContentWrapper>

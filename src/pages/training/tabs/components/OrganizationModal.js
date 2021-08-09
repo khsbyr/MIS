@@ -219,7 +219,7 @@ export default function OrganizationModal(props) {
         title="Зөвлөх байгууллага бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
-        width={1200}
+        width={1100}
         alignItems="center"
         visible={isModalVisible}
         onOk={save}
@@ -234,7 +234,7 @@ export default function OrganizationModal(props) {
             validateMessages={validateMessages}
           >
             <Row gutter={[72]}>
-              <Col xs={24} md={24} lg={4}>
+              <Col xs={24} md={24} lg={6}>
                 <Dragger {...props}>
                   <p className="ant-upload-drag-icon">
                     <InboxOutlined />
@@ -423,10 +423,10 @@ export default function OrganizationModal(props) {
                   </Col>
                 </Row>
               </Col>
-              <Col xs={24} md={24} lg={10}>
+              <Col xs={24} md={24} lg={8}>
                 <h2 className="title">Хариуцсан ажилтан:</h2>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={20}>
                     <Form.Item
                       label="Овог:"
                       name="RespoUserLastName"
@@ -441,7 +441,7 @@ export default function OrganizationModal(props) {
                   </Col>
                 </Row>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={20}>
                     <Form.Item
                       label="Нэр:"
                       name="RespoUserFirstName"
@@ -456,7 +456,7 @@ export default function OrganizationModal(props) {
                   </Col>
                 </Row>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={20}>
                     <Form.Item
                       label="Регистрийн дугаар:"
                       name="RespoUserRegister"
@@ -471,14 +471,14 @@ export default function OrganizationModal(props) {
                   </Col>
                 </Row>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={20}>
                     <Form.Item label="Албан тушаал:" name="RespoUserPosition">
                       <Input />
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={20}>
                     <Form.Item
                       label="Утасны дугаар:"
                       name="RespoUserPhone"
@@ -496,7 +496,7 @@ export default function OrganizationModal(props) {
                   </Col>
                 </Row>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={20}>
                     <Form.Item
                       label="Е-майл хаяг:"
                       name="RespoUserEmail"
@@ -511,7 +511,7 @@ export default function OrganizationModal(props) {
                   </Col>
                 </Row>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={20}>
                     <Form.Item label="Танилцуулга оруулах:">
                       <Upload {...props}>
                         <Button
@@ -525,7 +525,7 @@ export default function OrganizationModal(props) {
                   </Col>
                 </Row>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={20}>
                     <Form.Item>
                       <Checkbox>Оруулсан мэдээлэл үнэн болно.</Checkbox>
                     </Form.Item>
