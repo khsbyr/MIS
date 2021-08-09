@@ -11,40 +11,39 @@ import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import { ToolsContext } from '../../../context/Tools';
-import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from './components/attendance.style';
-import TrainingReportModal from './components/trainingReportModal';
+import { ToolsContext } from '../../context/Tools';
+import { getService, putService } from '../../service/service';
+import { errorCatch } from '../../tools/Tools';
+import ContentWrapper from '../criteria/criteria.style';
+import OrganizationModal from '../training/tabs/components/OrganizationModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const TrainingReport = props => {
+const ConsultingOrg = () => {
   const loadLazyTimeout = null;
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
+  const PAGESIZE = 20;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams] = useState({
     page: 0,
   });
   // const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [orgID, setOrgID] = useState([]);
   const onInit = () => {
-    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`training/get/${props.id}`, list)
+    toolsStore.setIsShowLoader(true);
+    getService(`organization/get`, list)
       .then(result => {
-        const listResult = result || [];
-        // listResult.forEach((item, index) => {
-        //   item.index = lazyParams.page * PAGESIZE + index + 1;
-        // });
-        setList([listResult]);
-        setOrgID(result.organization.id);
+        const listResult = result.content;
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
         setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
@@ -53,7 +52,6 @@ const TrainingReport = props => {
         toolsStore.setIsShowLoader(false);
       });
   };
-
   useEffect(() => {
     onInit();
   }, [lazyParams]);
@@ -74,7 +72,7 @@ const TrainingReport = props => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`trainingReport/delete/${row.id}`)
+    putService(`organization/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -121,6 +119,7 @@ const TrainingReport = props => {
       />
     </>
   );
+
   const closeModal = (isSuccess = false) => {
     setIsModalVisible(false);
     if (isSuccess) onInit();
@@ -133,26 +132,38 @@ const TrainingReport = props => {
     </>
   );
 
-  const trainingnameBodyTemplate = row => (
+  const nameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Сургалтын нэр</span>
+      <span className="p-column-title">Байгууллагын нэр</span>
       {row.name}
     </>
   );
 
-  const teacherBodyTemplate = row => (
+  const registerNumberBodyTemplate = row => (
     <>
-      <span className="p-column-title">Огноо</span>
-      {row.createdDate}
+      <span className="p-column-title">Регистрийн дугаар</span>
+      {row.registerNumber}
     </>
   );
 
-  const respoUserBodyTemplate = row => (
+  const bankNameBodyTemplate = row => (
     <>
-      <span className="p-column-title">
-        Сургалт явуулсан байгууллага, хүний нэр
-      </span>
-      {row.organization.responsibleUser.firstname}
+      <span className="p-column-title">Банкны нэр</span>
+      {row.bank.name}
+    </>
+  );
+
+  const accountNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дансны нэр</span>
+      {row.accountName}
+    </>
+  );
+
+  const accountNumberBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дансны дугаар</span>
+      {row.accountNumber}
     </>
   );
 
@@ -162,7 +173,10 @@ const TrainingReport = props => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={24}>
+              <Col xs={24} md={12} lg={14}>
+                <p className="title">Зөвлөх байгууллага</p>
+              </Col>
+              <Col xs={18} md={12} lg={10}>
                 <Row justify="end" gutter={[16, 16]}>
                   <Col>
                     <Tooltip title="Хэвлэх" arrowPointAtCenter>
@@ -209,53 +223,35 @@ const TrainingReport = props => {
             paginator
             rows={10}
             className="p-datatable-responsive-demo"
-            // selectionMode="checkbox"
             selection={selectedRows}
             // onRowClick={edit}
-            // editMode="row"
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
           >
-            {/* <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column> */}
-            {/* <Column
-              field="index"
-              header="№"
-              body={indexBodyTemplate}
-              sortable
-            /> */}
+            <Column header="№" body={indexBodyTemplate} style={{ width: 40 }} />
             <Column
-              field="trainerFor"
-              header="Сургалтын нэр"
-              body={trainingnameBodyTemplate}
-              sortable
+              header="Байгууллагын нэр"
+              body={nameBodyTemplate}
               filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              field="registerNumber"
-              header="Огноо"
-              body={teacherBodyTemplate}
               sortable
-              filter
-              filterPlaceholder="Хайх"
             />
             <Column
-              field=""
-              header="Сургалт явуулсан байгууллага, хүний нэр"
-              body={respoUserBodyTemplate}
+              header="Регистрийн дугаар"
+              body={registerNumberBodyTemplate}
             />
+            <Column header="Банкны нэр" body={bankNameBodyTemplate} />
+            <Column header="Дансны нэр" body={accountNameBodyTemplate} />
+            <Column header="Дансны дугаар" body={accountNumberBodyTemplate} />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <TrainingReportModal
-              TrainingReportController={editRow}
+            <OrganizationModal
+              Orgcontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              orgID={orgID}
-              trainingIDD={props.id}
             />
           )}
         </div>
@@ -264,4 +260,4 @@ const TrainingReport = props => {
   );
 };
 
-export default TrainingReport;
+export default ConsultingOrg;

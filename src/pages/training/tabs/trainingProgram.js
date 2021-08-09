@@ -187,20 +187,6 @@ const TrainingProgram = props => {
               <Col xs={24} md={24} lg={24}>
                 <Row justify="end" gutter={[16, 16]}>
                   <Col>
-                    <DatePicker
-                      bordered={false}
-                      suffixIcon={<DownOutlined />}
-                      placeholder="Select year"
-                      picker="year"
-                      className="DatePicker"
-                      style={{
-                        width: '120px',
-                        color: 'black',
-                        cursor: 'pointer',
-                      }}
-                    />
-                  </Col>
-                  <Col>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -250,7 +236,6 @@ const TrainingProgram = props => {
               field="index"
               header="№"
               body={indexBodyTemplate}
-              sortable
               style={{ width: 40 }}
             />
             <Column

@@ -2,36 +2,27 @@ import { InboxOutlined } from '@ant-design/icons';
 import { faCalendarAlt, faPhone } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  AutoComplete,
   Col,
   DatePicker,
   Form,
   Input,
   InputNumber,
+  message,
   Modal,
   Row,
-  Select,
   Upload,
-  message,
 } from 'antd';
 import moment from 'moment';
 import React, { useContext, useEffect, useState } from 'react';
-import AutoCompleteSelect from '../../../../components/Autocomplete';
-import { ToolsContext } from '../../../../context/Tools';
-import {
-  getService,
-  postService,
-  putService,
-} from '../../../../service/service';
-import { errorCatch } from '../../../../tools/Tools';
-import validateMessages from '../../../../tools/validateMessage';
-import ContentWrapper from './cv.styled';
-import CvShowModal from './CvShowModal';
-
-// import { colourOptions } from '../data';
+import AutoCompleteSelect from '../../../components/Autocomplete';
+import { ToolsContext } from '../../../context/Tools';
+import { getService, postService, putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import validateMessages from '../../../tools/validateMessage';
+import ContentWrapper from '../../training/tabs/components/cv.styled';
+import ConsultingShowModal from './ConsultingShowModal';
 
 const { Dragger } = Upload;
-const { Option } = Select;
 const layout = {
   labelCol: {
     span: 20,
@@ -41,7 +32,7 @@ const layout = {
   },
 };
 
-export default function CvModal(props) {
+export default function ConsultingPersonModal(props) {
   const { Trainerscontroller, isModalVisible, isEditMode, trainerID, orgId } =
     props;
   const [form] = Form.useForm();
@@ -52,14 +43,9 @@ export default function CvModal(props) {
   const [stateBag, setStateBag] = useState([]);
   const loadLazyTimeout = null;
   const [userID, setUserID] = useState();
-  const [BirthDatee, setBirthDatee] = useState();
-  const [, setStateOrg] = useState([]);
+  const [BirthDatee] = useState();
   const [changedBirthDate, setChangedBirthDate] = useState();
-  const [, setIsOnchange] = useState(false);
-  // const [isOnChange, setIsOnchange] = useState(false);
-  const [options, setOptions] = useState([]);
-  // const filter = createFilterOptions();
-
+  const [personID, setPersonID] = useState();
   function onBirthDateChange(date, value) {
     setChangedBirthDate(value);
   }
@@ -83,19 +69,8 @@ export default function CvModal(props) {
     //     toolsStore.setIsShowLoader(false);
     //   });
   };
-
   useEffect(() => {
     onInit();
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrg(result.content || []);
-      }
-    });
-    getService(`user/getNotTrainerUserListByOrgId/${orgId}`).then(result => {
-      if (result) {
-        setOptions(result || []);
-      }
-    });
     getService('country/get').then(result => {
       if (result) {
         setStateCountry(result || []);
@@ -150,8 +125,8 @@ export default function CvModal(props) {
         BagID: Trainerscontroller.address
           ? Trainerscontroller.address.bag.id
           : '',
-        purpose: Trainerscontroller.trainers.purpose,
-        skill: Trainerscontroller.trainers.skill,
+        // purpose: Trainerscontroller.trainers.purpose,
+        // skill: Trainerscontroller.trainers.skill,
       });
     }
   }, []);
@@ -160,29 +135,6 @@ export default function CvModal(props) {
     getService(`aimag/getList/${countryId}`, {}).then(result => {
       if (result) {
         setStateAimag(result || []);
-      }
-    });
-  };
-
-  const selectUser = (value, option) => {
-    setIsOnchange(true);
-    getService(`user/get/${option.key}`, {}).then(result => {
-      if (result) {
-        const selectedUser = result;
-        setBirthDatee(selectedUser.birthDate);
-        setUserID(selectedUser.id);
-        form.setFieldsValue({
-          ...selectedUser,
-          CountryID: selectedUser.address
-            ? selectedUser.address.country.id
-            : '',
-          AimagID: selectedUser.address ? selectedUser.address.aimag.id : '',
-          SoumID: selectedUser.address ? selectedUser.address.soum.id : '',
-          BagID: selectedUser.address ? selectedUser.address.bag.id : '',
-          AddressDetail: selectedUser.address
-            ? selectedUser.address.addressDetail
-            : '',
-        });
       }
     });
   };
@@ -219,9 +171,7 @@ export default function CvModal(props) {
     form
       .validateFields()
       .then(values => {
-        values.organizationId = orgId;
         if (isEditMode) {
-          values.trainers = { purpose: values.purpose, skill: values.skill };
           values.id = userID;
           values.birthDate = changedBirthDate;
           values.address = {
@@ -248,7 +198,7 @@ export default function CvModal(props) {
               errorCatch(error);
             });
         } else {
-          values.trainers = { purpose: values.purpose, skill: values.skill };
+          values.person = { id: personID };
           values.user = {
             id: userID,
             firstname: values.firstname,
@@ -256,7 +206,6 @@ export default function CvModal(props) {
             register: values.registerNumber,
             phoneNumber: values.phoneNumber,
             email: values.email,
-            birthDate: changedBirthDate,
             address: {
               addressDetail: values.AddressDetail,
               country: {
@@ -273,7 +222,7 @@ export default function CvModal(props) {
               },
             },
           };
-          postService(`trainers/post`, values)
+          postService(`person/post`, values)
             .then(() => {
               message.success('Амжилттай хадгаллаа');
               props.close(true);
@@ -290,7 +239,7 @@ export default function CvModal(props) {
   return (
     <div>
       <Modal
-        title="Сургагч багшийн CV бүртгэх"
+        title="Зөвлөх хувь хүн бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
         width={1200}
@@ -328,7 +277,7 @@ export default function CvModal(props) {
                     },
                   ]}
                 >
-                  <AutoComplete
+                  {/* <AutoComplete
                     placeholder="Регистрын дугаар"
                     onSelect={selectUser}
                     filterOption={(inputValue, option) =>
@@ -343,7 +292,8 @@ export default function CvModal(props) {
                         {value.register}
                       </Option>
                     ))}
-                  </AutoComplete>
+                  </AutoComplete> */}
+                  <Input className="FormItem" placeholder="Регистр:" />
                 </Form.Item>
                 <Form.Item name="lastname">
                   <Input
@@ -440,7 +390,7 @@ export default function CvModal(props) {
                 </Form.Item>
               </Col>
             </Row>
-            <h2 className="title">1. Ажлын зорилго</h2>
+            {/* <h2 className="title">1. Ажлын зорилго</h2>
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Form.Item name="purpose">
@@ -467,8 +417,8 @@ export default function CvModal(props) {
                   />
                 </Form.Item>
               </Col>
-            </Row>{' '}
-            <h2 className="title">3. Дэлгэрэнгүй хаяг</h2>
+            </Row>{' '} */}
+            <h2 className="title">1. Дэлгэрэнгүй хаяг</h2>
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Form.Item name="AddressDetail">
@@ -483,7 +433,7 @@ export default function CvModal(props) {
               </Col>
             </Row>
             {isEditMode ? (
-              <CvShowModal
+              <ConsultingShowModal
                 Trainerscontroller={Trainerscontroller}
                 isModalVisible={isModalVisible}
                 isEditMode={isEditMode}
