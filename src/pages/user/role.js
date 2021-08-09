@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Suspense, useContext } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { Button, message, Layout, Checkbox, Row, Col } from 'antd';
+import { Button, message, Layout, Checkbox, Row, Col, Tooltip } from 'antd';
 import {
   faFileExcel,
   faPlus,
@@ -122,37 +122,43 @@ export default function Roles() {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={14}>
+              <Col xs={24} md={12} lg={14}>
                 <p className="title">Эрхийн тохиргоо</p>
               </Col>
-              <Col xs={16} md={16} lg={10}>
+              <Col xs={18} md={12} lg={10}>
                 <Row justify="end" gutter={[16, 16]}>
-                  <Col xs={8} md={4} lg={4}>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      Хэвлэх{' '}
-                    </Button>
+                  <Col>
+                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        icon={<FontAwesomeIcon icon={faPrint} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
-                  <Col xs={8} md={4} lg={4}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      Экспорт
-                    </Button>
+                  <Col>
+                    <Tooltip title="Экспорт" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFileExcel} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
-                  <Col xs={8} md={4} lg={4}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      Нэмэх
-                    </Button>
+                  <Col>
+                    <Tooltip title="Нэмэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={add}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
                 </Row>
               </Col>

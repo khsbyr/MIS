@@ -11,17 +11,18 @@ import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import { ToolsContext } from '../../../context/Tools';
-import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from './components/attendance.style';
-import TrainingReportModal from './components/trainingReportModal';
+import { ToolsContext } from '../../context/Tools';
+import { getService, putService } from '../../service/service';
+import { errorCatch } from '../../tools/Tools';
+import ContentWrapper from '../criteria/criteria.style';
+import ConsultingPersonModal from './components/ConsultingPersonModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const TrainingReport = props => {
+let trainerID;
+const ConsultingPerson = () => {
   const loadLazyTimeout = null;
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
@@ -29,22 +30,22 @@ const TrainingReport = props => {
   const [lazyParams] = useState({
     page: 0,
   });
-  // const PAGESIZE = 20;
+  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [orgID, setOrgID] = useState([]);
+  const [, setStateOrg] = useState([]);
+  const [OrgID] = useState([]);
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`training/get/${props.id}`, list)
+    getService(`user/getAllPersonUserList`, list)
       .then(result => {
         const listResult = result || [];
-        // listResult.forEach((item, index) => {
-        //   item.index = lazyParams.page * PAGESIZE + index + 1;
-        // });
-        setList([listResult]);
-        setOrgID(result.organization.id);
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
         setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
@@ -56,17 +57,17 @@ const TrainingReport = props => {
 
   useEffect(() => {
     onInit();
+    getService('organization/get').then(result => {
+      if (result) {
+        setStateOrg(result.content || []);
+      }
+    });
   }, [lazyParams]);
 
   const add = () => {
+    editRow = null;
     setIsModalVisible(true);
     isEditMode = false;
-  };
-
-  const edit = row => {
-    editRow = row;
-    isEditMode = true;
-    setIsModalVisible(true);
   };
 
   const handleDeleted = row => {
@@ -74,7 +75,7 @@ const TrainingReport = props => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`trainingReport/delete/${row.id}`)
+    putService(`person/delete/${row.person.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -93,7 +94,7 @@ const TrainingReport = props => {
       cancelText: 'Буцах',
       onOk() {
         handleDeleted(row);
-        onInit();
+        // onInit();
       },
       onCancel() {},
     });
@@ -105,6 +106,13 @@ const TrainingReport = props => {
     } else {
       confirm(row);
     }
+  };
+
+  const edit = row => {
+    trainerID = row.person.id;
+    editRow = row;
+    isEditMode = true;
+    setIsModalVisible(true);
   };
 
   const action = row => (
@@ -121,6 +129,7 @@ const TrainingReport = props => {
       />
     </>
   );
+
   const closeModal = (isSuccess = false) => {
     setIsModalVisible(false);
     if (isSuccess) onInit();
@@ -133,36 +142,43 @@ const TrainingReport = props => {
     </>
   );
 
-  const trainingnameBodyTemplate = row => (
+  const FirstNameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Сургалтын нэр</span>
-      {row.name}
+      <span className="p-column-title">Нэр</span>
+      {row.firstname}
     </>
   );
 
-  const teacherBodyTemplate = row => (
+  const LastNameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Огноо</span>
-      {row.createdDate}
+      <span className="p-column-title">Овог</span>
+      {row.lastname}
     </>
   );
 
-  const respoUserBodyTemplate = row => (
+  const phoneBodyTemplate = row => (
     <>
-      <span className="p-column-title">
-        Сургалт явуулсан байгууллага, хүний нэр
-      </span>
-      {row.organization.responsibleUser.firstname}
+      <span className="p-column-title">Утас</span>
+      {row.phoneNumber}
     </>
   );
 
+  const registerBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Регистер</span>
+      {row.register}
+    </>
+  );
   return (
     <ContentWrapper>
       <div className="button-demo">
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={24}>
+              <Col xs={24} md={12} lg={14}>
+                <p className="title">Зөвлөх хувь хүн</p>
+              </Col>
+              <Col xs={18} md={12} lg={10}>
                 <Row justify="end" gutter={[16, 16]}>
                   <Col>
                     <Tooltip title="Хэвлэх" arrowPointAtCenter>
@@ -202,6 +218,7 @@ const TrainingReport = props => {
             </Row>
           </Content>
         </Layout>
+
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}
@@ -209,53 +226,57 @@ const TrainingReport = props => {
             paginator
             rows={10}
             className="p-datatable-responsive-demo"
-            // selectionMode="checkbox"
             selection={selectedRows}
-            // onRowClick={edit}
-            // editMode="row"
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
           >
-            {/* <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column> */}
-            {/* <Column
+            <Column
               field="index"
               header="№"
               body={indexBodyTemplate}
-              sortable
-            /> */}
+              style={{ width: 40 }}
+            />
             <Column
-              field="trainerFor"
-              header="Сургалтын нэр"
-              body={trainingnameBodyTemplate}
+              header="Овог"
+              body={LastNameBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              header="Нэр"
+              body={FirstNameBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              header="Утас"
+              body={phoneBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
             />
             <Column
               field="registerNumber"
-              header="Огноо"
-              body={teacherBodyTemplate}
+              header="Регистер"
+              body={registerBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
             />
-            <Column
-              field=""
-              header="Сургалт явуулсан байгууллага, хүний нэр"
-              body={respoUserBodyTemplate}
-            />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <TrainingReportModal
-              TrainingReportController={editRow}
+            <ConsultingPersonModal
+              Trainerscontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              orgID={orgID}
-              trainingIDD={props.id}
+              orgId={OrgID}
+              trainerID={trainerID}
             />
           )}
         </div>
@@ -264,4 +285,4 @@ const TrainingReport = props => {
   );
 };
 
-export default TrainingReport;
+export default ConsultingPerson;

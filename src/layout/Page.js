@@ -34,10 +34,16 @@ const TrainingList = loadable({
   loading: Loader,
 });
 
-// const TrainingInfo = loadable({
-//   loader: () => import('../pages/training/more/TraningInfo'),
-//   loading: Loader,
-// });
+const ConsultingOrg = loadable({
+  loader: () => import('../pages/consulting/consultingOrg'),
+  loading: Loader,
+});
+
+const ConsultingPerson = loadable({
+  loader: () => import('../pages/consulting/consultingPerson'),
+  loading: Loader,
+});
+
 const Scope = loadable({
   loader: () => import('../pages/directory/scope'),
   loading: Loader,
@@ -97,6 +103,11 @@ const Page = ({ route }) => {
 
       /** Тайлан */
 
+      /** Зөвлөх үйлчилгээ */
+      case 'Consulting organization'.toLowerCase():
+        return <ConsultingOrg />;
+      case 'Consultant individual'.toLowerCase():
+        return <ConsultingPerson />;
       default:
         return null;
     }

@@ -217,7 +217,11 @@ const Guidelines = props => {
             }}
             dataKey="id"
           >
-            <Column header="Сургалтын сэдэв" body={subjectBodyTemplate} />
+            <Column
+              header="Сургалтын сэдэв"
+              body={subjectBodyTemplate}
+              sortable
+            />
             <Column
               header="Сургалт зохион байгуулах үндэслэл"
               body={reasonTrainerBodyTemplate}

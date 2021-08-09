@@ -8,7 +8,16 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
+import {
+  Button,
+  Col,
+  DatePicker,
+  Layout,
+  message,
+  Modal,
+  Row,
+  Tooltip,
+} from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { ToolsContext } from '../../context/Tools';
@@ -154,7 +163,6 @@ const Criteria = () => {
       {row.indicatorProcess}
     </>
   );
-
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -164,9 +172,9 @@ const Criteria = () => {
               <Col xs={24} md={24} lg={14}>
                 <p className="title">Шалгуур үзүүлэлтийн бүртгэл</p>
               </Col>
-              <Col xs={24} md={24} lg={10}>
-                <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={6}>
+              <Col xs={24} md={12} lg={10}>
+                <Row justify="end" gutter={[16, 16]}>
+                  <Col>
                     <DatePicker
                       bordered={false}
                       suffixIcon={<DownOutlined />}
@@ -180,32 +188,38 @@ const Criteria = () => {
                       }}
                     />
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      Хэвлэх{' '}
-                    </Button>
+                  <Col>
+                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        icon={<FontAwesomeIcon icon={faPrint} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      Экспорт
-                    </Button>
+                  <Col>
+                    <Tooltip title="Экспорт" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFileExcel} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
-                  <Col xs={8} md={8} lg={6}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      Нэмэх
-                    </Button>
+                  <Col>
+                    <Tooltip title="Нэмэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={add}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
                 </Row>
               </Col>
@@ -226,7 +240,12 @@ const Criteria = () => {
             }}
             dataKey="id"
           >
-            <Column field="index" header="№" body={indexBodyTemplate} />
+            <Column
+              field="index"
+              header="№"
+              body={indexBodyTemplate}
+              style={{ width: 40 }}
+            />
             <Column
               field="name"
               header="Шалгуур үзүүлэлтийн нэр"
