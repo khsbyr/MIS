@@ -150,52 +150,50 @@ const Customerside = () => {
   return (
     <ContentWrapper>
       <div className="button-demo">
-        <Layout className="btn-layout">
-          <Content>
-            <Row>
-              <Col xs={24} md={12} lg={14}>
-                <p className="title">Харилцах тал</p>
-              </Col>
-              <Col xs={18} md={12} lg={10}>
-                <Row justify="end" gutter={[16, 16]}>
-                  <Col>
-                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        icon={<FontAwesomeIcon icon={faPrint} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title="Экспорт" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faFileExcel} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title="Нэмэх" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faPlus} />}
-                        onClick={add}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Content>
-        </Layout>
+        <Content>
+          <Row>
+            <Col xs={24} md={12} lg={14}>
+              <p className="title">Харилцах тал</p>
+            </Col>
+            <Col xs={18} md={12} lg={10}>
+              <Row justify="end" gutter={[16, 16]}>
+                <Col>
+                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      icon={<FontAwesomeIcon icon={faPrint} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col>
+                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFileExcel} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col>
+                  <Tooltip title="Нэмэх" arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faPlus} />}
+                      onClick={add}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Content>
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}

@@ -166,66 +166,64 @@ const Criteria = () => {
   return (
     <ContentWrapper>
       <div className="button-demo">
-        <Layout className="btn-layout">
-          <Content>
-            <Row>
-              <Col xs={24} md={24} lg={14}>
-                <p className="title">Шалгуур үзүүлэлтийн бүртгэл</p>
-              </Col>
-              <Col xs={24} md={12} lg={10}>
-                <Row justify="end" gutter={[16, 16]}>
-                  <Col>
-                    <DatePicker
-                      bordered={false}
-                      suffixIcon={<DownOutlined />}
-                      placeholder="Select year"
-                      picker="year"
-                      className="DatePicker"
-                      style={{
-                        width: '120px',
-                        color: 'black',
-                        cursor: 'pointer',
-                      }}
-                    />
-                  </Col>
-                  <Col>
-                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        icon={<FontAwesomeIcon icon={faPrint} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title="Экспорт" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faFileExcel} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title="Нэмэх" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faPlus} />}
-                        onClick={add}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Content>
-        </Layout>
+        <Content>
+          <Row>
+            <Col xs={24} md={24} lg={14}>
+              <p className="title">Шалгуур үзүүлэлтийн бүртгэл</p>
+            </Col>
+            <Col xs={24} md={12} lg={10}>
+              <Row justify="end" gutter={[16, 16]}>
+                <Col>
+                  <DatePicker
+                    bordered={false}
+                    suffixIcon={<DownOutlined />}
+                    placeholder="Select year"
+                    picker="year"
+                    className="DatePicker"
+                    style={{
+                      width: '120px',
+                      color: 'black',
+                      cursor: 'pointer',
+                    }}
+                  />
+                </Col>
+                <Col>
+                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      icon={<FontAwesomeIcon icon={faPrint} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col>
+                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFileExcel} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col>
+                  <Tooltip title="Нэмэх" arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faPlus} />}
+                      onClick={add}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Content>
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}
