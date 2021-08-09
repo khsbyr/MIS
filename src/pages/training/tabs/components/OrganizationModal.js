@@ -219,7 +219,7 @@ export default function OrganizationModal(props) {
         title="Зөвлөх байгууллага бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
-        width={1200}
+        width={1100}
         alignItems="center"
         visible={isModalVisible}
         onOk={save}
@@ -234,7 +234,7 @@ export default function OrganizationModal(props) {
             validateMessages={validateMessages}
           >
             <Row gutter={[72]}>
-              <Col xs={24} md={24} lg={4}>
+              <Col xs={24} md={24} lg={6}>
                 <Dragger {...props}>
                   <p className="ant-upload-drag-icon">
                     <InboxOutlined />
@@ -261,31 +261,71 @@ export default function OrganizationModal(props) {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Регистрийн дугаар:" name="registerNumber">
+                    <Form.Item
+                      label="Регистрийн дугаар:"
+                      name="registerNumber"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
                       <Input />
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row gutter={32}>
                   <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Банкны нэр:" name="bankID">
+                    <Form.Item
+                      label="Банкны нэр:"
+                      name="bankID"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
                       <AutoCompleteSelect valueField="id" data={stateBank} />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Дансны нэр:" name="accountName">
+                    <Form.Item
+                      label="Дансны нэр:"
+                      name="accountName"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
                       <Input />
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row gutter={32}>
                   <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Дансны дугаар:" name="accountNumber">
+                    <Form.Item
+                      label="Дансны дугаар:"
+                      name="accountNumber"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
                       <InputNumber type="number" />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Дансны вальют:" name="Currency">
+                    <Form.Item
+                      label="Дансны вальют:"
+                      name="Currency"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
                       <AutoCompleteSelect
                         valueField="id"
                         data={stateCurrency}
@@ -293,7 +333,15 @@ export default function OrganizationModal(props) {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={24}>
-                    <Form.Item label="Эрх:" name="roleId">
+                    <Form.Item
+                      label="Эрх:"
+                      name="roleId"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
                       <AutoCompleteSelect
                         valueField="id"
                         data={role}
@@ -375,42 +423,71 @@ export default function OrganizationModal(props) {
                   </Col>
                 </Row>
               </Col>
-              <Col xs={24} md={24} lg={10}>
+              <Col xs={24} md={24} lg={8}>
                 <h2 className="title">Хариуцсан ажилтан:</h2>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Овог:" name="RespoUserLastName">
+                  <Col xs={24} md={24} lg={20}>
+                    <Form.Item
+                      label="Овог:"
+                      name="RespoUserLastName"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
                       <Input />
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Нэр:" name="RespoUserFirstName">
+                  <Col xs={24} md={24} lg={20}>
+                    <Form.Item
+                      label="Нэр:"
+                      name="RespoUserFirstName"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
                       <Input />
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={20}>
                     <Form.Item
                       label="Регистрийн дугаар:"
                       name="RespoUserRegister"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
                     >
                       <Input maxLength={10} />
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={20}>
                     <Form.Item label="Албан тушаал:" name="RespoUserPosition">
                       <Input />
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Утасны дугаар:" name="RespoUserPhone">
+                  <Col xs={24} md={24} lg={20}>
+                    <Form.Item
+                      label="Утасны дугаар:"
+                      name="RespoUserPhone"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
                       <InputNumber
                         parser={value => value.substring(0, 12)}
                         type="number"
@@ -419,14 +496,22 @@ export default function OrganizationModal(props) {
                   </Col>
                 </Row>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Е-майл хаяг:" name="RespoUserEmail">
+                  <Col xs={24} md={24} lg={20}>
+                    <Form.Item
+                      label="Е-майл хаяг:"
+                      name="RespoUserEmail"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
                       <Input />
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={20}>
                     <Form.Item label="Танилцуулга оруулах:">
                       <Upload {...props}>
                         <Button
@@ -440,7 +525,7 @@ export default function OrganizationModal(props) {
                   </Col>
                 </Row>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={20}>
                     <Form.Item>
                       <Checkbox>Оруулсан мэдээлэл үнэн болно.</Checkbox>
                     </Form.Item>

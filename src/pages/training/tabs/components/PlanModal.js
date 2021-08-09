@@ -7,7 +7,8 @@ import {
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import ContentWrapper from './guidelines.style';
+// eslint-disable-next-line import/no-named-as-default
+import ContentWrapper from './plan.styled';
 import validateMessages from '../../../../tools/validateMessage';
 
 export default function PlanModal(props) {

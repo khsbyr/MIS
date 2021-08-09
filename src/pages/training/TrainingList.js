@@ -7,7 +7,16 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
+import {
+  Button,
+  Col,
+  DatePicker,
+  Layout,
+  message,
+  Modal,
+  Row,
+  Tooltip,
+} from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
@@ -36,6 +45,7 @@ const TrainingList = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   // const [, setStateOrga] = useState([]);
   const [orgID] = useState([]);
+  const [trainingID, setTrainingID] = useState([]);
   const [stateOrga, setStateOrga] = useState([]);
 
   const history = useHistory();
@@ -52,6 +62,7 @@ const TrainingList = () => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
+        setTrainingID(result.id);
         setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
@@ -66,6 +77,11 @@ const TrainingList = () => {
     getService('organization/get').then(result => {
       if (result) {
         setStateOrga(result.content || []);
+      }
+    });
+    getService(`criteria/getListByForWhatId/1`).then(result => {
+      if (result) {
+        // setStateCriteria(result.content || []);
       }
     });
   }, [lazyParams]);
@@ -93,7 +109,9 @@ const TrainingList = () => {
     isEditMode = false;
   };
 
-  const edit = row => {
+  const edit = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
@@ -130,7 +148,9 @@ const TrainingList = () => {
     });
   }
 
-  const pop = row => {
+  const pop = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
@@ -143,12 +163,12 @@ const TrainingList = () => {
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
+        onClick={event => edit(event, row)}
       />
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
+        onClick={event => pop(event, row)}
       />
     </>
   );
@@ -189,14 +209,14 @@ const TrainingList = () => {
   const startDateBodyTemplate = row => (
     <>
       <span className="p-column-title">Эхэлсэн огноо</span>
-      {row.trainingStartDate}
+      {row.startDateFormat}
     </>
   );
 
   const endDateBodyTemplate = row => (
     <>
       <span className="p-column-title">Дууссан огноо</span>
-      {row.trainingEndDate}
+      {row.endDateFormat}
     </>
   );
 
@@ -212,70 +232,74 @@ const TrainingList = () => {
   return (
     <ContentWrapper>
       <div className="button-demo">
-        <Layout className="btn-layout">
-          <Content>
-            <Row>
-              <Col xs={24} md={24} lg={14}>
-                <p className="title">Сургалт</p>
-              </Col>
-              <Col xs={24} md={24} lg={10}>
-                <Row justify="end" gutter={[16, 16]}>
-                  <Col xs={8} md={8} lg={6}>
-                    <OrgaStyle>
-                      <AutoCompleteSelect
-                        valueField="id"
-                        placeholder="Байгууллага сонгох"
-                        data={stateOrga}
-                        onChange={value => selectOrgs(value)}
-                      />
-                    </OrgaStyle>
-                  </Col>{' '}
-                  <Col xs={8} md={8} lg={4}>
-                    <DatePicker
-                      bordered={false}
-                      suffixIcon={<DownOutlined />}
-                      placeholder="Select year"
-                      picker="year"
-                      className="DatePicker"
-                      style={{
-                        width: '120px',
-                        color: 'black',
-                        cursor: 'pointer',
-                      }}
+        <Content>
+          <Row>
+            <Col xs={24} md={24} lg={14}>
+              <p className="title">Сургалтын жагсаалт</p>
+            </Col>
+            <Col xs={24} md={18} lg={10}>
+              <Row justify="end" gutter={[16, 16]}>
+                <Col xs={12} md={6} lg={7}>
+                  <OrgaStyle>
+                    <AutoCompleteSelect
+                      valueField="id"
+                      placeholder="Байгууллага сонгох"
+                      data={stateOrga}
+                      onChange={value => selectOrgs(value)}
                     />
-                  </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  </OrgaStyle>
+                </Col>
+                <Col xs={12} md={5} lg={5}>
+                  <DatePicker
+                    bordered={false}
+                    suffixIcon={<DownOutlined />}
+                    placeholder="Select year"
+                    picker="year"
+                    className="DatePicker"
+                    style={{
+                      width: '120px',
+                      color: 'black',
+                      cursor: 'pointer',
+                    }}
+                  />
+                </Col>
+                <Col xs={8} md={2} lg={2}>
+                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
                     >
-                      Хэвлэх{' '}
+                      {' '}
                     </Button>
-                  </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  </Tooltip>
+                </Col>
+                <Col xs={8} md={2} lg={2}>
+                  <Tooltip title="Экспорт" arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faFileExcel} />}
                     >
-                      Экспорт
+                      {' '}
                     </Button>
-                  </Col>
-                  <Col xs={8} md={8} lg={4}>
+                  </Tooltip>
+                </Col>
+                <Col xs={8} md={2} lg={2}>
+                  <Tooltip title="Нэмэх" arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faPlus} />}
                       onClick={add}
                     >
-                      Нэмэх
+                      {' '}
                     </Button>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Content>
-        </Layout>
+                  </Tooltip>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Content>
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}
@@ -284,32 +308,55 @@ const TrainingList = () => {
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            // onRowClick={ShowTrainingInfo}
+            onRowClick={ShowTrainingInfo}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
           >
-            <Column field="index" header="№" body={indexBodyTemplate} />
-            <Column header="Сургалтын сэдэв" filter body={NameBodyTemplate} />
-            <Column header="Төсөв" filter body={totalBudgetBodyTemplate} />
+            <Column
+              field="index"
+              header="№"
+              body={indexBodyTemplate}
+              style={{ width: 40 }}
+            />
+            <Column
+              header="Сургалтын сэдэв"
+              filter
+              body={NameBodyTemplate}
+              sortable
+            />
+            <Column
+              header="Төсөв"
+              headerStyle={{ width: '10rem' }}
+              filter
+              body={totalBudgetBodyTemplate}
+            />
             <Column
               header="Гүйцэтгэлийн төсөв"
+              headerStyle={{ width: '10rem' }}
               filter
               body={performanceBudgetBodyTemplate}
             />
             <Column
               header="Эхэлсэн огноо"
+              headerStyle={{ width: '10rem' }}
               filter
               body={startDateBodyTemplate}
             />
-            <Column header="Дууссан огноо" filter body={endDateBodyTemplate} />
+            <Column
+              header="Дууссан огноо"
+              headerStyle={{ width: '10rem' }}
+              filter
+              body={endDateBodyTemplate}
+            />
             <Column
               header="Оролцогчдын тоо"
+              headerStyle={{ width: '10rem' }}
               filter
               body={participantBodyTemplate}
             />
-            <Column headerStyle={{ width: '7rem' }} body={action} />
+            <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <TrainingModal

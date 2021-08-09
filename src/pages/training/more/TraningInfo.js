@@ -2,7 +2,7 @@ import { Tabs } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import ContentWrapper from '../tabs/components/guidelines.style';
+import ContentWrapper from './TrainingInfo.style';
 import Organization from '../tabs/organization';
 import TrainingTeam from '../tabs/plan';
 import Attendance from '../tabs/attendance';
@@ -12,7 +12,7 @@ import TrainingProgram from '../tabs/trainingProgram';
 import Budget from '../tabs/budget';
 
 const { TabPane } = Tabs;
-const tabPosition = 'left';
+const tabPosition = 'top';
 
 export default function TraningInfo() {
   const { t } = useTranslation();
@@ -21,28 +21,28 @@ export default function TraningInfo() {
     <ContentWrapper>
       <Tabs tabPosition={tabPosition}>
         <TabPane tab={t('consulting_orga')} key="1">
-          <Organization id={2} />
+          <Organization id={id} />
         </TabPane>
         <TabPane tab={t('training_intro')} key="2">
-          <Guidelines id={2} />
+          <Guidelines id={id} />
         </TabPane>
         <TabPane tab={t('training_team')} key="3">
-          <TrainingTeam id={2} />
+          <TrainingTeam id={id} />
         </TabPane>
         <TabPane tab={t('training_program')} key="4">
-          <TrainingProgram id={2} />
+          <TrainingProgram id={id} />
         </TabPane>
         <TabPane tab={t('attendance_registration')} key="5">
-          <Attendance id={2} />
+          <Attendance id={id} />
         </TabPane>
         <TabPane tab={t('test_aggregation')} key="6">
           Content of Tab 1
         </TabPane>
         <TabPane tab={t('training_report')} key="7">
-          <TrainingReport id={2} />
+          <TrainingReport id={id} />
         </TabPane>
         <TabPane tab={t('training_budget')} key="8">
-          <Budget id={2} />
+          <Budget id={id} />
         </TabPane>
       </Tabs>
     </ContentWrapper>

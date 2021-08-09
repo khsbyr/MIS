@@ -1,11 +1,19 @@
-import { Col, Form, Input, Modal, Row } from 'antd';
+import { Form, Input, Modal } from 'antd';
 import React, { useEffect } from 'react';
 // import AutoCompleteSelect from '../../../components/Autocomplete';
 import { postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from '../../training/tabs/components/guidelines.style';
+import ContentWrapper from '../../training/tabs/components/CvModal.style';
 import validateMessages from '../../../tools/validateMessage';
 
+const layout = {
+  labelCol: {
+    span: 10,
+  },
+  wrapperCol: {
+    span: 18,
+  },
+};
 export default function CustomerSideModal(props) {
   const { Customersidecontroller, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
@@ -66,12 +74,11 @@ export default function CustomerSideModal(props) {
           <Form
             form={form}
             labelAlign="left"
-            layout="vertical"
+            {...layout}
             name="nest-messages"
             validateMessages={validateMessages}
           >
-            <Row gutter={30}>
-              {/* <Col xs={24} md={24} lg={6}>
+            {/* <Col xs={24} md={24} lg={6}>
                 <Form.Item name="isParent" layout="vertical" label="isparent:">
                   <Radio.Group onChange={onChange} value={stateGender}>
                     <Radio value={0}>false</Radio>
@@ -79,21 +86,17 @@ export default function CustomerSideModal(props) {
                   </Radio.Group>
                 </Form.Item>
               </Col> */}
-              <Col xs={24} md={24} lg={22}>
-                <Form.Item
-                  label="Харилцах тал:"
-                  name="name"
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={24} lg={12} />
-            </Row>
+            <Form.Item
+              label="Харилцах тал:"
+              name="name"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
           </Form>
         </ContentWrapper>
       </Modal>

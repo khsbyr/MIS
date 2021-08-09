@@ -150,7 +150,7 @@ const signUpRequest = () => {
               field="index"
               header="№"
               body={indexBodyTemplate}
-              sortable
+              style={{ width: 40 }}
             />
             <Column
               field="firstname"

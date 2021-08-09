@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { LogIn } from './Login.style';
 import { postService, getService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
-import { ToolsContext } from '../../context/Tools';
+import { useToolsStore } from '../../context/Tools';
 import Partner from './components/Partner';
 
 const useFormInput = initialValue => {
@@ -27,7 +27,7 @@ function Login() {
   const password = useFormInput('');
 
   const history = useHistory();
-  const toolsStore = useContext(ToolsContext);
+  const toolsStore = useToolsStore();
 
   function moveToRegister() {
     history.push('/register');
@@ -45,7 +45,8 @@ function Login() {
             if (!user) return;
             localStorage.setItem('token', result.data.token);
             localStorage.setItem('name', user.firstname);
-            toolsStore.setUser(user);
+            toolsStore.generalInfo.userInfo = user;
+            toolsStore.setGeneralInfo({ ...toolsStore.generalInfo });
             history.push('/admin/user');
           });
         })

@@ -1,4 +1,4 @@
-import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
@@ -7,7 +7,7 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, DatePicker, Layout, message, Modal, Row } from 'antd';
+import { Button, Col, Input, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
@@ -47,7 +47,6 @@ const Plan = props => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
-
         setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
@@ -60,6 +59,26 @@ const Plan = props => {
   useEffect(() => {
     onInit();
   }, [lazyParams]);
+
+  const dataTableFuncMap = {
+    list: setList,
+  };
+
+  const onEditorValueChange = (productKey, editData, value) => {
+    const updatedProducts = [...editData.value];
+    updatedProducts[editData.rowIndex][editData.field] = value;
+    dataTableFuncMap[`${productKey}`](updatedProducts);
+  };
+
+  const inputTextEditor = (productKey, editData, field) => (
+    <Input
+      type="text"
+      value={editData.rowData[field]}
+      onChange={e => onEditorValueChange(productKey, editData, e.target.value)}
+    />
+  );
+  const missionEditor = (productKey, editData) =>
+    inputTextEditor(productKey, editData, 'mission');
 
   const add = () => {
     setIsModalVisible(true);
@@ -132,21 +151,21 @@ const Plan = props => {
 
   const indexBodyTemplate = row => (
     <>
-      <span className="p-column-title">№</span>
+      {/* <span className="p-column-title">№</span> */}
       {row.index}
     </>
   );
 
   const missionBodyTemplate = row => (
     <>
-      <span className="p-column-title">Сургалтанд гүйцэтгэх үүрэг</span>
+      {/* <span className="p-column-title">Сургалтанд гүйцэтгэх үүрэг</span> */}
       {row.mission}
     </>
   );
 
   const nameTrainerBodyTemplate = row => (
     <>
-      <span className="p-column-title">Багшийн нэрс</span>
+      {/* <span className="p-column-title">Багшийн нэрс</span> */}
       {row.user && row.user.fullName}
     </>
   );
@@ -157,52 +176,40 @@ const Plan = props => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={12}>
-                <p className="title">Сургалтын баг</p>
-              </Col>
-              <Col xs={24} md={24} lg={12}>
-                <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={7} />
-                  <Col xs={8} md={8} lg={5}>
-                    <DatePicker
-                      bordered={false}
-                      suffixIcon={<DownOutlined />}
-                      placeholder="Select year"
-                      picker="year"
-                      className="DatePicker"
-                      style={{
-                        width: '120px',
-                        color: 'black',
-                        cursor: 'pointer',
-                      }}
-                    />
+              <Col xs={24} md={24} lg={24}>
+                <Row justify="end" gutter={[16, 16]}>
+                  <Col>
+                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        icon={<FontAwesomeIcon icon={faPrint} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      Хэвлэх{' '}
-                    </Button>
+                  <Col>
+                    <Tooltip title="Экспорт" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFileExcel} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
-                  <Col xs={8} md={8} lg={4}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      Экспорт
-                    </Button>
-                  </Col>
-                  <Col xs={8} md={8} lg={4}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      Нэмэх
-                    </Button>
+                  <Col>
+                    <Tooltip title="Нэмэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={add}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
                 </Row>
               </Col>
@@ -211,11 +218,13 @@ const Plan = props => {
         </Layout>
         <div className="datatable-responsive-demo">
           <DataTable
+            editMode="cell"
+            className="editable-cells-table"
             value={list}
             removableSort
             paginator
             rows={10}
-            className="p-datatable-responsive-demo"
+            // className="p-datatable-responsive-demo"
             selection={selectedRows}
             // onRowClick={edit}
             onSelectionChange={e => {
@@ -227,7 +236,7 @@ const Plan = props => {
               field="index"
               header="№"
               body={indexBodyTemplate}
-              sortable
+              style={{ width: 40 }}
             />
             <Column
               header="Сургалтанд гүйцэтгэх үүрэг"
@@ -235,6 +244,8 @@ const Plan = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              field="mission"
+              editor={editData => missionEditor('list', editData)}
             />
             <Column
               header="Багшийн нэрс"

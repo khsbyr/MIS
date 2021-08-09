@@ -34,10 +34,16 @@ const TrainingList = loadable({
   loading: Loader,
 });
 
-const TrainingInfo = loadable({
-  loader: () => import('../pages/training/more/TraningInfo'),
+const ConsultingOrg = loadable({
+  loader: () => import('../pages/consulting/consultingOrg'),
   loading: Loader,
 });
+
+const ConsultingPerson = loadable({
+  loader: () => import('../pages/consulting/consultingPerson'),
+  loading: Loader,
+});
+
 const Scope = loadable({
   loader: () => import('../pages/directory/scope'),
   loading: Loader,
@@ -79,7 +85,7 @@ const Page = ({ route }) => {
 
       /** Сургалт */
       case 'Training List'.toLowerCase():
-        return <TrainingInfo />;
+        return <TrainingList />;
 
       case 'Human resources'.toLowerCase():
         return <CV />;
@@ -93,10 +99,16 @@ const Page = ({ route }) => {
         return <Customerside />;
       case 'Types of indicators'.toLowerCase():
         return <CriteriaReference />;
+
       /** Байгууллагын мэдээлэл */
 
       /** Тайлан */
 
+      /** Зөвлөх үйлчилгээ */
+      case 'Consulting organization'.toLowerCase():
+        return <ConsultingOrg />;
+      case 'Consultant individual'.toLowerCase():
+        return <ConsultingPerson />;
       default:
         return null;
     }
