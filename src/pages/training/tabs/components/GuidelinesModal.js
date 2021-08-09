@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { putService, postService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
-import ContentWrapper from './attendance.style';
+import ContentWrapper from './guidelines.style';
 
 const layout = {
   labelCol: {
@@ -62,7 +62,7 @@ export default function TrainingGuidelinesModal(props) {
         title="Сургалтын удирдамж"
         okText="Хадгалах"
         cancelText="Буцах"
-        width={1000}
+        width={800}
         alignItems="center"
         visible={isModalVisible}
         onOk={save}
@@ -90,7 +90,7 @@ export default function TrainingGuidelinesModal(props) {
                         },
                       ]}
                     >
-                      <Input allowClear />
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={12}>

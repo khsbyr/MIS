@@ -1,21 +1,14 @@
 import styled from 'styled-components';
 
 const ContentWrapper = styled.div`
-  margin-left: 35px;
-  margin-right: 35px;
-  margin-top: 45px;
-  .ant-upload.ant-upload-drag {
-    width: 100%;
-    height: 200px;
-    left: 20%;
-    border: 1px solid #d9d9d9;
-    border-radius: 15px;
-  }
+  margin-left: 45px;
+  margin-right: 45px;
+  margin-top: 30px;
 
   .title {
-    font-size: 16px;
+    font-size: 24px;
     font-weight: bold;
-    color: #103154;
+    color: #0d0d0d;
   }
 
   label {
@@ -34,7 +27,11 @@ const ContentWrapper = styled.div`
 
   .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
     height: 40px;
-    padding-top: 8px;
+    padding-top: 7px;
+  }
+
+  .ant-input {
+    height: 40px;
   }
 
   .button {
@@ -54,17 +51,23 @@ const ContentWrapper = styled.div`
     > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
     background-color: #fff;
   }
-  .FormItem {
-    width: 100%;
-    height: 40px;
-    @media (max-width: 991px) {
-      width: 100%;
-    }
+
+  .ant-input-prefix {
+    color: #103154;
+    margin-right: 25px;
   }
-  /* .p-multiselect .p-multiselect-label {
-    padding: 0.3rem 0.3rem;
-    margin: 0px 10px 0px 10px;
-  } */
+
+  .ant-input-number {
+    width: 100%;
+    border-radius: 3px;
+    height: 40px;
+  }
+  .ant-input-number-handler-wrap {
+    display: none;
+  }
+  .ant-select-selection-search {
+    margin-top: 8px;
+  }
 `;
 
 export default ContentWrapper;

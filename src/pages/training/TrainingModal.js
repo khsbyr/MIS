@@ -6,6 +6,7 @@ import moment from 'moment';
 import React, { useContext, useEffect, useState } from 'react';
 import { MultiSelect } from 'primereact/multiselect';
 import AutoCompleteSelect from '../../components/Autocomplete';
+import MulticompleteSelect from '../../components/MulticompleteSelect';
 import { ToolsContext } from '../../context/Tools';
 import { getService, postService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
@@ -136,6 +137,10 @@ export default function TrainingModal(props) {
   const SelectedCriteria = value => {
     setSelectedCriteria(value);
     console.log(CriteriaID);
+  };
+  const selectCriterias = (value, criteriaID) => {
+    setSelectedCriteria([value]);
+    console.log(value);
   };
 
   const getAimag = countryId => {
@@ -296,15 +301,24 @@ export default function TrainingModal(props) {
                   <Col xs={24} md={24} lg={8}>
                     <Form.Item label="Шалгуур үзүүлэлт:">
                       <MultiSelect
-                        name="CriteriaID"
+                        name="criteriaIds"
                         valueField="id"
                         style={{ width: '100%', height: '40px' }}
                         value={selectedCriteria}
                         options={stateCriteria}
                         onChange={e => SelectedCriteria(e.value)}
-                        optionLabel="name"
                         placeholder="Сонгох"
                         display="chip"
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={24} lg={8}>
+                    <Form.Item label="shalguur:" name="CriteriaID">
+                      <MulticompleteSelect
+                        valueField="id"
+                        data={stateCriteria}
+                        size="medium"
+                        onChange={value => selectCriterias(value)}
                       />
                     </Form.Item>
                   </Col>
