@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import React, { useEffect } from 'react';
 import { Modal, Form, Input, Radio, Space, InputNumber } from 'antd';
 import { postService, putService } from '../../../service/service';
@@ -20,25 +19,9 @@ export default function CriteriaModal(props) {
   const [value, setValue] = React.useState(1);
   useEffect(() => {
     if (isEditMode) {
-      const percentIndicator = Criteriacontroller.criteriaIndicator
-        .percentIndicator
-        ? Criteriacontroller.criteriaIndicator.percentIndicator.value
-        : '';
-      const quantityIndicator = Criteriacontroller.criteriaIndicator
-        .quantityIndicator
-        ? Criteriacontroller.criteriaIndicator.quantityIndicator.value
-        : '';
-      const formulaIndicator = Criteriacontroller.criteriaIndicator
-        .formulaIndicator
-        ? Criteriacontroller.criteriaIndicator.formulaIndicator.value
-        : '';
-
       form.setFieldsValue({
         ...Criteriacontroller,
       });
-      setValue(
-        percentIndicator ? 2 : quantityIndicator ? 1 : formulaIndicator ? 3 : ''
-      );
     }
   }, []);
 
@@ -50,9 +33,6 @@ export default function CriteriaModal(props) {
     form
       .validateFields()
       .then(values => {
-        values.criteriaIndicator = {
-          percentIndicator: { value: values.percentIndicator },
-        };
         if (isEditMode) {
           putService(`criteria/update/${Criteriacontroller.id}`, values)
             .then(() => {
@@ -75,6 +55,7 @@ export default function CriteriaModal(props) {
         errorCatch(info);
       });
   };
+
   return (
     <div>
       <Modal
@@ -117,7 +98,7 @@ export default function CriteriaModal(props) {
             <InputNumber style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item
-            name="indicatorProcess"
+            name="resultTobeAchieved"
             label="Хүрэх үр дүн:"
             rules={[
               {
@@ -128,7 +109,7 @@ export default function CriteriaModal(props) {
             <InputNumber style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item
-            name="upIndicator"
+            name="processResult"
             label="Үр дүнгийн биелэлт"
             rules={[
               {
@@ -141,7 +122,7 @@ export default function CriteriaModal(props) {
 
           <Form.Item
             name="percentIndicator"
-            label="Шалгуур үзүүлэлтийн төрөлa"
+            label="Шалгуур үзүүлэлтийн төрөл"
             rules={[
               {
                 required: false,
@@ -151,51 +132,15 @@ export default function CriteriaModal(props) {
             <Radio.Group
               value={value}
               onChange={onChange}
+              defaultValue={value}
               className="radioButton"
             >
               <Space direction="vertical">
-                <Radio value={1}>
+                <Radio value={1} defaultChecked>
                   Тоо
-                  {value === 1 ? (
-                    <InputNumber
-                      defaultValue={
-                        Criteriacontroller.criteriaIndicator.quantityIndicator
-                          ? Criteriacontroller.criteriaIndicator
-                              .quantityIndicator.value
-                          : ''
-                      }
-                      style={{ width: 100, marginLeft: 10 }}
-                    />
-                  ) : null}
                 </Radio>
-                <Radio value={2}>
-                  Хувь
-                  {value === 2 ? (
-                    <InputNumber
-                      defaultValue={
-                        Criteriacontroller.criteriaIndicator.percentIndicator
-                          ? Criteriacontroller.criteriaIndicator
-                              .percentIndicator.value
-                          : ''
-                      }
-                      style={{ width: 100, marginLeft: 10 }}
-                    />
-                  ) : null}
-                </Radio>
-                <Radio value={3}>
-                  Томъё
-                  {value === 3 ? (
-                    <InputNumber
-                      defaultValue={
-                        Criteriacontroller.criteriaIndicator.formulaIndicator
-                          ? Criteriacontroller.criteriaIndicator
-                              .formulaIndicator.value
-                          : ''
-                      }
-                      style={{ width: 100, marginLeft: 10 }}
-                    />
-                  ) : null}
-                </Radio>
+                <Radio value={2}>Хувь</Radio>
+                <Radio value={3}>Томъё</Radio>
               </Space>
             </Radio.Group>
           </Form.Item>
