@@ -232,76 +232,74 @@ const TrainingList = () => {
   return (
     <ContentWrapper>
       <div className="button-demo">
-        <Layout className="btn-layout">
-          <Content>
-            <Row>
-              <Col xs={24} md={24} lg={14}>
-                <p className="title">Сургалтын жагсаалт</p>
-              </Col>
-              <Col xs={24} md={18} lg={10}>
-                <Row justify="end" gutter={[16, 16]}>
-                  <Col xs={12} md={6} lg={7}>
-                    <OrgaStyle>
-                      <AutoCompleteSelect
-                        valueField="id"
-                        placeholder="Байгууллага сонгох"
-                        data={stateOrga}
-                        onChange={value => selectOrgs(value)}
-                      />
-                    </OrgaStyle>
-                  </Col>
-                  <Col xs={12} md={5} lg={5}>
-                    <DatePicker
-                      bordered={false}
-                      suffixIcon={<DownOutlined />}
-                      placeholder="Select year"
-                      picker="year"
-                      className="DatePicker"
-                      style={{
-                        width: '120px',
-                        color: 'black',
-                        cursor: 'pointer',
-                      }}
+        <Content>
+          <Row>
+            <Col xs={24} md={24} lg={14}>
+              <p className="title">Сургалтын жагсаалт</p>
+            </Col>
+            <Col xs={24} md={18} lg={10}>
+              <Row justify="end" gutter={[16, 16]}>
+                <Col xs={12} md={6} lg={7}>
+                  <OrgaStyle>
+                    <AutoCompleteSelect
+                      valueField="id"
+                      placeholder="Байгууллага сонгох"
+                      data={stateOrga}
+                      onChange={value => selectOrgs(value)}
                     />
-                  </Col>
-                  <Col xs={8} md={2} lg={2}>
-                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        icon={<FontAwesomeIcon icon={faPrint} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col xs={8} md={2} lg={2}>
-                    <Tooltip title="Экспорт" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faFileExcel} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col xs={8} md={2} lg={2}>
-                    <Tooltip title="Нэмэх" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faPlus} />}
-                        onClick={add}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Content>
-        </Layout>
+                  </OrgaStyle>
+                </Col>
+                <Col xs={12} md={5} lg={5}>
+                  <DatePicker
+                    bordered={false}
+                    suffixIcon={<DownOutlined />}
+                    placeholder="Select year"
+                    picker="year"
+                    className="DatePicker"
+                    style={{
+                      width: '120px',
+                      color: 'black',
+                      cursor: 'pointer',
+                    }}
+                  />
+                </Col>
+                <Col xs={8} md={2} lg={2}>
+                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      icon={<FontAwesomeIcon icon={faPrint} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col xs={8} md={2} lg={2}>
+                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFileExcel} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col xs={8} md={2} lg={2}>
+                  <Tooltip title="Нэмэх" arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faPlus} />}
+                      onClick={add}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Content>
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}
