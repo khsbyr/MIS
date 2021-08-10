@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Modal, Form, Input, Radio, Space, InputNumber, Row, Col } from 'antd';
+import { Modal, Form, Input, Radio, InputNumber, Row, Col } from 'antd';
 import { postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
@@ -87,6 +87,7 @@ export default function CriteriaModal(props) {
                   valueField="id"
                   data={criteriaReferenceList}
                   size="medium"
+                  mode="multiple"
                 />
               </Form.Item>
             </Col>

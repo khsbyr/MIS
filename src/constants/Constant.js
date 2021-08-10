@@ -59,3 +59,7 @@ export const criteriaFrequencyData = [
     name: 'Төслийн төгсгөлд',
   },
 ];
+
+export default {
+  criteriaFrequencyData,
+};
