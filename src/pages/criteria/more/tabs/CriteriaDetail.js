@@ -3,7 +3,12 @@ import { Descriptions } from 'antd';
 import ContentWrapper from '../../criteria.style';
 import { getService } from '../../../../service/service';
 import { useToolsStore } from '../../../../context/Tools';
-import { errorCatch, formatIndicator } from '../../../../tools/Tools';
+import {
+  errorCatch,
+  formatIndicator,
+  formatFrequency,
+  formatFormula,
+} from '../../../../tools/Tools';
 
 const CriteriaDetail = props => {
   const [criteriaRow, setCriteriaRow] = useState({});
@@ -34,6 +39,9 @@ const CriteriaDetail = props => {
           {criteriaRow.name}
         </Descriptions.Item>
         <Descriptions.Item label="Код">{criteriaRow.code}</Descriptions.Item>
+        <Descriptions.Item label="Шалгуур үзүүлэлтийн төрөл">
+          {formatFormula(criteriaRow.indicator)}
+        </Descriptions.Item>
         <Descriptions.Item label="Хүрэх үр дүн">
           {criteriaRow.resultTobeAchieved +
             formatIndicator(criteriaRow.indicator)}
@@ -42,7 +50,16 @@ const CriteriaDetail = props => {
           {criteriaRow.processResult + formatIndicator(criteriaRow.indicator)}
         </Descriptions.Item>
         <Descriptions.Item label="Давтамж">
-          {criteriaRow.frequency}
+          {formatFrequency(criteriaRow.frequency)}
+        </Descriptions.Item>
+        <Descriptions.Item label="Мэдээллийн эх үүсвэр">
+          {criteriaRow.sourceOfInformation}
+        </Descriptions.Item>
+        <Descriptions.Item label="Мэдээлэл цуглуулах аргачлал">
+          {criteriaRow.dataCollectionMethodology}
+        </Descriptions.Item>
+        <Descriptions.Item label="Харицах нэгж">
+          {criteriaRow.unitOfResponsibility}
         </Descriptions.Item>
         <Descriptions.Item label="Тайлбар">
           {criteriaRow.description}
