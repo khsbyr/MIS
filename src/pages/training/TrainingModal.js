@@ -1,10 +1,9 @@
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Col, DatePicker, Form, Input, Modal, Row, Checkbox } from 'antd';
+import { Col, DatePicker, Form, Input, Modal, Row } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import React, { useContext, useEffect, useState } from 'react';
-import { MultiSelect } from 'primereact/multiselect';
 import AutoCompleteSelect from '../../components/Autocomplete';
 import MulticompleteSelect from '../../components/MulticompleteSelect';
 import { ToolsContext } from '../../context/Tools';
@@ -21,9 +20,9 @@ const layout = {
     span: 22,
   },
 };
-
 export default function TrainingModal(props) {
-  const { Trainingcontroller, isModalVisible, isEditMode, orgID } = props;
+  const { Trainingcontroller, isModalVisible, isEditMode, orgID, trainingID } =
+    props;
   const toolsStore = useContext(ToolsContext);
   const [form] = Form.useForm();
   const [stateOrg, setStateOrg] = useState([]);
@@ -35,8 +34,10 @@ export default function TrainingModal(props) {
   const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
-  const [selectedCriteria, setSelectedCriteria] = useState([]);
+  const [selectedCriteria, setSelectedCriteria] = useState();
   const [CriteriaID, setCriteriaID] = useState([]);
+
+  const array = [];
 
   function onStartDateChange(date, value) {
     setStartDate(value);
@@ -46,15 +47,57 @@ export default function TrainingModal(props) {
     setEndDate(value);
   }
 
-  function onChange(checkedValues) {
-    console.log('checked = ', checkedValues);
-  }
-
   useEffect(() => {
-    getService(`criteria/getListByForWhatId/1`).then(result => {
+    if (trainingID) {
+      getService(`training/getCriteriaList/${trainingID}`).then(result => {
+        if (result) {
+          const list = result || [];
+          setSelectedCriteria(list);
+          if (isEditMode) {
+            // console.log(Trainingcontroller);
+            form.setFieldsValue({
+              ...Trainingcontroller,
+              CriteriaID: list.map(item => item.id),
+              orgID: Trainingcontroller.organization
+                ? Trainingcontroller.organization.id
+                : '',
+              CountryID: Trainingcontroller.address
+                ? Trainingcontroller.address.country.id
+                : '',
+              AimagID: Trainingcontroller.address
+                ? Trainingcontroller.address.aimag.id
+                : '',
+              SoumID: Trainingcontroller.address
+                ? Trainingcontroller.address.soum.id
+                : '',
+              BagID: Trainingcontroller.address
+                ? Trainingcontroller.address.bag.id
+                : '',
+              AddressDetail: Trainingcontroller.address
+                ? Trainingcontroller.address.addressDetail
+                : '',
+              totalBudget: Trainingcontroller.trainingBudget
+                ? Trainingcontroller.trainingBudget.totalBudget
+                : '',
+              performanceBudget: Trainingcontroller.trainingBudget
+                ? Trainingcontroller.trainingBudget.performanceBudget
+                : '',
+              trainingStartDate: Trainingcontroller
+                ? Trainingcontroller.trainingStartDate
+                : '',
+              trainingEndDate: Trainingcontroller
+                ? Trainingcontroller.trainingEndDate
+                : '',
+            });
+          }
+        }
+      });
+    } else {
+      setSelectedCriteria([]);
+    }
+    getService('criteria/getListByForWhatId/1').then(result => {
       if (result) {
         setStateCriteria(result || []);
-        console.log(stateCriteria);
       }
     });
 
@@ -97,58 +140,26 @@ export default function TrainingModal(props) {
         }
       });
     }
-
-    if (isEditMode) {
-      console.log(CriteriaID);
-
-      form.setFieldsValue({
-        ...Trainingcontroller,
-        CriteriaID: Trainingcontroller.criteria
-          ? Trainingcontroller.criteria.id
-          : '',
-        OrgID: Trainingcontroller.organization
-          ? Trainingcontroller.organization.id
-          : '',
-        CountryID: Trainingcontroller.address
-          ? Trainingcontroller.address.country.id
-          : '',
-        AimagID: Trainingcontroller.address
-          ? Trainingcontroller.address.aimag.id
-          : '',
-        SoumID: Trainingcontroller.address
-          ? Trainingcontroller.address.soum.id
-          : '',
-        BagID: Trainingcontroller.address
-          ? Trainingcontroller.address.bag.id
-          : '',
-        AddressDetail: Trainingcontroller.address
-          ? Trainingcontroller.address.addressDetail
-          : '',
-        totalBudget: Trainingcontroller.trainingBudget
-          ? Trainingcontroller.trainingBudget.totalBudget
-          : '',
-        performanceBudget: Trainingcontroller.trainingBudget
-          ? Trainingcontroller.trainingBudget.performanceBudget
-          : '',
-      });
-    }
+    array.forEach(value => console.log(value));
   }, [Trainingcontroller, form, isEditMode]);
 
-  const SelectedCriteria = value => {
+  const SelectCriteria = value => {
     setSelectedCriteria(value);
-    console.log(CriteriaID);
-  };
-  const selectCriterias = (value, criteriaID) => {
-    setSelectedCriteria([value]);
     console.log(value);
   };
-
+  // const selectCriterias = (value, criteriaID) => {
+  //   setSelectedCriteria([value]);
+  //   console.log(value);
+  // };
   const getAimag = countryId => {
     getService(`aimag/getList/${countryId}`, {}).then(result => {
       if (result) {
         setStateAimag(result || []);
       }
     });
+  };
+  const selectOrg = value => {
+    console.log(value);
   };
 
   const selectCountry = value => {
@@ -183,13 +194,14 @@ export default function TrainingModal(props) {
     form
       .validateFields()
       .then(values => {
-        values.organization = { id: orgID };
-        values.criteria = { id: CriteriaID };
+        debugger;
+        // values.criteriaIds = selectedCriteria;
+        values.organization = { id: values.orgID };
         values.trainingStartDate = startDate;
         values.trainingEndDate = endDate;
         values.address = {
           org: {
-            id: values.OrgID,
+            id: values.orgID,
           },
           country: {
             id: values.CountryID,
@@ -207,7 +219,11 @@ export default function TrainingModal(props) {
         };
         values.isTrue = true;
         if (isEditMode) {
-          putService(`training/update/${Trainingcontroller.id}`, values)
+          const saveData = {
+            training: values,
+            criteriaIds: values.CriteriaID,
+          };
+          putService(`training/update/${Trainingcontroller.id}`, saveData)
             .then(() => {
               props.close(true);
             })
@@ -215,7 +231,12 @@ export default function TrainingModal(props) {
               errorCatch(error);
             });
         } else {
-          postService('training/post', values)
+          const saveData = {
+            training: values,
+            criteriaIds: values.CriteriaID,
+          };
+
+          postService('training/post', saveData)
             .then(() => {
               props.close(true);
             })
@@ -253,73 +274,21 @@ export default function TrainingModal(props) {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Row>
-                  {/* <h4>Шалгуур үзүүлэлт сонгох</h4>
-                  <Col xs={24} md={24} lg={24}>
-                    <Checkbox.Group
-                      style={{ width: '100%' }}
-                      onChange={onChange}
+                  <Col xs={24} md={24} lg={8}>
+                    <Form.Item
+                      label="Шалгуур үзүүлэлт:"
+                      name="CriteriaID"
+                      valuePropName="option"
                     >
-                      <Row>
-                        <Col xs={24} md={24} lg={12}>
-                          <Checkbox
-                            value="A"
-                            style={{ fontSize: '14px', color: '#4e4e4e' }}
-                          >
-                            {' '}
-                            Шалгуур үзүүлэлт сонгох A
-                          </Checkbox>
-                        </Col>
-                        <Col xs={24} md={24} lg={12}>
-                          <Checkbox
-                            value="B"
-                            style={{ fontSize: '14px', color: '#4e4e4e' }}
-                          >
-                            Шалгуур үзүүлэлт сонгох B
-                          </Checkbox>
-                        </Col>
-                        <br /> <br />
-                        <Col xs={24} md={24} lg={12}>
-                          <Checkbox
-                            value="C"
-                            style={{ fontSize: '14px', color: '#4e4e4e' }}
-                          >
-                            Шалгуур үзүүлэлт сонгох C
-                          </Checkbox>
-                        </Col>
-                        <Col xs={24} md={24} lg={12}>
-                          <Checkbox
-                            value="D"
-                            style={{ fontSize: '14px', color: '#4e4e4e' }}
-                          >
-                            Шалгуур үзүүлэлт сонгох D
-                          </Checkbox>
-                        </Col>
-                      </Row>{' '}
-                      <br />
-                    </Checkbox.Group>
-                  </Col> */}
-                  <Col xs={24} md={24} lg={8}>
-                    <Form.Item label="Шалгуур үзүүлэлт:">
-                      <MultiSelect
-                        name="criteriaIds"
-                        valueField="id"
-                        style={{ width: '100%', height: '40px' }}
-                        value={selectedCriteria}
-                        options={stateCriteria}
-                        onChange={e => SelectedCriteria(e.value)}
-                        placeholder="Сонгох"
-                        display="chip"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} md={24} lg={8}>
-                    <Form.Item label="shalguur:" name="CriteriaID">
-                      <MulticompleteSelect
-                        valueField="id"
-                        data={stateCriteria}
-                        size="medium"
-                        onChange={value => selectCriterias(value)}
-                      />
+                      {selectedCriteria && (
+                        <MulticompleteSelect
+                          data={stateCriteria}
+                          defaultValue={selectedCriteria.map(row => row.id)}
+                          valueField="id"
+                          size="medium"
+                          onChange={value => SelectCriteria(value)}
+                        />
+                      )}
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={8}>
@@ -457,12 +426,13 @@ export default function TrainingModal(props) {
                   </Col>
                   <Col xs={24} md={24} lg={8}>
                     <Form.Item
-                      name="OrgID"
+                      name="orgID"
                       layout="vertical"
                       label="Байгууллага:"
                     >
                       <AutoCompleteSelect
                         valueField="id"
+                        onChange={value => selectOrg(value)}
                         data={stateOrg}
                         size="medium"
                       />

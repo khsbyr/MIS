@@ -28,22 +28,19 @@ let editRow;
 let isEditMode;
 let isEditModeFuel;
 let isEditModeRoad;
-const Budget = () => {
+const Budget = props => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
-  const [list1, setList1] = useState([]);
-  const [list2, setList2] = useState([]);
-  const [list3, setList3] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisibleFuel, setIsModalVisibleFuel] = useState(false);
   const [isModalVisibleRoad, setIsModalVisibleRoad] = useState(false);
-  const [budgetID, setBudgetID] = useState([]);
   const [lazyParams] = useState({
     page: 0,
   });
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [stateTraining, setStateTraining] = useState([]);
+  const [trainingID, setTrainingID] = useState([]);
+
   // const [setTrainingID] = useState([]);
   const toolsStore = useContext(ToolsContext);
   const onInit = () => {
@@ -51,12 +48,14 @@ const Budget = () => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('trainingBudget/get', list)
+    getService(`training/get/${props.id}`, list)
       .then(result => {
-        const listResult = result.content || [];
+        const listResult = result.content.trainingBudget || [];
+        setTrainingID(result.id);
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
+        console.log(result);
         setList(listResult);
         setSelectedRows([]);
       })
@@ -68,91 +67,7 @@ const Budget = () => {
   };
   useEffect(() => {
     onInit();
-    getService('training/get').then(result => {
-      if (result) {
-        setStateTraining(result.content || []);
-      }
-    });
-    getService('stationeryExpenses/get', list1).then(result => {
-      if (result) {
-        const listResult = result.content || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList1(listResult);
-        setSelectedRows([]);
-      }
-    });
-    getService('hotelTravelExpenses/get', list2).then(result => {
-      const listResult = result.content || [];
-      listResult.forEach((item, index) => {
-        item.index = lazyParams.page * PAGESIZE + index + 1;
-      });
-      setList2(listResult);
-      setSelectedRows([]);
-    });
-    getService('fuelExpenses/get', list3).then(result => {
-      const listResult = result.content || [];
-      listResult.forEach((item, index) => {
-        item.index = lazyParams.page * PAGESIZE + index + 1;
-      });
-      setList3(listResult);
-      setSelectedRows([]);
-    });
   }, [lazyParams]);
-
-  const getTrainingProgram = trainingId => {
-    getService(`trainingBudget/getByTraining/${trainingId}`, {}).then(
-      result => {
-        if (result) {
-          const listResult = result.content || [];
-          const Id = result.id || [];
-          setBudgetID(result.id);
-          listResult.forEach((item, index) => {
-            item.index = lazyParams.page * PAGESIZE + index + 1;
-          });
-          setList(listResult);
-          setSelectedRows([]);
-        }
-      }
-    );
-  };
-  getService(`stationeryExpenses/getListBy/${budgetID}`).then(result => {
-    const listResult = result || [];
-    listResult.forEach((item, index) => {
-      item.index = lazyParams.page * PAGESIZE + index + 1;
-    });
-    setList1(listResult);
-    setSelectedRows([]);
-  });
-  const getTrainingProgram2 = trainingId => {
-    getService(`hotelTravelExpenses/getListBy/${trainingId}`, list2).then(
-      result => {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList2(listResult);
-        setSelectedRows([]);
-      }
-    );
-  };
-  const getTrainingProgram3 = trainingId => {
-    getService(`fuelExpenses/getListBy/${trainingId}`, list3).then(result => {
-      const listResult = result || [];
-      listResult.forEach((item, index) => {
-        item.index = lazyParams.page * PAGESIZE + index + 1;
-      });
-      setList3(listResult);
-      setSelectedRows([]);
-    });
-  };
-
-  const selectTraining = value => {
-    getTrainingProgram(value);
-    getTrainingProgram2(value);
-    getTrainingProgram3(value);
-  };
 
   const add = () => {
     editRow = null;
@@ -370,40 +285,40 @@ const Budget = () => {
     </>
   );
 
-  // const costNameBodyTemplate = row => (
-  //   <>
-  //     <span className="p-column-title">Зардлын нэр</span>
-  //     {row.stationeryExpenses.costName}
-  //   </>
-  // );
+  const costNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Зардлын нэр</span>
+      {row.stationeryExpenses.costName}
+    </>
+  );
 
-  // const unitPriceNameBodyTemplate = row => (
-  //   <>
-  //     <span className="p-column-title">Нэгж үнэ /₮/</span>
-  //     {row.stationeryExpenses.unitPrice}
-  //   </>
-  // );
+  const unitPriceNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Нэгж үнэ /₮/</span>
+      {row.stationeryExpenses.unitPrice}
+    </>
+  );
 
-  // const quantityNameBodyTemplate = row => (
-  //   <>
-  //     <span className="p-column-title">Тоо ширхэг</span>
-  //     {row.stationeryExpenses.quantity}
-  //   </>
-  // );
+  const quantityNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Тоо ширхэг</span>
+      {row.stationeryExpenses.quantity}
+    </>
+  );
 
-  // const numberOfPeopleNameBodyTemplate = row => (
-  //   <>
-  //     <span className="p-column-title">Хүний тоо</span>
-  //     {row.stationeryExpenses.numberOfPeople}
-  //   </>
-  // );
+  const numberOfPeopleNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Хүний тоо</span>
+      {row.stationeryExpenses.numberOfPeople}
+    </>
+  );
 
-  // const totalNameBodyTemplate = row => (
-  //   <>
-  //     <span className="p-column-title">Дүн /₮/</span>
-  //     {row.stationeryExpenses.total}
-  //   </>
-  // );
+  const totalNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дүн /₮/</span>
+      {row.stationeryExpenses.total}
+    </>
+  );
 
   return (
     <ContentWrapper>
@@ -478,7 +393,7 @@ const Budget = () => {
             </Content>
           </Layout>
           <DataTable
-            value={list1}
+            value={list}
             removableSort
             paginator
             rows={10}
@@ -499,27 +414,27 @@ const Budget = () => {
             <Column
               field="costName"
               header="Зардлын нэр"
-              // body={costNameBodyTemplate}
+              body={costNameBodyTemplate}
             />
             <Column
               field="unitPrice"
               header="Нэгж үнэ /₮/"
-              // body={unitPriceNameBodyTemplate}
+              body={unitPriceNameBodyTemplate}
             />
             <Column
               field="quantity"
               header="Тоо ширхэг"
-              // body={quantityNameBodyTemplate}
+              body={quantityNameBodyTemplate}
             />
             <Column
               field="numberOfPeople"
               header="Хүний тоо"
-              // body={numberOfPeopleNameBodyTemplate}
+              body={numberOfPeopleNameBodyTemplate}
             />
             <Column
               field="total"
               header="Дүн /₮/"
-              // body={totalNameBodyTemplate}
+              body={totalNameBodyTemplate}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
@@ -559,7 +474,7 @@ const Budget = () => {
             </Content>
           </Layout>
           <DataTable
-            value={list2}
+            value={list}
             removableSort
             paginator
             rows={10}
@@ -615,7 +530,7 @@ const Budget = () => {
             </Content>
           </Layout>
           <DataTable
-            value={list3}
+            value={list}
             removableSort
             paginator
             rows={10}

@@ -45,9 +45,8 @@ const TrainingList = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   // const [, setStateOrga] = useState([]);
   const [orgID] = useState([]);
-  const [trainingID, setTrainingID] = useState([]);
+  const [trainingID, setTrainingID] = useState();
   const [stateOrga, setStateOrga] = useState([]);
-
   const history = useHistory();
 
   const onInit = () => {
@@ -61,8 +60,8 @@ const TrainingList = () => {
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
+        console.log(listResult);
         setList(listResult);
-        setTrainingID(result.id);
         setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
@@ -79,14 +78,15 @@ const TrainingList = () => {
         setStateOrga(result.content || []);
       }
     });
-    getService(`criteria/getListByForWhatId/1`).then(result => {
-      if (result) {
-        // setStateCriteria(result.content || []);
-      }
-    });
+    // getService(`criteria/getListByForWhatId/1`).then(result => {
+    //   if (result) {
+    //     setStateCriteria(result.content || []);
+    //   }
+    // });
   }, [lazyParams]);
 
   const getTraining = orgId => {
+    console.log(orgId);
     getService(`training/getList/${orgId}`, {}).then(result => {
       if (result) {
         const listResult = result || [];
@@ -110,6 +110,7 @@ const TrainingList = () => {
   };
 
   const edit = (event, row) => {
+    setTrainingID(row.id);
     event.preventDefault();
     event.stopPropagation();
     editRow = row;
@@ -364,7 +365,8 @@ const TrainingList = () => {
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              orgID={orgID}
+              orgId={orgID}
+              trainingID={trainingID}
             />
           )}
           {/* {isModalVisible && (
