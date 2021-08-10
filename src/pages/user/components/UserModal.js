@@ -1,4 +1,4 @@
-import { Col, Form, Input, Modal, Row, Radio } from 'antd';
+import { Col, Form, Input, Modal, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { getService, postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
@@ -12,7 +12,6 @@ export default function UserModal(props) {
   const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
-  const [stateGender, setStateGender] = useState([]);
   const [stateTrue, setStateTrue] = useState([]);
   const [stateOrg, setStateOrg] = useState([]);
   const [stateRole, setStateRole] = useState([]);
@@ -63,7 +62,6 @@ export default function UserModal(props) {
     }
 
     if (isEditMode) {
-      setStateGender(Usercontroller.gender.id);
       setStateTrue(Usercontroller.isTrue);
       form.setFieldsValue({
         ...Usercontroller,
@@ -118,10 +116,6 @@ export default function UserModal(props) {
     getBag(value);
   };
 
-  const onChange = e => {
-    setStateGender(e.target.value);
-  };
-
   const onChangeCheckBox = e => {
     setStateTrue(e.target.checked);
   };
@@ -130,11 +124,8 @@ export default function UserModal(props) {
     form
       .validateFields()
       .then(values => {
-        values.gender = {
-          id: values.GenderID,
-        };
         values.role = {
-          id: values.RoleID,
+          id: values.roleId,
         };
         values.address = {
           country: {
@@ -152,9 +143,10 @@ export default function UserModal(props) {
           addressDetail: values.AddressDetail,
         };
         values.organization = {
-          id: values.organizationId,
+          id: values.orgId,
         };
         values.isTrue = true;
+
         if (isEditMode) {
           putService(`user/update/${Usercontroller.id}`, values)
             .then(() => {
@@ -197,7 +189,7 @@ export default function UserModal(props) {
           layout="vertical"
           validateMessages={validateMessages}
         >
-          <Row gutter={32}>
+          <Row gutter={24}>
             <Col xs={24} md={24} lg={6}>
               <Form.Item label="Нэр:" name="firstname">
                 <Input placeholder="Нэр..." />
@@ -214,24 +206,8 @@ export default function UserModal(props) {
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
-              <Form.Item label="Нас:" name="age">
-                <Input type="number" placeholder="Нас..." />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={32}>
-            <Col xs={24} md={24} lg={6}>
-              <Form.Item name="GenderID" layout="vertical" label="Хүйс:">
-                <Radio.Group onChange={onChange} value={stateGender}>
-                  <Radio value={1}>эр</Radio>
-                  <Radio value={2}>эм</Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} md={24} lg={6}>
               <Form.Item
-                name="organizationId"
+                name="orgId"
                 layout="vertical"
                 label="Харьяа байгууллагын нэр:"
               >
@@ -242,6 +218,8 @@ export default function UserModal(props) {
                 />
               </Form.Item>
             </Col>
+          </Row>
+          <Row gutter={24}>
             <Col xs={24} md={24} lg={6}>
               <Form.Item label="Албан тушаал:" name="position">
                 <Input placeholder="Албан тушаал..." />
@@ -252,8 +230,27 @@ export default function UserModal(props) {
                 <Input placeholder="Утасны дугаар..." />
               </Form.Item>
             </Col>
+            <Col xs={24} md={24} lg={6}>
+              <Form.Item label="И-мэйл хаяг:" name="email">
+                <Input placeholder="И-мэйл хаяг..." />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={24} lg={6}>
+              <Form.Item
+                size="large"
+                name="roleId"
+                layout="vertical"
+                label="Эрх:"
+              >
+                <AutoCompleteSelect
+                  valueField="id"
+                  data={stateRole}
+                  size="medium"
+                />
+              </Form.Item>
+            </Col>
           </Row>
-          <Row gutter={32}>
+          <Row gutter={24}>
             <Col xs={24} md={24} lg={6}>
               <Form.Item label="Улс:" name="CountryID">
                 <AutoCompleteSelect
@@ -298,29 +295,16 @@ export default function UserModal(props) {
               </Form.Item>
             </Col>
           </Row>
-          <Row gutter={32}>
-            <Col xs={24} md={24} lg={6}>
+          <Row gutter={18}>
+            <Col xs={24} md={24} lg={12}>
               <Form.Item label="Хаяг:" name="AddressDetail">
-                <Input type="text" />
-              </Form.Item>
-            </Col>
-            <Col xs={24} md={24} lg={6}>
-              <Form.Item
-                size="large"
-                name="RoleID"
-                layout="vertical"
-                label="Эрх:"
-              >
-                <AutoCompleteSelect
-                  valueField="id"
-                  data={stateRole}
-                  size="medium"
+                <Input.TextArea
+                  placeholder="Хаяг"
+                  style={{
+                    width: '100%',
+                    height: '100px',
+                  }}
                 />
-              </Form.Item>
-            </Col>
-            <Col xs={24} md={24} lg={6}>
-              <Form.Item label="Password" name="password">
-                <Input.Password />
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
@@ -330,18 +314,6 @@ export default function UserModal(props) {
                   onChange={onChangeCheckBox}
                   checked={stateTrue}
                 />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={32}>
-            <Col xs={24} md={24} lg={6}>
-              <Form.Item label="Нэвтрэх нэр:" name="username">
-                <Input placeholder="Нэвтрэх нэр..." />
-              </Form.Item>
-            </Col>
-            <Col xs={24} md={24} lg={6}>
-              <Form.Item label="И-мэйл хаяг:" name="email">
-                <Input placeholder="И-мэйл хаяг..." />
               </Form.Item>
             </Col>
           </Row>

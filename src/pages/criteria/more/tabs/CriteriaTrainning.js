@@ -1,6 +1,3 @@
-import { faFileExcel, faPrint } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState } from 'react';
@@ -10,14 +7,13 @@ import { getService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import ContentWrapper from '../../criteria.style';
 
-const { Content } = Layout;
-
 const CriteriaTrainning = props => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [lazyParams] = useState({
     page: 0,
   });
+  const PAGESIZE = 20;
   const { setIsShowLoader } = useToolsStore();
 
   const history = useHistory();
@@ -29,7 +25,11 @@ const CriteriaTrainning = props => {
     }
     getService(`/criteria/getById/${props.id}`)
       .then(result => {
-        setList(result);
+        const listResult = result.training || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
       })
       .finally(setIsShowLoader(false))
       .catch(error => {
@@ -96,38 +96,6 @@ const CriteriaTrainning = props => {
   return (
     <ContentWrapper>
       <div className="button-demo">
-        <Content>
-          <Row>
-            <Col xs={24} md={24} lg={14}>
-              <p className="title">Сургалтын жагсаалт</p>
-            </Col>
-            <Col xs={24} md={18} lg={10}>
-              <Row justify="end" gutter={[16, 16]}>
-                <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Экспорт" arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Content>
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}
