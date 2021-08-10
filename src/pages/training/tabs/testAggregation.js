@@ -2,53 +2,54 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
+  faPlus,
   faPrint,
   faTrash,
-  faPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row } from 'antd';
+import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
-import { ColumnGroup } from 'primereact/columngroup';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import moment from 'moment';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
-import CriteriaModal from '../../criteria/components/CriteriaModal';
 import ContentWrapper from '../../criteria/criteria.style';
-import OrgaStyle from './components/orga.style';
-import AutoCompleteSelect from '../../../components/Autocomplete';
+import TestModal from './components/testModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const TestAggregation = () => {
+const TestAggregation = props => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [stateTraining, setStateTraining] = useState([]);
-
+  const [trainingID, setTrainingID] = useState([]);
   const [lazyParams] = useState({
     page: 0,
   });
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const toolsStore = useContext(ToolsContext);
+  const history = useHistory();
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('testAggregation/get', list)
+    getService(`training/get/${props.id}`, list)
       .then(result => {
-        const listResult = result.content || [];
+        const listResult = result.tests || [];
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
+        setTrainingID(result.id);
         setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
@@ -60,20 +61,16 @@ const TestAggregation = () => {
 
   useEffect(() => {
     onInit();
-    getService('training/get').then(result => {
-      if (result) {
-        setStateTraining(result.content || []);
-      }
-    });
   }, [lazyParams]);
 
-  const selectTraining = value => {};
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
   };
 
-  const edit = row => {
+  const edit = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
@@ -85,7 +82,7 @@ const TestAggregation = () => {
       return;
     }
 
-    putService(`testAggregation/delete/${row.id}`)
+    putService(`test/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -110,7 +107,9 @@ const TestAggregation = () => {
     });
   }
 
-  const pop = row => {
+  const pop = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
@@ -123,12 +122,12 @@ const TestAggregation = () => {
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
+        onClick={event => edit(event, row)}
       />
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
+        onClick={event => pop(event, row)}
       />
     </>
   );
@@ -147,72 +146,27 @@ const TestAggregation = () => {
 
   const nameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Оролцогчийн нэр</span>
-      {row.name}
+      <span className="p-column-title">Сорилын нэр</span>
+      {row.testName}
     </>
   );
 
-  const test1ShouldTakenBodyTemplate = row => (
+  const ShouldTakenBodyTemplate = row => (
     <>
-      <span className="p-column-title">Сорил №1: Авбал зохих</span>
-      {row.indicatorProcess}
+      <span className="p-column-title">Авбал зохих</span>
+      {row.shouldBeTaken}
     </>
   );
 
-  const test1TakenBodyTemplate = row => (
+  const DateBodyTemplate = row => (
     <>
-      <span className="p-column-title">Сорил №1: Авсан</span>
-      {row.indicatorProcess}
+      <span className="p-column-title">Огноо</span>
+      {moment(row.createdDate).format('YYYY-M-D')}
     </>
   );
 
-  const test2ShouldTakenBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Сорил №2: Авбал зохих</span>
-      {row.indicatorProcess}
-    </>
-  );
-
-  const test2TakenBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Сорил №2: Авсан</span>
-      {row.indicatorProcess}
-    </>
-  );
-
-  const growthBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Өсөлт бууралт</span>
-      {row.indicatorProcess}
-    </>
-  );
-
-  const explanationBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Тайлбар</span>
-      {row.indicatorProcess}
-    </>
-  );
-
-  const headerGroup = (
-    <ColumnGroup>
-      <Row>
-        <Column header="№" rowSpan={2} />
-        <Column header="Оролцогчийн нэр" rowSpan={2} />
-        <Column header="Сорил №1" colSpan={2} />
-        <Column header="Сорил №2" colSpan={2} />
-        <Column header="Өсөлт бууралт" rowSpan={2} />
-        <Column header="Тайлбар" rowSpan={2} />
-        <Column headerStyle={{ width: '7rem' }} body={action} rowSpan={2} />
-      </Row>
-      <Row>
-        <Column header="Авбал зохих" sortable field="indicatorProcess" />
-        <Column header="Авсан" sortable />
-        <Column header="Авбал зохих" sortable />
-        <Column header="Авсан" sortable />
-      </Row>
-    </ColumnGroup>
-  );
+  const showParticipants = row =>
+    history.push(`/participantsList/${row.data.id}`);
 
   return (
     <ContentWrapper>
@@ -220,49 +174,40 @@ const TestAggregation = () => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={12}>
-                <p className="title">Сорилын нэгтгэл</p>
-              </Col>
-              <Col xs={24} md={24} lg={12}>
-                <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={10} />
-                  <Col xs={8} md={8} lg={5}>
-                    <OrgaStyle>
-                      <AutoCompleteSelect
-                        valueField="id"
-                        placeholder="Сургалт сонгох"
-                        data={stateTraining}
-                        onChange={value => selectTraining(value)}
-                      />
-                    </OrgaStyle>
+              <Col xs={24} md={24} lg={24}>
+                <Row justify="end" gutter={[16, 16]}>
+                  <Col>
+                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        icon={<FontAwesomeIcon icon={faPrint} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
-
-                  <Col xs={8} md={8} lg={3}>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      Хэвлэх{' '}
-                    </Button>
+                  <Col>
+                    <Tooltip title="Экспорт" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFileExcel} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      Экспорт
-                    </Button>
-                  </Col>
-                  <Col xs={8} md={8} lg={3}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      Нэмэх
-                    </Button>
+                  <Col>
+                    <Tooltip title="Нэмэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={add}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
                 </Row>
               </Col>
@@ -272,8 +217,8 @@ const TestAggregation = () => {
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}
+            onRowClick={showParticipants}
             removableSort
-            headerColumnGroup={headerGroup}
             paginator
             rows={10}
             className="p-datatable-responsive-demo"
@@ -284,36 +229,29 @@ const TestAggregation = () => {
             }}
             dataKey="id"
           >
-            <Column field="index" body={indexBodyTemplate} sortable />
+            <Column header="№" body={indexBodyTemplate} style={{ width: 40 }} />
             <Column
-              field="name"
+              header="Сорилын нэр"
               body={nameBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
             />
             <Column
-              field="indicatorProcess"
-              body={test1ShouldTakenBodyTemplate}
+              header="Авбал зохих"
+              body={ShouldTakenBodyTemplate}
               sortable
             />
-            <Column
-              field="upIndicator"
-              body={test1TakenBodyTemplate}
-              sortable
-            />
-            <Column field="upIndicator" body={test2ShouldTakenBodyTemplate} />
-            <Column field="upIndicator" body={test2TakenBodyTemplate} />
-            <Column field="upIndicator" body={growthBodyTemplate} />
-            <Column field="upIndicator" body={explanationBodyTemplate} />
+            <Column header="Огноо" body={DateBodyTemplate} sortable />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <CriteriaModal
-              Criteriacontroller={editRow}
+            <TestModal
+              TestController={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+              trainingID={trainingID}
             />
           )}
         </div>
