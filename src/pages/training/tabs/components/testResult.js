@@ -8,47 +8,48 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
-import moment from 'moment';
 import { Column } from 'primereact/column';
+import { useHistory, useParams } from 'react-router-dom';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import { ToolsContext } from '../../../context/Tools';
-import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from './components/attendance.style';
-import TrainingReportModal from './components/trainingReportModal';
+import { ToolsContext } from '../../../../context/Tools';
+import { getService, putService } from '../../../../service/service';
+import { errorCatch } from '../../../../tools/Tools';
+import ContentWrapper from '../../../criteria/criteria.style';
+import TestResultModal from './testResultModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const TrainingReport = props => {
+const TestResult = () => {
   const loadLazyTimeout = null;
-  const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [stateTraining, setStateTraining] = useState([]);
+  const [trainingID, setTrainingID] = useState([]);
   const [lazyParams] = useState({
     page: 0,
   });
-  // const PAGESIZE = 20;
+  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [orgID, setOrgID] = useState([]);
+  const toolsStore = useContext(ToolsContext);
+  const history = useHistory();
+  const { id } = useParams();
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`training/get/${props.id}`, list)
+    getService(`testPoint/getByTestId/${id}`, list)
       .then(result => {
-        if (result.trainingReport !== null) {
-          const listResult = result || [];
-          // listResult.forEach((item, index) => {
-          //   item.index = lazyParams.page * PAGESIZE + index + 1;
-          // });
-          setList([listResult]);
-          setSelectedRows([]);
-        }
-        setOrgID(result.organization.id);
+        const listResult = result || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
+        setTrainingID(result.id);
+        setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
@@ -56,6 +57,7 @@ const TrainingReport = props => {
         toolsStore.setIsShowLoader(false);
       });
   };
+
   useEffect(() => {
     onInit();
   }, [lazyParams]);
@@ -65,7 +67,9 @@ const TrainingReport = props => {
     isEditMode = false;
   };
 
-  const edit = row => {
+  const edit = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
@@ -76,7 +80,8 @@ const TrainingReport = props => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`trainingReport/delete/${row.trainingReport.id}`)
+
+    putService(`test/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -101,7 +106,9 @@ const TrainingReport = props => {
     });
   }
 
-  const pop = row => {
+  const pop = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
@@ -114,15 +121,16 @@ const TrainingReport = props => {
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
+        onClick={event => edit(event, row)}
       />
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
+        onClick={event => pop(event, row)}
       />
     </>
   );
+
   const closeModal = (isSuccess = false) => {
     setIsModalVisible(false);
     if (isSuccess) onInit();
@@ -135,39 +143,35 @@ const TrainingReport = props => {
     </>
   );
 
-  const trainingnameBodyTemplate = row => (
+  const FirstNameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Сургалтын нэр</span>
-      {row.name}
+      <span className="p-column-title">Нэр</span>
+      {row.participant.user.firstname}
     </>
   );
 
-  const teacherBodyTemplate = row => (
+  const registerNumberBodyTemplate = row => (
     <>
-      <span className="p-column-title">Огноо</span>
-      {moment(row.trainingReport && row.trainingReport.createdDate).format(
-        'YYYY-M-D h цаг m минут'
-      )}
+      <span className="p-column-title">Регистрийн дугаар</span>
+      {row.participant.user.register}
+    </>
+  );
+  const shouldTakenBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Авбал зохих</span>
+      {row.test.shouldBeTaken}
     </>
   );
 
-  const updatedDateBodyTemplate = row => (
+  const takenBodyTemplate = row => (
     <>
-      <span className="p-column-title">Огноо</span>
-      {moment(row.trainingReport && row.trainingReport.updatedDate).format(
-        'YYYY-M-D h цаг m минут'
-      )}
+      <span className="p-column-title">Авсан</span>
+      {row.taken}
     </>
   );
 
-  const respoUserBodyTemplate = row => (
-    <>
-      <span className="p-column-title">
-        Сургалт явуулсан байгууллага, хүний нэр
-      </span>
-      {row.organization.responsibleUser.firstname}
-    </>
-  );
+  const showParticipants = row =>
+    history.push(`/participantsList/${row.data.id}`);
 
   return (
     <ContentWrapper>
@@ -198,7 +202,7 @@ const TrainingReport = props => {
                       </Button>
                     </Tooltip>
                   </Col>
-                  <Col>
+                  {/* <Col>
                     <Tooltip title="Нэмэх" arrowPointAtCenter>
                       <Button
                         type="text"
@@ -209,7 +213,7 @@ const TrainingReport = props => {
                         {' '}
                       </Button>
                     </Tooltip>
-                  </Col>
+                  </Col> */}
                 </Row>
               </Col>
             </Row>
@@ -218,65 +222,50 @@ const TrainingReport = props => {
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}
+            onRowClick={showParticipants}
             removableSort
             paginator
             rows={10}
             className="p-datatable-responsive-demo"
-            // selectionMode="checkbox"
             selection={selectedRows}
             // onRowClick={edit}
-            // editMode="row"
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
           >
-            {/* <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column> */}
-            {/* <Column
-              field="index"
-              header="№"
-              body={indexBodyTemplate}
-              sortable
-            /> */}
+            <Column header="№" body={indexBodyTemplate} style={{ width: 40 }} />
             <Column
-              field="trainerFor"
-              header="Сургалтын нэр"
-              body={trainingnameBodyTemplate}
+              field="name"
+              header="Нэр"
               sortable
               filter
               filterPlaceholder="Хайх"
+              body={FirstNameBodyTemplate}
             />
             <Column
               field=""
-              header="Сургалт явуулсан байгууллага, хүний нэр"
-              body={respoUserBodyTemplate}
-            />
-            <Column
-              header="Үүссэн огноо"
-              body={teacherBodyTemplate}
-              style={{ width: 200 }}
+              header="Регистрийн дугаар"
               sortable
               filter
               filterPlaceholder="Хайх"
+              body={registerNumberBodyTemplate}
             />
             <Column
-              header="Зассан огноо"
-              body={updatedDateBodyTemplate}
-              style={{ width: 200 }}
+              header="Авбал зохих"
+              body={shouldTakenBodyTemplate}
               sortable
-              filter
-              filterPlaceholder="Хайх"
             />
+            <Column header="Авсан" body={takenBodyTemplate} sortable />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <TrainingReportModal
-              TrainingReportController={editRow}
+            <TestResultModal
+              TestResultController={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              orgID={orgID}
-              trainingIDD={props.id}
+              trainingID={trainingID}
             />
           )}
         </div>
@@ -285,4 +274,4 @@ const TrainingReport = props => {
   );
 };
 
-export default TrainingReport;
+export default TestResult;

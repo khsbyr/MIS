@@ -1,15 +1,17 @@
-import { MenuOutlined } from '@ant-design/icons';
-import React, { useEffect, useContext } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { Layout } from 'antd';
-import { getService } from '../service/service';
+import React, { useContext, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { ToolsContext } from '../context/Tools';
-import Page from './Page';
-import Menu from './Menu';
-import { buildPaths, generateRoutes } from './utils';
 import TrainingInfo from '../pages/training/more/TraningInfo';
+import TestResult from '../pages/training/tabs/components/testResult';
+import { getService } from '../service/service';
+import Menu from './Menu';
+import Page from './Page';
 
-const { Sider, Content } = Layout;
+import { buildPaths, generateRoutes } from './utils';
+
+const { Sider, Content, Header } = Layout;
 
 let menus = [];
 
@@ -17,7 +19,9 @@ function Admin() {
   const toolsStore = useContext(ToolsContext);
   const [collapsed, setCollapsed] = React.useState(false);
   const [routes, setRoutes] = React.useState([]);
-
+  const toggle = () => {
+    setCollapsed(!collapsed);
+  };
   useEffect(() => {
     // if (!toolsStore.user) return;
     getService('/menus/getByToken').then(result => {
@@ -35,8 +39,10 @@ function Admin() {
           style={{ background: '#fff' }}
           breakpoint="lg"
           width="300px"
-          collapsedWidth="0"
-          trigger={<MenuOutlined />}
+          collapsedWidth="70"
+          collapsible
+          collapsed={collapsed}
+          onCollapse={toggle}
         >
           <Menu
             className="menu"
@@ -48,7 +54,6 @@ function Admin() {
               background: '#fff',
             }}
             menus={buildPaths(menus)}
-            collapsed={collapsed}
           />
         </Sider>
         <Layout className="site-layout">
@@ -69,6 +74,9 @@ function Admin() {
 
               <Route path="/trainingList/:id">
                 <TrainingInfo />
+              </Route>
+              <Route path="/participantsList/:id">
+                <TestResult />
               </Route>
             </Switch>
           </Content>
