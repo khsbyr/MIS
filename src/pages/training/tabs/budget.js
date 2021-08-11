@@ -68,11 +68,11 @@ const Budget = props => {
   };
   useEffect(() => {
     onInit();
-    getService('costType/get').then(result => {
-      if (result) {
-        setStateCostType(result || []);
-      }
-    });
+    // getService('costType/get').then(result => {
+    //   if (result) {
+    //     setStateCostType(result || []);
+    //   }
+    // });
     getService(`stationeryExpenses/getListBy/${props.id}`, list1).then(
       result => {
         const listResult = result || [];
