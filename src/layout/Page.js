@@ -64,6 +64,11 @@ const CriteriaReference = loadable({
   loading: Loader,
 });
 
+const Feedback = loadable({
+  loader: () => import('../pages/feedback/feedback'),
+  loading: Loader,
+});
+
 const Page = ({ route }) => {
   const PageContent = () => {
     switch (route.code.toLowerCase()) {
@@ -108,6 +113,10 @@ const Page = ({ route }) => {
         return <ConsultingOrg />;
       case 'Consultant individual'.toLowerCase():
         return <ConsultingPerson />;
+
+      /** Бусад */
+      case 'Feedback'.toLowerCase():
+        return <Feedback />;
       default:
         return null;
     }

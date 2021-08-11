@@ -2,20 +2,19 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
-  faPlus,
   faPrint,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
-import { useHistory, useParams } from 'react-router-dom';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import { ToolsContext } from '../../../../context/Tools';
 import { getService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import ContentWrapper from '../../../criteria/criteria.style';
+import ContentWrapper from './testResult.style';
 import TestResultModal from './testResultModal';
 
 const { Content } = Layout;
@@ -26,7 +25,6 @@ const TestResult = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [stateTraining, setStateTraining] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
   const [lazyParams] = useState({
     page: 0,
@@ -62,10 +60,10 @@ const TestResult = () => {
     onInit();
   }, [lazyParams]);
 
-  const add = () => {
-    setIsModalVisible(true);
-    isEditMode = false;
-  };
+  // const add = () => {
+  //   setIsModalVisible(true);
+  //   isEditMode = false;
+  // };
 
   const edit = (event, row) => {
     event.preventDefault();
@@ -176,33 +174,37 @@ const TestResult = () => {
   return (
     <ContentWrapper>
       <div className="button-demo">
-        <Layout className="btn-layout">
-          <Content>
-            <Row>
-              <Col xs={24} md={24} lg={24}>
-                <Row justify="end" gutter={[16, 16]}>
-                  <Col>
-                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        icon={<FontAwesomeIcon icon={faPrint} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title="Экспорт" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faFileExcel} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  {/* <Col>
+        <Content>
+          <Row>
+            <Col xs={24} md={12} lg={14}>
+              <p className="title">
+                Сорил : {list[0] && list[0].test.testName}
+              </p>
+            </Col>
+            <Col xs={24} md={24} lg={10}>
+              <Row justify="end" gutter={[16, 16]}>
+                <Col>
+                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      icon={<FontAwesomeIcon icon={faPrint} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col>
+                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFileExcel} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                {/* <Col>
                     <Tooltip title="Нэмэх" arrowPointAtCenter>
                       <Button
                         type="text"
@@ -214,11 +216,10 @@ const TestResult = () => {
                       </Button>
                     </Tooltip>
                   </Col> */}
-                </Row>
-              </Col>
-            </Row>
-          </Content>
-        </Layout>
+              </Row>
+            </Col>
+          </Row>
+        </Content>
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}

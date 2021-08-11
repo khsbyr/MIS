@@ -11,17 +11,17 @@ import { Button, Col, Input, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import { ToolsContext } from '../../../context/Tools';
-import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from './components/plan.styled';
-import PlanModal from './components/PlanModal';
+import { ToolsContext } from '../../context/Tools';
+import { getService, putService } from '../../service/service';
+import { errorCatch } from '../../tools/Tools';
+import ContentWrapper from '../training/tabs/components/plan.styled';
+import PlanModal from '../training/tabs/components/PlanModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const Plan = props => {
+const Feedback = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -34,51 +34,29 @@ const Plan = props => {
   const [orgID, setOrgID] = useState([]);
   const toolsStore = useContext(ToolsContext);
   const onInit = () => {
-    toolsStore.setIsShowLoader(true);
-    if (loadLazyTimeout) {
-      clearTimeout(loadLazyTimeout);
-    }
-    getService(`training/get/${props.id}`, list)
-      .then(result => {
-        const listResult = result.trainingTeams || [];
-        setOrgID(result.organization.id);
-        setTrainingID(result.id);
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList(listResult);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    // toolsStore.setIsShowLoader(true);
+    // if (loadLazyTimeout) {
+    //   clearTimeout(loadLazyTimeout);
+    // }
+    // getService(`training/get`, list)
+    //   .then(result => {
+    //     const listResult = result.trainingTeams || [];
+    //     setOrgID(result.organization.id);
+    //     setTrainingID(result.id);
+    //     listResult.forEach((item, index) => {
+    //       item.index = lazyParams.page * PAGESIZE + index + 1;
+    //     });
+    //     setList(listResult);
+    //     setSelectedRows([]);
+    //   })
+    //   .finally(toolsStore.setIsShowLoader(false))
+    //   .catch(error => {
+    //     errorCatch(error);
+    //     toolsStore.setIsShowLoader(false);
+    //   });
   };
 
-  useEffect(() => {
-    onInit();
-  }, [lazyParams]);
-
-  const dataTableFuncMap = {
-    list: setList,
-  };
-
-  const onEditorValueChange = (productKey, editData, value) => {
-    const updatedProducts = [...editData.value];
-    updatedProducts[editData.rowIndex][editData.field] = value;
-    dataTableFuncMap[`${productKey}`](updatedProducts);
-  };
-
-  const inputTextEditor = (productKey, editData, field) => (
-    <Input
-      type="text"
-      value={editData.rowData[field]}
-      onChange={e => onEditorValueChange(productKey, editData, e.target.value)}
-    />
-  );
-  const missionEditor = (productKey, editData) =>
-    inputTextEditor(productKey, editData, 'mission');
+  useEffect(() => {}, [lazyParams]);
 
   const add = () => {
     setIsModalVisible(true);
@@ -176,7 +154,10 @@ const Plan = props => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={24}>
+              <Col xs={24} md={24} lg={14}>
+                <p className="title">Санал гомдол</p>
+              </Col>
+              <Col xs={24} md={24} lg={10}>
                 <Row justify="end" gutter={[16, 16]}>
                   <Col>
                     <Tooltip title="Хэвлэх" arrowPointAtCenter>
@@ -224,36 +205,20 @@ const Plan = props => {
             removableSort
             paginator
             rows={10}
-            // className="p-datatable-responsive-demo"
             selection={selectedRows}
-            // onRowClick={edit}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
           >
-            <Column
-              field="index"
-              header="№"
-              body={indexBodyTemplate}
-              style={{ width: 40 }}
-            />
-            <Column
-              header="Сургалтанд гүйцэтгэх үүрэг"
-              body={missionBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-              field="mission"
-              editor={editData => missionEditor('list', editData)}
-            />
-            <Column
-              header="Багшийн нэрс"
-              body={nameTrainerBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
+            <Column field="index" header="№" style={{ width: 40 }} />
+            <Column header="Огноо" field="mission" />
+            <Column header="Санал, гомдлын төрөл" />
+            <Column header="Санал, гомдол гаргагч" />
+            <Column header="Хүлээн авагч" />
+            <Column header="Хэлбэр (албан бичиг, мэдээлэл холбооны технологиор дамжуулан)" />
+            <Column header="Шийдвэрлэсэн эсэх" />
+            <Column header="Сэтгэл ханамж" />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
@@ -271,4 +236,4 @@ const Plan = props => {
     </ContentWrapper>
   );
 };
-export default Plan;
+export default Feedback;
