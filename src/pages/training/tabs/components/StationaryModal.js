@@ -1,4 +1,4 @@
-import { Form, Input, Modal } from 'antd';
+import { Form, Input, Modal, message } from 'antd';
 import React, { useEffect } from 'react';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
@@ -15,7 +15,7 @@ const layout = {
 };
 
 export default function StationaryModal(props) {
-  const { Stationarycontroller, isModalVisible, isEditMode } = props;
+  const { Stationarycontroller, isModalVisible, isEditMode, budgetID } = props;
   // const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
@@ -41,14 +41,16 @@ export default function StationaryModal(props) {
             values
           )
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService('stationeryExpenses/post', values)
+          postService(`stationeryExpenses/post/${budgetID}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {

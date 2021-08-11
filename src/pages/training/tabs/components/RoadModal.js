@@ -1,5 +1,5 @@
 import { Form, Input, Modal } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, message } from 'react';
 import {
   getService,
   postService,
@@ -7,6 +7,7 @@ import {
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
+import AutoCompleteSelect from '../../../../components/Autocomplete';
 
 const layout = {
   labelCol: {
@@ -18,40 +19,42 @@ const layout = {
 };
 
 export default function RoadModal(props) {
-  const { Roadcontroller, isModalVisible, isEditMode } = props;
-  // const [setStateController] = useState([]);
+  const { Roadcontroller, isModalVisible, isEditMode, budgetID } = props;
   const [form] = Form.useForm();
-  useEffect(() => {
-    // getService('hotelTravelExpenses/get', {
-    //   search: 'status:true',
-    // }).then(result => {
-    //   if (result) {
-    //     setStateController(result.content || []);
-    //   }
-    // });
+  const [stateCostType, setStateCostType] = useState([]);
 
+  useEffect(() => {
+    getService('costType/get').then(result => {
+      if (result) {
+        setStateCostType(result || []);
+      }
+    });
     if (isEditMode) {
-      // getService(`hotelTravelExpenses/get${Roadcontroller.id}`).then(result => {
-      //   Roadcontroller.userServiceId = result.userService.id;
-      form.setFieldsValue({ ...Roadcontroller });
-      // });
+      form.setFieldsValue({
+        ...Roadcontroller,
+        costID: Roadcontroller.costType ? Roadcontroller.costType.id : '',
+      });
     }
   }, []);
+  const selectCostType = value => {};
   const save = () => {
     form
       .validateFields()
       .then(values => {
+        values.costType = { id: values.costID };
         if (isEditMode) {
           putService(`hotelTravelExpenses/update/${Roadcontroller.id}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService('hotelTravelExpenses/post', values)
+          postService(`hotelTravelExpenses/post/${budgetID}`, values)
             .then(() => {
+              // message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -108,14 +111,19 @@ export default function RoadModal(props) {
           </Form.Item>
           <Form.Item
             label="Төлбөрийн төрөл"
-            name="costType.name"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
+            name="costID"
+            // rules={[
+            //   {
+            //     required: true,
+            //   },
+            // ]}
           >
-            <Input />
+            <AutoCompleteSelect
+              valueField="id"
+              data={stateCostType}
+              size="medium"
+              onChange={value => selectCostType(value)}
+            />{' '}
           </Form.Item>
           <Form.Item
             name="days"

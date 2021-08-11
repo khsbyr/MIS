@@ -1,4 +1,4 @@
-import { Form, Input, Modal } from 'antd';
+import { Form, Input, Modal, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import {
   getService,
@@ -18,7 +18,7 @@ const layout = {
 };
 
 export default function FuelModal(props) {
-  const { Fuelcontroller, isModalVisible, isEditMode } = props;
+  const { Fuelcontroller, isModalVisible, isEditMode, budgetID } = props;
   const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
@@ -39,16 +39,18 @@ export default function FuelModal(props) {
       .validateFields()
       .then(values => {
         if (isEditMode) {
-          putService(`fuelExpenses/update${Fuelcontroller.id}`, values)
+          putService(`fuelExpenses/update/${Fuelcontroller.id}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService('fuelExpenses/post', values)
+          postService(`fuelExpenses/post/${budgetID}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {

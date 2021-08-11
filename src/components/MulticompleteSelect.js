@@ -3,8 +3,8 @@ import { React, useState } from 'react';
 
 export default function MulticompleteSelect(props) {
   const { Option } = Select;
-  const { data, disabled, value, viewField, valueField } = props;
-  const [size, setSize] = useState([]);
+  const { data, value, viewField, valueField } = props;
+  const [size] = useState([]);
 
   const multiple = props.multiple || '';
   const placeholder = props.placeholder || 'Сонгох';

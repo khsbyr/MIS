@@ -17,6 +17,7 @@ import {
   Row,
   Tooltip,
 } from 'antd';
+import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
@@ -60,7 +61,6 @@ const TrainingList = () => {
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
-        console.log(listResult);
         setList(listResult);
         setSelectedRows([]);
       })
@@ -86,7 +86,6 @@ const TrainingList = () => {
   }, [lazyParams]);
 
   const getTraining = orgId => {
-    console.log(orgId);
     getService(`training/getList/${orgId}`, {}).then(result => {
       if (result) {
         const listResult = result || [];
@@ -210,14 +209,16 @@ const TrainingList = () => {
   const startDateBodyTemplate = row => (
     <>
       <span className="p-column-title">Эхэлсэн огноо</span>
-      {row.startDateFormat}
+      {moment(row.trainingStartDate && row.trainingStartDate).format(
+        'YYYY-M-D'
+      )}
     </>
   );
 
   const endDateBodyTemplate = row => (
     <>
       <span className="p-column-title">Дууссан огноо</span>
-      {row.endDateFormat}
+      {moment(row.trainingEndDate && row.trainingEndDate).format('YYYY-M-D')}
     </>
   );
 
@@ -332,30 +333,35 @@ const TrainingList = () => {
               headerStyle={{ width: '10rem' }}
               filter
               body={totalBudgetBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Гүйцэтгэлийн төсөв"
               headerStyle={{ width: '10rem' }}
               filter
               body={performanceBudgetBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Эхэлсэн огноо"
               headerStyle={{ width: '10rem' }}
               filter
               body={startDateBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Дууссан огноо"
               headerStyle={{ width: '10rem' }}
               filter
               body={endDateBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Оролцогчдын тоо"
               headerStyle={{ width: '10rem' }}
               filter
               body={participantBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>

@@ -3,10 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Col, DatePicker, Form, Input, Modal, Row } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../components/Autocomplete';
 import MulticompleteSelect from '../../components/MulticompleteSelect';
-import { ToolsContext } from '../../context/Tools';
 import { getService, postService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import validateMessages from '../../tools/validateMessage';
@@ -21,12 +20,9 @@ const layout = {
   },
 };
 export default function TrainingModal(props) {
-  const { Trainingcontroller, isModalVisible, isEditMode, orgID, trainingID } =
-    props;
-  const toolsStore = useContext(ToolsContext);
+  const { Trainingcontroller, isModalVisible, isEditMode, trainingID } = props;
   const [form] = Form.useForm();
   const [stateOrg, setStateOrg] = useState([]);
-  const PAGESIZE = 20;
   const [startDate, setStartDate] = useState([]);
   const [endDate, setEndDate] = useState([]);
   const [stateCountry, setStateCountry] = useState([]);
@@ -35,9 +31,6 @@ export default function TrainingModal(props) {
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const [selectedCriteria, setSelectedCriteria] = useState();
-  const [CriteriaID, setCriteriaID] = useState([]);
-
-  const array = [];
 
   function onStartDateChange(date, value) {
     setStartDate(value);
@@ -54,6 +47,8 @@ export default function TrainingModal(props) {
           const list = result || [];
           setSelectedCriteria(list);
           if (isEditMode) {
+            setStartDate(Trainingcontroller.trainingStartDate);
+            setEndDate(Trainingcontroller.trainingEndDate);
             // console.log(Trainingcontroller);
             form.setFieldsValue({
               ...Trainingcontroller,
@@ -140,12 +135,10 @@ export default function TrainingModal(props) {
         }
       });
     }
-    array.forEach(value => console.log(value));
   }, [Trainingcontroller, form, isEditMode]);
 
   const SelectCriteria = value => {
     setSelectedCriteria(value);
-    console.log(value);
   };
   // const selectCriterias = (value, criteriaID) => {
   //   setSelectedCriteria([value]);
@@ -194,7 +187,6 @@ export default function TrainingModal(props) {
     form
       .validateFields()
       .then(values => {
-        debugger;
         // values.criteriaIds = selectedCriteria;
         values.organization = { id: values.orgID };
         values.trainingStartDate = startDate;
@@ -305,15 +297,7 @@ export default function TrainingModal(props) {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={8}>
-                    <Form.Item
-                      label="Төсөв:"
-                      name="totalBudget"
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
+                    <Form.Item label="Төсөв:" name="totalBudget">
                       <Input />
                     </Form.Item>
                   </Col>
@@ -321,16 +305,11 @@ export default function TrainingModal(props) {
                     <Form.Item
                       label="Гүйцэтгэлийн төсөв:"
                       name="performanceBudget"
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
                     >
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={8}>
+                  {/* <Col xs={24} md={24} lg={8}>
                     <Form.Item
                       label="Оролцогчдын тоо:"
                       name="totalParticipants"
@@ -342,7 +321,7 @@ export default function TrainingModal(props) {
                     >
                       <Input />
                     </Form.Item>
-                  </Col>
+                  </Col> */}
                   <Col xs={24} md={24} lg={8}>
                     <Form.Item label="Эхэлсэн огноо:">
                       <DatePicker
