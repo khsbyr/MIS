@@ -163,7 +163,7 @@ export default function MenuSettings() {
           <Content>
             <Row>
               <Col xs={24} md={24} lg={14}>
-                <p className="title">Цэсний жагсааалт</p>
+                <p className="title">Цэсний жагсаалт</p>
               </Col>
               <Col xs={16} md={16} lg={10}>
                 <Row justify="end" gutter={[16, 16]}>

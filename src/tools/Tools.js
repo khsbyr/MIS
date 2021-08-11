@@ -95,6 +95,47 @@ export const convertOrgStep = step => {
   }
 };
 
+export const formatIndicator = indicator => {
+  switch (indicator) {
+    case 1:
+      return '';
+    case 2:
+      return '%';
+    case 3:
+      return '';
+    default:
+      return '';
+  }
+};
+
+export const formatFrequency = frequency => {
+  switch (frequency) {
+    case '1':
+      return 'Улирал тутам';
+    case '2':
+      return 'Жил тутам';
+    case '3':
+      return 'Суурь, дунд хугацаанд болон төгсгөлд';
+    case '4':
+      return 'Төслийн төгсгөлд';
+    default:
+      return 'Тодорхойгүй';
+  }
+};
+
+export const formatFormula = indicator => {
+  switch (indicator) {
+    case 1:
+      return 'Тоо';
+    case 2:
+      return 'Хувь';
+    case 3:
+      return 'Томьёо';
+    default:
+      return 'Тодорхойгүй';
+  }
+};
+
 export const convertOrgWish = wish => {
   switch (wish) {
     case ORG_WISH.CREATE:

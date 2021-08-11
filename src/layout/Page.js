@@ -104,6 +104,7 @@ const Page = ({ route }) => {
         return <Customerside />;
       case 'Types of indicators'.toLowerCase():
         return <CriteriaReference />;
+
       /** Байгууллагын мэдээлэл */
 
       /** Тайлан */

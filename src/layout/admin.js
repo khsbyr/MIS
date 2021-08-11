@@ -91,10 +91,15 @@ function Admin() {
               minHeight: '100%',
             }}
           >
-            <Switch>
-              {routes.map(route => (
-                <Route key={route.code} path={route.path}>
-                  <Page route={route} />
+            <CriteriaContextProvider>
+              <Switch>
+                {routes.map(route => (
+                  <Route key={route.code} path={route.path}>
+                    <Page route={route} />
+                  </Route>
+                ))}
+                <Route path="/criteriaDetail/:id">
+                  <CriteriaMore />
                 </Route>
               ))}
 

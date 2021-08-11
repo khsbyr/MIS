@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
@@ -8,21 +8,15 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Button,
-  Col,
-  DatePicker,
-  Layout,
-  message,
-  Modal,
-  Row,
-  Tooltip,
-} from 'antd';
+import { Button, Col, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
+import { useHistory } from 'react-router-dom';
 import { ToolsContext } from '../../context/Tools';
+import { useCriteriaStore } from '../../context/CriteriaContext';
 import { getService, putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
+import { errorCatch, formatIndicator } from '../../tools/Tools';
+import AutoCompleteSelect from '../../components/Autocomplete';
 import CriteriaModal from './components/CriteriaModal';
 import ContentWrapper from './criteria.style';
 
@@ -35,12 +29,15 @@ const Criteria = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const { criteriaReferenceList, setCriteriaReferenceList } =
+    useCriteriaStore();
   const [lazyParams] = useState({
     page: 0,
   });
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const toolsStore = useContext(ToolsContext);
+  const history = useHistory();
 
   const onInit = () => {
     if (loadLazyTimeout) {
@@ -68,10 +65,16 @@ const Criteria = () => {
     isEditMode = false;
   };
 
-  const edit = row => {
+  const edit = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
+  };
+
+  const more = row => {
+    history.push(`/criteriaDetail/${row.data.id}`);
   };
 
   const handleDeleted = row => {
@@ -104,7 +107,9 @@ const Criteria = () => {
     });
   }
 
-  const pop = row => {
+  const pop = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
@@ -119,19 +124,43 @@ const Criteria = () => {
 
   useEffect(() => {
     onInit();
+    getService('/criteriaReference/get').then(result => {
+      if (result) {
+        setCriteriaReferenceList(result || []);
+      }
+    });
   }, [lazyParams]);
+
+  const getComposition = compId => {
+    getService(`/criteria/getListByCriteriaReferenceId/${compId}`).then(
+      result => {
+        if (result) {
+          const listResult = result || [];
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setList(listResult);
+          setSelectedRows([]);
+        }
+      }
+    );
+  };
+
+  const selectComposition = value => {
+    getComposition(value);
+  };
 
   const action = row => (
     <>
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
+        onClick={event => edit(event, row)}
       />
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
+        onClick={event => pop(event, row)}
       />
     </>
   );
@@ -153,14 +182,14 @@ const Criteria = () => {
   const indicatorProcessBodyTemplate = row => (
     <>
       <span className="p-column-title">Хүрэх үр дүн</span>
-      {row.upIndicator}
+      {row.resultTobeAchieved + formatIndicator(row.indicator)}
     </>
   );
 
   const upIndicatorBodyTemplate = row => (
     <>
       <span className="p-column-title">Үр дүнгийн биелэлт</span>
-      {row.indicatorProcess}
+      {row.processResult + formatIndicator(row.indicator)}
     </>
   );
   return (
@@ -168,57 +197,42 @@ const Criteria = () => {
       <div className="button-demo">
         <Content>
           <Row>
-            <Col xs={24} md={24} lg={14}>
-              <p className="title">Шалгуур үзүүлэлтийн бүртгэл</p>
+            <Col xs={24} md={24} lg={12}>
+              <p className="title">Сургалт</p>
             </Col>
-            <Col xs={24} md={12} lg={10}>
-              <Row justify="end" gutter={[16, 16]}>
-                <Col>
-                  <DatePicker
-                    bordered={false}
-                    suffixIcon={<DownOutlined />}
-                    placeholder="Select year"
-                    picker="year"
-                    className="DatePicker"
-                    style={{
-                      width: '120px',
-                      color: 'black',
-                      cursor: 'pointer',
-                    }}
+            <Col xs={24} md={24} lg={12}>
+              <Row justify="end" gutter={[0, 15]}>
+                <Col xs={8} md={8} lg={12}>
+                  <AutoCompleteSelect
+                    valueField="id"
+                    data={criteriaReferenceList}
+                    placeholder="Бүрэлдэхүүн сонгох"
+                    onChange={value => selectComposition(value)}
                   />
                 </Col>
-                <Col>
-                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
+                <Col xs={8} md={8} lg={3}>
+                  <Button type="text" icon={<FontAwesomeIcon icon={faPrint} />}>
+                    {' '}
+                  </Button>
                 </Col>
-                <Col>
-                  <Tooltip title="Экспорт" arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
+                <Col xs={8} md={8} lg={3}>
+                  <Button
+                    type="text"
+                    className="export"
+                    icon={<FontAwesomeIcon icon={faFileExcel} />}
+                  >
+                    {' '}
+                  </Button>
                 </Col>
-                <Col>
-                  <Tooltip title="Нэмэх" arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
+                <Col xs={8} md={8} lg={3}>
+                  <Button
+                    type="text"
+                    className="export"
+                    icon={<FontAwesomeIcon icon={faPlus} />}
+                    onClick={add}
+                  >
+                    {' '}
+                  </Button>
                 </Col>
               </Row>
             </Col>
@@ -232,7 +246,7 @@ const Criteria = () => {
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            // onRowClick={edit}
+            onRowClick={more}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
@@ -241,16 +255,17 @@ const Criteria = () => {
             <Column
               field="index"
               header="№"
+              headerStyle={{ width: '4rem' }}
               body={indexBodyTemplate}
-              style={{ width: 40 }}
             />
             <Column
               field="name"
+              headerStyle={{ width: '30rem' }}
               header="Шалгуур үзүүлэлтийн нэр"
               body={nameBodyTemplate}
             />
             <Column
-              field="indicatorProcess"
+              field="resultTobeAchieved"
               header="Хүрэх үр дүн"
               body={indicatorProcessBodyTemplate}
             />
@@ -258,10 +273,6 @@ const Criteria = () => {
               field="upIndicator"
               header="Үр дүнгийн биелэлт"
               body={upIndicatorBodyTemplate}
-            />
-            <Column
-              field="criteriaIndicator.percentIndicator.value"
-              header="Хувь"
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

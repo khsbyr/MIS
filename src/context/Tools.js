@@ -1,25 +1,34 @@
-import React, { useState } from 'react';
+/* eslint-disable import/no-anonymous-default-export */
+import React, { useState, useContext, useEffect } from 'react';
 import Loader from '../loader/Loader';
 
-export const ToolsContext = React.createContext();
+export const ToolsContext = React.createContext({});
+
+export const useToolsStore = () => useContext(ToolsContext);
 
 export default function ContextProvider({ children }) {
   const [isShowLoader, setIsShowLoader] = useState(false);
-  const [tokenParsed, setTokenParsed] = useState();
-  const [user, setUser] = useState();
-  const [org, setOrg] = useState();
+  const [generalInfo, setGeneralInfo] = useState({
+    userInfo: {},
+    orgList: null,
+  });
+  const [selectedUser, setSelectedUser] = useState();
+
+  useEffect(() => {
+    if (selectedUser && selectedUser.orgId) {
+      localStorage.setItem('orgId', selectedUser.orgId);
+    }
+  }, [selectedUser]);
 
   return (
     <ToolsContext.Provider
       value={{
         isShowLoader,
         setIsShowLoader,
-        tokenParsed,
-        setTokenParsed,
-        user,
-        setUser,
-        org,
-        setOrg,
+        generalInfo,
+        setGeneralInfo,
+        selectedUser,
+        setSelectedUser,
       }}
     >
       {isShowLoader && <Loader />}
