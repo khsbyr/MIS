@@ -16,7 +16,7 @@ import moment from 'moment';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from '../../criteria/criteria.style';
+import ContentWrapper from './components/attendance.style';
 import TestModal from './components/testModal';
 
 const { Content } = Layout;
@@ -27,7 +27,6 @@ const TestAggregation = props => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [stateTraining, setStateTraining] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
   const [lazyParams] = useState({
     page: 0,

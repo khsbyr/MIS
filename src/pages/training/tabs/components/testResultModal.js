@@ -7,15 +7,8 @@ import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './plan.styled';
 
 export default function TestResulModal(props) {
-  const {
-    TestResultController,
-    isModalVisible,
-    isEditMode,
-    trainingID,
-    orgID,
-  } = props;
+  const { TestResultController, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
-  console.log(TestResultController);
   useEffect(() => {
     if (isEditMode) {
       form.setFieldsValue({

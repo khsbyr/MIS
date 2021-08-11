@@ -7,8 +7,7 @@ import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './plan.styled';
 
 export default function TestModal(props) {
-  const { TestController, isModalVisible, isEditMode, trainingID, orgID } =
-    props;
+  const { TestController, isModalVisible, isEditMode, trainingID } = props;
   const [form] = Form.useForm();
   useEffect(() => {
     if (isEditMode) {
@@ -49,7 +48,7 @@ export default function TestModal(props) {
   return (
     <div>
       <Modal
-        title="Сургалтын баг"
+        title="Сорилын бүртгэл"
         okText="Хадгалах"
         cancelText="Буцах"
         width={600}

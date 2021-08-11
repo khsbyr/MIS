@@ -128,13 +128,6 @@ const TrainingReport = props => {
     if (isSuccess) onInit();
   };
 
-  const indexBodyTemplate = row => (
-    <>
-      <span className="p-column-title">№</span>
-      {row.index}
-    </>
-  );
-
   const trainingnameBodyTemplate = row => (
     <>
       <span className="p-column-title">Сургалтын нэр</span>

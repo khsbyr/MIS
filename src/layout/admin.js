@@ -1,6 +1,7 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { Layout } from 'antd';
 import React, { useContext, useEffect } from 'react';
+import { Media } from 'react-bootstrap';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { ToolsContext } from '../context/Tools';
 import TrainingInfo from '../pages/training/more/TraningInfo';
@@ -41,9 +42,34 @@ function Admin() {
           width="300px"
           collapsedWidth="70"
           collapsible
+          trigger={null}
           collapsed={collapsed}
           onCollapse={toggle}
         >
+          {!collapsed ? (
+            <img
+              src="http://lcp.mn/assets/images/logo.png"
+              className="logoHeader"
+              height={50}
+              width={200}
+              style={{
+                marginLeft: '25px',
+                marginTop: '10px',
+              }}
+            />
+          ) : (
+            ''
+          )}
+          {React.createElement(
+            collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+            {
+              style: { float: 'right' },
+              className: 'trigger',
+              onClick: () => {
+                toggle();
+              },
+            }
+          )}
           <Menu
             className="menu"
             mode="inline"

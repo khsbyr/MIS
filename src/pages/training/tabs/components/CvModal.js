@@ -54,34 +54,13 @@ export default function CvModal(props) {
   const [userID, setUserID] = useState();
   const [BirthDatee, setBirthDatee] = useState();
   const [, setStateOrg] = useState([]);
-  const [changedBirthDate, setChangedBirthDate] = useState();
   const [, setIsOnchange] = useState(false);
-  // const [isOnChange, setIsOnchange] = useState(false);
   const [options, setOptions] = useState([]);
-  // const filter = createFilterOptions();
-
-  function onBirthDateChange(date, value) {
-    setChangedBirthDate(value);
-  }
   const onInit = () => {
     toolsStore.setIsShowLoader(false);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    // getService('trainers/get', list)
-    //   .then(result => {
-    //     const listResult = result.content || [];
-    //     listResult.forEach((item, index) => {
-    //       item.index = lazyParams.page * PAGESIZE + index + 1;
-    //     });
-    //     setList(listResult);
-    //     setSelectedRows([]);
-    //   })
-    //   .finally(toolsStore.setIsShowLoader(false))
-    //   .catch(error => {
-    //     errorCatch(error);
-    //     toolsStore.setIsShowLoader(false);
-    //   });
   };
 
   useEffect(() => {
@@ -124,7 +103,7 @@ export default function CvModal(props) {
     }
 
     if (isEditMode) {
-      setChangedBirthDate(Trainerscontroller.birthDate);
+      // setChangedBirthDate(Trainerscontroller.birthDate);
       setUserID(Trainerscontroller.id);
       form.setFieldsValue({
         ...Trainerscontroller,
@@ -134,7 +113,7 @@ export default function CvModal(props) {
         phoneNumber: Trainerscontroller.phoneNumber,
         email: Trainerscontroller.email,
         OrganizationName: Trainerscontroller.orgName,
-        birthDateNew: Trainerscontroller.birthDate,
+        // birthDateNew: Trainerscontroller.birthDate,
         AddressDetail: Trainerscontroller.address
           ? Trainerscontroller.address.addressDetail
           : '',
@@ -223,7 +202,7 @@ export default function CvModal(props) {
         if (isEditMode) {
           values.trainers = { purpose: values.purpose, skill: values.skill };
           values.id = userID;
-          values.birthDate = changedBirthDate;
+          // values.birthDate = changedBirthDate;
           values.address = {
             addressDetail: values.AddressDetail,
             country: {
@@ -256,7 +235,7 @@ export default function CvModal(props) {
             register: values.registerNumber,
             phoneNumber: values.phoneNumber,
             email: values.email,
-            birthDate: changedBirthDate,
+            // birthDate: changedBirthDate,
             address: {
               addressDetail: values.AddressDetail,
               country: {
@@ -389,20 +368,6 @@ export default function CvModal(props) {
               </Col>
 
               <Col xs={24} md={24} lg={9}>
-                <Form.Item>
-                  <DatePicker
-                    prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
-                    placeholder="Төрсөн он, сар, өдөр"
-                    className="FormItem"
-                    onChange={onBirthDateChange}
-                    defaultValue={
-                      isEditMode
-                        ? Trainerscontroller &&
-                          moment(Trainerscontroller.birthDate)
-                        : BirthDatee
-                    }
-                  />
-                </Form.Item>
                 <Form.Item name="CountryID">
                   <AutoCompleteSelect
                     className="FormItem"
@@ -437,6 +402,23 @@ export default function CvModal(props) {
                     valueField="id"
                     data={stateBag}
                   />
+                </Form.Item>
+                <Form.Item>
+                  {isEditMode && (
+                    <DatePicker
+                      prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
+                      disabled
+                      placeholder="Төрсөн он, сар, өдөр"
+                      className="FormItem"
+                      // onChange={onBirthDateChange}
+                      defaultValue={
+                        isEditMode
+                          ? Trainerscontroller &&
+                            moment(Trainerscontroller.birthDate)
+                          : BirthDatee
+                      }
+                    />
+                  )}
                 </Form.Item>
               </Col>
             </Row>
