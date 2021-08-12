@@ -1,4 +1,4 @@
-import { Col, Form, Input, Modal, Row, Select } from 'antd';
+import { Col, Form, Input, Modal, Row, Select, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import {
   postService,
@@ -47,6 +47,7 @@ export default function TrainingProgramModal(props) {
             values
           )
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -55,6 +56,7 @@ export default function TrainingProgramModal(props) {
         } else {
           postService(`trainingProgram/post`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {

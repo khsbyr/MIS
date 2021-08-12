@@ -14,7 +14,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ToolsContext } from '../../context/Tools';
 import { deleteService, getService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
-import ContentWrapper from '../training/tabs/components/trainingProgram.style';
+import ContentWrapper from '../criteria/criteria.style';
 // import OrgaStyle from '../training/tabs/components/orga.style';
 // import AutoCompleteSelect from '../../components/Autocomplete';
 import CustomerSideModal from './components/CustomerSideModal';

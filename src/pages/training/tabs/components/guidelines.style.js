@@ -26,7 +26,7 @@ const ContentWrapper = styled.div`
 
   .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
     height: 40px;
-    padding-top: 7px;
+    padding-top: 4px;
   }
 
   .ant-input {
@@ -65,7 +65,7 @@ const ContentWrapper = styled.div`
     display: none;
   }
   .ant-select-selection-search {
-    margin-top: 8px;
+    margin-top: 4px;
   }
 `;
 
