@@ -33,7 +33,7 @@ export default function FeedbackModal(props) {
   const { Trainerscontroller, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
   const toolsStore = useContext(ToolsContext);
-  const [valueCheck, setValueCheck] = useState(1);
+  const [valueCheck, setValueCheck] = useState(2);
   const loadLazyTimeout = null;
   const [BirthDatee] = useState();
   const onInit = () => {

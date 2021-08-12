@@ -1,12 +1,10 @@
 import React from 'react';
 import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
-import StopIcon from '@material-ui/icons/Stop';
-import DescriptionIcon from '@material-ui/icons/Description';
-import { sortArray } from '../tools/Tools';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { sortArray, menuIcon } from '../tools/Tools';
 
 const { SubMenu } = Menu;
-
 export default function AppMenu({ menus, collapsed }) {
   const buildMenu = buildMenus =>
     sortArray(buildMenus, 'priority').map((menu, index) => {
@@ -14,7 +12,7 @@ export default function AppMenu({ menus, collapsed }) {
         return (
           <SubMenu
             key={menu.code + index}
-            icon={<DescriptionIcon />}
+            icon={<FontAwesomeIcon icon={menuIcon(menu.code)} />}
             title={collapsed ? '' : menu.name}
           >
             {buildMenu(menu.menus)}
@@ -22,7 +20,10 @@ export default function AppMenu({ menus, collapsed }) {
         );
       }
       return (
-        <Menu.Item key={menu.code} icon={<StopIcon />}>
+        <Menu.Item
+          key={menu.code}
+          icon={<FontAwesomeIcon icon={menuIcon(menu.code)} />}
+        >
           <Link to={menu.path}>{menu.name}</Link>
         </Menu.Item>
       );
