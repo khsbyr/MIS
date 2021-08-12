@@ -14,7 +14,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from '../../criteria/criteria.style';
+import ContentWrapper from './components/organization.style';
 import OrganizationModal from './components/OrganizationModal';
 
 const { Content } = Layout;

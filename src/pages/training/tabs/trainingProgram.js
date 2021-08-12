@@ -14,7 +14,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from '../../criteria/criteria.style';
+import ContentWrapper from './components/trainingProgram.style';
 import TrainingProgramModal from './components/trainingProgramModal';
 
 const { Content } = Layout;
@@ -166,15 +166,8 @@ const TrainingProgram = props => {
   );
   const responsiblepersonameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Сургалтын материал</span>
+      <span className="p-column-title">Хариуцах эзэн</span>
       {row.responsiblePersonName}
-    </>
-  );
-
-  const trainingmaterialTrainerBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Сургалтын материал</span>
-      {row.trainingMaterial}
     </>
   );
 
@@ -264,13 +257,6 @@ const TrainingProgram = props => {
               filterPlaceholder="Хайх"
               sortable
               body={responsiblepersonameBodyTemplate}
-            />
-            <Column
-              header="Сургалтын материал"
-              body={trainingmaterialTrainerBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

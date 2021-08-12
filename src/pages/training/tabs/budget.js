@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
+import { ColumnGroup } from 'primereact/columngroup';
 import React, { useContext, useEffect, useState } from 'react';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
@@ -28,7 +29,7 @@ let editRow;
 let isEditMode;
 let isEditModeFuel;
 let isEditModeRoad;
-const Budget = () => {
+const Budget = props => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [list1, setList1] = useState([]);
@@ -37,13 +38,14 @@ const Budget = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisibleFuel, setIsModalVisibleFuel] = useState(false);
   const [isModalVisibleRoad, setIsModalVisibleRoad] = useState(false);
-  const [budgetID, setBudgetID] = useState([]);
   const [lazyParams] = useState({
     page: 0,
   });
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [stateTraining, setStateTraining] = useState([]);
+  const [budgetID, setBudgetID] = useState([]);
+  const [setStateCostType] = useState([]);
+
   // const [setTrainingID] = useState([]);
   const toolsStore = useContext(ToolsContext);
   const onInit = () => {
@@ -51,13 +53,11 @@ const Budget = () => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('trainingBudget/get', list)
+    getService(`training/get/${props.id}`, list)
       .then(result => {
-        const listResult = result.content || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList(listResult);
+        const listResult = result.trainingBudget || [];
+        setBudgetID(result.trainingBudget.id);
+        setList([listResult]);
         setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
@@ -68,65 +68,22 @@ const Budget = () => {
   };
   useEffect(() => {
     onInit();
-    getService('training/get').then(result => {
-      if (result) {
-        setStateTraining(result.content || []);
-      }
-    });
-    getService('stationeryExpenses/get', list1).then(result => {
-      if (result) {
-        const listResult = result.content || [];
+    // getService('costType/get').then(result => {
+    //   if (result) {
+    //     setStateCostType(result || []);
+    //   }
+    // });
+    getService(`stationeryExpenses/getListBy/${props.id}`, list1).then(
+      result => {
+        const listResult = result || [];
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList1(listResult);
         setSelectedRows([]);
       }
-    });
-    getService('hotelTravelExpenses/get', list2).then(result => {
-      const listResult = result.content || [];
-      listResult.forEach((item, index) => {
-        item.index = lazyParams.page * PAGESIZE + index + 1;
-      });
-      setList2(listResult);
-      setSelectedRows([]);
-    });
-    getService('fuelExpenses/get', list3).then(result => {
-      const listResult = result.content || [];
-      listResult.forEach((item, index) => {
-        item.index = lazyParams.page * PAGESIZE + index + 1;
-      });
-      setList3(listResult);
-      setSelectedRows([]);
-    });
-  }, [lazyParams]);
-
-  const getTrainingProgram = trainingId => {
-    getService(`trainingBudget/getByTraining/${trainingId}`, {}).then(
-      result => {
-        if (result) {
-          const listResult = result.content || [];
-          const Id = result.id || [];
-          setBudgetID(result.id);
-          listResult.forEach((item, index) => {
-            item.index = lazyParams.page * PAGESIZE + index + 1;
-          });
-          setList(listResult);
-          setSelectedRows([]);
-        }
-      }
     );
-  };
-  getService(`stationeryExpenses/getListBy/${budgetID}`).then(result => {
-    const listResult = result || [];
-    listResult.forEach((item, index) => {
-      item.index = lazyParams.page * PAGESIZE + index + 1;
-    });
-    setList1(listResult);
-    setSelectedRows([]);
-  });
-  const getTrainingProgram2 = trainingId => {
-    getService(`hotelTravelExpenses/getListBy/${trainingId}`, list2).then(
+    getService(`hotelTravelExpenses/getListBy/${props.id}`, list2).then(
       result => {
         const listResult = result || [];
         listResult.forEach((item, index) => {
@@ -136,9 +93,7 @@ const Budget = () => {
         setSelectedRows([]);
       }
     );
-  };
-  const getTrainingProgram3 = trainingId => {
-    getService(`fuelExpenses/getListBy/${trainingId}`, list3).then(result => {
+    getService(`fuelExpenses/getListBy/${props.id}`, list3).then(result => {
       const listResult = result || [];
       listResult.forEach((item, index) => {
         item.index = lazyParams.page * PAGESIZE + index + 1;
@@ -146,13 +101,7 @@ const Budget = () => {
       setList3(listResult);
       setSelectedRows([]);
     });
-  };
-
-  const selectTraining = value => {
-    getTrainingProgram(value);
-    getTrainingProgram2(value);
-    getTrainingProgram3(value);
-  };
+  }, [lazyParams]);
 
   const add = () => {
     editRow = null;
@@ -261,11 +210,11 @@ const Budget = () => {
       onCancel() {},
     });
   }
-  const popFuel = () => {
-    if (selectedRows.length === 0) {
+  const popFuel = row => {
+    if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
-      confirmFuel();
+      confirmFuel(row);
     }
   };
 
@@ -325,11 +274,11 @@ const Budget = () => {
     });
   }
 
-  const popRoad = () => {
-    if (selectedRows.length === 0) {
+  const popRoad = row => {
+    if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
-      confirmRoad();
+      confirmRoad(row);
     }
   };
 
@@ -362,7 +311,39 @@ const Budget = () => {
     setIsModalVisibleRoad(false);
     if (isSuccess) onInit();
   };
+  // total
+  const totalBudgetBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Нийт төсөв /₮/</span>
+      {row.totalBudget}
+    </>
+  );
+  const performanceBudgetBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Гүйцэтгэлийн төсөв /₮/</span>
+      {row.performanceBudget}
+    </>
+  );
+  const stationeryTotalBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Бичгийн хэрэгсэл нийт /₮/</span>
+      {row.stationeryTotal}
+    </>
+  );
+  const hotelTotalBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Зам хоног, буудлын зардал нийт /₮/</span>
+      {row.hotelTotal}
+    </>
+  );
+  const fuelTotalBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Шатахууны зардал нийт /₮/</span>
+      {row.fuelTotal}
+    </>
+  );
 
+  // stationeryExpenses
   const indexBodyTemplate = row => (
     <>
       <span className="p-column-title">№</span>
@@ -370,41 +351,147 @@ const Budget = () => {
     </>
   );
 
-  // const costNameBodyTemplate = row => (
-  //   <>
-  //     <span className="p-column-title">Зардлын нэр</span>
-  //     {row.stationeryExpenses.costName}
-  //   </>
-  // );
+  const costNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Зардлын нэр</span>
+      {row.costName}
+    </>
+  );
 
-  // const unitPriceNameBodyTemplate = row => (
-  //   <>
-  //     <span className="p-column-title">Нэгж үнэ /₮/</span>
-  //     {row.stationeryExpenses.unitPrice}
-  //   </>
-  // );
+  const unitPriceNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Нэгж үнэ /₮/</span>
+      {row.unitPrice}
+    </>
+  );
 
-  // const quantityNameBodyTemplate = row => (
-  //   <>
-  //     <span className="p-column-title">Тоо ширхэг</span>
-  //     {row.stationeryExpenses.quantity}
-  //   </>
-  // );
+  const quantityNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Тоо ширхэг</span>
+      {row.quantity}
+    </>
+  );
 
-  // const numberOfPeopleNameBodyTemplate = row => (
-  //   <>
-  //     <span className="p-column-title">Хүний тоо</span>
-  //     {row.stationeryExpenses.numberOfPeople}
-  //   </>
-  // );
+  const numberOfPeopleNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Хүний тоо</span>
+      {row.numberOfPeople}
+    </>
+  );
 
-  // const totalNameBodyTemplate = row => (
-  //   <>
-  //     <span className="p-column-title">Дүн /₮/</span>
-  //     {row.stationeryExpenses.total}
-  //   </>
-  // );
+  const totalNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дүн /₮/</span>
+      {row.total}
+    </>
+  );
 
+  // hotelTravelExpenses
+  const numberOfPeopleBodyTemplate = row => (
+    <>
+      <span className="p-column-title">МЗҮБ хүний тоо</span>
+      {row.numberOfPeople}
+    </>
+  );
+
+  const costPerDayBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Хоногт /₮/</span>
+      {row.costPerDay}
+    </>
+  );
+
+  const costTypeBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Төлбөрийн төрөл</span>
+      {row.costType && row.costType.name}
+    </>
+  );
+
+  const daysBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Хоног</span>
+      {row.days}
+    </>
+  );
+
+  const totalBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Нийт /₮/</span>
+      {row.total}
+    </>
+  );
+  // fuelExpenses
+  const routeBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Маршрут</span>
+      {row.route}
+    </>
+  );
+
+  const roadLengthBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Замын урт /км/</span>
+      {row.roadLength}
+    </>
+  );
+
+  const regionalSupplementBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Бүсийн нэмэгдэл /%/</span>
+      {row.regionalSupplement}
+    </>
+  );
+
+  const fuelConsumptionBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Зарцуулах шатахуун /л/</span>
+      {row.fuelConsumption}
+    </>
+  );
+
+  const fuelCostBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Шатахууны үнэ /₮/ A92</span>
+      {row.fuelCost}
+    </>
+  );
+
+  const totalfuelBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Нийт /₮/</span>
+      {row.total}
+    </>
+  );
+  // const lastYearTotal = () => {
+  //   let total = 0;
+  //   for (const sale of sales) {
+  //     total += sale.lastYearProfit;
+  //   }
+
+  //   return formatCurrency(total);
+  // };
+
+  // const thisYearTotal = () => {
+  //   let total = 0;
+  //   for (const sale of sales) {
+  //     total += sale.thisYearProfit;
+  //   }
+
+  //   return formatCurrency(total);
+  // };
+  const footerGroup = (
+    <ColumnGroup>
+      <Row>
+        <Column />
+        <Column />
+        <Column footer="Нийт:" footerStyle={{ textAlign: 'left' }} />
+        <Column footer="Нийт:" footerStyle={{ textAlign: 'left' }} />
+        <Column footer="Нийт:" footerStyle={{ textAlign: 'left' }} />
+        <Column footer="Нийт:" footerStyle={{ textAlign: 'left' }} />
+      </Row>
+    </ColumnGroup>
+  );
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -434,7 +521,7 @@ const Budget = () => {
                       </Button>
                     </Tooltip>
                   </Col>
-                  <Col>
+                  {/* <Col>
                     <Tooltip title="Нэмэх" arrowPointAtCenter>
                       <Button
                         type="text"
@@ -445,12 +532,58 @@ const Budget = () => {
                         {' '}
                       </Button>
                     </Tooltip>
-                  </Col>
+                  </Col> */}
                 </Row>
               </Col>
             </Row>
           </Content>
         </Layout>
+        <div className="datatable-responsive-demo">
+          <DataTable
+            value={list}
+            removableSort
+            paginator
+            rows={10}
+            className="p-datatable-responsive-demo"
+            selection={selectedRows}
+            onSelectionChange={e => {
+              setSelectedRows(e.value);
+            }}
+            dataKey="id"
+          >
+            <Column
+              header="Бичгийн хэрэгсэл нийт /₮/"
+              body={stationeryTotalBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
+            />
+            <Column
+              header="Зам хоног, буудлын зардал нийт /₮/"
+              body={hotelTotalBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
+            />
+            <Column
+              header="Шатахууны зардал нийт /₮/"
+              body={fuelTotalBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
+            />
+            <Column
+              header="Нийт төсөв /₮/"
+              body={totalBudgetBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
+            />
+            <Column
+              header="Гүйцэтгэлийн төсөв /₮/"
+              body={performanceBudgetBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
+            />
+            {/* <Column
+              header="Үйлдэл"
+              headerStyle={{ width: '7rem' }}
+              body={action}
+            /> */}
+          </DataTable>
+        </div>
+        {/* <Stationary /> */}
         <div className="datatable-responsive-demo">
           <Layout className="btn-layout">
             <Content>
@@ -463,14 +596,16 @@ const Budget = () => {
                     <Col xs={8} md={8} lg={10} />
                     <Col xs={8} md={8} lg={11} />
                     <Col xs={8} md={8} lg={3}>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faPlus} />}
-                        onClick={add}
-                      >
-                        Нэмэх
-                      </Button>
+                      <Tooltip title="Нэмэх" arrowPointAtCenter>
+                        <Button
+                          type="text"
+                          className="export"
+                          icon={<FontAwesomeIcon icon={faPlus} />}
+                          onClick={add}
+                        >
+                          {' '}
+                        </Button>
+                      </Tooltip>
                     </Col>
                   </Row>
                 </Col>
@@ -478,6 +613,7 @@ const Budget = () => {
             </Content>
           </Layout>
           <DataTable
+            footerColumnGroup={footerGroup}
             value={list1}
             removableSort
             paginator
@@ -499,27 +635,46 @@ const Budget = () => {
             <Column
               field="costName"
               header="Зардлын нэр"
-              // body={costNameBodyTemplate}
+              body={costNameBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
             />
             <Column
               field="unitPrice"
               header="Нэгж үнэ /₮/"
-              // body={unitPriceNameBodyTemplate}
+              body={unitPriceNameBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
             />
             <Column
               field="quantity"
               header="Тоо ширхэг"
-              // body={quantityNameBodyTemplate}
+              body={quantityNameBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
             />
             <Column
               field="numberOfPeople"
               header="Хүний тоо"
-              // body={numberOfPeopleNameBodyTemplate}
+              body={numberOfPeopleNameBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
             />
             <Column
               field="total"
               header="Дүн /₮/"
-              // body={totalNameBodyTemplate}
+              body={totalNameBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
@@ -529,6 +684,7 @@ const Budget = () => {
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+              budgetID={budgetID}
             />
           )}
         </div>
@@ -544,14 +700,16 @@ const Budget = () => {
                     <Col xs={8} md={8} lg={10} />
                     <Col xs={8} md={8} lg={11} />
                     <Col xs={8} md={8} lg={3}>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faPlus} />}
-                        onClick={addRoad}
-                      >
-                        Нэмэх
-                      </Button>
+                      <Tooltip title="Нэмэх" arrowPointAtCenter>
+                        <Button
+                          type="text"
+                          className="export"
+                          icon={<FontAwesomeIcon icon={faPlus} />}
+                          onClick={addRoad}
+                        >
+                          {' '}
+                        </Button>
+                      </Tooltip>
                     </Col>
                   </Row>
                 </Col>
@@ -570,13 +728,56 @@ const Budget = () => {
             }}
             dataKey="id"
           >
-            <Column field="index" header="№" style={{ width: 40 }} />
+            <Column
+              field="index"
+              header="№"
+              style={{ width: 40 }}
+              body={indexBodyTemplate}
+            />
 
-            <Column field="numberOfPeople" header="МЗҮБ хүний тоо" />
-            <Column field="costPerDay" header="Хоногт /₮/" />
-            <Column field="costType.name" header="Төлбөрийн төрөл" />
-            <Column field="days" header="Хоног" />
-            <Column field="total" header="Нийт /₮/" />
+            <Column
+              field="numberOfPeople"
+              header="МЗҮБ хүний тоо"
+              body={numberOfPeopleBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              field="costPerDay"
+              header="Хоногт /₮/"
+              bodyStyle={{ textAlign: 'center' }}
+              body={costPerDayBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              header="Төлбөрийн төрөл"
+              body={costTypeBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              field="days"
+              header="Хоног"
+              bodyStyle={{ textAlign: 'center' }}
+              body={daysBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              field="total"
+              header="Нийт /₮/"
+              bodyStyle={{ textAlign: 'center' }}
+              body={totalBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
             <Column headerStyle={{ width: '7rem' }} body={actionRoad} />
           </DataTable>
           {isModalVisibleRoad && (
@@ -585,6 +786,7 @@ const Budget = () => {
               isModalVisible={isModalVisibleRoad}
               close={closeModalRoad}
               isEditMode={isEditModeRoad}
+              budgetID={budgetID}
             />
           )}
         </div>
@@ -600,14 +802,16 @@ const Budget = () => {
                     <Col xs={8} md={8} lg={10} />
                     <Col xs={8} md={8} lg={11} />
                     <Col xs={8} md={8} lg={3}>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faPlus} />}
-                        onClick={addFuel}
-                      >
-                        Нэмэх
-                      </Button>
+                      <Tooltip title="Нэмэх" arrowPointAtCenter>
+                        <Button
+                          type="text"
+                          className="export"
+                          icon={<FontAwesomeIcon icon={faPlus} />}
+                          onClick={addFuel}
+                        >
+                          {' '}
+                        </Button>
+                      </Tooltip>
                     </Col>
                   </Row>
                 </Col>
@@ -632,12 +836,59 @@ const Budget = () => {
               body={indexBodyTemplate}
               style={{ width: 40 }}
             />
-            <Column field="route" header="Маршрут" />
-            <Column field="roadLength" header="Замын урт /км/" />
-            <Column field="regionalSupplement" header="Бүсийн нэмэгдэл /%/" />
-            <Column field="fuelConsumption" header="Зарцуулах шатахуун /л/" />
-            <Column field="fuelCost" header="Шатахууны үнэ /₮/ A92" />
-            <Column field="total" header="Нийт /₮/" />
+            <Column
+              field="route"
+              header="Маршрут"
+              body={routeBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              field="roadLength"
+              bodyStyle={{ textAlign: 'center' }}
+              header="Замын урт /км/"
+              body={roadLengthBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              field="regionalSupplement"
+              bodyStyle={{ textAlign: 'center' }}
+              header="Бүсийн нэмэгдэл /%/"
+              body={regionalSupplementBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              field="fuelConsumption"
+              header="Зарцуулах шатахуун /л/"
+              bodyStyle={{ textAlign: 'center' }}
+              body={fuelConsumptionBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              field="fuelCost"
+              bodyStyle={{ textAlign: 'center' }}
+              header="Шатахууны үнэ /₮/ A92"
+              body={fuelCostBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              field="total"
+              header="Нийт /₮/"
+              bodyStyle={{ textAlign: 'center' }}
+              body={totalfuelBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
             <Column headerStyle={{ width: '7rem' }} body={actionFuel} />
           </DataTable>
           {isModalVisibleFuel && (
@@ -646,6 +897,7 @@ const Budget = () => {
               isModalVisible={isModalVisibleFuel}
               close={closeModalFuel}
               isEditMode={isEditModeFuel}
+              budgetID={budgetID}
             />
           )}
         </div>
