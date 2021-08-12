@@ -5,10 +5,10 @@ import {
   DatePicker,
   Form,
   Input,
+  InputNumber,
+  message,
   Modal,
   Row,
-  message,
-  InputNumber,
 } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
@@ -160,7 +160,6 @@ export default function TrainingModal(props) {
       }
     });
   };
-  const selectOrg = value => {};
 
   const selectCountry = value => {
     getAimag(value);
@@ -422,7 +421,6 @@ export default function TrainingModal(props) {
                     >
                       <AutoCompleteSelect
                         valueField="id"
-                        onChange={value => selectOrg(value)}
                         data={stateOrg}
                         size="medium"
                       />

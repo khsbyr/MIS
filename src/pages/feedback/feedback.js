@@ -22,15 +22,15 @@ let editRow;
 let isEditMode;
 const Feedback = () => {
   // const loadLazyTimeout = null;
-  const [list, setList] = useState([]);
+  // const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams] = useState({
     page: 0,
   });
   // const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [trainingID, setTrainingID] = useState([]);
-  const [orgID, setOrgID] = useState([]);
+  // const [trainingID, setTrainingID] = useState([]);
+  // const [orgID, setOrgID] = useState([]);
   // const toolsStore = useContext(ToolsContext);
   const onInit = () => {
     // toolsStore.setIsShowLoader(true);
@@ -178,7 +178,7 @@ const Feedback = () => {
           <DataTable
             editMode="cell"
             className="editable-cells-table"
-            value={list}
+            // value={list}
             removableSort
             paginator
             rows={10}
@@ -203,9 +203,9 @@ const Feedback = () => {
               Plancontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
-              isEditMode={isEditMode}
-              trainingID={trainingID}
-              orgID={orgID}
+              // isEditMode={isEditMode}
+              // trainingID={trainingID}
+              // orgID={orgID}
             />
           )}
         </div>

@@ -44,7 +44,6 @@ const Budget = props => {
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [budgetID, setBudgetID] = useState([]);
-  const [setStateCostType] = useState([]);
 
   // const [setTrainingID] = useState([]);
   const toolsStore = useContext(ToolsContext);

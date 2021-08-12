@@ -1,10 +1,6 @@
-import { Form, Input, Modal, message, InputNumber } from 'antd';
-import React, { useEffect, useState } from 'react';
-import {
-  getService,
-  postService,
-  putService,
-} from '../../../../service/service';
+import { Form, Input, InputNumber, message, Modal } from 'antd';
+import React, { useEffect } from 'react';
+import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 
@@ -19,7 +15,6 @@ const layout = {
 
 export default function FuelModal(props) {
   const { Fuelcontroller, isModalVisible, isEditMode, budgetID } = props;
-  const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
     // getService('fuelExpenses/get', {

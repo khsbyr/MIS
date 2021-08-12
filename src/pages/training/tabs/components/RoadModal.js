@@ -1,5 +1,6 @@
-import { Form, Input, Modal, message, InputNumber } from 'antd';
+import { Form, InputNumber, message, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
+import AutoCompleteSelect from '../../../../components/Autocomplete';
 import {
   getService,
   postService,
@@ -7,7 +8,6 @@ import {
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
-import AutoCompleteSelect from '../../../../components/Autocomplete';
 
 const layout = {
   labelCol: {
@@ -23,7 +23,6 @@ export default function RoadModal(props) {
   const [form] = Form.useForm();
   const [stateCostType, setStateCostType] = useState([]);
   const [stateCostID, setStateCostID] = useState([]);
-  console.log(stateCostID);
 
   useEffect(() => {
     getService('costType/get').then(result => {
