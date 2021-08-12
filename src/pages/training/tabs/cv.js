@@ -279,6 +279,7 @@ const CV = () => {
         </Content>
         <div className="datatable-responsive-demo">
           <DataTable
+            emptyMessage="Өгөгдөл олдсонгүй..."
             value={list}
             removableSort
             paginator

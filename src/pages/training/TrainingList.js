@@ -304,6 +304,7 @@ const TrainingList = () => {
         </Content>
         <div className="datatable-responsive-demo">
           <DataTable
+            emptyMessage="Өгөгдөл олдсонгүй..."
             value={list}
             removableSort
             paginator
@@ -329,14 +330,15 @@ const TrainingList = () => {
               sortable
             />
             <Column
-              header="Төсөв"
+              header="Төсөв /₮/"
+              thousandSeparator
               headerStyle={{ width: '10rem' }}
               filter
               body={totalBudgetBodyTemplate}
               bodyStyle={{ textAlign: 'center' }}
             />
             <Column
-              header="Гүйцэтгэлийн төсөв"
+              header="Төсвийн гүйцэтгэл /₮/"
               headerStyle={{ width: '10rem' }}
               filter
               body={performanceBudgetBodyTemplate}

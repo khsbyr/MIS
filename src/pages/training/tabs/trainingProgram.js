@@ -221,6 +221,7 @@ const TrainingProgram = props => {
           <DataTable
             value={list}
             removableSort
+            emptyMessage="Өгөгдөл олдсонгүй..."
             paginator
             rows={10}
             className="p-datatable-responsive-demo"
@@ -245,7 +246,7 @@ const TrainingProgram = props => {
               filterPlaceholder="Хайх"
             />
             <Column
-              header="Хэрэгжих хугацаа"
+              header="Хэрэгжих өдөр"
               body={durationtrainerBodyTemplate}
               sortable
               filter

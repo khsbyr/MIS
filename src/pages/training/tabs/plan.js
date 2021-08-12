@@ -223,6 +223,7 @@ const Plan = props => {
             value={list}
             removableSort
             paginator
+            emptyMessage="Өгөгдөл олдсонгүй..."
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}

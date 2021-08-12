@@ -212,6 +212,7 @@ const Guidelines = props => {
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}
+            emptyMessage="Өгөгдөл олдсонгүй..."
             removableSort
             paginator
             rows={10}
