@@ -50,7 +50,7 @@ function ForgetPassword() {
             }
           } else errorCatch(error);
         });
-    }
+    } else message.error('Бүртгэлтэй Имэйл хаягаа оруулна уу!!!');
   }
 
   return (
