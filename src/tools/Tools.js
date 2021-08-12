@@ -1,3 +1,19 @@
+import {
+  faBookOpen,
+  faChartBar,
+  faClipboard,
+  faFolderOpen,
+  faHandsHelping,
+  faPen,
+  faProjectDiagram,
+  faSquare,
+  faSquareFull,
+  faStop,
+  faTasks,
+  faTrash,
+  faUser,
+  faUserCog,
+} from '@fortawesome/free-solid-svg-icons';
 import { message, Tag } from 'antd';
 import { Warning } from '../components/Confirm';
 import { ORG_STEP, ORG_WISH } from '../constants/Constant';
@@ -133,6 +149,31 @@ export const formatFormula = indicator => {
       return 'Томьёо';
     default:
       return 'Тодорхойгүй';
+  }
+};
+
+export const menuIcon = code => {
+  switch (code) {
+    case 'User':
+      return faUser;
+    case 'Indicator':
+      return faChartBar;
+    case 'Training':
+      return faBookOpen;
+    case 'Project':
+      return faTasks;
+    case 'Project implementing unit':
+      return faProjectDiagram;
+    case 'Directory registration':
+      return faFolderOpen;
+    case 'Consulting service':
+      return faHandsHelping;
+    case 'Dashboard':
+      return faClipboard;
+    case 'settings':
+      return faUserCog;
+    default:
+      return faSquare;
   }
 };
 
