@@ -123,11 +123,15 @@ export default function TrainingReportModal(props) {
         BagID: TrainingReportController.address
           ? TrainingReportController.address.bag.id
           : '',
-        TrainingName: TrainingReportController.name,
-        TotalParticipants: TrainingReportController.totalParticipants,
+        TrainingName: TrainingReportController && TrainingReportController.name,
+        TotalParticipants:
+          TrainingReportController &&
+          TrainingReportController.totalParticipants,
         ResponsibleUserName:
+          TrainingReportController.organization.responsibleUser &&
           TrainingReportController.organization.responsibleUser.firstname,
         PerformanceBudget:
+          TrainingReportController.trainingBudget &&
           TrainingReportController.trainingBudget.performanceBudget,
         ReportsAim:
           TrainingReportController.trainingReport &&
@@ -207,9 +211,12 @@ export default function TrainingReportModal(props) {
           AimagID: selectedTraining ? selectedTraining.address.aimag.id : '',
           SoumID: selectedTraining ? selectedTraining.address.soum.id : '',
           BagID: selectedTraining ? selectedTraining.address.bag.id : '',
-          TrainingName: selectedTraining.name,
-          TotalParticipants: selectedTraining.totalParticipants,
-          PerformanceBudget: selectedTraining.trainingBudget.performanceBudget,
+          TrainingName: selectedTraining && selectedTraining.name,
+          TotalParticipants:
+            selectedTraining && selectedTraining.totalParticipants,
+          PerformanceBudget:
+            selectedTraining.trainingBudget &&
+            selectedTraining.trainingBudget.performanceBudget,
           ResponsibleUserName:
             selectedTraining.organization &&
             selectedTraining.organization.responsibleUser.firstname,

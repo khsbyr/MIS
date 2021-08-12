@@ -65,7 +65,7 @@ code {
 
 .ant-breadcrumb {
   margin-top: 20px !important;
-  margin-left: 45px !important;
+  margin-left: 35px !important;
 }
 
 .ant-layout-header {
@@ -273,11 +273,6 @@ position: none;
   height: 30px;
 }
 
-.p-filter-column {
-  background-color: green;
-}
-
-
 .p-inputtext {
   padding: 0px;
   color: blue;
@@ -363,7 +358,6 @@ position: none;
   color: #103154;
 }
 
-.p-inputtext {
-  border: none;
-  background-color: green;
+.selectArrow .ant-select-arrow {
+  color:white;
 }

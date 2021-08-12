@@ -5,14 +5,8 @@ import { errorCatch } from '../../../tools/Tools';
 import ContentWrapper from '../../training/tabs/components/CvModal.style';
 import validateMessages from '../../../tools/validateMessage';
 
-const layout = {
-  labelCol: {
-    span: 10,
-  },
-  wrapperCol: {
-    span: 14,
-  },
-};
+const { TextArea } = Input;
+
 export default function ScopeModal(props) {
   const { Scopecontroller, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
@@ -67,7 +61,7 @@ export default function ScopeModal(props) {
           <Form
             form={form}
             labelAlign="left"
-            {...layout}
+            layout="vertical"
             name="nest-messages"
             validateMessages={validateMessages}
           >
@@ -80,7 +74,7 @@ export default function ScopeModal(props) {
                 },
               ]}
             >
-              <Input style={{ width: '100%' }} />
+              <TextArea style={{ width: '100%', height: '100px' }} />
             </Form.Item>
           </Form>
         </ContentWrapper>

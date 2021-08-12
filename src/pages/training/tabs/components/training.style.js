@@ -66,7 +66,7 @@ const ContentWrapper = styled.div`
     display: none;
   }
   .ant-select-selection-search {
-    margin-top: 8px;
+    margin-top: 4px;
   }
   .ant-picker {
     width: 100%;

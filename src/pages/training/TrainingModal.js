@@ -1,6 +1,15 @@
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Col, DatePicker, Form, Input, Modal, Row } from 'antd';
+import {
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Modal,
+  Row,
+} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -151,7 +160,6 @@ export default function TrainingModal(props) {
       }
     });
   };
-  const selectOrg = value => {};
 
   const selectCountry = value => {
     getAimag(value);
@@ -212,9 +220,11 @@ export default function TrainingModal(props) {
           const saveData = {
             training: values,
             criteriaIds: values.CriteriaID,
+            totalBudget: values.totalBudget,
           };
           putService(`training/update/${Trainingcontroller.id}`, saveData)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -224,10 +234,12 @@ export default function TrainingModal(props) {
           const saveData = {
             training: values,
             criteriaIds: values.CriteriaID,
+            totalBudget: values.totalBudget,
           };
 
           postService('training/post', saveData)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -296,17 +308,17 @@ export default function TrainingModal(props) {
                   </Col>
                   <Col xs={24} md={24} lg={8}>
                     <Form.Item label="Төсөв:" name="totalBudget">
-                      <Input />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={8}>
+                  {/* <Col xs={24} md={24} lg={8}>
                     <Form.Item
                       label="Гүйцэтгэлийн төсөв:"
                       name="performanceBudget"
                     >
                       <Input />
                     </Form.Item>
-                  </Col>
+                  </Col> */}
                   {/* <Col xs={24} md={24} lg={8}>
                     <Form.Item
                       label="Оролцогчдын тоо:"
@@ -317,7 +329,7 @@ export default function TrainingModal(props) {
                         },
                       ]}
                     >
-                      <Input />
+                      <InputNumber />
                     </Form.Item>
                   </Col> */}
                   <Col xs={24} md={24} lg={8}>
@@ -409,7 +421,6 @@ export default function TrainingModal(props) {
                     >
                       <AutoCompleteSelect
                         valueField="id"
-                        onChange={value => selectOrg(value)}
                         data={stateOrg}
                         size="medium"
                       />

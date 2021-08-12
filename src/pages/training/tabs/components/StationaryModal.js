@@ -1,4 +1,4 @@
-import { Form, Input, Modal, message } from 'antd';
+import { Form, Input, Modal, message, InputNumber } from 'antd';
 import React, { useEffect } from 'react';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
@@ -104,7 +104,7 @@ export default function StationaryModal(props) {
                 },
               ]}
             >
-              <Input />
+              <InputNumber />
             </Form.Item>
             <Form.Item
               name="quantity"
@@ -115,7 +115,7 @@ export default function StationaryModal(props) {
                 },
               ]}
             >
-              <Input />
+              <InputNumber />
             </Form.Item>
             <Form.Item
               name="numberOfPeople"
@@ -126,10 +126,10 @@ export default function StationaryModal(props) {
                 },
               ]}
             >
-              <Input />
+              <InputNumber />
             </Form.Item>
             <Form.Item name="total" label="Дүн">
-              <Input />
+              <InputNumber />
             </Form.Item>
           </Form>
         </ContentWrapper>

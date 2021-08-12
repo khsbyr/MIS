@@ -16,7 +16,7 @@ const ContentWrapper = styled.div`
   }
 
   .title {
-    font-size: 14px;
+    font-size: 24px;
     font-weight: bold;
     color: #0d0d0d;
     margin: 20px 0px 20px 0px;
@@ -74,7 +74,7 @@ const ContentWrapper = styled.div`
     margin-right: 25px;
   }
   .ant-select-selection-search {
-    margin-top: 8px;
+    margin-top: 4px;
   }
 `;
 
