@@ -1,10 +1,6 @@
-import { Form, Input, Modal, message } from 'antd';
-import React, { useEffect, useState } from 'react';
-import {
-  getService,
-  postService,
-  putService,
-} from '../../../../service/service';
+import { Form, Input, InputNumber, message, Modal } from 'antd';
+import React, { useEffect } from 'react';
+import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 
@@ -19,7 +15,6 @@ const layout = {
 
 export default function FuelModal(props) {
   const { Fuelcontroller, isModalVisible, isEditMode, budgetID } = props;
-  const [setStateController] = useState([]);
   const [form] = Form.useForm();
   useEffect(() => {
     // getService('fuelExpenses/get', {
@@ -103,7 +98,7 @@ export default function FuelModal(props) {
               },
             ]}
           >
-            <Input />
+            <InputNumber />
           </Form.Item>
           <Form.Item
             name="regionalSupplement"
@@ -114,7 +109,7 @@ export default function FuelModal(props) {
               },
             ]}
           >
-            <Input />
+            <InputNumber />
           </Form.Item>
           <Form.Item
             name="fuelConsumption"
@@ -125,7 +120,7 @@ export default function FuelModal(props) {
               },
             ]}
           >
-            <Input />
+            <InputNumber />
           </Form.Item>
           <Form.Item
             name="fuelCost"
@@ -136,11 +131,11 @@ export default function FuelModal(props) {
               },
             ]}
           >
-            <Input />
+            <InputNumber />
           </Form.Item>
 
           <Form.Item name="total" label="Нийт /₮/">
-            <Input />
+            <InputNumber />
           </Form.Item>
         </Form>
       </Modal>

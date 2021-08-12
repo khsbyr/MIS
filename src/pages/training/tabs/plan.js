@@ -219,12 +219,12 @@ const Plan = props => {
         <div className="datatable-responsive-demo">
           <DataTable
             editMode="cell"
-            className="editable-cells-table"
+            // className="editable-cells-table"
             value={list}
             removableSort
             paginator
             rows={10}
-            // className="p-datatable-responsive-demo"
+            className="p-datatable-responsive-demo"
             selection={selectedRows}
             // onRowClick={edit}
             onSelectionChange={e => {
