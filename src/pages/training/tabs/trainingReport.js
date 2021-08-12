@@ -40,13 +40,15 @@ const TrainingReport = props => {
     }
     getService(`training/get/${props.id}`, list)
       .then(result => {
-        const listResult = result || [];
-        // listResult.forEach((item, index) => {
-        //   item.index = lazyParams.page * PAGESIZE + index + 1;
-        // });
-        setList([listResult]);
+        if (result.trainingReport !== null) {
+          const listResult = result || [];
+          // listResult.forEach((item, index) => {
+          //   item.index = lazyParams.page * PAGESIZE + index + 1;
+          // });
+          setList([listResult]);
+          setSelectedRows([]);
+        }
         setOrgID(result.organization.id);
-        setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
@@ -54,7 +56,6 @@ const TrainingReport = props => {
         toolsStore.setIsShowLoader(false);
       });
   };
-
   useEffect(() => {
     onInit();
   }, [lazyParams]);
@@ -75,7 +76,7 @@ const TrainingReport = props => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`trainingReport/delete/${row.id}`)
+    putService(`trainingReport/delete/${row.trainingReport.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -127,13 +128,6 @@ const TrainingReport = props => {
     if (isSuccess) onInit();
   };
 
-  const indexBodyTemplate = row => (
-    <>
-      <span className="p-column-title">№</span>
-      {row.index}
-    </>
-  );
-
   const trainingnameBodyTemplate = row => (
     <>
       <span className="p-column-title">Сургалтын нэр</span>
@@ -144,7 +138,18 @@ const TrainingReport = props => {
   const teacherBodyTemplate = row => (
     <>
       <span className="p-column-title">Огноо</span>
-      {moment(row.createdDate).format('YYYY-M-D h цаг m минут')}
+      {moment(row.trainingReport && row.trainingReport.createdDate).format(
+        'YYYY-M-D h цаг m минут'
+      )}
+    </>
+  );
+
+  const updatedDateBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Огноо</span>
+      {moment(row.trainingReport && row.trainingReport.updatedDate).format(
+        'YYYY-M-D h цаг m минут'
+      )}
     </>
   );
 
@@ -240,8 +245,16 @@ const TrainingReport = props => {
               body={respoUserBodyTemplate}
             />
             <Column
-              header="Огноо"
+              header="Үүссэн огноо"
               body={teacherBodyTemplate}
+              style={{ width: 200 }}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              header="Зассан огноо"
+              body={updatedDateBodyTemplate}
               style={{ width: 200 }}
               sortable
               filter

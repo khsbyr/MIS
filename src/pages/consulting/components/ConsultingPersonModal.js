@@ -33,8 +33,7 @@ const layout = {
 };
 
 export default function ConsultingPersonModal(props) {
-  const { Trainerscontroller, isModalVisible, isEditMode, trainerID, orgId } =
-    props;
+  const { Trainerscontroller, isModalVisible, isEditMode, trainerID } = props;
   const [form] = Form.useForm();
   const toolsStore = useContext(ToolsContext);
   const [stateAimag, setStateAimag] = useState([]);
@@ -44,30 +43,12 @@ export default function ConsultingPersonModal(props) {
   const loadLazyTimeout = null;
   const [userID, setUserID] = useState();
   const [BirthDatee] = useState();
-  const [changedBirthDate, setChangedBirthDate] = useState();
-  const [personID, setPersonID] = useState();
-  function onBirthDateChange(date, value) {
-    setChangedBirthDate(value);
-  }
+  const [personID] = useState();
   const onInit = () => {
     toolsStore.setIsShowLoader(false);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    // getService('trainers/get', list)
-    //   .then(result => {
-    //     const listResult = result.content || [];
-    //     listResult.forEach((item, index) => {
-    //       item.index = lazyParams.page * PAGESIZE + index + 1;
-    //     });
-    //     setList(listResult);
-    //     setSelectedRows([]);
-    //   })
-    //   .finally(toolsStore.setIsShowLoader(false))
-    //   .catch(error => {
-    //     errorCatch(error);
-    //     toolsStore.setIsShowLoader(false);
-    //   });
   };
   useEffect(() => {
     onInit();
@@ -99,7 +80,7 @@ export default function ConsultingPersonModal(props) {
     }
 
     if (isEditMode) {
-      setChangedBirthDate(Trainerscontroller.birthDate);
+      // setChangedBirthDate(Trainerscontroller.birthDate);
       setUserID(Trainerscontroller.id);
       form.setFieldsValue({
         ...Trainerscontroller,
@@ -109,7 +90,7 @@ export default function ConsultingPersonModal(props) {
         phoneNumber: Trainerscontroller.phoneNumber,
         email: Trainerscontroller.email,
         OrganizationName: Trainerscontroller.orgName,
-        birthDateNew: Trainerscontroller.birthDate,
+        // birthDateNew: Trainerscontroller.birthDate,
         AddressDetail: Trainerscontroller.address
           ? Trainerscontroller.address.addressDetail
           : '',
@@ -173,7 +154,7 @@ export default function ConsultingPersonModal(props) {
       .then(values => {
         if (isEditMode) {
           values.id = userID;
-          values.birthDate = changedBirthDate;
+          // values.birthDate = changedBirthDate;
           values.address = {
             addressDetail: values.AddressDetail,
             country: {
@@ -277,22 +258,6 @@ export default function ConsultingPersonModal(props) {
                     },
                   ]}
                 >
-                  {/* <AutoComplete
-                    placeholder="Регистрын дугаар"
-                    onSelect={selectUser}
-                    filterOption={(inputValue, option) =>
-                      option.children
-                        .toUpperCase()
-                        .indexOf(inputValue.toUpperCase()) !== -1
-                    }
-                    // onChange={value => console.log(value)}
-                  >
-                    {options.map(value => (
-                      <Option key={value.id} value={value.register}>
-                        {value.register}
-                      </Option>
-                    ))}
-                  </AutoComplete> */}
                   <Input className="FormItem" placeholder="Регистр:" />
                 </Form.Item>
                 <Form.Item name="lastname">
@@ -339,20 +304,6 @@ export default function ConsultingPersonModal(props) {
               </Col>
 
               <Col xs={24} md={24} lg={9}>
-                <Form.Item>
-                  <DatePicker
-                    prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
-                    placeholder="Төрсөн он, сар, өдөр"
-                    className="FormItem"
-                    onChange={onBirthDateChange}
-                    defaultValue={
-                      isEditMode
-                        ? Trainerscontroller &&
-                          moment(Trainerscontroller.birthDate)
-                        : BirthDatee
-                    }
-                  />
-                </Form.Item>
                 <Form.Item name="CountryID">
                   <AutoCompleteSelect
                     className="FormItem"
@@ -388,36 +339,25 @@ export default function ConsultingPersonModal(props) {
                     data={stateBag}
                   />
                 </Form.Item>
-              </Col>
-            </Row>
-            {/* <h2 className="title">1. Ажлын зорилго</h2>
-            <Row>
-              <Col xs={24} md={24} lg={24}>
-                <Form.Item name="purpose">
-                  <Input.TextArea
-                    placeholder="(Горилж буй ажлын зорилгоо товч бичнэ үү)"
-                    style={{
-                      width: '100%',
-                      height: '100px',
-                    }}
-                  />
+                <Form.Item>
+                  {isEditMode && (
+                    <DatePicker
+                      disabled
+                      prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
+                      placeholder="Төрсөн он, сар, өдөр"
+                      className="FormItem"
+                      // onChange={onBirthDateChange}
+                      defaultValue={
+                        isEditMode
+                          ? Trainerscontroller &&
+                            moment(Trainerscontroller.birthDate)
+                          : BirthDatee
+                      }
+                    />
+                  )}
                 </Form.Item>
               </Col>
             </Row>
-            <h2 className="title">2. Ур чадвар</h2>
-            <Row>
-              <Col xs={24} md={24} lg={24}>
-                <Form.Item name="skill">
-                  <Input.TextArea
-                    placeholder="(Өөрийн давуу тал, ур чадвараа нэрлэнэ үү)"
-                    style={{
-                      width: '100%',
-                      height: '100px',
-                    }}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>{' '} */}
             <h2 className="title">1. Дэлгэрэнгүй хаяг</h2>
             <Row>
               <Col xs={24} md={24} lg={24}>

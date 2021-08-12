@@ -1,10 +1,15 @@
-import { Col, Form, Input, Modal, Row } from 'antd';
+import { Col, Form, Input, Modal, Row, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { postService, putService } from '../../../../service/service';
+import {
+  postService,
+  putService,
+  getService,
+} from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './guidelines.style';
 
+const { Option } = Select;
 const layout = {
   labelCol: {
     span: 20,
@@ -18,23 +23,24 @@ export default function TrainingProgramModal(props) {
   const { Trainingprogramcontroller, isModalVisible, isEditMode, trainingID } =
     props;
   const [form] = Form.useForm();
-  const [TrainingTeamID] = useState([]);
-
+  const [stateTrainers, setStateTrainers] = useState(false);
   useEffect(() => {
+    getService(`trainingTeam/getList/${trainingID}`).then(result => {
+      if (result) {
+        setStateTrainers(result || []);
+      }
+    });
     if (isEditMode) {
       form.setFieldsValue({
         ...Trainingprogramcontroller,
       });
     }
   }, []);
-
   const save = () => {
     form
       .validateFields()
       .then(values => {
         values.training = { id: trainingID };
-        values.training_team = { id: TrainingTeamID };
-
         if (isEditMode) {
           putService(
             `trainingProgram/update/${Trainingprogramcontroller.id}`,
@@ -47,7 +53,7 @@ export default function TrainingProgramModal(props) {
               errorCatch(error);
             });
         } else {
-          postService(`trainingProgram/post/${trainingID}`, values)
+          postService(`trainingProgram/post`, values)
             .then(() => {
               props.close(true);
             })
@@ -63,7 +69,7 @@ export default function TrainingProgramModal(props) {
   return (
     <div>
       <Modal
-        title="Сургалт бүртгэх"
+        title="Сургалтын хөтөлбөр бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
         width={600}
@@ -107,29 +113,34 @@ export default function TrainingProgramModal(props) {
                     >
                       <Input />
                     </Form.Item>
-                    <Form.Item
+                    {/* <Form.Item
                       name="responsiblePersonName"
                       label="Хариуцах эзэн:"
                     >
                       <Input />
-                    </Form.Item>
-                    {/* <Form.Item
+                    </Form.Item> */}
+                    <Form.Item
                       layout="vertical"
                       label="Хариуцах эзэн:"
                       name="responsiblePersonName"
                     >
-                      <AutocompleteSelect
-                        valueField="id"
-                        data={stateTeam}
-                        placeholder="Хариуцах эзэн"
-                        onChange={(value) => selectTrainingTeam(value)}
-                      />
-                    </Form.Item> */}
-                    <Form.Item
-                      name="trainingMaterial"
-                      label="Сургалтын материал"
-                    >
-                      <Input />
+                      <Select
+                        showSearch
+                        style={{ width: '100%' }}
+                        optionFilterProp="children"
+                        maxTagCount="responsive"
+                        // filterOption={(input, option) =>
+                        //   option.children?.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                        // }
+                        // onChange={props.onChange}
+                      >
+                        {stateTrainers &&
+                          stateTrainers.map((z, index) => (
+                            <Option key={index} value={z.user.fullName}>
+                              {z.user.fullName}
+                            </Option>
+                          ))}
+                      </Select>
                     </Form.Item>
                   </Col>
                 </Row>

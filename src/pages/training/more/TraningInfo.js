@@ -10,6 +10,7 @@ import TrainingReport from '../tabs/trainingReport';
 import Guidelines from '../tabs/guidelines';
 import TrainingProgram from '../tabs/trainingProgram';
 import Budget from '../tabs/budget';
+import TrainingTest from '../tabs/testAggregation';
 
 const { TabPane } = Tabs;
 const tabPosition = 'top';
@@ -36,7 +37,7 @@ export default function TraningInfo() {
           <Attendance id={id} />
         </TabPane>
         <TabPane tab={t('test_aggregation')} key="6">
-          Content of Tab 1
+          <TrainingTest id={id} />
         </TabPane>
         <TabPane tab={t('training_report')} key="7">
           <TrainingReport id={id} />

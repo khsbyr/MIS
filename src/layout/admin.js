@@ -1,17 +1,19 @@
-import { MenuOutlined } from '@ant-design/icons';
-import React, { useEffect, useContext } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { Layout } from 'antd';
-import { getService } from '../service/service';
+import React, { useContext, useEffect } from 'react';
+import { Media } from 'react-bootstrap';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { ToolsContext } from '../context/Tools';
-import Page from './Page';
-import Menu from './Menu';
-import { buildPaths, generateRoutes } from './utils';
-import CriteriaMore from '../pages/criteria/more/CriteriaMore';
-import TrainingInfo from '../pages/training/more/TraningInfo';
 import CriteriaContextProvider from '../context/CriteriaContext';
+import TrainingInfo from '../pages/training/more/TraningInfo';
+import TestResult from '../pages/training/tabs/components/testResult';
+import { getService } from '../service/service';
+import Menu from './Menu';
+import Page from './Page';
+import CriteriaMore from '../pages/criteria/more/CriteriaMore';
+import { buildPaths, generateRoutes } from './utils';
 
-const { Sider, Content } = Layout;
+const { Sider, Content, Header } = Layout;
 
 let menus = [];
 
@@ -19,7 +21,9 @@ function Admin() {
   const toolsStore = useContext(ToolsContext);
   const [collapsed, setCollapsed] = React.useState(false);
   const [routes, setRoutes] = React.useState([]);
-
+  const toggle = () => {
+    setCollapsed(!collapsed);
+  };
   useEffect(() => {
     // if (!toolsStore.user) return;
     getService('/menus/getByToken').then(result => {
@@ -37,9 +41,36 @@ function Admin() {
           style={{ background: '#fff' }}
           breakpoint="lg"
           width="300px"
-          collapsedWidth="0"
-          trigger={<MenuOutlined />}
+          collapsedWidth="70"
+          collapsible
+          trigger={null}
+          collapsed={collapsed}
+          onCollapse={toggle}
         >
+          {!collapsed ? (
+            <img
+              src="http://lcp.mn/assets/images/logo.png"
+              className="logoHeader"
+              height={50}
+              width={200}
+              style={{
+                marginLeft: '25px',
+                marginTop: '10px',
+              }}
+            />
+          ) : (
+            ''
+          )}
+          {React.createElement(
+            collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+            {
+              style: { float: 'right' },
+              className: 'trigger',
+              onClick: () => {
+                toggle();
+              },
+            }
+          )}
           <Menu
             className="menu"
             mode="inline"
@@ -50,7 +81,6 @@ function Admin() {
               background: '#fff',
             }}
             menus={buildPaths(menus)}
-            collapsed={collapsed}
           />
         </Sider>
         <Layout className="site-layout">
@@ -72,8 +102,12 @@ function Admin() {
                 <Route path="/criteriaDetail/:id">
                   <CriteriaMore />
                 </Route>
+
                 <Route path="/trainingList/:id">
                   <TrainingInfo />
+                </Route>
+                <Route path="/participantsList/:id">
+                  <TestResult />
                 </Route>
               </Switch>
             </CriteriaContextProvider>
