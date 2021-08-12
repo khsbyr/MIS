@@ -151,9 +151,7 @@ export default function TrainingModal(props) {
       }
     });
   };
-  const selectOrg = value => {
-    console.log(value);
-  };
+  const selectOrg = value => {};
 
   const selectCountry = value => {
     getAimag(value);
