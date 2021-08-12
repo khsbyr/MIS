@@ -8,20 +8,18 @@ import {
 } from '@ant-design/icons';
 import { Col, Layout, Row, Select, Menu, Dropdown, Avatar, Button } from 'antd';
 import 'antd/dist/antd.css';
-import { React, useContext } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { React } from 'react';
+import { Link } from 'react-router-dom';
 import i18n from '../i18n';
 import HeaderWrapper from './header.style';
-import { ToolsContext } from '../context/Tools';
 
 const { Option } = Select;
 const { Header } = Layout;
 
 const AvatarDropdown = () => {
-  const history = useHistory();
   function logout() {
-    localStorage.removeItem('token');
-    history.push('/login');
+    localStorage.clear();
+    window.location.href = '/login';
   }
   return (
     <Menu className="app-header-dropdown">
@@ -37,8 +35,6 @@ const AvatarDropdown = () => {
 };
 
 const Headers = () => {
-  const toolsStore = useContext(ToolsContext);
-
   function handleChange(value) {
     i18n.changeLanguage(value);
   }

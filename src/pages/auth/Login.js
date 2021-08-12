@@ -47,7 +47,7 @@ function Login() {
             localStorage.setItem('name', user.firstname);
             toolsStore.generalInfo.userInfo = user;
             toolsStore.setGeneralInfo({ ...toolsStore.generalInfo });
-            history.push('/admin/user');
+            history.push('user/users');
           });
         })
         .finally(() => {
