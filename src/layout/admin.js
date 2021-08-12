@@ -4,12 +4,13 @@ import React, { useContext, useEffect } from 'react';
 import { Media } from 'react-bootstrap';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { ToolsContext } from '../context/Tools';
+import CriteriaContextProvider from '../context/CriteriaContext';
 import TrainingInfo from '../pages/training/more/TraningInfo';
 import TestResult from '../pages/training/tabs/components/testResult';
 import { getService } from '../service/service';
 import Menu from './Menu';
 import Page from './Page';
-
+import CriteriaMore from '../pages/criteria/more/CriteriaMore';
 import { buildPaths, generateRoutes } from './utils';
 
 const { Sider, Content, Header } = Layout;
@@ -101,15 +102,15 @@ function Admin() {
                 <Route path="/criteriaDetail/:id">
                   <CriteriaMore />
                 </Route>
-              ))}
 
-              <Route path="/trainingList/:id">
-                <TrainingInfo />
-              </Route>
-              <Route path="/participantsList/:id">
-                <TestResult />
-              </Route>
-            </Switch>
+                <Route path="/trainingList/:id">
+                  <TrainingInfo />
+                </Route>
+                <Route path="/participantsList/:id">
+                  <TestResult />
+                </Route>
+              </Switch>
+            </CriteriaContextProvider>
           </Content>
         </Layout>
       </Layout>
