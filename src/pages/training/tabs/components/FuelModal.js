@@ -1,4 +1,4 @@
-import { Form, Input, Modal, message } from 'antd';
+import { Form, Input, Modal, message, InputNumber } from 'antd';
 import React, { useEffect, useState } from 'react';
 import {
   getService,
@@ -103,7 +103,7 @@ export default function FuelModal(props) {
               },
             ]}
           >
-            <Input />
+            <InputNumber />
           </Form.Item>
           <Form.Item
             name="regionalSupplement"
@@ -114,7 +114,7 @@ export default function FuelModal(props) {
               },
             ]}
           >
-            <Input />
+            <InputNumber />
           </Form.Item>
           <Form.Item
             name="fuelConsumption"
@@ -125,7 +125,7 @@ export default function FuelModal(props) {
               },
             ]}
           >
-            <Input />
+            <InputNumber />
           </Form.Item>
           <Form.Item
             name="fuelCost"
@@ -136,11 +136,11 @@ export default function FuelModal(props) {
               },
             ]}
           >
-            <Input />
+            <InputNumber />
           </Form.Item>
 
           <Form.Item name="total" label="Нийт /₮/">
-            <Input />
+            <InputNumber />
           </Form.Item>
         </Form>
       </Modal>

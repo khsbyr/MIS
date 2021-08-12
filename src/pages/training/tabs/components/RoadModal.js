@@ -1,5 +1,5 @@
-import { Form, Input, Modal } from 'antd';
-import React, { useEffect, useState, message } from 'react';
+import { Form, Input, Modal, message, InputNumber } from 'antd';
+import React, { useEffect, useState } from 'react';
 import {
   getService,
   postService,
@@ -22,6 +22,8 @@ export default function RoadModal(props) {
   const { Roadcontroller, isModalVisible, isEditMode, budgetID } = props;
   const [form] = Form.useForm();
   const [stateCostType, setStateCostType] = useState([]);
+  const [stateCostID, setStateCostID] = useState([]);
+  console.log(stateCostID);
 
   useEffect(() => {
     getService('costType/get').then(result => {
@@ -30,18 +32,21 @@ export default function RoadModal(props) {
       }
     });
     if (isEditMode) {
+      setStateCostID(Roadcontroller.costType.id);
       form.setFieldsValue({
         ...Roadcontroller,
-        costID: Roadcontroller.costType ? Roadcontroller.costType.id : '',
+        costID: Roadcontroller.costType ? Roadcontroller.costType.name : '',
       });
     }
   }, []);
-  const selectCostType = value => {};
+  const selectCostType = value => {
+    setStateCostID(value);
+  };
   const save = () => {
     form
       .validateFields()
       .then(values => {
-        values.costType = { id: values.costID };
+        values.costType = { id: stateCostID };
         if (isEditMode) {
           putService(`hotelTravelExpenses/update/${Roadcontroller.id}`, values)
             .then(() => {
@@ -52,9 +57,10 @@ export default function RoadModal(props) {
               errorCatch(error);
             });
         } else {
+          values.costType = { id: values.costID };
           postService(`hotelTravelExpenses/post/${budgetID}`, values)
             .then(() => {
-              // message.success('Амжилттай хадгаллаа');
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -96,7 +102,7 @@ export default function RoadModal(props) {
               },
             ]}
           >
-            <Input />
+            <InputNumber />
           </Form.Item>
           <Form.Item
             name="costPerDay"
@@ -107,23 +113,15 @@ export default function RoadModal(props) {
               },
             ]}
           >
-            <Input />
+            <InputNumber />
           </Form.Item>
-          <Form.Item
-            label="Төлбөрийн төрөл"
-            name="costID"
-            // rules={[
-            //   {
-            //     required: true,
-            //   },
-            // ]}
-          >
+          <Form.Item label="Төлбөрийн төрөл" name="costID">
             <AutoCompleteSelect
               valueField="id"
               data={stateCostType}
               size="medium"
               onChange={value => selectCostType(value)}
-            />{' '}
+            />
           </Form.Item>
           <Form.Item
             name="days"
@@ -134,11 +132,11 @@ export default function RoadModal(props) {
               },
             ]}
           >
-            <Input />
+            <InputNumber />
           </Form.Item>
 
           <Form.Item name="total" label="Нийт">
-            <Input />
+            <InputNumber />
           </Form.Item>
         </Form>
       </Modal>

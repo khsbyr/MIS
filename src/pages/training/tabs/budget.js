@@ -463,32 +463,68 @@ const Budget = props => {
       {row.total}
     </>
   );
-  // const lastYearTotal = () => {
-  //   let total = 0;
-  //   for (const sale of sales) {
-  //     total += sale.lastYearProfit;
-  //   }
+  const StationaryTotal = () => {
+    let total = 0;
+    for (let i = 0; i < list1.length; i++) {
+      total += list1[i].total;
+    }
+    return <div>Нийт: {total}</div>;
+  };
+  const HotelTotal = () => {
+    let total = 0;
+    for (let i = 0; i < list2.length; i++) {
+      total += list2[i].total;
+    }
+    return <div>Нийт: {total}</div>;
+  };
+  const FuelTotal = () => {
+    let total = 0;
+    for (let i = 0; i < list3.length; i++) {
+      total += list3[i].total;
+    }
+    return <div>Нийт: {total}</div>;
+  };
 
-  //   return formatCurrency(total);
-  // };
-
-  // const thisYearTotal = () => {
-  //   let total = 0;
-  //   for (const sale of sales) {
-  //     total += sale.thisYearProfit;
-  //   }
-
-  //   return formatCurrency(total);
-  // };
   const footerGroup = (
     <ColumnGroup>
       <Row>
         <Column />
         <Column />
-        <Column footer="Нийт:" footerStyle={{ textAlign: 'left' }} />
-        <Column footer="Нийт:" footerStyle={{ textAlign: 'left' }} />
-        <Column footer="Нийт:" footerStyle={{ textAlign: 'left' }} />
-        <Column footer="Нийт:" footerStyle={{ textAlign: 'left' }} />
+        <Column />
+        <Column />
+        <Column />
+        <Column
+          footer={StationaryTotal}
+          footerStyle={{ textAlign: 'center' }}
+        />
+        <Column />
+      </Row>
+    </ColumnGroup>
+  );
+  const footerGroup1 = (
+    <ColumnGroup>
+      <Row>
+        <Column />
+        <Column />
+        <Column />
+        <Column />
+        <Column />
+        <Column footer={HotelTotal} footerStyle={{ textAlign: 'center' }} />
+        <Column />
+      </Row>
+    </ColumnGroup>
+  );
+  const footerGroup2 = (
+    <ColumnGroup>
+      <Row>
+        <Column />
+        <Column />
+        <Column />
+        <Column />
+        <Column />
+        <Column />
+        <Column footer={FuelTotal} footerStyle={{ textAlign: 'center' }} />
+        <Column />
       </Row>
     </ColumnGroup>
   );
@@ -717,6 +753,7 @@ const Budget = props => {
             </Content>
           </Layout>
           <DataTable
+            footerColumnGroup={footerGroup1}
             value={list2}
             removableSort
             paginator
@@ -819,6 +856,7 @@ const Budget = props => {
             </Content>
           </Layout>
           <DataTable
+            footerColumnGroup={footerGroup2}
             value={list3}
             removableSort
             paginator
