@@ -45,6 +45,7 @@ const CV = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateOrg, setStateOrg] = useState([]);
   const [OrgID, setOrgID] = useState([]);
+  const [isOnChange, setIsOnChange] = useState(false);
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
@@ -76,6 +77,7 @@ const CV = () => {
   }, [lazyParams]);
 
   const selectOrg = value => {
+    setIsOnChange(true);
     getService(`user/getTrainerListByOrgId/${value}`, {}).then(result => {
       if (result) {
         const listResult = result || [];
@@ -88,10 +90,15 @@ const CV = () => {
       }
     });
   };
+
   const add = () => {
-    editRow = null;
-    setIsModalVisible(true);
-    isEditMode = false;
+    if (isOnChange === false) {
+      message.warning('Байгууллага сонгоно уу!');
+    } else {
+      editRow = null;
+      setIsModalVisible(true);
+      isEditMode = false;
+    }
   };
 
   const handleDeleted = row => {
@@ -125,7 +132,9 @@ const CV = () => {
   }
 
   const pop = row => {
-    if (row.length === 0) {
+    if (isOnChange === false) {
+      message.warning('Байгууллага сонгоно уу!');
+    } else if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
       confirm(row);
@@ -133,10 +142,14 @@ const CV = () => {
   };
 
   const edit = row => {
-    trainerID = row.trainers.id;
-    editRow = row;
-    isEditMode = true;
-    setIsModalVisible(true);
+    if (isOnChange === false) {
+      message.warning('Байгууллага сонгоно уу!');
+    } else {
+      trainerID = row.trainers.id;
+      editRow = row;
+      isEditMode = true;
+      setIsModalVisible(true);
+    }
   };
 
   const action = row => (
