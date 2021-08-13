@@ -1,7 +1,6 @@
 import { message } from 'antd';
 import { errorCatch } from '../tools/Tools';
 import axios from './axios';
-import mockData from '../mock-data';
 
 const config = () => ({
   withCredentials: false,
@@ -13,18 +12,38 @@ const config = () => ({
   },
 });
 
-export async function getService(serviceName, isShowErrorMessage = true) {
-  let response = null;
-  const serviceKey = serviceName.split('?')[0];
-  try {
-    response = await axios.get(serviceName, config());
-  } catch (error) {
+export async function getService(
+  serviceName,
+  // param = null,
+  isShowErrorMessage = true
+) {
+  // let params = "?search=status:true";
+  // let isSeparate = false;
+  // if (param) {
+  //   if (param.search) {
+  //     params += " AND " + param.search;
+  //     isSeparate = true;
+  //   }
+  //   if (param.sort) {
+  //     if (isSeparate) params += "&";
+  //     params += "sort=" + param.sort;
+  //     isSeparate = true;
+  //   }
+  //   if (param.page) {
+  //     if (isSeparate) params += "&";
+  //     params += "page=" + param.page;
+  //     isSeparate = true;
+  //   }
+  //   if (param.size) {
+  //     if (isSeparate) params += "&";
+  //     params += "size=" + param.size;
+  //     isSeparate = true;
+  //   }
+  // }
+  const response = await axios.get(serviceName, config()).catch(error => {
     if (isShowErrorMessage) errorCatch(error);
-    if (process.env.NODE_ENV === 'development' && mockData[serviceKey]) {
-      return mockData[serviceKey];
-    }
     throw error;
-  }
+  });
   return response?.data;
 }
 
