@@ -4,13 +4,9 @@ import {
   faClipboard,
   faFolderOpen,
   faHandsHelping,
-  faPen,
   faProjectDiagram,
   faSquare,
-  faSquareFull,
-  faStop,
   faTasks,
-  faTrash,
   faUser,
   faUserCog,
 } from '@fortawesome/free-solid-svg-icons';
