@@ -3,7 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import ContentWrapper from './projectInfo.style';
-import BriefDraft from '../briefDraft';
+import BriefDraft from '../briefdraft';
 import MainInfo from '../mainInfo';
 
 const { TabPane } = Tabs;
