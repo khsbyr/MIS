@@ -10,6 +10,7 @@ import {
 import { ToolsContext } from '../context/Tools';
 import CriteriaContextProvider from '../context/CriteriaContext';
 import TrainingInfo from '../pages/training/more/TraningInfo';
+import ProjectInfo from '../pages/project/more/projectInfo';
 import TestResult from '../pages/training/tabs/components/testResult';
 import { getService } from '../service/service';
 import Menu from './Menu';
@@ -117,6 +118,9 @@ function Admin() {
                 </Route>
                 <Route path="/participantsList/:id">
                   <TestResult />
+                </Route>
+                <Route path="/projectList/:id">
+                  <ProjectInfo />
                 </Route>
               </Switch>
             </CriteriaContextProvider>

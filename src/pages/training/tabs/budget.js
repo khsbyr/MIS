@@ -462,6 +462,7 @@ const Budget = props => {
       {row.total}
     </>
   );
+
   const StationaryTotal = () => {
     let total = 0;
     for (let i = 0; i < list1.length; i++) {
@@ -576,6 +577,7 @@ const Budget = props => {
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}
+            emptyMessage="Өгөгдөл олдсонгүй..."
             removableSort
             paginator
             rows={10}
@@ -607,7 +609,7 @@ const Budget = props => {
               bodyStyle={{ textAlign: 'center' }}
             />
             <Column
-              header="Гүйцэтгэлийн төсөв /₮/"
+              header="Төсвийн гүйцэтгэл /₮/"
               body={performanceBudgetBodyTemplate}
               bodyStyle={{ textAlign: 'center' }}
             />

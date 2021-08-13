@@ -106,7 +106,7 @@ export default function TrainingProgramModal(props) {
                     </Form.Item>
                     <Form.Item
                       name="duration"
-                      label="Хэрэгжих хугацаа:"
+                      label="Хэрэгжих өдөр:"
                       rules={[
                         {
                           required: true,

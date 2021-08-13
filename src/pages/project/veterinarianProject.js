@@ -17,43 +17,47 @@ import {
   Row,
   Tooltip,
 } from 'antd';
+import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useContext } from 'react';
-import AutoCompleteSelect from '../../../components/Autocomplete';
-import { ToolsContext } from '../../../context/Tools';
-import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from '../../criteria/criteria.style';
-import CvModal from './components/CvModal';
-import OrgaStyle from './components/orga.style';
+import React, { useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { ToolsContext } from '../../context/Tools';
+import { getService, putService } from '../../service/service';
+import { errorCatch } from '../../tools/Tools';
+import ContentWrapper from '../criteria/criteria.style';
+// import TrainingModal from './TrainingModal';
+import OrgaStyle from '../training/tabs/components/orga.style';
+import AutoCompleteSelect from '../../components/Autocomplete';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-let trainerID;
-const CV = () => {
+const veterinarianProject = () => {
   const loadLazyTimeout = null;
-  const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams] = useState({
     page: 0,
   });
+  const toolsStore = useContext(ToolsContext);
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [stateOrg, setStateOrg] = useState([]);
-  const [OrgID, setOrgID] = useState([]);
-  const [isOnChange, setIsOnChange] = useState(false);
+  // const [, setStateOrga] = useState([]);
+  const [orgID] = useState([]);
+  const [trainingID, setTrainingID] = useState();
+  const [stateOrga, setStateOrga] = useState([]);
+  const history = useHistory();
+
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`user/getAllTrainerUserList`, list)
+    getService('training/get', list)
       .then(result => {
-        const listResult = result || [];
+        const listResult = result.content || [];
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
@@ -71,34 +75,46 @@ const CV = () => {
     onInit();
     getService('organization/get').then(result => {
       if (result) {
-        setStateOrg(result.content || []);
+        setStateOrga(result.content || []);
       }
     });
+    // getService(`criteria/getListByForWhatId/1`).then(result => {
+    //   if (result) {
+    //     setStateCriteria(result.content || []);
+    //   }
+    // });
   }, [lazyParams]);
 
-  const selectOrg = value => {
-    setIsOnChange(true);
-    getService(`user/getTrainerListByOrgId/${value}`, {}).then(result => {
+  const getTraining = orgId => {
+    getService(`training/getList/${orgId}`, {}).then(result => {
       if (result) {
         const listResult = result || [];
         listResult.forEach((item, index) => {
-          item.index = index + 1;
+          item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
-        setOrgID(value);
         setSelectedRows([]);
       }
     });
   };
 
+  const selectOrgs = value => {
+    getTraining(value);
+  };
+
   const add = () => {
-    if (isOnChange === false) {
-      message.warning('Байгууллага сонгоно уу!');
-    } else {
-      editRow = null;
-      setIsModalVisible(true);
-      isEditMode = false;
-    }
+    editRow = null;
+    setIsModalVisible(true);
+    isEditMode = false;
+  };
+
+  const edit = (event, row) => {
+    setTrainingID(row.id);
+    event.preventDefault();
+    event.stopPropagation();
+    editRow = row;
+    isEditMode = true;
+    setIsModalVisible(true);
   };
 
   const handleDeleted = row => {
@@ -106,7 +122,8 @@ const CV = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`trainers/delete/${row.trainers.id}`)
+
+    putService(`training/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -125,30 +142,19 @@ const CV = () => {
       cancelText: 'Буцах',
       onOk() {
         handleDeleted(row);
-        // onInit();
+        onInit();
       },
       onCancel() {},
     });
   }
 
-  const pop = row => {
-    if (isOnChange === false) {
-      message.warning('Байгууллага сонгоно уу!');
-    } else if (row.length === 0) {
+  const pop = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
       confirm(row);
-    }
-  };
-
-  const edit = row => {
-    if (isOnChange === false) {
-      message.warning('Байгууллага сонгоно уу!');
-    } else {
-      trainerID = row.trainers.id;
-      editRow = row;
-      isEditMode = true;
-      setIsModalVisible(true);
     }
   };
 
@@ -157,12 +163,12 @@ const CV = () => {
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
+        onClick={event => edit(event, row)}
       />
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
+        onClick={event => pop(event, row)}
       />
     </>
   );
@@ -179,40 +185,59 @@ const CV = () => {
     </>
   );
 
-  const FirstNameBodyTemplate = row => (
+  const NameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Нэр</span>
-      {row.firstname}
+      <span className="p-column-title">Сургалтын нэр</span>
+      {row.name}
     </>
   );
 
-  const LastNameBodyTemplate = row => (
+  const totalBudgetBodyTemplate = row => (
     <>
-      <span className="p-column-title">Овог</span>
-      {row.lastname}
+      <span className="p-column-title">Төсөв</span>
+      {row.trainingBudget && row.trainingBudget.totalBudget}
     </>
   );
 
-  const phoneBodyTemplate = row => (
+  const performanceBudgetBodyTemplate = row => (
     <>
-      <span className="p-column-title">Утас</span>
-      {row.phoneNumber}
+      <span className="p-column-title">Гүйцэтгэлийн төсөв</span>
+      {row.trainingBudget && row.trainingBudget.performanceBudget}
     </>
   );
 
-  const registerBodyTemplate = row => (
+  const startDateBodyTemplate = row => (
     <>
-      <span className="p-column-title">Сургагч багшийн регистер</span>
-      {row.register}
+      <span className="p-column-title">Эхэлсэн огноо</span>
+      {moment(row.trainingStartDate && row.trainingStartDate).format(
+        'YYYY-M-D'
+      )}
     </>
   );
+
+  const endDateBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дууссан огноо</span>
+      {moment(row.trainingEndDate && row.trainingEndDate).format('YYYY-M-D')}
+    </>
+  );
+
+  const participantBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Оролцогчдын тоо</span>
+      {row.totalParticipants}
+    </>
+  );
+
+  const ShowTrainingInfo = row => history.push(`/trainingList/${row.data.id}`);
+
   return (
     <ContentWrapper>
       <div className="button-demo">
         <Content>
           <Row>
             <Col xs={24} md={24} lg={14}>
-              <p className="title">Хүний нөөц</p>
+              <p className="title">Залуу малын эмч хөтөлбөр</p>
             </Col>
             <Col xs={24} md={18} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
@@ -221,8 +246,8 @@ const CV = () => {
                     <AutoCompleteSelect
                       valueField="id"
                       placeholder="Байгууллага сонгох"
-                      data={stateOrg}
-                      onChange={value => selectOrg(value)}
+                      data={stateOrga}
+                      onChange={value => selectOrgs(value)}
                     />
                   </OrgaStyle>
                 </Col>
@@ -286,6 +311,7 @@ const CV = () => {
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
+            onRowClick={ShowTrainingInfo}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
@@ -298,50 +324,63 @@ const CV = () => {
               style={{ width: 40 }}
             />
             <Column
-              header="Овог"
-              body={LastNameBodyTemplate}
-              sortable
+              header="Сургалтын сэдэв"
               filter
-              filterPlaceholder="Хайх"
+              body={NameBodyTemplate}
+              sortable
             />
             <Column
-              header="Нэр"
-              body={FirstNameBodyTemplate}
-              sortable
+              header="Төсөв /₮/"
+              thousandSeparator
+              headerStyle={{ width: '10rem' }}
               filter
-              filterPlaceholder="Хайх"
+              body={totalBudgetBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
-              header="Утас"
-              body={phoneBodyTemplate}
-              sortable
+              header="Төсвийн гүйцэтгэл /₮/"
+              headerStyle={{ width: '10rem' }}
               filter
-              filterPlaceholder="Хайх"
+              body={performanceBudgetBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
-              field="registerNumber"
-              header="Сургагч багшийн регистер"
-              body={registerBodyTemplate}
-              sortable
+              header="Эхэлсэн огноо"
+              headerStyle={{ width: '10rem' }}
               filter
-              filterPlaceholder="Хайх"
+              body={startDateBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
-            <Column headerStyle={{ width: '7rem' }} body={action} />
+            <Column
+              header="Дууссан огноо"
+              headerStyle={{ width: '10rem' }}
+              filter
+              body={endDateBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
+            />
+            <Column
+              header="Оролцогчдын тоо"
+              headerStyle={{ width: '10rem' }}
+              filter
+              body={participantBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
+            />
+            <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>
-          {isModalVisible && (
-            <CvModal
-              Trainerscontroller={editRow}
+          {/* {isModalVisible && (
+            <TrainingModal
+              Trainingcontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              orgId={OrgID}
-              trainerID={trainerID}
+              orgId={orgID}
+              trainingID={trainingID}
             />
-          )}
+          )} */}
         </div>
       </div>
     </ContentWrapper>
   );
 };
 
-export default CV;
+export default veterinarianProject;

@@ -214,6 +214,7 @@ const TrainingReport = props => {
             removableSort
             paginator
             rows={10}
+            emptyMessage="Өгөгдөл олдсонгүй..."
             className="p-datatable-responsive-demo"
             // selectionMode="checkbox"
             selection={selectedRows}

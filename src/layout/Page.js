@@ -69,6 +69,26 @@ const Feedback = loadable({
   loading: Loader,
 });
 
+const ProductiveProject = loadable({
+  loader: () => import('../pages/project/productiveProject'),
+  loading: Loader,
+});
+
+const InnovativeProject = loadable({
+  loader: () => import('../pages/project/innovativeProject'),
+  loading: Loader,
+});
+
+const FactoryProject = loadable({
+  loader: () => import('../pages/project/factoryProject'),
+  loading: Loader,
+});
+
+const VeterinarianProject = loadable({
+  loader: () => import('../pages/project/veterinarianProject'),
+  loading: Loader,
+});
+
 const Page = ({ route }) => {
   const PageContent = () => {
     switch (route.code.toLowerCase()) {
@@ -118,6 +138,20 @@ const Page = ({ route }) => {
       /** Бусад */
       case 'Feedback'.toLowerCase():
         return <Feedback />;
+
+      /** Төсөл */
+      case 'Productive Partnership Project'.toLowerCase():
+        return <ProductiveProject />;
+
+      case 'Innovative project'.toLowerCase():
+        return <InnovativeProject />;
+
+      case 'Factory'.toLowerCase():
+        return <FactoryProject />;
+
+      case 'Young Veterinarian Program'.toLowerCase():
+        return <VeterinarianProject />;
+
       default:
         return null;
     }
