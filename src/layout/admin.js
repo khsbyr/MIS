@@ -1,8 +1,12 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { Layout } from 'antd';
 import React, { useContext, useEffect } from 'react';
-import { Media } from 'react-bootstrap';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  useHistory,
+} from 'react-router-dom';
 import { ToolsContext } from '../context/Tools';
 import CriteriaContextProvider from '../context/CriteriaContext';
 import TrainingInfo from '../pages/training/more/TraningInfo';
@@ -13,7 +17,7 @@ import Page from './Page';
 import CriteriaMore from '../pages/criteria/more/CriteriaMore';
 import { buildPaths, generateRoutes } from './utils';
 
-const { Sider, Content, Header } = Layout;
+const { Sider, Content } = Layout;
 
 let menus = [];
 
@@ -21,11 +25,16 @@ function Admin() {
   const toolsStore = useContext(ToolsContext);
   const [collapsed, setCollapsed] = React.useState(false);
   const [routes, setRoutes] = React.useState([]);
+  const isLoggged = localStorage.getItem('token');
+  const history = useHistory();
   const toggle = () => {
     setCollapsed(!collapsed);
   };
   useEffect(() => {
     // if (!toolsStore.user) return;
+    if (!isLoggged) {
+      history.push('/login');
+    }
     getService('/menus/getByToken').then(result => {
       if (!result) return;
       menus = result;
@@ -34,7 +43,7 @@ function Admin() {
   }, []);
 
   return (
-    <Router>
+    <Router history={history}>
       <Layout>
         <Sider
           className="site-layout-background"

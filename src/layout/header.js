@@ -8,20 +8,18 @@ import {
 } from '@ant-design/icons';
 import { Col, Layout, Row, Select, Menu, Dropdown, Avatar, Button } from 'antd';
 import 'antd/dist/antd.css';
-import { React, useContext } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { React } from 'react';
+import { Link } from 'react-router-dom';
 import i18n from '../i18n';
 import HeaderWrapper from './header.style';
-import { ToolsContext } from '../context/Tools';
 
 const { Option } = Select;
 const { Header } = Layout;
 
 const AvatarDropdown = () => {
-  const history = useHistory();
   function logout() {
-    localStorage.removeItem('token');
-    history.push('/login');
+    localStorage.clear();
+    window.location.href = '/login';
   }
   return (
     <Menu className="app-header-dropdown">
@@ -37,8 +35,6 @@ const AvatarDropdown = () => {
 };
 
 const Headers = () => {
-  const toolsStore = useContext(ToolsContext);
-
   function handleChange(value) {
     i18n.changeLanguage(value);
   }
@@ -53,31 +49,25 @@ const Headers = () => {
         }}
       >
         <Row justify="start">
-          <Col xs={24} md={15} lg={15}>
-            <p
-              style={{ color: 'white', float: 'left', marginLeft: '80px' }}
-              className="texthide"
-            >
+          <Col xs={0} md={0} lg={17}>
+            <p style={{ color: 'white', float: 'left', marginLeft: '50px' }}>
               <EnvironmentFilled /> Монгол Улс, Улаанбаатар, 1-р хороо,
               Сүхбаатар дүүрэг, Парк плэйс оффис, 602 тоот
             </p>
           </Col>
-          <Col xs={24} md={24} lg={8}>
+          <Col xs={24} md={24} lg={7}>
             <Row justify="end" style={{ color: 'white', cursor: 'pointer' }}>
-              <Col lg={6}>
-                <p className="texthide">
-                  <MailFilled /> info@lcp.mn
-                </p>
+              <Col xs={0} md={0} lg={6}>
+                <MailFilled /> info@lcp.mn
               </Col>
-              <Col xs={8} lg={6} md={8}>
-                <p className="textshow">
-                  <PhoneFilled /> 70104041
-                </p>
+              <Col xs={3} md={3} lg={5}>
+                <PhoneFilled /> 70104041
               </Col>
-              <Col xs={8} lg={6} md={8}>
+              <Col xs={5} md={2} lg={4}>
                 <Select
                   defaultValue="MN"
-                  style={{ width: 80, color: 'blue' }}
+                  className="selectArrow"
+                  style={{ width: 70, color: 'blue' }}
                   onChange={handleChange}
                 >
                   <Option value="mn">MN</Option>
@@ -85,7 +75,7 @@ const Headers = () => {
                 </Select>
               </Col>
               {localStorage.getItem('token') ? (
-                <Col xs={8} lg={6} md={8}>
+                <Col xs={8} md={4} lg={8}>
                   <Dropdown
                     className="list-inline-item"
                     overlay={<AvatarDropdown />}

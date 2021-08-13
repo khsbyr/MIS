@@ -5,6 +5,7 @@ import { Button, Col, Form, message, Modal, Row, Upload } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
+import moment from 'moment';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
@@ -253,6 +254,30 @@ export default function ConsultingShowModal(props) {
         });
     }
   };
+
+  const enrolledDate = row => (
+    <>{moment(row && row.enrolledDate).format('YYYY-M-D')}</>
+  );
+
+  const graduatedDate = row => (
+    <>{moment(row && row.graduatedDate).format('YYYY-M-D')}</>
+  );
+
+  const hiredDate = row => (
+    <>{moment(row && row.hiredDate).format('YYYY-M-D')}</>
+  );
+
+  const firedDate = row => (
+    <>{moment(row && row.hiredDate).format('YYYY-M-D')}</>
+  );
+
+  const publishedDate = row => (
+    <>{moment(row && row.publishedDate).format('YYYY-M-D')}</>
+  );
+
+  const licensedDate = row => (
+    <>{moment(row && row.licensedDate).format('YYYY-M-D')}</>
+  );
 
   useEffect(() => {
     // onInit();
@@ -808,8 +833,16 @@ export default function ConsultingShowModal(props) {
             <Column field="index" header="№" style={{ width: '50px' }} />
             <Column field="degree" header="Зэрэг, цол" />
             <Column field="universityName" header="Их дээд сургуулийн нэр" />
-            <Column field="enrolledDate" header="Элссэн огноо" />
-            <Column field="graduatedDate" header="Төгссөн огноо" />
+            <Column
+              field="enrolledDate"
+              header="Элссэн огноо"
+              body={enrolledDate}
+            />
+            <Column
+              field="graduatedDate"
+              header="Төгссөн огноо"
+              body={graduatedDate}
+            />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisibleEducation && (
@@ -852,8 +885,16 @@ export default function ConsultingShowModal(props) {
             <Column field="index" header="№" style={{ width: '50px' }} />
             <Column field="position" header="Албан тушаал" />
             <Column field="organizationName" header="Байгууллагын нэр" />
-            <Column field="hiredDate" header="Ажилд орсон огноо" />
-            <Column field="firedDate" header="Ажлаас гарсан огноо" />
+            <Column
+              field="hiredDate"
+              header="Ажилд орсон огноо"
+              body={hiredDate}
+            />
+            <Column
+              field="firedDate"
+              header="Ажлаас гарсан огноо"
+              body={firedDate}
+            />
             <Column headerStyle={{ width: '7rem' }} body={actionExperience} />
           </DataTable>
           {isModalVisibleExperience && (
@@ -896,8 +937,16 @@ export default function ConsultingShowModal(props) {
             <Column field="index" header="№" style={{ width: '50px' }} />
             <Column field="position" header="Албан тушаал" />
             <Column field="organizationName" header="Байгууллагын нэр" />
-            <Column field="hiredDate" header="Ажилд орсон огноо" />
-            <Column field="firedDate" header="Ажлаас гарсан огноо" />
+            <Column
+              field="hiredDate"
+              header="Ажилд орсон огноо"
+              body={hiredDate}
+            />
+            <Column
+              field="firedDate"
+              header="Ажлаас гарсан огноо"
+              body={firedDate}
+            />
             <Column
               headerStyle={{ width: '7rem' }}
               body={actionExperienceAdvice}
@@ -943,8 +992,16 @@ export default function ConsultingShowModal(props) {
             <Column field="index" header="№" style={{ width: '50px' }} />
             <Column field="position" header="Албан тушаал" />
             <Column field="organizationName" header="Байгууллагын нэр" />
-            <Column field="hiredDate" header="Ажилд орсон огноо" />
-            <Column field="firedDate" header="Ажлаас гарсан огноо" />
+            <Column
+              field="hiredDate"
+              header="Ажилд орсон огноо"
+              body={hiredDate}
+            />
+            <Column
+              field="firedDate"
+              header="Ажлаас гарсан огноо"
+              body={firedDate}
+            />
             <Column
               headerStyle={{ width: '7rem' }}
               body={actionTeacherExperience}
@@ -990,7 +1047,7 @@ export default function ConsultingShowModal(props) {
           >
             <Column field="index" header="№" style={{ width: '50px' }} />
             <Column field="name" header="Бүтээлийн нэр" />
-            <Column field="publishedDate" header="Огноо" />
+            <Column field="publishedDate" header="Огноо" body={publishedDate} />
             <Column
               headerStyle={{ width: '7rem' }}
               body={actionPublishedWork}
@@ -1040,7 +1097,7 @@ export default function ConsultingShowModal(props) {
               header="Оюуны өмч, гэрчилгээ, лицензийн нэр"
             />
             <Column field="licensedBy" header="Олгосон байгууллагын нэр" />
-            <Column field="licensedDate" header="Огноо" />
+            <Column field="licensedDate" header="Огноо" body={licensedDate} />
             <Column headerStyle={{ width: '7rem' }} body={actionCertificate} />
           </DataTable>
           {isModalVisibleCertificate && (
@@ -1083,7 +1140,7 @@ export default function ConsultingShowModal(props) {
             <Column field="index" header="№" style={{ width: '50px' }} />
             <Column field="position" header="Албан тушаал" />
             <Column field="organization" header="Байгууллагын нэр" />
-            <Column field="enrolledDate" header="Огноо" />
+            <Column field="enrolledDate" header="Огноо" body={enrolledDate} />
             <Column headerStyle={{ width: '7rem' }} body={actionMembership} />
           </DataTable>
           {isModalVisibleMembership && (
