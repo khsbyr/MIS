@@ -1,18 +1,10 @@
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Col,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Modal,
-  Row,
-} from 'antd';
+import { Col, DatePicker, Form, Input, message, Modal, Row } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import CurrencyInput from 'react-currency-input';
 import AutoCompleteSelect from '../../components/Autocomplete';
 import MulticompleteSelect from '../../components/MulticompleteSelect';
 import { getService, postService, putService } from '../../service/service';
@@ -307,10 +299,31 @@ export default function TrainingModal(props) {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={8}>
-                    <Form.Item label="Төсөв:" name="totalBudget">
-                      <InputNumber />
+                    <Form.Item
+                      label="Төсөв:"
+                      name="totalBudget"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <CurrencyInput precision="0" suffix=" ₮" />
                     </Form.Item>
                   </Col>
+                  {/* <Col xs={24} md={24} lg={8}>
+                    <Form.Item label="Төсөв:" name="totalBudget">
+                      <InputNumber
+                        precision="0"
+                        max="1000000000"
+                        defaultValue="0"
+                        formatter={value =>
+                          ` ${value} ₮`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                        }
+                        parser={value => value.replace(/\s?|(,*)\$/g, '')}
+                      />
+                    </Form.Item>
+                  </Col> */}
                   {/* <Col xs={24} md={24} lg={8}>
                     <Form.Item
                       label="Гүйцэтгэлийн төсөв:"

@@ -64,6 +64,11 @@ const CriteriaReference = loadable({
   loading: Loader,
 });
 
+const Activity = loadable({
+  loader: () => import('../pages/directory/activity'),
+  loading: Loader,
+});
+
 const Feedback = loadable({
   loader: () => import('../pages/feedback/feedback'),
   loading: Loader,
@@ -104,6 +109,8 @@ const Page = ({ route }) => {
         return <Customerside />;
       case 'Types of indicators'.toLowerCase():
         return <CriteriaReference />;
+      case 'activity'.toLowerCase():
+        return <Activity />;
 
       /** Байгууллагын мэдээлэл */
 
