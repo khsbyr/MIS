@@ -56,6 +56,9 @@ const User = () => {
 
   useEffect(() => {
     onInit();
+    getService('organization/get').then(result => {
+      console.log(result);
+    });
   }, [lazyParams]);
 
   const add = () => {

@@ -2,7 +2,7 @@ import { Tabs } from 'antd';
 import React from 'react';
 // import { useParams } from 'react-router-dom';
 import ContentWrapper from './projectInfo.style';
-import BriefDraft from '../briefDraft';
+import BriefDraft from '../briefdraft';
 import MainInfo from '../mainInfo';
 
 const { TabPane } = Tabs;
