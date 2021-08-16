@@ -10,7 +10,7 @@ export default function AutocompleteSelect(props) {
   return (
     <Select
       showSearch
-      mode={mode}
+      mode=""
       disabled={disabled}
       style={{ width: '100%' }}
       placeholder={placeholder}

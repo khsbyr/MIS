@@ -25,7 +25,7 @@ import { useHistory } from 'react-router-dom';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
-import ContentWrapper from '../criteria/criteria.style';
+import ContentWrapper from './training.style';
 import TrainingModal from './TrainingModal';
 import OrgaStyle from './tabs/components/orga.style';
 import AutoCompleteSelect from '../../components/Autocomplete';
@@ -178,6 +178,13 @@ const TrainingList = () => {
     if (isSuccess) onInit();
   };
 
+  function Formatcurrency(value) {
+    const values = value || 0;
+    return `${values.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}₮`;
+  }
+
+  console.log(Formatcurrency(2661115)); // $2,665.00
+
   const indexBodyTemplate = row => (
     <>
       <span className="p-column-title">№</span>
@@ -195,14 +202,16 @@ const TrainingList = () => {
   const totalBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Төсөв</span>
-      {row.trainingBudget && row.trainingBudget.totalBudget}
+      {Formatcurrency(row.trainingBudget && row.trainingBudget.totalBudget)}
     </>
   );
 
   const performanceBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Гүйцэтгэлийн төсөв</span>
-      {row.trainingBudget && row.trainingBudget.performanceBudget}
+      {Formatcurrency(
+        row.trainingBudget && row.trainingBudget.performanceBudget
+      )}
     </>
   );
 
@@ -303,89 +312,82 @@ const TrainingList = () => {
           </Row>
         </Content>
         <div className="datatable-responsive-demo">
-          <DataTable
-            emptyMessage="Өгөгдөл олдсонгүй..."
-            value={list}
-            removableSort
-            paginator
-            rows={10}
-            className="p-datatable-responsive-demo"
-            selection={selectedRows}
-            onRowClick={ShowTrainingInfo}
-            onSelectionChange={e => {
-              setSelectedRows(e.value);
-            }}
-            dataKey="id"
-          >
-            <Column
-              field="index"
-              header="№"
-              body={indexBodyTemplate}
-              style={{ width: 40 }}
-            />
-            <Column
-              header="Сургалтын сэдэв"
-              filter
-              body={NameBodyTemplate}
-              sortable
-            />
-            <Column
-              header="Төсөв /₮/"
-              thousandSeparator
-              headerStyle={{ width: '10rem' }}
-              filter
-              body={totalBudgetBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
-            />
-            <Column
-              header="Төсвийн гүйцэтгэл /₮/"
-              headerStyle={{ width: '10rem' }}
-              filter
-              body={performanceBudgetBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
-            />
-            <Column
-              header="Эхэлсэн огноо"
-              headerStyle={{ width: '10rem' }}
-              filter
-              body={startDateBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
-            />
-            <Column
-              header="Дууссан огноо"
-              headerStyle={{ width: '10rem' }}
-              filter
-              body={endDateBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
-            />
-            <Column
-              header="Оролцогчдын тоо"
-              headerStyle={{ width: '10rem' }}
-              filter
-              body={participantBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
-            />
-            <Column headerStyle={{ width: '6rem' }} body={action} />
-          </DataTable>
-          {isModalVisible && (
-            <TrainingModal
-              Trainingcontroller={editRow}
-              isModalVisible={isModalVisible}
-              close={closeModal}
-              isEditMode={isEditMode}
-              orgId={orgID}
-              trainingID={trainingID}
-            />
-          )}
-          {/* {isModalVisible && (
-            <GuidelinesModal
-              Guidelinescontroller={editRow}
-              isModalVisible={isModalVisible}
-              close={closeModal}
-              isEditMode={isEditMode}
-              orgID={orgID}
-            />
-          )} */}
+          <div className="datatable-selection-demo">
+            <DataTable
+              selectionMode="single"
+              emptyMessage="Өгөгдөл олдсонгүй..."
+              value={list}
+              removableSort
+              paginator
+              rows={10}
+              className="p-datatable-responsive-demo"
+              selection={selectedRows}
+              onRowClick={ShowTrainingInfo}
+              onSelectionChange={e => {
+                setSelectedRows(e.value);
+              }}
+              dataKey="id"
+            >
+              <Column
+                field="index"
+                header="№"
+                body={indexBodyTemplate}
+                style={{ width: 40 }}
+              />
+              <Column
+                header="Сургалтын сэдэв"
+                filter
+                body={NameBodyTemplate}
+                sortable
+              />
+              <Column
+                header="Төсөв /₮/"
+                headerStyle={{ width: '10rem' }}
+                filter
+                body={totalBudgetBodyTemplate}
+                bodyStyle={{ textAlign: 'center' }}
+              />
+              <Column
+                header="Төсвийн гүйцэтгэл /₮/"
+                headerStyle={{ width: '10rem' }}
+                filter
+                body={performanceBudgetBodyTemplate}
+                bodyStyle={{ textAlign: 'center' }}
+              />
+              <Column
+                header="Эхэлсэн огноо"
+                headerStyle={{ width: '10rem' }}
+                filter
+                body={startDateBodyTemplate}
+                bodyStyle={{ textAlign: 'center' }}
+              />
+              <Column
+                header="Дууссан огноо"
+                headerStyle={{ width: '10rem' }}
+                filter
+                body={endDateBodyTemplate}
+                bodyStyle={{ textAlign: 'center' }}
+              />
+              <Column
+                header="Оролцогчдын тоо"
+                headerStyle={{ width: '10rem' }}
+                filter
+                body={participantBodyTemplate}
+                bodyStyle={{ textAlign: 'center' }}
+              />
+              <Column headerStyle={{ width: '6rem' }} body={action} />
+            </DataTable>
+            {isModalVisible && (
+              <TrainingModal
+                Trainingcontroller={editRow}
+                isModalVisible={isModalVisible}
+                close={closeModal}
+                isEditMode={isEditMode}
+                orgId={orgID}
+                trainingID={trainingID}
+              />
+            )}
+          </div>
         </div>
       </div>
     </ContentWrapper>
