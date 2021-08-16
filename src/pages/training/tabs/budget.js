@@ -310,35 +310,48 @@ const Budget = props => {
     setIsModalVisibleRoad(false);
     if (isSuccess) onInit();
   };
+
+  function Formatcurrency(value) {
+    const values = value || 0;
+    return `${values.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}₮`;
+  }
+
+  function Formatpercent(value) {
+    return `${value} %`;
+  }
+
+  function FormatKm(value) {
+    return `${value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')} км`;
+  }
   // total
   const totalBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Нийт төсөв /₮/</span>
-      {row.totalBudget}
+      {Formatcurrency(row.totalBudget)}
     </>
   );
   const performanceBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Гүйцэтгэлийн төсөв /₮/</span>
-      {row.performanceBudget}
+      {Formatcurrency(row.performanceBudget)}
     </>
   );
   const stationeryTotalBodyTemplate = row => (
     <>
       <span className="p-column-title">Бичгийн хэрэгсэл нийт /₮/</span>
-      {row.stationeryTotal}
+      {Formatcurrency(row.stationeryTotal)}
     </>
   );
   const hotelTotalBodyTemplate = row => (
     <>
       <span className="p-column-title">Зам хоног, буудлын зардал нийт /₮/</span>
-      {row.hotelTotal}
+      {Formatcurrency(row.hotelTotal)}
     </>
   );
   const fuelTotalBodyTemplate = row => (
     <>
       <span className="p-column-title">Шатахууны зардал нийт /₮/</span>
-      {row.fuelTotal}
+      {Formatcurrency(row.fuelTotal)}
     </>
   );
 
@@ -360,7 +373,7 @@ const Budget = props => {
   const unitPriceNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Нэгж үнэ /₮/</span>
-      {row.unitPrice}
+      {Formatcurrency(row.unitPrice)}
     </>
   );
 
@@ -381,7 +394,7 @@ const Budget = props => {
   const totalNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Дүн /₮/</span>
-      {row.total}
+      {Formatcurrency(row.total)}
     </>
   );
 
@@ -396,7 +409,7 @@ const Budget = props => {
   const costPerDayBodyTemplate = row => (
     <>
       <span className="p-column-title">Хоногт /₮/</span>
-      {row.costPerDay}
+      {Formatcurrency(row.costPerDay)}
     </>
   );
 
@@ -417,7 +430,7 @@ const Budget = props => {
   const totalBodyTemplate = row => (
     <>
       <span className="p-column-title">Нийт /₮/</span>
-      {row.total}
+      {Formatcurrency(row.total)}
     </>
   );
   // fuelExpenses
@@ -431,35 +444,35 @@ const Budget = props => {
   const roadLengthBodyTemplate = row => (
     <>
       <span className="p-column-title">Замын урт /км/</span>
-      {row.roadLength}
+      {FormatKm(row.roadLength)}
     </>
   );
 
   const regionalSupplementBodyTemplate = row => (
     <>
       <span className="p-column-title">Бүсийн нэмэгдэл /%/</span>
-      {row.regionalSupplement}
+      {Formatpercent(row.regionalSupplement)}
     </>
   );
 
   const fuelConsumptionBodyTemplate = row => (
     <>
       <span className="p-column-title">Зарцуулах шатахуун /л/</span>
-      {row.fuelConsumption}
+      {row.fuelConsumption} л
     </>
   );
 
   const fuelCostBodyTemplate = row => (
     <>
       <span className="p-column-title">Шатахууны үнэ /₮/ A92</span>
-      {row.fuelCost}
+      {Formatcurrency(row.fuelCost)}
     </>
   );
 
   const totalfuelBodyTemplate = row => (
     <>
       <span className="p-column-title">Нийт /₮/</span>
-      {row.total}
+      {Formatcurrency(row.total)}
     </>
   );
 
@@ -468,21 +481,21 @@ const Budget = props => {
     for (let i = 0; i < list1.length; i++) {
       total += list1[i].total;
     }
-    return <div>Нийт: {total}</div>;
+    return <div>Нийт: {Formatcurrency(total)}</div>;
   };
   const HotelTotal = () => {
     let total = 0;
     for (let i = 0; i < list2.length; i++) {
       total += list2[i].total;
     }
-    return <div>Нийт: {total}</div>;
+    return <div>Нийт: {Formatcurrency(total)}</div>;
   };
   const FuelTotal = () => {
     let total = 0;
     for (let i = 0; i < list3.length; i++) {
       total += list3[i].total;
     }
-    return <div>Нийт: {total}</div>;
+    return <div>Нийт: {Formatcurrency(total)}</div>;
   };
 
   const footerGroup = (

@@ -32,16 +32,6 @@ const ContentWrapper = styled.div`
     }
   }
 
-  Select {
-    text-align: center;
-  }
-
-  .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
-    height: 39px;
-    padding-top: 4px;
-    border: none;
-  }
-
   .button {
     background-color: #103154;
     float: right;
@@ -59,11 +49,6 @@ const ContentWrapper = styled.div`
     > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
     background-color: #fff;
   }
-  .ant-form-item .ant-select,
-  .ant-form-item .ant-cascader-picker {
-    width: 100%;
-    border-bottom: 1px solid #103154;
-  }
 
   /* .ant-input-number {
         border: none;
@@ -80,12 +65,16 @@ const ContentWrapper = styled.div`
 
   #nest-messages_unitPrice,
   #nest-messages_total,
-  #nest-messages_fuelCost {
+  #nest-messages_fuelCost,
+  #nest-messages_costPerDay {
     /* height: 40px; */
     width: 100%;
     border: 1px solid rgb(217, 217, 217);
     padding: 4px 11px;
     border-radius: 2px;
+  }
+  #nest-messages_costPerDay:hover {
+    border-color: #1890ff;
   }
   #nest-messages_unitPrice:hover {
     border-color: #1890ff;
@@ -96,6 +85,35 @@ const ContentWrapper = styled.div`
   #nest-messages_fuelCost:hover {
     border-color: #1890ff;
   }
+  #nest-messages_unitPrice:focus-visible {
+    outline: none;
+  }
+  #nest-messages_unitPrice:focus {
+    border-color: #40a9ff;
+    box-shadow: 0 0 0 0.025rem #1890ff;
+  }
+  #nest-messages_total:focus-visible {
+    outline: none;
+  }
+  #nest-messages_total:focus {
+    border-color: #40a9ff;
+    box-shadow: 0 0 0 0.025rem #1890ff;
+  }
+  #nest-messages_fuelCost:focus-visible {
+    outline: none;
+  }
+  #nest-messages_fuelCost:focus {
+    border-color: #40a9ff;
+    box-shadow: 0 0 0 0.025rem #1890ff;
+  }
+  #nest-messages_costPerDay:focus-visible {
+    outline: none;
+  }
+  #nest-messages_costPerDay:focus {
+    border-color: #40a9ff;
+    box-shadow: 0 0 0 0.025rem #1890ff;
+  }
+
   /* .ant-form-item-control-input-content {
         border-bottom: 1px solid #103154;
     } */
