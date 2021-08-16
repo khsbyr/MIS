@@ -18,9 +18,6 @@ export default function AutocompleteSelect(props) {
       optionFilterProp="children"
       maxTagCount="responsive"
       size={size || 'small'}
-      // filterOption={(input, option) =>
-      //   option.children?.toLowerCase().indexOf(input.toLowerCase()) >= 0
-      // }
       onChange={props.onChange}
     >
       {data &&
