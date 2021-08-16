@@ -57,22 +57,24 @@ function finance() {
           </Button>
         </Tooltip>
       </h2>
-      <DataTable
-        // value={listEducation}
-        removableSort
-        rows={10}
-        className="p-datatable-responsive-demo"
-        dataKey="id"
-      >
-        <Column field="index" header="№" style={{ width: '50px' }} />
-        <Column
-          field="#"
-          header="Төсөл хэрэгжүүлэхэд шаардлагатай том хэмжээний хөрөнгө, тоног төхөөрөмж "
-        />
-        <Column field="#" header="Хүчин чадал" />
-        <Column field="#" header="Үнэлгээ (мөнгөн дүнгээр)" />
-        <Column headerStyle={{ width: '7rem' }} body={action} />
-      </DataTable>
+      <div className="datatable-responsive-demo">
+        <DataTable
+          // value={listEducation}
+          removableSort
+          rows={10}
+          className="p-datatable-responsive-demo"
+          dataKey="id"
+        >
+          <Column field="index" header="№" style={{ width: '50px' }} />
+          <Column
+            field="#"
+            header="Төсөл хэрэгжүүлэхэд шаардлагатай том хэмжээний хөрөнгө, тоног төхөөрөмж "
+          />
+          <Column field="#" header="Хүчин чадал" />
+          <Column field="#" header="Үнэлгээ (мөнгөн дүнгээр)" />
+          <Column headerStyle={{ width: '7rem' }} body={action} />
+        </DataTable>
+      </div>
       {isModalVisible && (
         <FinanceModal
           ActivityController={editRow}

@@ -57,26 +57,28 @@ function projectPurpose() {
           </Button>
         </Tooltip>
       </h2>
-      <DataTable
-        // value={listEducation}
-        removableSort
-        rows={10}
-        className="p-datatable-responsive-demo"
-        dataKey="id"
-      >
-        <Column field="index" header="№" style={{ width: '50px' }} />
-        <Column field="#" header="Төслийн зорилго" />
-        <Column
-          field="#"
-          header="Тулгамдаж буй хүндрэл, бэрхшээлүүдийг шийдвэрлэх"
-        />
-        <Column field="#" header="Төслийн ашиг хүртэгчид" />
-        <Column field="#" header="Төслийн үр ашиг" />
-        <Column field="#" header="Зах зээлийн холбоо, хамтын ажиллагаа" />
-        <Column field="#" header="Хугацаа болон тогтвортой байдал" />
+      <div className="datatable-responsive-demo">
+        <DataTable
+          // value={listEducation}
+          removableSort
+          rows={10}
+          className="p-datatable-responsive-demo"
+          dataKey="id"
+        >
+          <Column field="index" header="№" style={{ width: '50px' }} />
+          <Column field="#" header="Төслийн зорилго" />
+          <Column
+            field="#"
+            header="Тулгамдаж буй хүндрэл, бэрхшээлүүдийг шийдвэрлэх"
+          />
+          <Column field="#" header="Төслийн ашиг хүртэгчид" />
+          <Column field="#" header="Төслийн үр ашиг" />
+          <Column field="#" header="Зах зээлийн холбоо, хамтын ажиллагаа" />
+          <Column field="#" header="Хугацаа болон тогтвортой байдал" />
 
-        <Column headerStyle={{ width: '7rem' }} body={action} />
-      </DataTable>
+          <Column headerStyle={{ width: '7rem' }} body={action} />
+        </DataTable>
+      </div>
       {isModalVisible && (
         <ProjectPurposeModal
           ProjectPurposeModalController={editRow}
