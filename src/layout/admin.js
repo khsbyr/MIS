@@ -59,7 +59,7 @@ function Admin() {
         >
           {!collapsed ? (
             <img
-              src="http://lcp.mn/assets/images/logo.png"
+              src="https://i.imgur.com/qmWx2x8.png"
               className="logoHeader"
               height={50}
               width={200}

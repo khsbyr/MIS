@@ -216,7 +216,7 @@ export default function OrganizationModal(props) {
   return (
     <div>
       <Modal
-        title="Зөвлөх байгууллага бүртгэх"
+        title="Байгууллага бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
         width={1100}
