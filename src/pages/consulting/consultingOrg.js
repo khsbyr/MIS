@@ -173,7 +173,7 @@ const ConsultingOrg = () => {
         <Content>
           <Row>
             <Col xs={24} md={12} lg={14}>
-              <p className="title">Зөвлөх байгууллага</p>
+              <p className="title">Байгууллага</p>
             </Col>
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>

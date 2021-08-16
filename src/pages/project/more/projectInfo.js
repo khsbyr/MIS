@@ -1,7 +1,6 @@
 import { Tabs } from 'antd';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 import ContentWrapper from './projectInfo.style';
 import BriefDraft from '../briefDraft';
 import MainInfo from '../mainInfo';
@@ -11,8 +10,7 @@ const tabPosition = 'top';
 const tabPosition2 = 'top';
 
 export default function projectInfo() {
-  const { t } = useTranslation();
-  const { id } = useParams();
+  // const { id } = useParams();
   return (
     <ContentWrapper>
       <Tabs tabPosition={tabPosition2}>
@@ -25,12 +23,11 @@ export default function projectInfo() {
               <BriefDraft />
             </TabPane>
             <TabPane tab="Хөрөнгө оруулалт" key="4" />
-            <TabPane tab="Орлого зардал" key="5" />
-            <TabPane tab="Түншлэгч байгууллага" key="6" />
-            <TabPane tab="Хавсралт файл" key="7" />
+            <TabPane tab="Түншлэгч байгууллага" key="5" />
+            <TabPane tab="Хавсралт файл" key="6" />
           </Tabs>
         </TabPane>
-        <TabPane tab="Дэлгэрэнгүй төсөл" key="8" disabled>
+        <TabPane tab="Дэлгэрэнгүй төсөл" key="7" disabled>
           Дэлгэрэнгүй төсөл
         </TabPane>
       </Tabs>
