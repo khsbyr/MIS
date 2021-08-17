@@ -10,6 +10,7 @@ import MulticompleteSelect from '../../components/MulticompleteSelect';
 import { getService, postService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import validateMessages from '../../tools/validateMessage';
+import { useToolsStore } from '../../context/Tools';
 import ContentWrapper from './tabs/components/training.style';
 
 const layout = {
@@ -23,7 +24,7 @@ const layout = {
 export default function TrainingModal(props) {
   const { Trainingcontroller, isModalVisible, isEditMode, trainingID } = props;
   const [form] = Form.useForm();
-  const [stateOrg, setStateOrg] = useState([]);
+  const toolsStore = useToolsStore();
   const [startDate, setStartDate] = useState([]);
   const [endDate, setEndDate] = useState([]);
   const [stateCountry, setStateCountry] = useState([]);
@@ -94,12 +95,6 @@ export default function TrainingModal(props) {
     getService('criteria/getListByForWhatId/1').then(result => {
       if (result) {
         setStateCriteria(result || []);
-      }
-    });
-
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrg(result.content || []);
       }
     });
 
@@ -434,7 +429,7 @@ export default function TrainingModal(props) {
                     >
                       <AutoCompleteSelect
                         valueField="id"
-                        data={stateOrg}
+                        data={toolsStore.orgList}
                         size="medium"
                       />
                     </Form.Item>

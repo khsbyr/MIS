@@ -20,9 +20,9 @@ import {
 import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { ToolsContext } from '../../context/Tools';
+import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
@@ -41,11 +41,9 @@ const innovativeProject = () => {
   const [lazyParams] = useState({
     page: 0,
   });
-  const toolsStore = useContext(ToolsContext);
+  const toolsStore = useToolsStore();
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  // const [, setStateOrga] = useState([]);
-  const [stateOrga, setStateOrga] = useState([]);
   const history = useHistory();
 
   const onInit = () => {
@@ -71,16 +69,6 @@ const innovativeProject = () => {
 
   useEffect(() => {
     onInit();
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrga(result.content || []);
-      }
-    });
-    // getService(`criteria/getListByForWhatId/1`).then(result => {
-    //   if (result) {
-    //     setStateCriteria(result.content || []);
-    //   }
-    // });
   }, [lazyParams]);
 
   const getTraining = orgId => {
@@ -243,7 +231,7 @@ const innovativeProject = () => {
                     <AutoCompleteSelect
                       valueField="id"
                       placeholder="Байгууллага сонгох"
-                      data={stateOrga}
+                      data={toolsStore.orgList}
                       onChange={value => selectOrgs(value)}
                     />
                   </OrgaStyle>
