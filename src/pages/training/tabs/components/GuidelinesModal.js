@@ -5,14 +5,8 @@ import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './guidelines.style';
 
-const layout = {
-  labelCol: {
-    span: 20,
-  },
-  wrapperCol: {
-    span: 22,
-  },
-};
+const { TextArea } = Input;
+
 export default function TrainingGuidelinesModal(props) {
   const { Guidelinescontroller, isModalVisible, isEditMode, trainingID } =
     props;
@@ -74,7 +68,6 @@ export default function TrainingGuidelinesModal(props) {
           <Form
             form={form}
             labelAlign="left"
-            {...layout}
             layout="vertical"
             name="nest-messages"
             validateMessages={validateMessages}
@@ -82,7 +75,7 @@ export default function TrainingGuidelinesModal(props) {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Row>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={24}>
                     <Form.Item
                       label="Сургалтын сэдэв:"
                       name="subject"
@@ -92,10 +85,10 @@ export default function TrainingGuidelinesModal(props) {
                         },
                       ]}
                     >
-                      <Input />
+                      <TextArea style={{ width: '100%', height: '100px' }} />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={24}>
                     <Form.Item
                       label="Сургалт зохион байгуулах үндэслэл:"
                       name="reason"
@@ -105,10 +98,10 @@ export default function TrainingGuidelinesModal(props) {
                         },
                       ]}
                     >
-                      <Input />
+                      <TextArea style={{ width: '100%', height: '100px' }} />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={24}>
                     <Form.Item
                       label="Сургалтын зорилго:"
                       name="aim"
@@ -118,11 +111,11 @@ export default function TrainingGuidelinesModal(props) {
                         },
                       ]}
                     >
-                      <Input />
+                      <TextArea style={{ width: '100%', height: '100px' }} />
                     </Form.Item>
                   </Col>
 
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={24}>
                     <Form.Item
                       label="Хэрэгжүүлэх үйл ажиллагаа:"
                       name="operation"
@@ -132,11 +125,11 @@ export default function TrainingGuidelinesModal(props) {
                         },
                       ]}
                     >
-                      <Input />
+                      <TextArea style={{ width: '100%', height: '100px' }} />
                     </Form.Item>
                   </Col>
 
-                  <Col xs={24} md={24} lg={12}>
+                  <Col xs={24} md={24} lg={24}>
                     <Form.Item
                       label="Хүлээгдэж буй үр дүн:"
                       name="result"
@@ -146,7 +139,7 @@ export default function TrainingGuidelinesModal(props) {
                         },
                       ]}
                     >
-                      <Input />
+                      <TextArea style={{ width: '100%', height: '100px' }} />
                     </Form.Item>
                   </Col>
                 </Row>

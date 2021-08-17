@@ -134,11 +134,7 @@ export default function FuelModal(props) {
                 },
               ]}
             >
-              <CurrencyInput precision="0" suffix=" ₮" />
-            </Form.Item>
-
-            <Form.Item name="total" label="Нийт /₮/">
-              <CurrencyInput precision="0" suffix=" ₮" />
+              <Input precision="0" suffix=" ₮" />
             </Form.Item>
           </Form>
         </ContentWrapper>
