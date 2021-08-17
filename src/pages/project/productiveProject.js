@@ -15,21 +15,24 @@ import {
   message,
   Modal,
   Row,
+  Select,
   Tooltip,
+  Tag,
 } from 'antd';
 import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import AutoCompleteSelect from '../../components/Autocomplete';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
-import ContentWrapper from '../criteria/criteria.style';
-// import TrainingModal from './TrainingModal';
 import OrgaStyle from '../training/tabs/components/orga.style';
-import AutoCompleteSelect from '../../components/Autocomplete';
+import ContentWrapper from './more/productiveProject.style';
+import ProductiveProjectModal from './more/productiveProjectModal';
 
+const { Option } = Select;
 const { Content } = Layout;
 
 let editRow;
@@ -45,8 +48,6 @@ const productiveProject = () => {
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   // const [, setStateOrga] = useState([]);
-  const [orgID] = useState([]);
-  const [trainingID, setTrainingID] = useState();
   const [stateOrga, setStateOrga] = useState([]);
   const history = useHistory();
 
@@ -55,9 +56,9 @@ const productiveProject = () => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('training/get', list)
+    getService('project/getByProjectTypeId/1', list)
       .then(result => {
-        const listResult = result.content || [];
+        const listResult = result;
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
@@ -85,6 +86,13 @@ const productiveProject = () => {
     // });
   }, [lazyParams]);
 
+  const selectedStatus = event => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const onChangeStatus = () => {};
+
   const getTraining = orgId => {
     getService(`training/getList/${orgId}`, {}).then(result => {
       if (result) {
@@ -109,7 +117,6 @@ const productiveProject = () => {
   };
 
   const edit = (event, row) => {
-    setTrainingID(row.id);
     event.preventDefault();
     event.stopPropagation();
     editRow = row;
@@ -123,7 +130,7 @@ const productiveProject = () => {
       return;
     }
 
-    putService(`training/delete/${row.id}`)
+    putService(`project/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -188,44 +195,53 @@ const productiveProject = () => {
   const NameBodyTemplate = row => (
     <>
       <span className="p-column-title">Төслийн нэр</span>
-      {row.name}
+      {row.projectName}
     </>
   );
 
-  const orgNameBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Байгууллагын нэр</span>
-      {row.trainingBudget && row.trainingBudget.totalBudget}
-    </>
-  );
+  // const orgNameBodyTemplate = row => (
+  //   <>
+  //     <span className="p-column-title">Байгууллагын нэр</span>
+  //     {row.trainingBudget && row.trainingBudget.totalBudget}
+  //   </>
+  // );
 
-  const activityDirectionBodyTemplate = row => (
+  const userBodyTemplate = row => (
     <>
-      <span className="p-column-title">Төслийн үйл ажиллагааны чиглэл</span>
-      {row.trainingBudget && row.trainingBudget.performanceBudget}
-    </>
-  );
-
-  const fundingBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Төслийн санхүүжилт</span>
-      {moment(row.trainingStartDate && row.trainingStartDate).format(
-        'YYYY-M-D'
-      )}
+      <span className="p-column-title">Хариуцсан хүн</span>
+      {row.nameOfAuthorizedPerson}
     </>
   );
 
   const dateBodyTemplate = row => (
     <>
       <span className="p-column-title">Төсөл хэрэгжүүлэх хугацаа</span>
-      {moment(row.trainingEndDate && row.trainingEndDate).format('YYYY-M-D')}
+      {row.period}
     </>
   );
 
   const dateSentBodyTemplate = row => (
     <>
       <span className="p-column-title">Төсөл ирүүлсэн огноо</span>
-      {row.totalParticipants}
+      {moment(row.createdDate && row.createdDate).format('YYYY-M-D')}
+    </>
+  );
+
+  const statusBodyTemplate = row => (
+    <>
+      <Select
+        defaultValue="1"
+        onChange={onChangeStatus}
+        onClick={event => selectedStatus(event, row)}
+        style={{ width: '70%' }}
+      >
+        <Option key="1">
+          <Tag color="green">Зөвшөөрсөн</Tag>
+        </Option>
+        <Option key="2">
+          <Tag color="red">Цуцлагдсан</Tag>
+        </Option>
+      </Select>
     </>
   );
 
@@ -329,22 +345,7 @@ const productiveProject = () => {
               body={NameBodyTemplate}
               sortable
             />
-            <Column
-              header="Байгууллагын нэр"
-              thousandSeparator
-              filter
-              body={orgNameBodyTemplate}
-            />
-            <Column
-              header="Төслийн үйл ажиллагааны чиглэл"
-              filter
-              body={activityDirectionBodyTemplate}
-            />
-            <Column
-              header="Төслийн санхүүжилт"
-              filter
-              body={fundingBodyTemplate}
-            />
+            <Column header="Хариуцсан хүн" filter body={userBodyTemplate} />
             <Column
               header="Төсөл хэрэгжүүлэх хугацаа"
               filter
@@ -355,18 +356,17 @@ const productiveProject = () => {
               filter
               body={dateSentBodyTemplate}
             />
+            <Column header="Статус" body={statusBodyTemplate} />
             <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>
-          {/* {isModalVisible && (
-            <TrainingModal
-              Trainingcontroller={editRow}
+          {isModalVisible && (
+            <ProductiveProjectModal
+              ProductiveController={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              orgId={orgID}
-              trainingID={trainingID}
             />
-          )} */}
+          )}
         </div>
       </div>
     </ContentWrapper>

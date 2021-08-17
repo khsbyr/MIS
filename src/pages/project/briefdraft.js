@@ -16,11 +16,11 @@ const BriefDraft = () => (
   <ContentWrapper>
     <h2 className="title">1. Төслийн үндэслэл болон тулгамдаж буй асуудал</h2>
     <Row gutter={[40, 30]}>
-      <Col span={12}>
-        <TextArea rows={4} />
+      <Col xs={24} md={24} lg={12}>
+        <TextArea rows={4} placeholder="Төслийн үндэслэл" />
       </Col>
-      <Col span={12}>
-        <TextArea rows={4} />
+      <Col xs={24} md={24} lg={12}>
+        <TextArea rows={4} placeholder="Тулгарч буй хүндрэл бэрхшээл" />
       </Col>
       <Col>
         <ProjectPurpose />

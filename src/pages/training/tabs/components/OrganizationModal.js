@@ -66,20 +66,22 @@ export default function OrganizationModal(props) {
       }
     });
     if (Orgcontroller !== undefined) {
-      getService(`soum/getList/${Orgcontroller.address.aimag.id}`).then(
-        result => {
-          if (result) {
-            setStateSum(result || []);
-          }
+      getService(
+        `soum/getList/${
+          Orgcontroller.address && Orgcontroller.address.aimag.id
+        }`
+      ).then(result => {
+        if (result) {
+          setStateSum(result || []);
         }
-      );
-      getService(`bag/getList/${Orgcontroller.address.soum.id}`).then(
-        result => {
-          if (result) {
-            setStateBag(result || []);
-          }
+      });
+      getService(
+        `bag/getList/${Orgcontroller.address && Orgcontroller.address.soum.id}`
+      ).then(result => {
+        if (result) {
+          setStateBag(result || []);
         }
-      );
+      });
     }
     if (isEditMode) {
       setResponsibleUserID(
@@ -88,15 +90,16 @@ export default function OrganizationModal(props) {
       setRoleID(Orgcontroller.roleId);
       form.setFieldsValue({
         ...Orgcontroller,
-        bankID: Orgcontroller.bank.id,
-        Currency: Orgcontroller.currency.id,
+        bankID: Orgcontroller.bank && Orgcontroller.bank.id,
+        Currency: Orgcontroller.currency && Orgcontroller.currency.id,
         CountryID: Orgcontroller.address
           ? Orgcontroller.address.country.id
           : '',
         AimagID: Orgcontroller.address ? Orgcontroller.address.aimag.id : '',
         SoumID: Orgcontroller.address ? Orgcontroller.address.soum.id : '',
         BagID: Orgcontroller.address ? Orgcontroller.address.bag.id : '',
-        AddressDetail: Orgcontroller.address.addressDetail,
+        AddressDetail:
+          Orgcontroller.address && Orgcontroller.address.addressDetail,
         RespoUserFirstName:
           Orgcontroller.responsibleUser &&
           Orgcontroller.responsibleUser.firstname,
@@ -216,7 +219,7 @@ export default function OrganizationModal(props) {
   return (
     <div>
       <Modal
-        title="Зөвлөх байгууллага бүртгэх"
+        title="Байгууллага бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
         width={1100}

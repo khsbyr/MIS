@@ -56,18 +56,20 @@ function projectInnovation() {
           </Button>
         </Tooltip>
       </h2>
-      <DataTable
-        // value={listEducation}
-        removableSort
-        rows={10}
-        className="p-datatable-responsive-demo"
-        dataKey="id"
-      >
-        <Column field="index" header="№" style={{ width: '50px' }} />
-        <Column field="#" header="Хамрах хүрээ" />
-        <Column field="#" header="Инноваци, шинэлэг үйл ажиллагаанууд" />
-        <Column headerStyle={{ width: '7rem' }} body={action} />
-      </DataTable>
+      <div className="datatable-responsive-demo">
+        <DataTable
+          // value={listEducation}
+          removableSort
+          rows={10}
+          className="p-datatable-responsive-demo"
+          dataKey="id"
+        >
+          <Column field="index" header="№" style={{ width: '50px' }} />
+          <Column field="#" header="Хамрах хүрээ" />
+          <Column field="#" header="Инноваци, шинэлэг үйл ажиллагаанууд" />
+          <Column headerStyle={{ width: '7rem' }} body={action} />
+        </DataTable>
+      </div>
       {isModalVisible && (
         <ProjectInnovationModal
           ActivityController={editRow}

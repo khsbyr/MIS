@@ -44,9 +44,11 @@ function Login() {
           getService(`/user/get/${result.data.userId}`).then(user => {
             if (!user) return;
             localStorage.setItem('token', result.data.token);
-            localStorage.setItem('name', user.firstname);
-            toolsStore.generalInfo.userInfo = user;
-            toolsStore.setGeneralInfo({ ...toolsStore.generalInfo });
+            localStorage.setItem(
+              'name',
+              user.firstname ? user.firstname : user.username
+            );
+            toolsStore.setUser(user);
             history.push('user/users');
           });
         })

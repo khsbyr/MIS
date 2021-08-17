@@ -44,9 +44,6 @@ const veterinarianProject = () => {
   const toolsStore = useContext(ToolsContext);
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  // const [, setStateOrga] = useState([]);
-  const [orgID] = useState([]);
-  const [trainingID, setTrainingID] = useState();
   const [stateOrga, setStateOrga] = useState([]);
   const history = useHistory();
 
@@ -109,7 +106,6 @@ const veterinarianProject = () => {
   };
 
   const edit = (event, row) => {
-    setTrainingID(row.id);
     event.preventDefault();
     event.stopPropagation();
     editRow = row;
