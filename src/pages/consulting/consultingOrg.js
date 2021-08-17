@@ -149,7 +149,7 @@ const ConsultingOrg = () => {
   const bankNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Банкны нэр</span>
-      {row.bank.name}
+      {row.bank && row.bank.name}
     </>
   );
 
