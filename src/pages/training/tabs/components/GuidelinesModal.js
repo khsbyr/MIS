@@ -7,14 +7,6 @@ import ContentWrapper from './guidelines.style';
 
 const { TextArea } = Input;
 
-const layout = {
-  labelCol: {
-    span: 20,
-  },
-  wrapperCol: {
-    span: 22,
-  },
-};
 export default function TrainingGuidelinesModal(props) {
   const { Guidelinescontroller, isModalVisible, isEditMode, trainingID } =
     props;
