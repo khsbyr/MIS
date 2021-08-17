@@ -3,18 +3,18 @@ import { React } from 'react';
 
 export default function AutocompleteSelect(props) {
   const { Option } = Select;
-  const { data, value, disabled, viewField, valueField, size } = props;
-  const mode = props.mode || '';
+  const { data, value, disabled, viewField, valueField, size, defaultValue } =
+    props;
   const placeholder = props.placeholder || 'Сонгох';
 
   return (
     <Select
       showSearch
-      mode=""
       disabled={disabled}
       style={{ width: '100%' }}
       placeholder={placeholder}
       value={value}
+      defaultValue={defaultValue}
       optionFilterProp="children"
       maxTagCount="responsive"
       size={size || 'small'}
