@@ -12,11 +12,13 @@ import {
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
+import MulticompleteSelect from '../../../components/MulticompleteSelect';
 import { getService, postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 import ContentWrapper from '../components/ModalComponent/produictiveProjectModal.style';
 
+const { TextArea } = Input;
 const { TabPane } = Tabs;
 
 const Uploadprops = {
@@ -38,13 +40,15 @@ const Uploadprops = {
 };
 
 export default function productiveProjectModal(props) {
-  const { Plancontroller, isModalVisible, isEditMode } = props;
+  const { ProductiveController, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
   const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
   const [stateCountry, setStateCountry] = useState([]);
   const [stateBag, setStateBag] = useState([]);
-
+  const [stateOrg, setStateOrg] = useState([]);
+  const [selectedOrg, setSelectedOrg] = useState();
+  const [selectedProjectOrg, setSelectedProjectOrg] = useState([]);
   const getAimag = countryId => {
     getService(`aimag/getList/${countryId}`, {}).then(result => {
       if (result) {
@@ -81,24 +85,112 @@ export default function productiveProjectModal(props) {
     getBag(value);
   };
 
+  const selectOrg = value => {
+    setSelectedOrg(value);
+  };
+
+  const ProjectOrgList = ProductiveController
+    ? ProductiveController.projectOrganizations.map(
+        item => item.organization.id
+      )
+    : '';
+
   useEffect(() => {
-    // getService(`user/getTrainerListByOrgId/${orgID}`).then(result => {
-    //   if (result) {
-    //     setStateTrainers(result || []);
-    //   }
-    // });
+    getService('organization/get').then(result => {
+      if (result) {
+        setStateOrg(result.content || []);
+      }
+    });
+    getService('country/get').then(result => {
+      if (result) {
+        setStateCountry(result || []);
+      }
+    });
+    getService('aimag/get').then(result => {
+      if (result) {
+        setStateAimag(result || []);
+      }
+    });
+    if (ProductiveController !== null) {
+      getService(
+        `soum/getList/${
+          ProductiveController.address && ProductiveController.address.aimag.id
+        }`
+      ).then(result => {
+        if (result) {
+          setStateSum(result || []);
+        }
+      });
+      getService(
+        `bag/getList/${
+          ProductiveController.address && ProductiveController.address.soum.id
+        }`
+      ).then(result => {
+        if (result) {
+          setStateBag(result || []);
+        }
+      });
+    }
     if (isEditMode) {
+      setSelectedProjectOrg(ProjectOrgList);
       form.setFieldsValue({
-        ...Plancontroller,
+        ...ProductiveController,
+        AddressDetail:
+          ProductiveController.address &&
+          ProductiveController.address.addressDetail,
+        CountryID: ProductiveController.address
+          ? ProductiveController.address.country.id
+          : '',
+        AimagID: ProductiveController.address
+          ? ProductiveController.address.aimag.id
+          : '',
+        SoumID: ProductiveController.address
+          ? ProductiveController.address.soum.id
+          : '',
+        BagID: ProductiveController.address
+          ? ProductiveController.address.bag.id
+          : '',
+        OrgID: ProductiveController.organization.id,
       });
     }
   }, []);
+
+  const selectProjectOrg = value => {
+    setSelectedProjectOrg(value);
+  };
+
   const save = () => {
     form
       .validateFields()
       .then(values => {
+        values.project = {
+          projectName: values.projectName,
+          nameOfAuthorizedPerson: values.nameOfAuthorizedPerson,
+          period: values.period,
+          expierenceActivity: values.expierenceActivity,
+          proposedActivity: values.proposedActivity,
+          partnerActivity: values.partnerActivity,
+          organization: { id: values.OrgID },
+          projectType: { id: 1 },
+          address: {
+            addressDetail: values.AddressDetail,
+            country: {
+              id: values.CountryID,
+            },
+            aimag: {
+              id: values.AimagID,
+            },
+            soum: {
+              id: values.SoumID,
+            },
+            bag: {
+              id: values.BagID,
+            },
+          },
+        };
+        values.organizationIds = selectedProjectOrg;
         if (isEditMode) {
-          putService(`trainingTeam/update/${Plancontroller.id}`, values)
+          putService(`project/update/${ProductiveController.id}`, values)
             .then(() => {
               message.success('Амжилттай хадгаллаа');
               props.close(true);
@@ -107,7 +199,7 @@ export default function productiveProjectModal(props) {
               errorCatch(error);
             });
         } else {
-          postService('trainingTeam/post', values)
+          postService('project/post', values)
             .then(() => {
               message.success('Амжилттай хадгаллаа');
               props.close(true);
@@ -145,98 +237,35 @@ export default function productiveProjectModal(props) {
               <TabPane tab="Төслийн мэдээлэл" key="1">
                 <Row gutter={60}>
                   <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Төслийн нэр:" name="mission">
-                      <Input />
-                    </Form.Item>
-                    <Form.Item label="Төслийн санхүүжилт:" name="mission">
+                    <Form.Item label="Төслийн нэр:" name="projectName">
                       <Input />
                     </Form.Item>
                     <Form.Item
-                      label="Төсөл хэрэгжүүлэх хугацаа:"
-                      name="mission"
+                      label="Хариуцсан хүн:"
+                      name="nameOfAuthorizedPerson"
                     >
                       <Input />
                     </Form.Item>
-                  </Col>
-                  <Col xs={24} md={24} lg={12}>
-                    <Form.Item
-                      name="TrainerID"
-                      label="Төслийн үйл ажиллагааны чиглэл:"
-                    >
-                      <AutoCompleteSelect valueField="id" />
+                    <Form.Item label="Төсөл хэрэгжүүлэх хугацаа:" name="period">
+                      <Input />
                     </Form.Item>
-                    <Form.Item name="TrainerID" label="Байгууллага сонгох:">
+                    <Form.Item name="OrgID" label="Байгууллага сонгох:">
                       <AutoCompleteSelect
                         valueField="id"
-                        // data={stateTrainers}
-                        // onChange={value => selectTrainer(value)}
+                        data={stateOrg}
+                        onChange={value => selectOrg(value)}
                       />
                     </Form.Item>
-                    <Form.Item name="TrainerID" label="Түншлэгч байгууллага:">
-                      <AutoCompleteSelect valueField="id" />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </TabPane>
-              <TabPane tab="Бусад мэдээлэл" key="2">
-                <Row gutter={60}>
-                  <Col xs={24} md={24} lg={12}>
-                    <Form.Item
-                      name="TrainerID"
-                      label="Төслийн үйл ажиллагааны чиглэл:"
-                    >
-                      <AutoCompleteSelect valueField="id" />
-                    </Form.Item>
-                    <Form.Item
-                      name="TrainerID"
-                      label="Төслийн үйл ажиллагааны чиглэл:"
-                    >
-                      <AutoCompleteSelect valueField="id" />
-                    </Form.Item>
-                    <Form.Item
-                      name="TrainerID"
-                      label="Өргөдөл гаргагчийн туршлага болон үйл ажиллагааны чиглэл:"
-                    >
-                      <AutoCompleteSelect valueField="id" />
-                    </Form.Item>
-                    <Form.Item
-                      name="TrainerID"
-                      label="Өргөдөл гаргагчийн санал болгож буй үйл ажиллагааны чиглэл:"
-                    >
-                      <AutoCompleteSelect valueField="id" />
-                    </Form.Item>
-                    <Form.Item
-                      name="TrainerID"
-                      label="Хамтран ажиллах түншлэгч байгууллагатай бол үйл ажиллагааны төрөл болон бусад дэлгэрэнгүй мэдээлэл:"
-                    >
-                      <AutoCompleteSelect valueField="id" />
-                    </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={12}>
-                    <Form.Item
-                      label="Улс:"
-                      name="CountryID"
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
+                    <Form.Item label="Улс:" name="CountryID">
                       <AutoCompleteSelect
                         valueField="id"
                         data={stateCountry}
                         onChange={value => selectCountry(value)}
                       />
                     </Form.Item>
-                    <Form.Item
-                      label="Аймаг, хот:"
-                      name="AimagID"
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
+                    <Form.Item label="Аймаг, хот:" name="AimagID">
                       <AutoCompleteSelect
                         valueField="id"
                         data={stateAimag}
@@ -247,11 +276,6 @@ export default function productiveProjectModal(props) {
                       name="SoumID"
                       layout="vertical"
                       label="Сум, Дүүрэг:"
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
                     >
                       <AutoCompleteSelect
                         valueField="id"
@@ -263,13 +287,53 @@ export default function productiveProjectModal(props) {
                       name="BagID"
                       layout="vertical"
                       label="Баг, Хороо:"
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
                     >
                       <AutoCompleteSelect valueField="id" data={stateBag} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={24} md={24} lg={24}>
+                    <Form.Item label="Дэлгэрэнгүй хаяг:" name="AddressDetail">
+                      <Input.TextArea />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </TabPane>
+              <TabPane tab="Бусад мэдээлэл" key="2">
+                <Row gutter={40}>
+                  <Col xs={24} md={24} lg={24}>
+                    <Form.Item
+                      label="Түншлэгч бөйгууллага:"
+                      valuePropName="option"
+                    >
+                      <MulticompleteSelect
+                        data={stateOrg}
+                        defaultValue={ProjectOrgList}
+                        valueField="id"
+                        size="medium"
+                        onChange={value => selectProjectOrg(value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={24} lg={24}>
+                    <Form.Item
+                      name="expierenceActivity"
+                      label="Өргөдөл гаргагчийн туршлага болон үйл ажиллагааны чиглэл:"
+                    >
+                      <TextArea autoSize={{ minRows: 3, maxRows: 6 }} />
+                    </Form.Item>
+                    <Form.Item
+                      name="proposedActivity"
+                      label="Өргөдөл гаргагчийн санал болгож буй үйл ажиллагааны чиглэл:"
+                    >
+                      <TextArea autoSize={{ minRows: 3, maxRows: 6 }} />
+                    </Form.Item>
+                    <Form.Item
+                      name="partnerActivity"
+                      label="Хамтран ажиллах түншлэгч байгууллагатай бол үйл ажиллагааны төрөл болон бусад дэлгэрэнгүй мэдээлэл:"
+                    >
+                      <TextArea autoSize={{ minRows: 3, maxRows: 6 }} />
                     </Form.Item>
                   </Col>
                 </Row>

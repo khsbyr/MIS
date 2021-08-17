@@ -56,9 +56,9 @@ const productiveProject = () => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('training/get', list)
+    getService('project/getByProjectTypeId/1', list)
       .then(result => {
-        const listResult = result.content || [];
+        const listResult = result;
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
@@ -91,9 +91,7 @@ const productiveProject = () => {
     event.stopPropagation();
   };
 
-  const onChangeStatus = value => {
-    console.log(value);
-  };
+  const onChangeStatus = () => {};
 
   const getTraining = orgId => {
     getService(`training/getList/${orgId}`, {}).then(result => {
@@ -132,7 +130,7 @@ const productiveProject = () => {
       return;
     }
 
-    putService(`training/delete/${row.id}`)
+    putService(`project/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -197,7 +195,7 @@ const productiveProject = () => {
   const NameBodyTemplate = row => (
     <>
       <span className="p-column-title">Төслийн нэр</span>
-      {row.name}
+      {row.projectName}
     </>
   );
 
@@ -208,33 +206,24 @@ const productiveProject = () => {
   //   </>
   // );
 
-  const activityDirectionBodyTemplate = row => (
+  const userBodyTemplate = row => (
     <>
-      <span className="p-column-title">Төслийн үйл ажиллагааны чиглэл</span>
-      {row.trainingBudget && row.trainingBudget.performanceBudget}
-    </>
-  );
-
-  const fundingBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Төслийн санхүүжилт</span>
-      {moment(row.trainingStartDate && row.trainingStartDate).format(
-        'YYYY-M-D'
-      )}
+      <span className="p-column-title">Хариуцсан хүн</span>
+      {row.nameOfAuthorizedPerson}
     </>
   );
 
   const dateBodyTemplate = row => (
     <>
       <span className="p-column-title">Төсөл хэрэгжүүлэх хугацаа</span>
-      {moment(row.trainingEndDate && row.trainingEndDate).format('YYYY-M-D')}
+      {row.period}
     </>
   );
 
   const dateSentBodyTemplate = row => (
     <>
       <span className="p-column-title">Төсөл ирүүлсэн огноо</span>
-      {row.totalParticipants}
+      {moment(row.createdDate && row.createdDate).format('YYYY-M-D')}
     </>
   );
 
@@ -356,22 +345,7 @@ const productiveProject = () => {
               body={NameBodyTemplate}
               sortable
             />
-            {/* <Column
-              header="Байгууллагын нэр"
-              thousandSeparator
-              filter
-              body={orgNameBodyTemplate}
-            /> */}
-            <Column
-              header="Төслийн үйл ажиллагааны чиглэл"
-              filter
-              body={activityDirectionBodyTemplate}
-            />
-            <Column
-              header="Төслийн санхүүжилт"
-              filter
-              body={fundingBodyTemplate}
-            />
+            <Column header="Хариуцсан хүн" filter body={userBodyTemplate} />
             <Column
               header="Төсөл хэрэгжүүлэх хугацаа"
               filter
@@ -387,7 +361,7 @@ const productiveProject = () => {
           </DataTable>
           {isModalVisible && (
             <ProductiveProjectModal
-              Trainingcontroller={editRow}
+              ProductiveController={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}

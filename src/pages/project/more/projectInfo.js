@@ -1,6 +1,6 @@
 import { Tabs } from 'antd';
 import React from 'react';
-// import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import ContentWrapper from './projectInfo.style';
 import BriefDraft from '../briefDraft';
 import MainInfo from '../mainInfo';
@@ -10,14 +10,14 @@ const tabPosition = 'top';
 const tabPosition2 = 'top';
 
 export default function projectInfo() {
-  // const { id } = useParams();
+  const { id } = useParams();
   return (
     <ContentWrapper>
       <Tabs tabPosition={tabPosition2}>
         <TabPane tab="Хураангуй төсөл" key="1">
           <Tabs tabPosition={tabPosition}>
             <TabPane tab="Үндсэн мэдээлэл" key="2">
-              <MainInfo />
+              <MainInfo projectId={id} />
             </TabPane>
             <TabPane tab="Товч төсөл" key="3">
               <BriefDraft />
