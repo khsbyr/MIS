@@ -9,6 +9,7 @@ export const useToolsStore = () => useContext(ToolsContext);
 export default function ContextProvider({ children }) {
   const [isShowLoader, setIsShowLoader] = useState(false);
   const [user, setUser] = useState();
+  const [orgList, setOrgList] = useState();
 
   return (
     <ToolsContext.Provider
@@ -17,6 +18,8 @@ export default function ContextProvider({ children }) {
         setIsShowLoader,
         user,
         setUser,
+        orgList,
+        setOrgList,
       }}
     >
       {isShowLoader && <Loader />}

@@ -4,8 +4,10 @@ import { getService, postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import validateMessages from '../../../tools/validateMessage';
+import { useToolsStore } from '../../../context/Tools';
 
 export default function UserModal(props) {
+  const toolsStore = useToolsStore();
   const { Usercontroller, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
   const [stateCountry, setStateCountry] = useState([]);
@@ -13,16 +15,9 @@ export default function UserModal(props) {
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const [stateTrue, setStateTrue] = useState([]);
-  const [stateOrg, setStateOrg] = useState([]);
   const [stateRole, setStateRole] = useState([]);
 
   useEffect(() => {
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrg(result.content || []);
-      }
-    });
-
     getService('role/get').then(result => {
       if (result) {
         setStateRole(result || []);
@@ -214,7 +209,7 @@ export default function UserModal(props) {
                 <AutoCompleteSelect
                   valueField="id"
                   size="medium"
-                  data={stateOrg}
+                  data={toolsStore.orgList}
                 />
               </Form.Item>
             </Col>

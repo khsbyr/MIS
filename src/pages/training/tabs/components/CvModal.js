@@ -15,9 +15,9 @@ import {
   message,
 } from 'antd';
 import moment from 'moment';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
-import { ToolsContext } from '../../../../context/Tools';
+import { useToolsStore } from '../../../../context/Tools';
 import {
   getService,
   postService,
@@ -45,7 +45,7 @@ export default function CvModal(props) {
   const { Trainerscontroller, isModalVisible, isEditMode, trainerID, orgId } =
     props;
   const [form] = Form.useForm();
-  const toolsStore = useContext(ToolsContext);
+  const toolsStore = useToolsStore();
   const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
   const [stateCountry, setStateCountry] = useState([]);
@@ -53,7 +53,6 @@ export default function CvModal(props) {
   const loadLazyTimeout = null;
   const [userID, setUserID] = useState();
   const [BirthDatee, setBirthDatee] = useState();
-  const [, setStateOrg] = useState([]);
   const [, setIsOnchange] = useState(false);
   const [options, setOptions] = useState([]);
   const onInit = () => {
@@ -65,11 +64,6 @@ export default function CvModal(props) {
 
   useEffect(() => {
     onInit();
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrg(result.content || []);
-      }
-    });
     getService(`user/getNotTrainerUserListByOrgId/${orgId}`).then(result => {
       if (result) {
         setOptions(result || []);

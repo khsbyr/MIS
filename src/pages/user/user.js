@@ -10,8 +10,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
-import { ToolsContext } from '../../context/Tools';
+import React, { useEffect, useState } from 'react';
+import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
@@ -23,7 +23,7 @@ let editRow;
 let isEditMode;
 
 const User = () => {
-  const toolsStore = useContext(ToolsContext);
+  const toolsStore = useToolsStore();
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -57,7 +57,9 @@ const User = () => {
   useEffect(() => {
     onInit();
     getService('organization/get').then(result => {
-      console.log(result);
+      if (result) {
+        toolsStore.setOrgList(result.content || []);
+      }
     });
   }, [lazyParams]);
 
