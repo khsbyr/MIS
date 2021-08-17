@@ -4,7 +4,6 @@ import { Col, DatePicker, Form, Input, message, Modal, Row } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import CurrencyInput from 'react-currency-input';
 import AutoCompleteSelect from '../../components/Autocomplete';
 import MulticompleteSelect from '../../components/MulticompleteSelect';
 import { getService, postService, putService } from '../../service/service';
@@ -49,7 +48,6 @@ export default function TrainingModal(props) {
           if (isEditMode) {
             setStartDate(Trainingcontroller.trainingStartDate);
             setEndDate(Trainingcontroller.trainingEndDate);
-            // console.log(Trainingcontroller);
             form.setFieldsValue({
               ...Trainingcontroller,
               CriteriaID: list.map(item => item.id),
@@ -273,7 +271,7 @@ export default function TrainingModal(props) {
                         },
                       ]}
                     >
-                      <CurrencyInput precision="0" suffix=" ₮" />
+                      <Input precision="0" suffix=" ₮" />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={8}>

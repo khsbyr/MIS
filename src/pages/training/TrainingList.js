@@ -171,8 +171,6 @@ const TrainingList = () => {
     return `${values.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}₮`;
   }
 
-  console.log(Formatcurrency(2661115)); // $2,665.00
-
   const indexBodyTemplate = row => (
     <>
       <span className="p-column-title">№</span>
@@ -233,12 +231,12 @@ const TrainingList = () => {
       <div className="button-demo">
         <Content>
           <Row>
-            <Col xs={24} md={24} lg={14}>
+            <Col xs={24} md={24} lg={10}>
               <p className="title">Сургалтын жагсаалт</p>
             </Col>
-            <Col xs={24} md={18} lg={10}>
+            <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>
-                <Col xs={12} md={6} lg={7}>
+                <Col xs={12} md={12} lg={10}>
                   <OrgaStyle>
                     <AutoCompleteSelect
                       valueField="id"
