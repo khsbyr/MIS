@@ -10,8 +10,6 @@ export default function UserModal(props) {
   const toolsStore = useToolsStore();
   const { Usercontroller, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
-  const [stateCountry, setStateCountry] = useState([]);
-  const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const [stateTrue, setStateTrue] = useState([]);
@@ -21,18 +19,6 @@ export default function UserModal(props) {
     getService('role/get').then(result => {
       if (result) {
         setStateRole(result || []);
-      }
-    });
-
-    getService('country/get').then(result => {
-      if (result) {
-        setStateCountry(result || []);
-      }
-    });
-
-    getService('aimag/get').then(result => {
-      if (result) {
-        setStateAimag(result || []);
       }
     });
 
@@ -74,18 +60,6 @@ export default function UserModal(props) {
       });
     }
   }, [Usercontroller, form, isEditMode]);
-
-  const getAimag = countryId => {
-    getService(`aimag/getList/${countryId}`, {}).then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-  };
-
-  const selectCountry = value => {
-    getAimag(value);
-  };
 
   const getSum = aimagId => {
     getService(`soum/getList/${aimagId}`, {}).then(result => {
@@ -250,9 +224,8 @@ export default function UserModal(props) {
               <Form.Item label="Улс:" name="CountryID">
                 <AutoCompleteSelect
                   valueField="id"
-                  data={stateCountry}
+                  data={toolsStore.countryList}
                   size="medium"
-                  onChange={value => selectCountry(value)}
                 />
               </Form.Item>
             </Col>
@@ -264,7 +237,7 @@ export default function UserModal(props) {
               >
                 <AutoCompleteSelect
                   valueField="id"
-                  data={stateAimag}
+                  data={toolsStore.aimagList}
                   size="medium"
                   onChange={value => selectAimag(value)}
                 />

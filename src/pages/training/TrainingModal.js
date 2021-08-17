@@ -27,9 +27,7 @@ export default function TrainingModal(props) {
   const toolsStore = useToolsStore();
   const [startDate, setStartDate] = useState([]);
   const [endDate, setEndDate] = useState([]);
-  const [stateCountry, setStateCountry] = useState([]);
   const [stateCriteria, setStateCriteria] = useState([]);
-  const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const [selectedCriteria, setSelectedCriteria] = useState();
@@ -98,18 +96,6 @@ export default function TrainingModal(props) {
       }
     });
 
-    getService('country/get').then(result => {
-      if (result) {
-        setStateCountry(result || []);
-      }
-    });
-
-    getService('aimag/get').then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-
     if (Trainingcontroller) {
       getService(
         `soum/getList/${
@@ -135,21 +121,6 @@ export default function TrainingModal(props) {
 
   const SelectCriteria = value => {
     setSelectedCriteria(value);
-  };
-  // const selectCriterias = (value, criteriaID) => {
-  //   setSelectedCriteria([value]);
-  //   console.log(value);
-  // };
-  const getAimag = countryId => {
-    getService(`aimag/getList/${countryId}`, {}).then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-  };
-
-  const selectCountry = value => {
-    getAimag(value);
   };
 
   const getSum = aimagId => {
@@ -180,7 +151,6 @@ export default function TrainingModal(props) {
     form
       .validateFields()
       .then(values => {
-        // values.criteriaIds = selectedCriteria;
         values.organization = { id: values.orgID };
         values.trainingStartDate = startDate;
         values.trainingEndDate = endDate;
@@ -306,40 +276,6 @@ export default function TrainingModal(props) {
                       <CurrencyInput precision="0" suffix=" ₮" />
                     </Form.Item>
                   </Col>
-                  {/* <Col xs={24} md={24} lg={8}>
-                    <Form.Item label="Төсөв:" name="totalBudget">
-                      <InputNumber
-                        precision="0"
-                        max="1000000000"
-                        defaultValue="0"
-                        formatter={value =>
-                          ` ${value} ₮`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                        }
-                        parser={value => value.replace(/\s?|(,*)\$/g, '')}
-                      />
-                    </Form.Item>
-                  </Col> */}
-                  {/* <Col xs={24} md={24} lg={8}>
-                    <Form.Item
-                      label="Гүйцэтгэлийн төсөв:"
-                      name="performanceBudget"
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col> */}
-                  {/* <Col xs={24} md={24} lg={8}>
-                    <Form.Item
-                      label="Оролцогчдын тоо:"
-                      name="totalParticipants"
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col> */}
                   <Col xs={24} md={24} lg={8}>
                     <Form.Item label="Эхэлсэн огноо:">
                       <DatePicker
@@ -374,9 +310,8 @@ export default function TrainingModal(props) {
                     <Form.Item label="Улс:" name="CountryID">
                       <AutoCompleteSelect
                         valueField="id"
-                        data={stateCountry}
+                        data={toolsStore.countryList}
                         size="medium"
-                        onChange={value => selectCountry(value)}
                       />
                     </Form.Item>
                   </Col>
@@ -388,7 +323,7 @@ export default function TrainingModal(props) {
                     >
                       <AutoCompleteSelect
                         valueField="id"
-                        data={stateAimag}
+                        data={toolsStore.aimagList}
                         size="medium"
                         onChange={value => selectAimag(value)}
                       />
