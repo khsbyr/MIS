@@ -105,7 +105,7 @@ export default function StationaryModal(props) {
                 },
               ]}
             >
-              <CurrencyInput precision="0" suffix=" ₮" />
+              <Input precision="0" suffix=" ₮" />
             </Form.Item>
             <Form.Item
               name="quantity"
@@ -128,9 +128,6 @@ export default function StationaryModal(props) {
               ]}
             >
               <InputNumber style={{ width: '100%' }} />
-            </Form.Item>
-            <Form.Item name="total" label="Дүн">
-              <CurrencyInput precision="0" suffix=" ₮" />
             </Form.Item>
           </Form>
         </ContentWrapper>

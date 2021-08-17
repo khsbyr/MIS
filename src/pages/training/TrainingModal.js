@@ -106,6 +106,7 @@ export default function TrainingModal(props) {
     getService('country/get').then(result => {
       if (result) {
         setStateCountry(result || []);
+        console.log(result[105]);
       }
     });
 
@@ -308,43 +309,9 @@ export default function TrainingModal(props) {
                         },
                       ]}
                     >
-                      <CurrencyInput precision="0" suffix=" ₮" />
+                      <Input precision="0" suffix=" ₮" />
                     </Form.Item>
                   </Col>
-                  {/* <Col xs={24} md={24} lg={8}>
-                    <Form.Item label="Төсөв:" name="totalBudget">
-                      <InputNumber
-                        precision="0"
-                        max="1000000000"
-                        defaultValue="0"
-                        formatter={value =>
-                          ` ${value} ₮`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                        }
-                        parser={value => value.replace(/\s?|(,*)\$/g, '')}
-                      />
-                    </Form.Item>
-                  </Col> */}
-                  {/* <Col xs={24} md={24} lg={8}>
-                    <Form.Item
-                      label="Гүйцэтгэлийн төсөв:"
-                      name="performanceBudget"
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col> */}
-                  {/* <Col xs={24} md={24} lg={8}>
-                    <Form.Item
-                      label="Оролцогчдын тоо:"
-                      name="totalParticipants"
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col> */}
                   <Col xs={24} md={24} lg={8}>
                     <Form.Item label="Эхэлсэн огноо:">
                       <DatePicker

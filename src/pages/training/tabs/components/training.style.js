@@ -29,6 +29,10 @@ const ContentWrapper = styled.div`
     height: 40px;
     padding-top: 5px;
   }
+  .ant-select-show-search.ant-select:not(.ant-select-customize-input)
+    .ant-select-selector {
+    height: 40px;
+  }
 
   .ant-input {
     height: 40px;

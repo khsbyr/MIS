@@ -19,7 +19,6 @@ import ContentWrapper from './components/attendance.style';
 import FuelModal from './components/FuelModal';
 import RoadModal from './components/RoadModal';
 import StationaryModal from './components/StationaryModal';
-
 // function onChange(date, dateString) {
 //   console.log(date, dateString);
 // }
@@ -64,14 +63,6 @@ const Budget = props => {
         errorCatch(error);
         toolsStore.setIsShowLoader(false);
       });
-  };
-  useEffect(() => {
-    onInit();
-    // getService('costType/get').then(result => {
-    //   if (result) {
-    //     setStateCostType(result || []);
-    //   }
-    // });
     getService(`stationeryExpenses/getListBy/${props.id}`, list1).then(
       result => {
         const listResult = result || [];
@@ -100,6 +91,9 @@ const Budget = props => {
       setList3(listResult);
       setSelectedRows([]);
     });
+  };
+  useEffect(() => {
+    onInit();
   }, [lazyParams]);
 
   const add = () => {
@@ -336,24 +330,24 @@ const Budget = props => {
       {Formatcurrency(row.performanceBudget)}
     </>
   );
-  const stationeryTotalBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Бичгийн хэрэгсэл нийт /₮/</span>
-      {Formatcurrency(row.stationeryTotal)}
-    </>
-  );
-  const hotelTotalBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Зам хоног, буудлын зардал нийт /₮/</span>
-      {Formatcurrency(row.hotelTotal)}
-    </>
-  );
-  const fuelTotalBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Шатахууны зардал нийт /₮/</span>
-      {Formatcurrency(row.fuelTotal)}
-    </>
-  );
+  // const stationeryTotalBodyTemplate = row => (
+  //   <>
+  //     <span className="p-column-title">Бичгийн хэрэгсэл нийт /₮/</span>
+  //     {Formatcurrency(row.stationeryTotal)}
+  //   </>
+  // );
+  // const hotelTotalBodyTemplate = row => (
+  //   <>
+  //     <span className="p-column-title">Зам хоног, буудлын зардал нийт /₮/</span>
+  //     {Formatcurrency(row.hotelTotal)}
+  //   </>
+  // );
+  // const fuelTotalBodyTemplate = row => (
+  //   <>
+  //     <span className="p-column-title">Шатахууны зардал нийт /₮/</span>
+  //     {Formatcurrency(row.fuelTotal)}
+  //   </>
+  // );
 
   // stationeryExpenses
   const indexBodyTemplate = row => (
@@ -481,22 +475,29 @@ const Budget = props => {
     for (let i = 0; i < list1.length; i++) {
       total += list1[i].total;
     }
-    return <div>Нийт: {Formatcurrency(total)}</div>;
+    return <div>{Formatcurrency(total)}</div>;
   };
   const HotelTotal = () => {
     let total = 0;
     for (let i = 0; i < list2.length; i++) {
       total += list2[i].total;
     }
-    return <div>Нийт: {Formatcurrency(total)}</div>;
+    return <div>{Formatcurrency(total)}</div>;
   };
   const FuelTotal = () => {
     let total = 0;
     for (let i = 0; i < list3.length; i++) {
       total += list3[i].total;
     }
-    return <div>Нийт: {Formatcurrency(total)}</div>;
+    return <div>{Formatcurrency(total)}</div>;
   };
+
+  // const Alltotal = () => {
+  //   const total = 0;
+  //   total === FuelTotal.total + HotelTotal.total + StationaryTotal.total;
+  //   console.log(total);
+  //   return <div>{Formatcurrency(total)}</div>;
+  // };
 
   const footerGroup = (
     <ColumnGroup>
@@ -505,7 +506,7 @@ const Budget = props => {
         <Column />
         <Column />
         <Column />
-        <Column />
+        <Column footer="Нийт:" footerStyle={{ textAlign: 'right' }} />
         <Column
           footer={StationaryTotal}
           footerStyle={{ textAlign: 'center' }}
@@ -521,7 +522,7 @@ const Budget = props => {
         <Column />
         <Column />
         <Column />
-        <Column />
+        <Column footer="Нийт:" footerStyle={{ textAlign: 'right' }} />
         <Column footer={HotelTotal} footerStyle={{ textAlign: 'center' }} />
         <Column />
       </Row>
@@ -535,7 +536,7 @@ const Budget = props => {
         <Column />
         <Column />
         <Column />
-        <Column />
+        <Column footer="Нийт:" footerStyle={{ textAlign: 'right' }} />
         <Column footer={FuelTotal} footerStyle={{ textAlign: 'center' }} />
         <Column />
       </Row>
@@ -603,17 +604,17 @@ const Budget = props => {
           >
             <Column
               header="Бичгийн хэрэгсэл нийт /₮/"
-              body={stationeryTotalBodyTemplate}
+              body={StationaryTotal}
               bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Зам хоног, буудлын зардал нийт /₮/"
-              body={hotelTotalBodyTemplate}
+              body={HotelTotal}
               bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Шатахууны зардал нийт /₮/"
-              body={fuelTotalBodyTemplate}
+              body={FuelTotal}
               bodyStyle={{ textAlign: 'center' }}
             />
             <Column
