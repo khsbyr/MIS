@@ -213,9 +213,6 @@ const Guidelines = props => {
           <DataTable
             value={list}
             emptyMessage="Өгөгдөл олдсонгүй..."
-            removableSort
-            paginator
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             // onRowClick={edit}
@@ -227,28 +224,20 @@ const Guidelines = props => {
             <Column
               header="Сургалтын сэдэв"
               body={subjectBodyTemplate}
-              sortable
-              bodyStyle={{ textAlign: 'center' }}
+              // bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Сургалт зохион байгуулах үндэслэл"
               body={reasonTrainerBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
             />
-            <Column
-              header="Сургалтын зорилго"
-              body={aimtBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
-            />
+            <Column header="Сургалтын зорилго" body={aimtBodyTemplate} />
             <Column
               header="Хэрэгжүүлэх үйл ажиллагаа"
               body={operationTrainerBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Хүлээгдэж буй үр дүн"
               body={resultTrainerBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

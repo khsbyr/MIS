@@ -8,6 +8,7 @@ import {
   faPrint,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../context/Tools';
 import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import { getService, postService, putService } from '../../service/service';
@@ -22,6 +23,7 @@ let isEditMode;
 let selectedRole;
 
 export default function Roles() {
+  const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isShowModal, setIsShowModal] = useState(false);
   const [isShowConfigMenu, setIsShowConfigMenu] = useState(false);
@@ -111,7 +113,7 @@ export default function Roles() {
           selectedRole = rowData;
         }}
       >
-        Цэс тохируулах
+        {t('Set the menu')}
       </Button>
     </>
   );
@@ -122,12 +124,12 @@ export default function Roles() {
         <Content>
           <Row>
             <Col xs={24} md={12} lg={14}>
-              <p className="title">Эрхийн тохиргоо</p>
+              <p className="title">{t('User role')}</p>
             </Col>
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col>
-                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                  <Tooltip title={t('print')} arrowPointAtCenter>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -137,7 +139,7 @@ export default function Roles() {
                   </Tooltip>
                 </Col>
                 <Col>
-                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                  <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -148,7 +150,7 @@ export default function Roles() {
                   </Tooltip>
                 </Col>
                 <Col>
-                  <Tooltip title="Нэмэх" arrowPointAtCenter>
+                  <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -179,17 +181,17 @@ export default function Roles() {
             onRowClick={edit}
           >
             <Column field="index" header="№" style={{ width: 40 }} />
-            <Column field="name" header="Дүрийн нэр" sortable filter />
+            <Column field="name" header={t('Role name')} sortable filter />
             <Column
               field="isActive"
-              header="Идэвхтэй эсэх"
+              header={t('Active')}
               sortable
               style={{ width: '25%', textAlign: 'center' }}
               body={activeBodyTemplate}
             />
             <Column
               field=""
-              header="Үйлдэл"
+              header={t('Action')}
               style={{ width: 200, textAlign: 'right' }}
               body={roleBodyTemplate}
             />

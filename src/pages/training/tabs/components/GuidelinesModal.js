@@ -92,11 +92,6 @@ export default function TrainingGuidelinesModal(props) {
                     <Form.Item
                       label="Сургалт зохион байгуулах үндэслэл:"
                       name="reason"
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
                     >
                       <TextArea style={{ width: '100%', height: '100px' }} />
                     </Form.Item>
@@ -119,11 +114,6 @@ export default function TrainingGuidelinesModal(props) {
                     <Form.Item
                       label="Хэрэгжүүлэх үйл ажиллагаа:"
                       name="operation"
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
                     >
                       <TextArea style={{ width: '100%', height: '100px' }} />
                     </Form.Item>
