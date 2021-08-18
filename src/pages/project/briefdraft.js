@@ -12,7 +12,7 @@ import Result from './components/result';
 
 const { TextArea } = Input;
 
-const BriefDraft = () => (
+const BriefDraft = props => (
   <ContentWrapper>
     <h2 className="title">1. Төслийн үндэслэл болон тулгамдаж буй асуудал</h2>
     <Row gutter={[40, 30]}>
@@ -26,25 +26,25 @@ const BriefDraft = () => (
         <ProjectPurpose />
       </Col>
       <Col>
-        <Activity />
+        <Activity projectId={props.projectId} />
       </Col>
       <Col>
-        <SocietyActivity />
+        <SocietyActivity projectId={props.projectId} />
       </Col>
       <Col>
-        <SocietyImpactActivity />
+        <SocietyImpactActivity projectId={props.projectId} />
       </Col>
       <Col>
-        <ProjectInnovation />
+        <ProjectInnovation projectId={props.projectId} />
       </Col>
       <Col>
         <ProjectImplementer />
       </Col>
       <Col>
-        <Finance />
+        <Finance projectId={props.projectId} />
       </Col>
-      <Col>
-        <Result />
+      <Col style={{ marginBottom: '80px' }}>
+        <Result projectId={props.projectId} />
       </Col>
     </Row>
   </ContentWrapper>

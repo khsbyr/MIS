@@ -36,7 +36,6 @@ export default function OrganizationModal(props) {
   const [responsibleUserID, setResponsibleUserID] = useState(null);
   const [role, setRole] = useState([]);
   const [, setRoleID] = useState([]);
-
   useEffect(() => {
     getService('bank/get').then(result => {
       if (result) {

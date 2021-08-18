@@ -74,6 +74,11 @@ const Feedback = loadable({
   loading: Loader,
 });
 
+const IndicatorsReport = loadable({
+  loader: () => import('../pages/other/IndicatorsReport/IndicatorsReport'),
+  loading: Loader,
+});
+
 const ProductiveProject = loadable({
   loader: () => import('../pages/project/productiveProject'),
   loading: Loader,
@@ -145,6 +150,8 @@ const Page = ({ route }) => {
       /** Бусад */
       case 'Feedback'.toLowerCase():
         return <Feedback />;
+      case 'Indicators report'.toLowerCase():
+        return <IndicatorsReport />;
 
       /** Төсөл */
       case 'Productive Partnership Project'.toLowerCase():

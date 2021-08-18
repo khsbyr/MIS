@@ -1,12 +1,57 @@
-import { Col, Form, Input, Modal, Row } from 'antd';
-import React from 'react';
+import { Col, Form, Input, message, Modal, Row } from 'antd';
+import React, { useEffect } from 'react';
+import { postService, putService } from '../../../../service/service';
+import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './Modal.style';
 
 const { TextArea } = Input;
 
 export default function resultModal(props) {
-  const { isModalVisible, isEditMode } = props;
+  const { EditRow, isModalVisible, isEditMode, summaryID } = props;
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (isEditMode) {
+      form.setFieldsValue({
+        ...EditRow,
+        areasOfActivity: EditRow.projectResult.areasOfActivity,
+        result: EditRow.projectResult.result,
+        yield: EditRow.projectResult.yield,
+        effect: EditRow.projectResult.effect,
+      });
+    }
+  }, []);
+
+  const save = () => {
+    form
+      .validateFields()
+      .then(values => {
+        if (isEditMode) {
+          putService(`projectResult/update/${EditRow.projectResult.id}`, values)
+            .then(() => {
+              message.success('Амжилттай хадгаллаа');
+              props.close(true);
+            })
+            .catch(error => {
+              errorCatch(error);
+            });
+        } else {
+          postService(`projectResult/post/${summaryID}`, values)
+            .then(() => {
+              message.success('Амжилттай хадгаллаа');
+              props.close(true);
+            })
+            .catch(error => {
+              errorCatch(error);
+            });
+        }
+      })
+      .catch(info => {
+        errorCatch(info);
+      });
+  };
+
   return (
     <div>
       <Modal
@@ -16,12 +61,12 @@ export default function resultModal(props) {
         width={800}
         alignItems="center"
         visible={isModalVisible}
-        // onOk={save}
+        onOk={save}
         onCancel={() => props.close()}
       >
         <ContentWrapper>
           <Form
-            // form={form}
+            form={form}
             labelAlign="left"
             layout="vertical"
             name="nest-messages"
@@ -31,7 +76,7 @@ export default function resultModal(props) {
               <Col span={24}>
                 <Form.Item
                   label="Үйл ажиллагааны чиглэл:"
-                  name="#"
+                  name="areasOfActivity"
                   rules={[
                     {
                       required: true,
@@ -40,14 +85,14 @@ export default function resultModal(props) {
                 >
                   <TextArea rows={4} />
                 </Form.Item>
-                <Form.Item label="Үр дүн:" name="#">
-                  <Input />
+                <Form.Item label="Үр дүн:" name="result">
+                  <TextArea rows={4} />
                 </Form.Item>
-                <Form.Item label="Гарц:" name="#">
-                  <Input />
+                <Form.Item label="Гарц:" name="yield">
+                  <TextArea rows={4} />
                 </Form.Item>
-                <Form.Item label="Нөлөө:" name="#">
-                  <Input />
+                <Form.Item label="Нөлөө:" name="effect">
+                  <TextArea rows={4} />
                 </Form.Item>
               </Col>
             </Row>
