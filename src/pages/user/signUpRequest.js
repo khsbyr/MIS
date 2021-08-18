@@ -131,7 +131,7 @@ const signUpRequest = () => {
   return (
     <ContentWrapper>
       <div className="button-demo">
-        <p className="title">Хэрэглэгчийн жагсаалт</p>
+        <p className="title">Бүртгүүлэх хүсэлтийн жагсаалт</p>
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}

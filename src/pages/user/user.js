@@ -11,6 +11,7 @@ import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
@@ -23,6 +24,7 @@ let editRow;
 let isEditMode;
 
 const User = () => {
+  const { t } = useTranslation();
   const toolsStore = useContext(ToolsContext);
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
@@ -170,7 +172,7 @@ const User = () => {
         <Content>
           <Row>
             <Col xs={24} md={12} lg={14}>
-              <p className="title">Хэрэглэгч</p>
+              <p className="title">Хэрэглэгчийн жагсаалт</p>
             </Col>
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
