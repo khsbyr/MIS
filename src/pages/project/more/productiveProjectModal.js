@@ -28,7 +28,7 @@ const Uploadprops = {
     authorization: 'authorization-text',
   },
   onChange(info) {
-    if (info.file.status !== 'uploading') {
+    if (info.file.status !== 'uploading asd') {
       console.log(info.file, info.fileList);
     }
     if (info.file.status === 'done') {
