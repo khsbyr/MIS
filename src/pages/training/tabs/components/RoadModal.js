@@ -1,4 +1,4 @@
-import { Form, InputNumber, message, Modal } from 'antd';
+import { Form, InputNumber, message, Modal, Input } from 'antd';
 import React, { useEffect, useState } from 'react';
 import CurrencyInput from 'react-currency-input';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
@@ -115,7 +115,7 @@ export default function RoadModal(props) {
                 },
               ]}
             >
-              <CurrencyInput precision="0" suffix=" ₮" />
+              <Input precision="0" suffix=" ₮" />
             </Form.Item>
             <Form.Item
               label="Төлбөрийн төрөл"
@@ -143,10 +143,6 @@ export default function RoadModal(props) {
               ]}
             >
               <InputNumber style={{ width: '100%' }} />
-            </Form.Item>
-
-            <Form.Item name="total" label="Нийт">
-              <CurrencyInput precision="0" suffix=" ₮" />
             </Form.Item>
           </Form>
         </ContentWrapper>
