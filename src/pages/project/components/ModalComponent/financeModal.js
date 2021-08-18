@@ -1,12 +1,57 @@
-import { Col, Form, Input, Modal, Row } from 'antd';
-import React from 'react';
+import { Col, Form, Input, message, Modal, Row, InputNumber } from 'antd';
+import React, { useEffect } from 'react';
+import { postService, putService } from '../../../../service/service';
+import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './Modal.style';
 
-const { TextArea } = Input;
-
 export default function financeModal(props) {
-  const { isModalVisible, isEditMode } = props;
+  const { EditRow, isModalVisible, isEditMode, summaryID } = props;
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (isEditMode) {
+      form.setFieldsValue({
+        ...EditRow,
+        largeAmountOfCapital:
+          EditRow.financingEstimatesRates.largeAmountOfCapital,
+        capacity: EditRow.financingEstimatesRates.capacity,
+        evaluation: EditRow.financingEstimatesRates.evaluation,
+      });
+    }
+  }, []);
+
+  const save = () => {
+    form
+      .validateFields()
+      .then(values => {
+        if (isEditMode) {
+          putService(
+            `financingEstimatesRates/update/${EditRow.financingEstimatesRates.id}`,
+            values
+          )
+            .then(() => {
+              message.success('Амжилттай хадгаллаа');
+              props.close(true);
+            })
+            .catch(error => {
+              errorCatch(error);
+            });
+        } else {
+          postService(`financingEstimatesRates/post/${summaryID}`, values)
+            .then(() => {
+              message.success('Амжилттай хадгаллаа');
+              props.close(true);
+            })
+            .catch(error => {
+              errorCatch(error);
+            });
+        }
+      })
+      .catch(info => {
+        errorCatch(info);
+      });
+  };
   return (
     <div>
       <Modal
@@ -16,12 +61,12 @@ export default function financeModal(props) {
         width={800}
         alignItems="center"
         visible={isModalVisible}
-        // onOk={save}
+        onOk={save}
         onCancel={() => props.close()}
       >
         <ContentWrapper>
           <Form
-            // form={form}
+            form={form}
             labelAlign="left"
             layout="vertical"
             name="nest-messages"
@@ -31,20 +76,20 @@ export default function financeModal(props) {
               <Col span={24}>
                 <Form.Item
                   label="Төсөл хэрэгжүүлэхэд шаардлагатай том хэмжээний хөрөнгө, тоног төхөөрөмж:"
-                  name="#"
+                  name="largeAmountOfCapital"
                   rules={[
                     {
                       required: true,
                     },
                   ]}
                 >
-                  <TextArea rows={4} />
-                </Form.Item>
-                <Form.Item label="Хүчин чадал:" name="#">
-                  <TextArea rows={4} />
-                </Form.Item>
-                <Form.Item label="Үнэлгээ (мөнгөн дүнгээр):" name="#">
                   <Input />
+                </Form.Item>
+                <Form.Item label="Хүчин чадал:" name="capacity">
+                  <Input />
+                </Form.Item>
+                <Form.Item label="Үнэлгээ (мөнгөн дүнгээр):" name="evaluation">
+                  <InputNumber type="number" style={{ width: '100%' }} />
                 </Form.Item>
               </Col>
             </Row>

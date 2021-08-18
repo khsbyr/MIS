@@ -11,16 +11,16 @@ import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState } from 'react';
-import { putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
-import ContentWrapper from '../criteria/criteria.style';
-import FeedbackModal from './components/feedbackModal';
+import { putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import ContentWrapper from '../../criteria/criteria.style';
+import IndicatorsReportModal from './components/indicatorsReportModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const Feedback = () => {
+const IndicatorsReport = () => {
   // const loadLazyTimeout = null;
   // const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -133,7 +133,7 @@ const Feedback = () => {
         <Content>
           <Row>
             <Col xs={24} md={24} lg={14}>
-              <p className="title">Санал гомдол</p>
+              <p className="title">Шалгуур үзүүлэлтийн үр дүн</p>
             </Col>
             <Col xs={24} md={24} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
@@ -189,17 +189,14 @@ const Feedback = () => {
             dataKey="id"
           >
             <Column field="index" header="№" style={{ width: 40 }} />
-            <Column header="Огноо" field="mission" />
-            <Column header="Санал, гомдлын төрөл" />
-            <Column header="Санал, гомдол гаргагч" />
-            <Column header="Хүлээн авагч" />
-            <Column header="Хэлбэр (албан бичиг, мэдээлэл холбооны технологиор дамжуулан)" />
-            <Column header="Шийдвэрлэсэн эсэх" />
-            <Column header="Сэтгэл ханамж" />
+            <Column header="Шалгуур үзүүлэлтийн нэр" field="mission" />
+            <Column header="Байршил" />
+            <Column header="Огноо" />
+            <Column header="Файл" />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <FeedbackModal
+            <IndicatorsReportModal
               Plancontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
@@ -210,4 +207,4 @@ const Feedback = () => {
     </ContentWrapper>
   );
 };
-export default Feedback;
+export default IndicatorsReport;
