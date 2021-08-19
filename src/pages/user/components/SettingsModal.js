@@ -4,41 +4,21 @@ import { getService, postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import AutocompleteSelect from '../../../components/Autocomplete';
 import validateMessages from '../../../tools/validateMessage';
+import { useToolsStore } from '../../../context/Tools';
 
 export default function SettingsModal(props) {
   const { Usercontroller, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
-  const [stateCountry, setStateCountry] = useState([]);
-  const [stateAimag, setStateAimag] = useState([]);
+  const toolsStore = useToolsStore();
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const [value, setValue] = React.useState(1);
 
   useEffect(() => {
-    getService('country/get').then(result => {
-      if (result) {
-        setStateCountry(result || []);
-      }
-    });
     if (isEditMode) {
       form.setFieldsValue({ ...Usercontroller });
     }
   }, []);
-
-  const getAimag = countryId => {
-    getService(`aimag/getList/${countryId}`, {}).then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-    if (isEditMode) {
-      form.setFieldsValue({ ...Usercontroller });
-    }
-  };
-
-  const selectCountry = val => {
-    getAimag(val);
-  };
 
   const getSum = aimagId => {
     getService(`soum/getList/${aimagId}`, {}).then(result => {
@@ -162,8 +142,7 @@ export default function SettingsModal(props) {
                 <Form.Item name="name" layout="vertical" label="Улс:">
                   <AutocompleteSelect
                     valueField="id"
-                    data={stateCountry}
-                    onChange={val => selectCountry(val)}
+                    data={toolsStore.countryList}
                   />
                 </Form.Item>
               </Form>
@@ -177,7 +156,7 @@ export default function SettingsModal(props) {
                 >
                   <AutocompleteSelect
                     valueField="id"
-                    data={stateAimag}
+                    data={toolsStore.aimagList}
                     onChange={valData => selectAimag(valData)}
                   />
                 </Form.Item>

@@ -44,10 +44,22 @@ function Login() {
           getService(`/user/get/${result.data.userId}`).then(user => {
             if (!user) return;
             localStorage.setItem('token', result.data.token);
-            localStorage.setItem('name', user.firstname);
-            toolsStore.generalInfo.userInfo = user;
-            toolsStore.setGeneralInfo({ ...toolsStore.generalInfo });
+            localStorage.setItem(
+              'name',
+              user.firstname ? user.firstname : user.username
+            );
+            toolsStore.setUser(user);
             history.push('user/users');
+          });
+          getService('country/get').then(resultCountry => {
+            if (result) {
+              toolsStore.setCountryList(resultCountry || []);
+            }
+          });
+          getService('aimag/get').then(resultAimag => {
+            if (result) {
+              toolsStore.setAimagList(resultAimag || []);
+            }
           });
         })
         .finally(() => {

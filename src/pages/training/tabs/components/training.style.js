@@ -29,6 +29,10 @@ const ContentWrapper = styled.div`
     height: 40px;
     padding-top: 5px;
   }
+  .ant-select-show-search.ant-select:not(.ant-select-customize-input)
+    .ant-select-selector {
+    height: 40px;
+  }
 
   .ant-input {
     height: 40px;
@@ -82,6 +86,25 @@ const ContentWrapper = styled.div`
   .p-multiselect .p-multiselect-label.p-placeholder {
     color: #c2c2c2;
     font-size: 14px;
+  }
+  #nest-messages_totalBudget {
+    height: 40px;
+    border: 1px solid rgb(217, 217, 217);
+    padding: 4px 11px;
+  }
+  #nest-messages_totalBudget:focus-visible {
+    outline: none;
+  }
+  #nest-messages_totalBudget:focus {
+    border-color: #40a9ff;
+    box-shadow: 0 0 0 0.025rem #1890ff;
+  }
+
+  #nest-messages_totalBudget:hover {
+    border-color: #40a9ff;
+  }
+  #nest-messages_totalBudget:focus {
+    border-color: #1890ff;
   }
 `;
 

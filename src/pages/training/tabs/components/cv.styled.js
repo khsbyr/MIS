@@ -77,6 +77,25 @@ const ContentWrapper = styled.div`
   .ant-input-number-handler-wrap {
     display: none;
   }
+
+  #nest-messages_unitPrice,
+  #nest-messages_total,
+  #nest-messages_fuelCost {
+    /* height: 40px; */
+    width: 100%;
+    border: 1px solid rgb(217, 217, 217);
+    padding: 4px 11px;
+    border-radius: 2px;
+  }
+  #nest-messages_unitPrice:hover {
+    border-color: #1890ff;
+  }
+  #nest-messages_total:hover {
+    border-color: #1890ff;
+  }
+  #nest-messages_fuelCost:hover {
+    border-color: #1890ff;
+  }
   /* .ant-form-item-control-input-content {
         border-bottom: 1px solid #103154;
     } */

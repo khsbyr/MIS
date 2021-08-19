@@ -219,6 +219,7 @@ const TestAggregation = props => {
             onRowClick={showParticipants}
             removableSort
             paginator
+            emptyMessage="Өгөгдөл олдсонгүй..."
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
@@ -235,13 +236,20 @@ const TestAggregation = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              bodyStyle={{ textAlign: 'left' }}
             />
             <Column
               header="Авбал зохих"
               body={ShouldTakenBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
               sortable
             />
-            <Column header="Огноо" body={DateBodyTemplate} sortable />
+            <Column
+              header="Огноо"
+              body={DateBodyTemplate}
+              sortable
+              bodyStyle={{ textAlign: 'center' }}
+            />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (

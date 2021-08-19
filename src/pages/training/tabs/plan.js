@@ -223,6 +223,7 @@ const Plan = props => {
             value={list}
             removableSort
             paginator
+            emptyMessage="Өгөгдөл олдсонгүй..."
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
@@ -246,6 +247,7 @@ const Plan = props => {
               filterPlaceholder="Хайх"
               field="mission"
               editor={editData => missionEditor('list', editData)}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Багшийн нэрс"
@@ -253,6 +255,7 @@ const Plan = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

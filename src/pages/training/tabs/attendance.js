@@ -226,6 +226,7 @@ const Attendance = props => {
         </Layout>
         <div className="datatable-responsive-demo">
           <DataTable
+            emptyMessage="Өгөгдөл олдсонгүй..."
             value={list}
             removableSort
             paginator
@@ -251,6 +252,7 @@ const Attendance = props => {
               filter
               filterPlaceholder="Хайх"
               body={nameBodyTemplate}
+              bodyStyle={{ textAlign: 'left' }}
             />
             <Column
               field="name"
@@ -259,6 +261,7 @@ const Attendance = props => {
               filter
               filterPlaceholder="Хайх"
               body={FirstNameBodyTemplate}
+              bodyStyle={{ textAlign: 'left' }}
             />
             <Column
               field="jobDescription"
@@ -267,6 +270,7 @@ const Attendance = props => {
               filter
               filterPlaceholder="Хайх"
               body={jobDescBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               field=""
@@ -275,6 +279,7 @@ const Attendance = props => {
               filter
               filterPlaceholder="Хайх"
               body={contactBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               field=""
@@ -283,6 +288,7 @@ const Attendance = props => {
               filter
               filterPlaceholder="Хайх"
               body={registerNumberBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               field=""
@@ -291,6 +297,7 @@ const Attendance = props => {
               filter
               filterPlaceholder="Хайх"
               body={genderBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

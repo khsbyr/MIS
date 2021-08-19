@@ -214,6 +214,7 @@ const TrainingReport = props => {
             removableSort
             paginator
             rows={10}
+            emptyMessage="Өгөгдөл олдсонгүй..."
             className="p-datatable-responsive-demo"
             // selectionMode="checkbox"
             selection={selectedRows}
@@ -238,11 +239,13 @@ const TrainingReport = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              bodyStyle={{ textAlign: 'left' }}
             />
             <Column
               field=""
               header="Сургалт явуулсан байгууллага, хүний нэр"
               body={respoUserBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Үүссэн огноо"
@@ -251,6 +254,7 @@ const TrainingReport = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Зассан огноо"
@@ -259,6 +263,7 @@ const TrainingReport = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

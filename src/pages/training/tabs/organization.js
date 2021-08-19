@@ -210,6 +210,7 @@ const Organization = props => {
             value={list}
             removableSort
             paginator
+            emptyMessage="Өгөгдөл олдсонгүй..."
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
@@ -224,14 +225,28 @@ const Organization = props => {
               header="Байгууллагын нэр"
               body={nameBodyTemplate}
               sortable
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Регистрийн дугаар"
               body={registerNumberBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
-            <Column header="Банкны нэр" body={bankNameBodyTemplate} />
-            <Column header="Дансны нэр" body={accountNameBodyTemplate} />
-            <Column header="Дансны дугаар" body={accountNumberBodyTemplate} />
+            <Column
+              header="Банкны нэр"
+              body={bankNameBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
+            />
+            <Column
+              header="Дансны нэр"
+              body={accountNameBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
+            />
+            <Column
+              header="Дансны дугаар"
+              body={accountNumberBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
+            />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (

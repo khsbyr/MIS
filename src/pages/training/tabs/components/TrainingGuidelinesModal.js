@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
 import { getService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
+import { useToolsStore } from '../../../../context/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './attendance.style';
 
@@ -16,15 +17,11 @@ const layout = {
 };
 export default function TrainingGuidelinesModal(props) {
   const { Result, isModalVisible, trainingID } = props;
-  const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
-  const [stateCountry, setStateCountry] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const [form] = Form.useForm();
+  const toolsStore = useToolsStore();
   const [valueState, setStateValue] = useState([]);
-  // const [lazyParams, setLazyParams] = useState({
-  //   page: 0,
-  // });
 
   useEffect(() => {
     getService(`trainingGuidelines/get/${trainingID}`).then(result => {
@@ -40,17 +37,6 @@ export default function TrainingGuidelinesModal(props) {
         AddressDetail: result.address.addressDetail,
       });
     });
-    getService('country/get').then(result => {
-      if (result) {
-        setStateCountry(result || []);
-      }
-    });
-
-    getService('aimag/get').then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
 
     if (Result) {
       getService(`soum/getList/${Result.address.aimag.id}`).then(result => {
@@ -64,24 +50,7 @@ export default function TrainingGuidelinesModal(props) {
         }
       });
     }
-    // if (isEditMode) {
-    //   form.setFieldsValue({
-    //     ...result,
-    //   });
-    // }
   }, []);
-
-  const getAimag = countryId => {
-    getService(`aimag/getList/${countryId}`, {}).then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-  };
-
-  const selectCountry = value => {
-    getAimag(value);
-  };
 
   const getSum = aimagId => {
     getService(`soum/getList/${aimagId}`, {}).then(result => {
@@ -249,8 +218,7 @@ export default function TrainingGuidelinesModal(props) {
                     <Form.Item label="Улс:" name="CountryID">
                       <AutoCompleteSelect
                         valueField="id"
-                        data={stateCountry}
-                        onChange={value => selectCountry(value)}
+                        data={toolsStore.countryList}
                       />
                     </Form.Item>
                   </Col>
@@ -258,7 +226,7 @@ export default function TrainingGuidelinesModal(props) {
                     <Form.Item label="Аймаг, хот:" name="AimagID">
                       <AutoCompleteSelect
                         valueField="id"
-                        data={stateAimag}
+                        data={toolsStore.aimagList}
                         onChange={value => selectAimag(value)}
                       />
                     </Form.Item>

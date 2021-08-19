@@ -64,8 +64,38 @@ const CriteriaReference = loadable({
   loading: Loader,
 });
 
+const Activity = loadable({
+  loader: () => import('../pages/directory/activity'),
+  loading: Loader,
+});
+
 const Feedback = loadable({
   loader: () => import('../pages/feedback/feedback'),
+  loading: Loader,
+});
+
+const IndicatorsReport = loadable({
+  loader: () => import('../pages/other/IndicatorsReport/IndicatorsReport'),
+  loading: Loader,
+});
+
+const ProductiveProject = loadable({
+  loader: () => import('../pages/project/productiveProject'),
+  loading: Loader,
+});
+
+const InnovativeProject = loadable({
+  loader: () => import('../pages/project/innovativeProject'),
+  loading: Loader,
+});
+
+const FactoryProject = loadable({
+  loader: () => import('../pages/project/factoryProject'),
+  loading: Loader,
+});
+
+const VeterinarianProject = loadable({
+  loader: () => import('../pages/project/veterinarianProject'),
   loading: Loader,
 });
 
@@ -104,6 +134,8 @@ const Page = ({ route }) => {
         return <Customerside />;
       case 'Types of indicators'.toLowerCase():
         return <CriteriaReference />;
+      case 'activity'.toLowerCase():
+        return <Activity />;
 
       /** Байгууллагын мэдээлэл */
 
@@ -118,6 +150,22 @@ const Page = ({ route }) => {
       /** Бусад */
       case 'Feedback'.toLowerCase():
         return <Feedback />;
+      case 'Indicators report'.toLowerCase():
+        return <IndicatorsReport />;
+
+      /** Төсөл */
+      case 'Productive Partnership Project'.toLowerCase():
+        return <ProductiveProject />;
+
+      case 'Innovative project'.toLowerCase():
+        return <InnovativeProject />;
+
+      case 'Factory'.toLowerCase():
+        return <FactoryProject />;
+
+      case 'Young Veterinarian Program'.toLowerCase():
+        return <VeterinarianProject />;
+
       default:
         return null;
     }

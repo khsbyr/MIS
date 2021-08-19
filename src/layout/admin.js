@@ -10,12 +10,14 @@ import {
 import { ToolsContext } from '../context/Tools';
 import CriteriaContextProvider from '../context/CriteriaContext';
 import TrainingInfo from '../pages/training/more/TraningInfo';
+import ProjectInfo from '../pages/project/more/projectInfo';
 import TestResult from '../pages/training/tabs/components/testResult';
 import { getService } from '../service/service';
 import Menu from './Menu';
 import Page from './Page';
 import CriteriaMore from '../pages/criteria/more/CriteriaMore';
 import { buildPaths, generateRoutes } from './utils';
+import ProjectContextProvider from '../context/ProjectContext';
 
 const { Sider, Content } = Layout;
 
@@ -58,7 +60,7 @@ function Admin() {
         >
           {!collapsed ? (
             <img
-              src="http://lcp.mn/assets/images/logo.png"
+              src="https://i.imgur.com/qmWx2x8.png"
               className="logoHeader"
               height={50}
               width={200}
@@ -102,23 +104,28 @@ function Admin() {
             }}
           >
             <CriteriaContextProvider>
-              <Switch>
-                {routes.map(route => (
-                  <Route key={route.code} path={route.path}>
-                    <Page route={route} />
+              <ProjectContextProvider>
+                <Switch>
+                  {routes.map(route => (
+                    <Route key={route.code} path={route.path}>
+                      <Page route={route} />
+                    </Route>
+                  ))}
+                  <Route path="/criteriaDetail/:id">
+                    <CriteriaMore />
                   </Route>
-                ))}
-                <Route path="/criteriaDetail/:id">
-                  <CriteriaMore />
-                </Route>
 
-                <Route path="/trainingList/:id">
-                  <TrainingInfo />
-                </Route>
-                <Route path="/participantsList/:id">
-                  <TestResult />
-                </Route>
-              </Switch>
+                  <Route path="/trainingList/:id">
+                    <TrainingInfo />
+                  </Route>
+                  <Route path="/participantsList/:id">
+                    <TestResult />
+                  </Route>
+                  <Route path="/projectList/:id">
+                    <ProjectInfo />
+                  </Route>
+                </Switch>
+              </ProjectContextProvider>
             </CriteriaContextProvider>
           </Content>
         </Layout>

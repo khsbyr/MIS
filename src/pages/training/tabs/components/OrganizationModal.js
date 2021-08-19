@@ -19,6 +19,7 @@ import {
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
+import { useToolsStore } from '../../../../context/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './organization.style';
 
@@ -29,14 +30,12 @@ export default function OrganizationModal(props) {
   const [stateBank, setStateBank] = useState([]);
   const [stateCurrency, setStateCurrency] = useState([]);
   const [form] = Form.useForm();
-  const [stateAimag, setStateAimag] = useState([]);
+  const toolsStore = useToolsStore();
   const [stateSum, setStateSum] = useState([]);
-  const [stateCountry, setStateCountry] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const [responsibleUserID, setResponsibleUserID] = useState(null);
   const [role, setRole] = useState([]);
   const [, setRoleID] = useState([]);
-
   useEffect(() => {
     getService('bank/get').then(result => {
       if (result) {
@@ -55,31 +54,23 @@ export default function OrganizationModal(props) {
         setStateCurrency(result.content || []);
       }
     });
-    getService('country/get').then(result => {
-      if (result) {
-        setStateCountry(result || []);
-      }
-    });
-    getService('aimag/get').then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
     if (Orgcontroller !== undefined) {
-      getService(`soum/getList/${Orgcontroller.address.aimag.id}`).then(
-        result => {
-          if (result) {
-            setStateSum(result || []);
-          }
+      getService(
+        `soum/getList/${
+          Orgcontroller.address && Orgcontroller.address.aimag.id
+        }`
+      ).then(result => {
+        if (result) {
+          setStateSum(result || []);
         }
-      );
-      getService(`bag/getList/${Orgcontroller.address.soum.id}`).then(
-        result => {
-          if (result) {
-            setStateBag(result || []);
-          }
+      });
+      getService(
+        `bag/getList/${Orgcontroller.address && Orgcontroller.address.soum.id}`
+      ).then(result => {
+        if (result) {
+          setStateBag(result || []);
         }
-      );
+      });
     }
     if (isEditMode) {
       setResponsibleUserID(
@@ -88,15 +79,16 @@ export default function OrganizationModal(props) {
       setRoleID(Orgcontroller.roleId);
       form.setFieldsValue({
         ...Orgcontroller,
-        bankID: Orgcontroller.bank.id,
-        Currency: Orgcontroller.currency.id,
+        bankID: Orgcontroller.bank && Orgcontroller.bank.id,
+        Currency: Orgcontroller.currency && Orgcontroller.currency.id,
         CountryID: Orgcontroller.address
           ? Orgcontroller.address.country.id
           : '',
         AimagID: Orgcontroller.address ? Orgcontroller.address.aimag.id : '',
         SoumID: Orgcontroller.address ? Orgcontroller.address.soum.id : '',
         BagID: Orgcontroller.address ? Orgcontroller.address.bag.id : '',
-        AddressDetail: Orgcontroller.address.addressDetail,
+        AddressDetail:
+          Orgcontroller.address && Orgcontroller.address.addressDetail,
         RespoUserFirstName:
           Orgcontroller.responsibleUser &&
           Orgcontroller.responsibleUser.firstname,
@@ -120,18 +112,6 @@ export default function OrganizationModal(props) {
 
   const selectRole = value => {
     setRoleID(value);
-  };
-
-  const getAimag = countryId => {
-    getService(`aimag/getList/${countryId}`, {}).then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-  };
-
-  const selectCountry = value => {
-    getAimag(value);
   };
 
   const getSum = aimagId => {
@@ -216,7 +196,7 @@ export default function OrganizationModal(props) {
   return (
     <div>
       <Modal
-        title="Зөвлөх байгууллага бүртгэх"
+        title="Байгууллага бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
         width={1100}
@@ -357,8 +337,7 @@ export default function OrganizationModal(props) {
                     <Form.Item label="Улс:" name="CountryID">
                       <AutoCompleteSelect
                         valueField="id"
-                        data={stateCountry}
-                        onChange={value => selectCountry(value)}
+                        data={toolsStore.countryList}
                       />
                     </Form.Item>
                   </Col>
@@ -366,7 +345,7 @@ export default function OrganizationModal(props) {
                     <Form.Item label="Аймаг, хот:" name="AimagID">
                       <AutoCompleteSelect
                         valueField="id"
-                        data={stateAimag}
+                        data={toolsStore.aimagList}
                         onChange={value => selectAimag(value)}
                       />
                     </Form.Item>

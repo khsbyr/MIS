@@ -1,5 +1,6 @@
-import { Form, InputNumber, message, Modal } from 'antd';
+import { Form, InputNumber, message, Modal, Input } from 'antd';
 import React, { useEffect, useState } from 'react';
+import CurrencyInput from 'react-currency-input';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
 import {
   getService,
@@ -8,6 +9,7 @@ import {
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
+import ContentWrapper from './budgets.style';
 
 const layout = {
   labelCol: {
@@ -85,59 +87,65 @@ export default function RoadModal(props) {
         onOk={save}
         onCancel={() => props.close()}
       >
-        <Form
-          form={form}
-          labelAlign="left"
-          {...layout}
-          name="nest-messages"
-          validateMessages={validateMessages}
-        >
-          <Form.Item
-            name="numberOfPeople"
-            label="МЗҮБ хүний тоо:"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
+        <ContentWrapper>
+          <Form
+            form={form}
+            labelAlign="left"
+            {...layout}
+            name="nest-messages"
+            validateMessages={validateMessages}
           >
-            <InputNumber />
-          </Form.Item>
-          <Form.Item
-            name="costPerDay"
-            label="Хоногт /₮/"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <InputNumber />
-          </Form.Item>
-          <Form.Item label="Төлбөрийн төрөл" name="costID">
-            <AutoCompleteSelect
-              valueField="id"
-              data={stateCostType}
-              size="medium"
-              onChange={value => selectCostType(value)}
-            />
-          </Form.Item>
-          <Form.Item
-            name="days"
-            label="Хоног"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <InputNumber />
-          </Form.Item>
-
-          <Form.Item name="total" label="Нийт">
-            <InputNumber />
-          </Form.Item>
-        </Form>
+            <Form.Item
+              name="numberOfPeople"
+              label="МЗҮБ хүний тоо:"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <InputNumber style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item
+              name="costPerDay"
+              label="Хоногт /₮/"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Input precision="0" suffix=" ₮" />
+            </Form.Item>
+            <Form.Item
+              label="Төлбөрийн төрөл"
+              name="costID"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <AutoCompleteSelect
+                valueField="id"
+                data={stateCostType}
+                size="medium"
+                onChange={value => selectCostType(value)}
+              />
+            </Form.Item>
+            <Form.Item
+              name="days"
+              label="Хоног"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <InputNumber style={{ width: '100%' }} />
+            </Form.Item>
+          </Form>
+        </ContentWrapper>
       </Modal>
     </div>
   );

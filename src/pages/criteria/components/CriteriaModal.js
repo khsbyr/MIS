@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Modal, Form, Input, Radio, InputNumber, Row, Col } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
@@ -8,6 +9,7 @@ import { criteriaFrequencyData } from '../../../constants/Constant';
 import { useCriteriaStore } from '../../../context/CriteriaContext';
 
 export default function CriteriaModal(props) {
+  const { t } = useTranslation();
   const { Criteriacontroller, isModalVisible, isEditMode } = props;
   const { criteriaReferenceList } = useCriteriaStore();
   const [form] = Form.useForm();
@@ -60,10 +62,10 @@ export default function CriteriaModal(props) {
   return (
     <div>
       <Modal
-        title="Шалгуур үзүүлэлт бүртгэх"
-        okText="Хадгалах"
-        cancelText="Буцах"
-        width={800}
+        title={t('Indicator create')}
+        okText={t('Save')}
+        cancelText={t('Cancel')}
+        width={1000}
         alignItems="center"
         visible={isModalVisible}
         onOk={save}
@@ -81,9 +83,10 @@ export default function CriteriaModal(props) {
               <Form.Item
                 name="referenceID"
                 layout="vertical"
-                label="Бүрэлдэхүүн сонгох"
+                label={t('Select Indicator')}
               >
                 <AutoCompleteSelect
+                  placeholder={t('Select')}
                   valueField="id"
                   data={criteriaReferenceList}
                   size="medium"
@@ -93,7 +96,7 @@ export default function CriteriaModal(props) {
             </Col>
             <Col xs={16} md={16} lg={8}>
               <Form.Item
-                label="Шалгуур үзүүлэлтийн нэр"
+                label={t('Indicator name')}
                 name="name"
                 rules={[
                   {
@@ -101,12 +104,12 @@ export default function CriteriaModal(props) {
                   },
                 ]}
               >
-                <Input placeholder="Шалгуур үзүүлэлт..." />
+                <Input placeholder={t('Indicator name')} />
               </Form.Item>
             </Col>
             <Col xs={16} md={16} lg={8}>
-              <Form.Item label="Код:" name="code">
-                <Input placeholder="Код..." />
+              <Form.Item label={t('Code')} name="code">
+                <Input placeholder={t('Code')} />
               </Form.Item>
             </Col>
           </Row>
@@ -114,7 +117,7 @@ export default function CriteriaModal(props) {
             <Col xs={16} md={16} lg={8}>
               <Form.Item
                 name="resultTobeAchieved"
-                label="Хүрэх үр дүн:"
+                label={t('Achieved result')}
                 rules={[
                   {
                     required: true,
@@ -127,7 +130,7 @@ export default function CriteriaModal(props) {
             <Col xs={16} md={16} lg={8}>
               <Form.Item
                 name="processResult"
-                label="Үр дүнгийн биелэлт"
+                label={t('Execution of results')}
                 rules={[
                   {
                     required: false,
@@ -138,8 +141,13 @@ export default function CriteriaModal(props) {
               </Form.Item>
             </Col>
             <Col xs={16} md={16} lg={8}>
-              <Form.Item name="frequency" layout="vertical" label="Давтамж">
+              <Form.Item
+                name="frequency"
+                layout="vertical"
+                label={t('Frequency')}
+              >
                 <AutoCompleteSelect
+                  placeholder={t('Select')}
                   valueField="id"
                   data={criteriaFrequencyData}
                   size="medium"
@@ -150,23 +158,26 @@ export default function CriteriaModal(props) {
           <Row gutter={24}>
             <Col xs={16} md={16} lg={8}>
               <Form.Item
-                label="Мэдээллийн эх үүсвэр"
+                label={t('Source of information')}
                 name="sourceOfInformation"
               >
-                <Input placeholder="Мэдээллийн эх үүсвэр..." />
+                <Input placeholder={t('Source of information')} />
               </Form.Item>
             </Col>
             <Col xs={16} md={16} lg={8}>
               <Form.Item
-                label="Мэдээлэл цуглуулах аргачлал"
+                label={t('Data collection methodology')}
                 name="dataCollectionMethodology"
               >
-                <Input placeholder="Мэдээлэл цуглуулах аргачлал..." />
+                <Input placeholder={t('Data collection methodology')} />
               </Form.Item>
             </Col>
             <Col xs={16} md={16} lg={8}>
-              <Form.Item label="Хариуцах нэгж" name="unitOfResponsibility">
-                <Input placeholder="Хариуцах нэгж..." />
+              <Form.Item
+                label={t('Responsible unit')}
+                name="unitOfResponsibility"
+              >
+                <Input placeholder={t('Responsible unit')} />
               </Form.Item>
             </Col>
           </Row>
@@ -175,7 +186,7 @@ export default function CriteriaModal(props) {
               <Form.Item
                 name="indicator"
                 layout="vertical"
-                label="Шалгуур үзүүлэлтийн төрөл"
+                label={t('Indicator type')}
                 rules={[
                   {
                     required: false,
@@ -184,17 +195,17 @@ export default function CriteriaModal(props) {
               >
                 <Radio.Group onChange={onChange} value={stateIndicator}>
                   <Radio value={1} defaultChecked>
-                    Тоо
+                    {t('Number')}
                   </Radio>
-                  <Radio value={2}>Хувь</Radio>
-                  <Radio value={3}>Томъё</Radio>
+                  <Radio value={2}>{t('Percent')}</Radio>
+                  <Radio value={3}>{t('Formula')}</Radio>
                 </Radio.Group>
               </Form.Item>
             </Col>
             <Col xs={16} md={16} lg={16}>
-              <Form.Item label="Тайлбар" name="description">
+              <Form.Item label={t('Description')} name="description">
                 <Input.TextArea
-                  placeholder="Тайлбар"
+                  placeholder={t('Description')}
                   style={{
                     width: '100%',
                     height: '100px',

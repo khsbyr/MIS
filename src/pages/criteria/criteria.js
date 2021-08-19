@@ -2,16 +2,18 @@ import React, { useEffect, useState, useContext } from 'react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
+  faFilePdf,
   faPen,
   faPlus,
   faPrint,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row } from 'antd';
+import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../context/Tools';
 import { useCriteriaStore } from '../../context/CriteriaContext';
 import { getService, putService } from '../../service/service';
@@ -26,6 +28,7 @@ let editRow;
 let isEditMode;
 
 const Criteria = () => {
+  const { t } = useTranslation();
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -197,42 +200,62 @@ const Criteria = () => {
       <div className="button-demo">
         <Content>
           <Row>
-            <Col xs={24} md={24} lg={12}>
-              <p className="title">Сургалт</p>
+            <Col xs={24} md={24} lg={10}>
+              <p className="title">{t('Indicator')}</p>
             </Col>
-            <Col xs={24} md={24} lg={12}>
-              <Row justify="end" gutter={[0, 15]}>
-                <Col xs={8} md={8} lg={12}>
+            <Col xs={24} md={18} lg={14}>
+              <Row justify="end" gutter={[16, 16]}>
+                <Col xs={12} md={12} lg={16}>
                   <AutoCompleteSelect
                     valueField="id"
                     data={criteriaReferenceList}
-                    placeholder="Бүрэлдэхүүн сонгох"
+                    placeholder={t('Select Indicator')}
                     onChange={value => selectComposition(value)}
                   />
                 </Col>
-                <Col xs={8} md={8} lg={3}>
-                  <Button type="text" icon={<FontAwesomeIcon icon={faPrint} />}>
-                    {' '}
-                  </Button>
+                <Col xs={8} md={3} lg={2}>
+                  <Tooltip title={t('print')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      icon={<FontAwesomeIcon icon={faPrint} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
                 </Col>
-                <Col xs={8} md={8} lg={3}>
-                  <Button
-                    type="text"
-                    className="export"
-                    icon={<FontAwesomeIcon icon={faFileExcel} />}
-                  >
-                    {' '}
-                  </Button>
+                <Col xs={8} md={3} lg={2}>
+                  <Tooltip title={t('export')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFileExcel} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
                 </Col>
-                <Col xs={8} md={8} lg={3}>
-                  <Button
-                    type="text"
-                    className="export"
-                    icon={<FontAwesomeIcon icon={faPlus} />}
-                    onClick={add}
-                  >
-                    {' '}
-                  </Button>
+                <Col xs={8} md={3} lg={2}>
+                  <Tooltip title={t('pdf')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFilePdf} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col xs={8} md={3} lg={2}>
+                  <Tooltip title={t('add')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faPlus} />}
+                      onClick={add}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
                 </Col>
               </Row>
             </Col>
@@ -261,17 +284,17 @@ const Criteria = () => {
             <Column
               field="name"
               headerStyle={{ width: '30rem' }}
-              header="Шалгуур үзүүлэлтийн нэр"
+              header={t('Indicator name')}
               body={nameBodyTemplate}
             />
             <Column
               field="resultTobeAchieved"
-              header="Хүрэх үр дүн"
+              header={t('Achieved result')}
               body={indicatorProcessBodyTemplate}
             />
             <Column
               field="upIndicator"
-              header="Үр дүнгийн биелэлт"
+              header={t('Execution of results')}
               body={upIndicatorBodyTemplate}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />

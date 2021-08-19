@@ -1,9 +1,10 @@
 import { Form, Input, Modal, message, InputNumber } from 'antd';
 import React, { useEffect } from 'react';
+import CurrencyInput from 'react-currency-input';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
-import ContentWrapper from './cv.styled';
+import ContentWrapper from './budgets.style';
 
 const layout = {
   labelCol: {
@@ -104,7 +105,7 @@ export default function StationaryModal(props) {
                 },
               ]}
             >
-              <InputNumber />
+              <Input precision="0" suffix=" ₮" />
             </Form.Item>
             <Form.Item
               name="quantity"
@@ -115,7 +116,7 @@ export default function StationaryModal(props) {
                 },
               ]}
             >
-              <InputNumber />
+              <InputNumber style={{ width: '100%' }} />
             </Form.Item>
             <Form.Item
               name="numberOfPeople"
@@ -126,10 +127,7 @@ export default function StationaryModal(props) {
                 },
               ]}
             >
-              <InputNumber />
-            </Form.Item>
-            <Form.Item name="total" label="Дүн">
-              <InputNumber />
+              <InputNumber style={{ width: '100%' }} />
             </Form.Item>
           </Form>
         </ContentWrapper>

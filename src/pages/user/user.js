@@ -10,8 +10,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
-import { ToolsContext } from '../../context/Tools';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
@@ -23,7 +24,8 @@ let editRow;
 let isEditMode;
 
 const User = () => {
-  const toolsStore = useContext(ToolsContext);
+  const toolsStore = useToolsStore();
+  const { t } = useTranslation();
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -56,6 +58,11 @@ const User = () => {
 
   useEffect(() => {
     onInit();
+    getService('organization/get').then(result => {
+      if (result) {
+        toolsStore.setOrgList(result.content || []);
+      }
+    });
   }, [lazyParams]);
 
   const add = () => {
@@ -167,7 +174,7 @@ const User = () => {
         <Content>
           <Row>
             <Col xs={24} md={12} lg={14}>
-              <p className="title">Хэрэглэгч</p>
+              <p className="title">Хэрэглэгчийн жагсаалт</p>
             </Col>
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>

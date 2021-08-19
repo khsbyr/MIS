@@ -1,8 +1,10 @@
 import { Form, Input, InputNumber, message, Modal } from 'antd';
 import React, { useEffect } from 'react';
+import CurrencyInput from 'react-currency-input';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
+import ContentWrapper from './budgets.style';
 
 const layout = {
   labelCol: {
@@ -71,73 +73,71 @@ export default function FuelModal(props) {
         onOk={save}
         onCancel={() => props.close()}
       >
-        <Form
-          form={form}
-          labelAlign="left"
-          {...layout}
-          name="nest-messages"
-          validateMessages={validateMessages}
-        >
-          <Form.Item
-            name="route"
-            label="Маршрут:"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
+        <ContentWrapper>
+          <Form
+            form={form}
+            labelAlign="left"
+            {...layout}
+            name="nest-messages"
+            validateMessages={validateMessages}
           >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="roadLength"
-            label="Замын урт /км/:"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <InputNumber />
-          </Form.Item>
-          <Form.Item
-            name="regionalSupplement"
-            label="Бүсийн нэмэгдэл /%/:"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <InputNumber />
-          </Form.Item>
-          <Form.Item
-            name="fuelConsumption"
-            label="Зарцуулах шатахуун /л/"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <InputNumber />
-          </Form.Item>
-          <Form.Item
-            name="fuelCost"
-            label="Шатахууны үнэ /₮/ A92"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <InputNumber />
-          </Form.Item>
-
-          <Form.Item name="total" label="Нийт /₮/">
-            <InputNumber />
-          </Form.Item>
-        </Form>
+            <Form.Item
+              name="route"
+              label="Маршрут:"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="roadLength"
+              label="Замын урт /км/:"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <InputNumber style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item
+              name="regionalSupplement"
+              label="Бүсийн нэмэгдэл /%/:"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <InputNumber style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item
+              name="fuelConsumption"
+              label="Зарцуулах шатахуун /л/"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <InputNumber style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item
+              name="fuelCost"
+              label="Шатахууны үнэ /₮/ A92"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Input precision="0" suffix=" ₮" />
+            </Form.Item>
+          </Form>
+        </ContentWrapper>
       </Modal>
     </div>
   );
