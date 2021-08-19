@@ -1,15 +1,51 @@
-import { Button, Tooltip } from 'antd';
-import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
-import React, { useState } from 'react';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Modal, Tooltip, message } from 'antd';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import React, { useContext, useEffect, useState } from 'react';
+import { ToolsContext } from '../../../context/Tools';
+import { getService, putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
 import ResultModal from './ModalComponent/resultModal';
 
 let isEditMode;
 let editRow;
-function result() {
+function result(props) {
+  const loadLazyTimeout = null;
+  const toolsStore = useContext(ToolsContext);
+  const [list, setList] = useState([]);
+  const [summaryID, setSummaryID] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const PAGESIZE = 20;
+  const [lazyParams] = useState({
+    page: 0,
+  });
+  const onInit = () => {
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    toolsStore.setIsShowLoader(true);
+    getService(`/project/get/${props.projectId}`, list)
+      .then(resultt => {
+        const listResult = resultt.summaryBallotForm.sbf_projectresults;
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
+        setSummaryID(resultt.summaryBallotForm.id);
+      })
+      .finally(toolsStore.setIsShowLoader(false))
+      .catch(error => {
+        errorCatch(error);
+        toolsStore.setIsShowLoader(false);
+      });
+  };
+
+  useEffect(() => {
+    onInit();
+  }, [lazyParams]);
 
   const add = () => {
     setIsModalVisible(true);
@@ -24,8 +60,39 @@ function result() {
 
   const closeModal = (isSuccess = false) => {
     setIsModalVisible(false);
-    // if (isSuccess) onInit();
+    if (isSuccess) onInit();
   };
+
+  const handleDeleted = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+      return;
+    }
+    putService(`projectResult/delete/${row.projectResult.id}`)
+      .then(() => {
+        message.success('Амжилттай устлаа');
+        onInit();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+  };
+
+  function confirm(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeleted(row);
+        onInit();
+      },
+      onCancel() {},
+    });
+  }
+
   const action = row => (
     <>
       <Button
@@ -33,11 +100,11 @@ function result() {
         icon={<FontAwesomeIcon icon={faPen} />}
         onClick={() => edit(row)}
       />
-      {/* <Button
+      <Button
         type="text"
         icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
-      /> */}
+        onClick={() => confirm(row)}
+      />
     </>
   );
   return (
@@ -58,26 +125,30 @@ function result() {
       </h2>
       <div className="datatable-responsive-demo">
         <DataTable
-          // value={listEducation}
+          value={list}
           removableSort
           rows={10}
           className="p-datatable-responsive-demo"
           dataKey="id"
         >
           <Column field="index" header="№" style={{ width: '50px' }} />
-          <Column field="#" header="Үйл ажиллагааны чиглэл  " />
-          <Column field="#" header="Үр дүн " />
-          <Column field="#" header="Гарц " />
-          <Column field="#" header="Нөлөө " />
+          <Column
+            field="projectResult.areasOfActivity"
+            header="Үйл ажиллагааны чиглэл  "
+          />
+          <Column field="projectResult.result" header="Үр дүн " />
+          <Column field="projectResult.yield" header="Гарц " />
+          <Column field="projectResult.effect" header="Нөлөө " />
           <Column headerStyle={{ width: '7rem' }} body={action} />
         </DataTable>
       </div>
       {isModalVisible && (
         <ResultModal
-          ActivityController={editRow}
+          EditRow={editRow}
           isModalVisible={isModalVisible}
           close={closeModal}
           isEditMode={isEditMode}
+          summaryID={summaryID}
         />
       )}
     </div>

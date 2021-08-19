@@ -204,7 +204,7 @@ const productiveProject = () => {
   const dateBodyTemplate = row => (
     <>
       <span className="p-column-title">Төсөл хэрэгжүүлэх хугацаа</span>
-      {row.period}
+      {row.period} сар
     </>
   );
 

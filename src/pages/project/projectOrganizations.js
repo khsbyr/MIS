@@ -7,47 +7,41 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Input, Layout, message, Modal, Row, Tooltip } from 'antd';
+import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import { ToolsContext } from '../../../context/Tools';
-import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from './components/plan.styled';
-import PlanModal from './components/PlanModal';
+import { ToolsContext } from '../../context/Tools';
+import { getService, putService } from '../../service/service';
+import { errorCatch } from '../../tools/Tools';
+import ContentWrapper from '../training/tabs/components/organization.style';
+import OrganizationModal from '../training/tabs/components/OrganizationModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const Plan = props => {
+const ProjectOrg = props => {
   const loadLazyTimeout = null;
+  const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const PAGESIZE = 20;
   const [lazyParams] = useState({
     page: 0,
   });
-  const PAGESIZE = 20;
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [trainingID, setTrainingID] = useState([]);
-  const [orgID, setOrgID] = useState([]);
-  const toolsStore = useContext(ToolsContext);
   const onInit = () => {
-    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`training/get/${props.id}`, list)
+    toolsStore.setIsShowLoader(true);
+    getService(`/project/get/${props.projectId}`, list)
       .then(result => {
-        const listResult = result.trainingTeams || [];
-        setOrgID(result.organization.id);
-        setTrainingID(result.id);
+        const listResult = result.projectOrganizations;
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
-        setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
@@ -55,34 +49,19 @@ const Plan = props => {
         toolsStore.setIsShowLoader(false);
       });
   };
-
   useEffect(() => {
     onInit();
   }, [lazyParams]);
 
-  const dataTableFuncMap = {
-    list: setList,
-  };
-
-  const onEditorValueChange = (productKey, editData, value) => {
-    const updatedProducts = [...editData.value];
-    updatedProducts[editData.rowIndex][editData.field] = value;
-    dataTableFuncMap[`${productKey}`](updatedProducts);
-  };
-
-  const inputTextEditor = (productKey, editData, field) => (
-    <Input
-      type="text"
-      value={editData.rowData[field]}
-      onChange={e => onEditorValueChange(productKey, editData, e.target.value)}
-    />
-  );
-  const missionEditor = (productKey, editData) =>
-    inputTextEditor(productKey, editData, 'mission');
-
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
+  };
+
+  const edit = row => {
+    editRow = row.organization;
+    isEditMode = true;
+    setIsModalVisible(true);
   };
 
   const handleDeleted = row => {
@@ -90,7 +69,7 @@ const Plan = props => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`trainingTeam/delete/${row.id}`)
+    putService(`organization/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -114,12 +93,6 @@ const Plan = props => {
       onCancel() {},
     });
   }
-
-  const edit = row => {
-    editRow = row;
-    isEditMode = true;
-    setIsModalVisible(true);
-  };
 
   const pop = row => {
     if (row.length === 0) {
@@ -151,22 +124,43 @@ const Plan = props => {
 
   const indexBodyTemplate = row => (
     <>
-      {/* <span className="p-column-title">№</span> */}
+      <span className="p-column-title">№</span>
       {row.index}
     </>
   );
 
-  const missionBodyTemplate = row => (
+  const nameBodyTemplate = row => (
     <>
-      {/* <span className="p-column-title">Сургалтанд гүйцэтгэх үүрэг</span> */}
-      {row.mission}
+      <span className="p-column-title">Байгууллагын нэр</span>
+      {row.organization.name}
     </>
   );
 
-  const nameTrainerBodyTemplate = row => (
+  const registerNumberBodyTemplate = row => (
     <>
-      {/* <span className="p-column-title">Багшийн нэрс</span> */}
-      {row.user && row.user.fullName}
+      <span className="p-column-title">Регистрийн дугаар</span>
+      {row.organization.registerNumber}
+    </>
+  );
+
+  const bankNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Банкны нэр</span>
+      {row.organization.bank.name}
+    </>
+  );
+
+  const accountNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дансны нэр</span>
+      {row.organization.accountName}
+    </>
+  );
+
+  const accountNumberBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дансны дугаар</span>
+      {row.organization.accountNumber}
     </>
   );
 
@@ -218,55 +212,35 @@ const Plan = props => {
         </Layout>
         <div className="datatable-responsive-demo">
           <DataTable
-            editMode="cell"
-            // className="editable-cells-table"
             value={list}
             removableSort
             paginator
             emptyMessage="Өгөгдөл олдсонгүй..."
             rows={10}
             className="p-datatable-responsive-demo"
-            selection={selectedRows}
-            // onRowClick={edit}
-            onSelectionChange={e => {
-              setSelectedRows(e.value);
-            }}
             dataKey="id"
           >
+            <Column header="№" body={indexBodyTemplate} style={{ width: 40 }} />
             <Column
-              field="index"
-              header="№"
-              body={indexBodyTemplate}
-              style={{ width: 40 }}
-            />
-            <Column
-              header="Сургалтанд гүйцэтгэх үүрэг"
-              body={missionBodyTemplate}
+              header="Байгууллагын нэр"
+              body={nameBodyTemplate}
               sortable
-              filter
-              filterPlaceholder="Хайх"
-              field="mission"
-              editor={editData => missionEditor('list', editData)}
-              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
-              header="Багшийн нэрс"
-              body={nameTrainerBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-              bodyStyle={{ textAlign: 'center' }}
+              header="Регистрийн дугаар"
+              body={registerNumberBodyTemplate}
             />
+            <Column header="Банкны нэр" body={bankNameBodyTemplate} />
+            <Column header="Дансны нэр" body={accountNameBodyTemplate} />
+            <Column header="Дансны дугаар" body={accountNumberBodyTemplate} />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <PlanModal
-              Plancontroller={editRow}
+            <OrganizationModal
+              Orgcontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              trainingID={trainingID}
-              orgID={orgID}
             />
           )}
         </div>
@@ -274,4 +248,5 @@ const Plan = props => {
     </ContentWrapper>
   );
 };
-export default Plan;
+
+export default ProjectOrg;

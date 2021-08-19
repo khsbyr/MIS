@@ -177,7 +177,7 @@ const Feedback = () => {
         <div className="datatable-responsive-demo">
           <DataTable
             editMode="cell"
-            className="editable-cells-table"
+            className="p-datatable-responsive-demo"
             // value={list}
             removableSort
             paginator
@@ -203,9 +203,6 @@ const Feedback = () => {
               Plancontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
-              // isEditMode={isEditMode}
-              // trainingID={trainingID}
-              // orgID={orgID}
             />
           )}
         </div>

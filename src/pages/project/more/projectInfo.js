@@ -2,8 +2,10 @@ import { Tabs } from 'antd';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import ContentWrapper from './projectInfo.style';
-import BriefDraft from '../briefdraft';
+import BriefDraft from '../briefDraft';
 import MainInfo from '../mainInfo';
+import Investment from '../investment';
+import ProjectOrg from '../projectOrganizations';
 
 const { TabPane } = Tabs;
 const tabPosition = 'top';
@@ -20,10 +22,14 @@ export default function projectInfo() {
               <MainInfo projectId={id} />
             </TabPane>
             <TabPane tab="Товч төсөл" key="3">
-              <BriefDraft />
+              <BriefDraft projectId={id} />
             </TabPane>
-            <TabPane tab="Хөрөнгө оруулалт" key="4" />
-            <TabPane tab="Түншлэгч байгууллага" key="5" />
+            <TabPane tab="Хөрөнгө оруулалт" key="4">
+              <Investment />
+            </TabPane>
+            <TabPane tab="Түншлэгч байгууллага" key="5">
+              <ProjectOrg projectId={id} />
+            </TabPane>
             <TabPane tab="Хавсралт файл" key="6" />
           </Tabs>
         </TabPane>

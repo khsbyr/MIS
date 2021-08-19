@@ -11,69 +11,55 @@ import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useToolsStore } from '../../context/Tools';
-import { getService, putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
-import ContentWrapper from '../criteria/criteria.style';
-import UserModal from './components/UserModal';
+import { putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import ContentWrapper from '../../criteria/criteria.style';
+import IndicatorsReportModal from './components/indicatorsReportModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-
-const User = () => {
-  const toolsStore = useToolsStore();
-  const { t } = useTranslation();
-  const loadLazyTimeout = null;
-  const [list, setList] = useState([]);
+const IndicatorsReport = () => {
+  // const loadLazyTimeout = null;
+  // const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams] = useState({
     page: 0,
   });
-  const PAGESIZE = 20;
+  // const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-
+  // const [trainingID, setTrainingID] = useState([]);
+  // const [orgID, setOrgID] = useState([]);
+  // const toolsStore = useContext(ToolsContext);
   const onInit = () => {
-    if (loadLazyTimeout) {
-      clearTimeout(loadLazyTimeout);
-    }
-    toolsStore.setIsShowLoader(true);
-    getService('user/get', list)
-      .then(result => {
-        const datas = result.content || [];
-        datas.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList(datas);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    // toolsStore.setIsShowLoader(true);
+    // if (loadLazyTimeout) {
+    //   clearTimeout(loadLazyTimeout);
+    // }
+    // getService(`training/get`, list)
+    //   .then(result => {
+    //     const listResult = result.trainingTeams || [];
+    //     setOrgID(result.organization.id);
+    //     setTrainingID(result.id);
+    //     listResult.forEach((item, index) => {
+    //       item.index = lazyParams.page * PAGESIZE + index + 1;
+    //     });
+    //     setList(listResult);
+    //     setSelectedRows([]);
+    //   })
+    //   .finally(toolsStore.setIsShowLoader(false))
+    //   .catch(error => {
+    //     errorCatch(error);
+    //     toolsStore.setIsShowLoader(false);
+    //   });
   };
 
-  useEffect(() => {
-    onInit();
-    getService('organization/get').then(result => {
-      if (result) {
-        toolsStore.setOrgList(result.content || []);
-      }
-    });
-  }, [lazyParams]);
+  useEffect(() => {}, [lazyParams]);
 
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
-  };
-
-  const edit = row => {
-    editRow = row;
-    isEditMode = true;
-    setIsModalVisible(true);
   };
 
   const handleDeleted = row => {
@@ -81,7 +67,7 @@ const User = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`user/delete/${row.id}`)
+    putService(`trainingTeam/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -105,6 +91,12 @@ const User = () => {
       onCancel() {},
     });
   }
+
+  const edit = row => {
+    editRow = row;
+    isEditMode = true;
+    setIsModalVisible(true);
+  };
 
   const pop = row => {
     if (row.length === 0) {
@@ -134,49 +126,16 @@ const User = () => {
     if (isSuccess) onInit();
   };
 
-  const indexBodyTemplate = row => (
-    <>
-      <span className="p-column-title">№</span>
-      {row.index}
-    </>
-  );
-
-  const firstnameBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Нэр</span>
-      {row.firstname}
-    </>
-  );
-
-  const lastnameBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Овог</span>
-      {row.lastname}
-    </>
-  );
-
-  const registerBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Регистрийн дугаар</span>
-      {row.register}
-    </>
-  );
-  const emailBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Й-мэйл</span>
-      {row.email}
-    </>
-  );
-
   return (
     <ContentWrapper>
       <div className="button-demo">
+        {' '}
         <Content>
           <Row>
-            <Col xs={24} md={12} lg={14}>
-              <p className="title">Хэрэглэгчийн жагсаалт</p>
+            <Col xs={24} md={24} lg={14}>
+              <p className="title">Шалгуур үзүүлэлтийн үр дүн</p>
             </Col>
-            <Col xs={18} md={12} lg={10}>
+            <Col xs={24} md={24} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col>
                   <Tooltip title="Хэвлэх" arrowPointAtCenter>
@@ -217,61 +176,30 @@ const User = () => {
         </Content>
         <div className="datatable-responsive-demo">
           <DataTable
-            value={list}
+            editMode="cell"
+            className="p-datatable-responsive-demo"
+            // value={list}
             removableSort
             paginator
             rows={10}
-            className="p-datatable-responsive-demo"
             selection={selectedRows}
-            editMode="row"
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
           >
-            <Column
-              field="index"
-              header="№"
-              body={indexBodyTemplate}
-              style={{ width: 40 }}
-            />
-            <Column
-              field="firstname"
-              header="Нэр"
-              body={firstnameBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              field="lastname"
-              header="Овог"
-              body={lastnameBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              field="register"
-              header="Регистрийн дугаар"
-              body={registerBodyTemplate}
-              sortable
-            />
-            <Column
-              field="email"
-              header="Й-мэйл"
-              body={emailBodyTemplate}
-              sortable
-            />
-            <Column field="role.name" header="Эрх" sortable />
+            <Column field="index" header="№" style={{ width: 40 }} />
+            <Column header="Шалгуур үзүүлэлтийн нэр" field="mission" />
+            <Column header="Байршил" />
+            <Column header="Огноо" />
+            <Column header="Файл" />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <UserModal
-              Usercontroller={editRow}
+            <IndicatorsReportModal
+              Plancontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
-              isEditMode={isEditMode}
             />
           )}
         </div>
@@ -279,5 +207,4 @@ const User = () => {
     </ContentWrapper>
   );
 };
-
-export default User;
+export default IndicatorsReport;
