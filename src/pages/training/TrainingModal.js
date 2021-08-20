@@ -1,6 +1,15 @@
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Col, DatePicker, Form, Input, message, Modal, Row } from 'antd';
+import {
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Modal,
+  Row,
+  TreeSelect,
+} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -20,6 +29,8 @@ const layout = {
     span: 22,
   },
 };
+const { TreeNode } = TreeSelect;
+
 export default function TrainingModal(props) {
   const { Trainingcontroller, isModalVisible, isEditMode, trainingID } = props;
   const [form] = Form.useForm();
@@ -32,6 +43,7 @@ export default function TrainingModal(props) {
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const [selectedCriteria, setSelectedCriteria] = useState();
+  const [stateSums, setStateSums] = useState([]);
 
   function onStartDateChange(date, value) {
     setStartDate(value);
@@ -182,6 +194,9 @@ export default function TrainingModal(props) {
     getBag(value);
   };
 
+  const selectSums = value => {
+    console.log(value);
+  };
   const save = () => {
     form
       .validateFields()
@@ -244,7 +259,15 @@ export default function TrainingModal(props) {
         errorCatch(info);
       });
   };
-
+  const onChange = (currentNode, selectedNodes) => {
+    console.log('onChange::', currentNode, selectedNodes);
+  };
+  const onAction = (node, action) => {
+    console.log('onAction::', action, node);
+  };
+  const onNodeToggle = currentNode => {
+    console.log('onNodeToggle::', currentNode);
+  };
   return (
     <div>
       <Modal
@@ -309,7 +332,7 @@ export default function TrainingModal(props) {
                         },
                       ]}
                     >
-                      <Input precision="0" suffix=" ₮" />
+                      <CurrencyInput precision="0" suffix=" ₮" />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={8}>
@@ -404,6 +427,44 @@ export default function TrainingModal(props) {
                         data={stateOrg}
                         size="medium"
                       />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={24} lg={8}>
+                    <Form.Item
+                      name="AimagID"
+                      layout="vertical"
+                      label="aimag songo:"
+                    >
+                      <TreeSelect
+                        showSearch
+                        style={{ width: '100%' }}
+                        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                        placeholder="Please select"
+                        allowClear
+                        multiple
+                        treeDefaultExpandAll
+                        onChange={value => selectSums(value)}
+                        valueField="id"
+                      >
+                        <TreeNode
+                          valueField="id"
+                          value={stateAimag.id}
+                          title={stateAimag.name}
+                          // title="stateAimag.name"
+                          data={stateAimag}
+                        >
+                          <TreeNode value="parent 1-0" title="parent 1-0">
+                            <TreeNode value="leaf1" title="my leaf" />
+                            <TreeNode value="leaf2" title="your leaf" />
+                          </TreeNode>
+                          <TreeNode value="parent 1-1" title="parent 1-1">
+                            <TreeNode
+                              value="sss"
+                              title={<b style={{ color: '#08c' }}>sss</b>}
+                            />
+                          </TreeNode>
+                        </TreeNode>
+                      </TreeSelect>
                     </Form.Item>
                   </Col>
                 </Row>

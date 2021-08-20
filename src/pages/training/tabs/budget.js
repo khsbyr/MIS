@@ -306,9 +306,14 @@ const Budget = props => {
   };
 
   function Formatcurrency(value) {
-    const values = value || 0;
-    return `${values.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}₮`;
+    return `${value}₮`;
+    // console.log(value);
+    // const values = value || 0;
+    // return `${values.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}₮`;
   }
+
+  const nf = new Intl.NumberFormat();
+  nf.format(2500);
 
   function Formatpercent(value) {
     return `${value} %`;
@@ -321,13 +326,15 @@ const Budget = props => {
   const totalBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Нийт төсөв /₮/</span>
-      {Formatcurrency(row.totalBudget)}
+      {/* {Formatcurrency(row.totalBudget)} */}
+      {Formatcurrency(nf.format(row.totalBudget))}
     </>
   );
   const performanceBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Гүйцэтгэлийн төсөв /₮/</span>
-      {Formatcurrency(row.performanceBudget)}
+      {/* {Formatcurrency(row.performanceBudget)} */}
+      {Formatcurrency(nf.format(row.performanceBudget))}
     </>
   );
   // const stationeryTotalBodyTemplate = row => (
@@ -367,7 +374,8 @@ const Budget = props => {
   const unitPriceNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Нэгж үнэ /₮/</span>
-      {Formatcurrency(row.unitPrice)}
+      {row.unitPrice}
+      {/* {Formatcurrency(nf.format(row.unitPrice))} */}
     </>
   );
 
@@ -388,7 +396,8 @@ const Budget = props => {
   const totalNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Дүн /₮/</span>
-      {Formatcurrency(row.total)}
+      {/* {row.total} */}
+      {Formatcurrency(nf.format(row.total))}
     </>
   );
 
@@ -403,7 +412,8 @@ const Budget = props => {
   const costPerDayBodyTemplate = row => (
     <>
       <span className="p-column-title">Хоногт /₮/</span>
-      {Formatcurrency(row.costPerDay)}
+      {row.costPerDay}
+      {/* {Formatcurrency(nf.format(row.costPerDay))} */}
     </>
   );
 
@@ -424,7 +434,8 @@ const Budget = props => {
   const totalBodyTemplate = row => (
     <>
       <span className="p-column-title">Нийт /₮/</span>
-      {Formatcurrency(row.total)}
+      {/* {Formatcurrency(row.total)} */}
+      {Formatcurrency(nf.format(row.total))}
     </>
   );
   // fuelExpenses
@@ -459,14 +470,16 @@ const Budget = props => {
   const fuelCostBodyTemplate = row => (
     <>
       <span className="p-column-title">Шатахууны үнэ /₮/ A92</span>
-      {Formatcurrency(row.fuelCost)}
+      {row.fuelCost}
+      {/* {Formatcurrency(nf.format(row.fuelCost))} */}
     </>
   );
 
   const totalfuelBodyTemplate = row => (
     <>
       <span className="p-column-title">Нийт /₮/</span>
-      {Formatcurrency(row.total)}
+      {/* {Formatcurrency(row.total)} */}
+      {Formatcurrency(nf.format(row.total))}
     </>
   );
 
@@ -475,21 +488,21 @@ const Budget = props => {
     for (let i = 0; i < list1.length; i++) {
       total += list1[i].total;
     }
-    return <div>{Formatcurrency(total)}</div>;
+    return <div> {Formatcurrency(nf.format(total))}</div>;
   };
   const HotelTotal = () => {
     let total = 0;
     for (let i = 0; i < list2.length; i++) {
       total += list2[i].total;
     }
-    return <div>{Formatcurrency(total)}</div>;
+    return <div> {Formatcurrency(nf.format(total))}</div>;
   };
   const FuelTotal = () => {
     let total = 0;
     for (let i = 0; i < list3.length; i++) {
       total += list3[i].total;
     }
-    return <div>{Formatcurrency(total)}</div>;
+    return <div> {Formatcurrency(nf.format(total))}</div>;
   };
 
   // const Alltotal = (total, HotelTotal, FuelTotal, StationaryTotal) => {
