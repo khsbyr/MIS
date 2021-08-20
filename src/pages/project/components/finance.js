@@ -111,7 +111,7 @@ function finance(props) {
   );
   return (
     <div>
-      <h2 className="title">
+      <h2 className="titleBrief">
         8. Холбогдох хөрөнгө, тоног төхөөрөмж, шаардлагатай санхүүжилтийн
         тооцоолол, хувь хэмжээ
         <Tooltip title="Нэмэх" arrowPointAtCenter>

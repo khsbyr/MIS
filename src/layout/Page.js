@@ -84,16 +84,6 @@ const ProductiveProject = loadable({
   loading: Loader,
 });
 
-const InnovativeProject = loadable({
-  loader: () => import('../pages/project/innovativeProject'),
-  loading: Loader,
-});
-
-const FactoryProject = loadable({
-  loader: () => import('../pages/project/factoryProject'),
-  loading: Loader,
-});
-
 const VeterinarianProject = loadable({
   loader: () => import('../pages/project/veterinarianProject'),
   loading: Loader,
@@ -155,13 +145,13 @@ const Page = ({ route }) => {
 
       /** Төсөл */
       case 'Productive Partnership Project'.toLowerCase():
-        return <ProductiveProject />;
+        return <ProductiveProject type={1} />;
 
       case 'Innovative project'.toLowerCase():
-        return <InnovativeProject />;
+        return <ProductiveProject type={2} />;
 
       case 'Factory'.toLowerCase():
-        return <FactoryProject />;
+        return <ProductiveProject type={3} />;
 
       case 'Young Veterinarian Program'.toLowerCase():
         return <VeterinarianProject />;

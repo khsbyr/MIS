@@ -132,35 +132,35 @@ const ProjectOrg = props => {
   const nameBodyTemplate = row => (
     <>
       <span className="p-column-title">Байгууллагын нэр</span>
-      {row.organization.name}
+      {row.organization?.name}
     </>
   );
 
   const registerNumberBodyTemplate = row => (
     <>
       <span className="p-column-title">Регистрийн дугаар</span>
-      {row.organization.registerNumber}
+      {row.organization?.registerNumber}
     </>
   );
 
   const bankNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Банкны нэр</span>
-      {row.organization.bank.name}
+      {row.organization.bank?.name}
     </>
   );
 
   const accountNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Дансны нэр</span>
-      {row.organization.accountName}
+      {row.organization?.accountName}
     </>
   );
 
   const accountNumberBodyTemplate = row => (
     <>
       <span className="p-column-title">Дансны дугаар</span>
-      {row.organization.accountNumber}
+      {row.organization?.accountNumber}
     </>
   );
 

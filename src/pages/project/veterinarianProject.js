@@ -233,7 +233,7 @@ const veterinarianProject = () => {
         <Content>
           <Row>
             <Col xs={24} md={24} lg={14}>
-              <p className="title">Залуу малын эмч хөтөлбөр</p>
+              <p className="title">Малын залуу эмч хөтөлбөр</p>
             </Col>
             <Col xs={24} md={18} lg={10}>
               <Row justify="end" gutter={[16, 16]}>

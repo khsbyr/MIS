@@ -1,11 +1,15 @@
 import { Tabs } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import ContentWrapper from './projectInfo.style';
+import { useProjectStore } from '../../../context/ProjectContext';
+import { useToolsStore } from '../../../context/Tools';
+import { getService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
 import BriefDraft from '../briefDraft';
-import MainInfo from '../mainInfo';
 import Investment from '../investment';
+import MainInfo from '../mainInfo';
 import ProjectOrg from '../projectOrganizations';
+import ContentWrapper from './projectInfo.style';
 
 const { TabPane } = Tabs;
 const tabPosition = 'top';
@@ -13,6 +17,22 @@ const tabPosition2 = 'top';
 
 export default function projectInfo() {
   const { id } = useParams();
+  const { ProjectList, setProjectList } = useProjectStore();
+  const { setIsShowLoader } = useToolsStore();
+
+  useEffect(() => {
+    setIsShowLoader(true);
+    getService(`/project/get/${id}`)
+      .then(result => {
+        setProjectList(result);
+      })
+      .finally(setIsShowLoader(false))
+      .catch(error => {
+        errorCatch(error);
+        setIsShowLoader(false);
+      });
+  }, []);
+
   return (
     <ContentWrapper>
       <Tabs tabPosition={tabPosition2}>
@@ -25,7 +45,7 @@ export default function projectInfo() {
               <BriefDraft projectId={id} />
             </TabPane>
             <TabPane tab="Хөрөнгө оруулалт" key="4">
-              <Investment />
+              <Investment projectId={id} />
             </TabPane>
             <TabPane tab="Түншлэгч байгууллага" key="5">
               <ProjectOrg projectId={id} />
@@ -33,9 +53,13 @@ export default function projectInfo() {
             <TabPane tab="Хавсралт файл" key="6" />
           </Tabs>
         </TabPane>
-        <TabPane tab="Дэлгэрэнгүй төсөл" key="7" disabled>
-          Дэлгэрэнгүй төсөл
-        </TabPane>
+        {ProjectList?.projectStatus?.id === 1 ? (
+          <TabPane tab="Дэлгэрэнгүй төсөл" key="7">
+            Дэлгэрэнгүй төсөл
+          </TabPane>
+        ) : (
+          <TabPane tab="Дэлгэрэнгүй төсөл" key="8" disabled />
+        )}
       </Tabs>
     </ContentWrapper>
   );
