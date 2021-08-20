@@ -244,6 +244,7 @@ const TrainingProgram = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              bodyStyle={{ textAlign: 'left' }}
             />
             <Column
               header="Хэрэгжих өдөр"
@@ -251,6 +252,7 @@ const TrainingProgram = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Хариуцах эзэн"
@@ -258,6 +260,7 @@ const TrainingProgram = props => {
               filterPlaceholder="Хайх"
               sortable
               body={responsiblepersonameBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

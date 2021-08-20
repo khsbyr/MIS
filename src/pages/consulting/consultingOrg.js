@@ -10,8 +10,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
-import { ToolsContext } from '../../context/Tools';
+import React, { useEffect, useState } from 'react';
+import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
@@ -23,8 +23,7 @@ let editRow;
 let isEditMode;
 const ConsultingOrg = () => {
   const loadLazyTimeout = null;
-  const toolsStore = useContext(ToolsContext);
-  const [list, setList] = useState([]);
+  const toolsStore = useToolsStore();
   const PAGESIZE = 20;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams] = useState({
@@ -37,13 +36,13 @@ const ConsultingOrg = () => {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService(`organization/get`, list)
+    getService(`organization/get`)
       .then(result => {
         const listResult = result.content;
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
-        setList(listResult);
+        toolsStore.setOrgList(listResult);
         setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
@@ -149,7 +148,7 @@ const ConsultingOrg = () => {
   const bankNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Банкны нэр</span>
-      {row.bank && row.bank.name}
+      {row.bank ? row.bank.name : 'Тодорхойгүй'}
     </>
   );
 
@@ -216,7 +215,7 @@ const ConsultingOrg = () => {
         </Content>
         <div className="datatable-responsive-demo">
           <DataTable
-            value={list}
+            value={toolsStore.orgList}
             removableSort
             paginator
             rows={10}

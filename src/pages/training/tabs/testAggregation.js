@@ -236,13 +236,20 @@ const TestAggregation = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              bodyStyle={{ textAlign: 'left' }}
             />
             <Column
               header="Авбал зохих"
               body={ShouldTakenBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
               sortable
             />
-            <Column header="Огноо" body={DateBodyTemplate} sortable />
+            <Column
+              header="Огноо"
+              body={DateBodyTemplate}
+              sortable
+              bodyStyle={{ textAlign: 'center' }}
+            />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (

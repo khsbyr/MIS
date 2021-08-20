@@ -23,10 +23,10 @@ import {
 import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import AutoCompleteSelect from '../../components/Autocomplete';
-import { ToolsContext } from '../../context/Tools';
+import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import OrgaStyle from '../training/tabs/components/orga.style';
@@ -45,12 +45,15 @@ const productiveProject = props => {
   const [lazyParams] = useState({
     page: 0,
   });
-  const toolsStore = useContext(ToolsContext);
+  const toolsStore = useToolsStore();
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
+<<<<<<< HEAD
   const [stateOrga, setStateOrga] = useState([]);
   const [status, setStatus] = useState();
   const [projectID, setProjectID] = useState();
+=======
+>>>>>>> 1f84c72e84367c79df650e106447b27580aa15fa
   const history = useHistory();
   const [form] = Form.useForm();
 
@@ -76,6 +79,7 @@ const productiveProject = props => {
 
   useEffect(() => {
     onInit();
+<<<<<<< HEAD
     getService('organization/get').then(result => {
       if (result) {
         setStateOrga(result.content || []);
@@ -89,6 +93,8 @@ const productiveProject = props => {
     form.setFieldsValue({
       ...list,
     });
+=======
+>>>>>>> 1f84c72e84367c79df650e106447b27580aa15fa
   }, [lazyParams]);
   const selectedStatus = (event, row) => {
     event.preventDefault();
@@ -303,7 +309,7 @@ const productiveProject = props => {
                     <AutoCompleteSelect
                       valueField="id"
                       placeholder="Байгууллага сонгох"
-                      data={stateOrga}
+                      data={toolsStore.orgList}
                       onChange={value => selectOrgs(value)}
                     />
                   </OrgaStyle>

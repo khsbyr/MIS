@@ -13,9 +13,9 @@ import {
   Upload,
 } from 'antd';
 import moment from 'moment';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
-import { ToolsContext } from '../../../context/Tools';
+import { useToolsStore } from '../../../context/Tools';
 import { getService, postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
@@ -35,10 +35,8 @@ const layout = {
 export default function ConsultingPersonModal(props) {
   const { Trainerscontroller, isModalVisible, isEditMode, trainerID } = props;
   const [form] = Form.useForm();
-  const toolsStore = useContext(ToolsContext);
-  const [stateAimag, setStateAimag] = useState([]);
+  const toolsStore = useToolsStore();
   const [stateSum, setStateSum] = useState([]);
-  const [stateCountry, setStateCountry] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const loadLazyTimeout = null;
   const [userID, setUserID] = useState();
@@ -52,16 +50,6 @@ export default function ConsultingPersonModal(props) {
   };
   useEffect(() => {
     onInit();
-    getService('country/get').then(result => {
-      if (result) {
-        setStateCountry(result || []);
-      }
-    });
-    getService('aimag/get').then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
     if (Trainerscontroller !== null) {
       getService(`soum/getList/${Trainerscontroller.address.aimag.id}`).then(
         result => {
@@ -80,7 +68,6 @@ export default function ConsultingPersonModal(props) {
     }
 
     if (isEditMode) {
-      // setChangedBirthDate(Trainerscontroller.birthDate);
       setUserID(Trainerscontroller.id);
       form.setFieldsValue({
         ...Trainerscontroller,
@@ -90,7 +77,6 @@ export default function ConsultingPersonModal(props) {
         phoneNumber: Trainerscontroller.phoneNumber,
         email: Trainerscontroller.email,
         OrganizationName: Trainerscontroller.orgName,
-        // birthDateNew: Trainerscontroller.birthDate,
         AddressDetail: Trainerscontroller.address
           ? Trainerscontroller.address.addressDetail
           : '',
@@ -106,23 +92,9 @@ export default function ConsultingPersonModal(props) {
         BagID: Trainerscontroller.address
           ? Trainerscontroller.address.bag.id
           : '',
-        // purpose: Trainerscontroller.trainers.purpose,
-        // skill: Trainerscontroller.trainers.skill,
       });
     }
   }, []);
-
-  const getAimag = countryId => {
-    getService(`aimag/getList/${countryId}`, {}).then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-  };
-
-  const selectCountry = value => {
-    getAimag(value);
-  };
 
   const getSum = aimagId => {
     getService(`soum/getList/${aimagId}`, {}).then(result => {
@@ -154,7 +126,6 @@ export default function ConsultingPersonModal(props) {
       .then(values => {
         if (isEditMode) {
           values.id = userID;
-          // values.birthDate = changedBirthDate;
           values.address = {
             addressDetail: values.AddressDetail,
             country: {
@@ -261,19 +232,11 @@ export default function ConsultingPersonModal(props) {
                   <Input className="FormItem" placeholder="Регистр:" />
                 </Form.Item>
                 <Form.Item name="lastname">
-                  <Input
-                    className="FormItem"
-                    placeholder="Овог:"
-                    // prefix={<FontAwesomeIcon icon={faUser} />}
-                  />
+                  <Input className="FormItem" placeholder="Овог:" />
                 </Form.Item>
 
                 <Form.Item name="firstname">
-                  <Input
-                    className="FormItem"
-                    placeholder="Нэр:"
-                    // prefix={<FontAwesomeIcon icon={faUser} />}
-                  />
+                  <Input className="FormItem" placeholder="Нэр:" />
                 </Form.Item>
                 <Form.Item name="phoneNumber">
                   <InputNumber
@@ -285,22 +248,8 @@ export default function ConsultingPersonModal(props) {
                   />
                 </Form.Item>
                 <Form.Item name="email">
-                  <Input
-                    className="FormItem"
-                    placeholder="И-мэйл хаяг:"
-                    // prefix={<FontAwesomeIcon icon={faEnvelope} />}
-                  />
+                  <Input className="FormItem" placeholder="И-мэйл хаяг:" />
                 </Form.Item>
-                {/* <Form.Item name="OrganizationName">
-                  <OrgaStyle>
-                    <AutoCompleteSelect
-                      valueField="id"
-                      placeholder="Байгууллага сонгох"
-                      data={stateOrg}
-                      onChange={value => selectOrg(value)}
-                    />
-                  </OrgaStyle>
-                </Form.Item> */}
               </Col>
 
               <Col xs={24} md={24} lg={9}>
@@ -308,9 +257,9 @@ export default function ConsultingPersonModal(props) {
                   <AutoCompleteSelect
                     className="FormItem"
                     placeholder="Улс сонгох"
+                    defaultValue={[105]}
                     valueField="id"
-                    data={stateCountry}
-                    onChange={value => selectCountry(value)}
+                    data={toolsStore.countryList}
                   />
                 </Form.Item>
                 <Form.Item name="AimagID">
@@ -318,7 +267,7 @@ export default function ConsultingPersonModal(props) {
                     className="FormItem"
                     placeholder="Аймаг, хот сонгох"
                     valueField="id"
-                    data={stateAimag}
+                    data={toolsStore.aimagList}
                     onChange={value => selectAimag(value)}
                   />
                 </Form.Item>
@@ -346,7 +295,6 @@ export default function ConsultingPersonModal(props) {
                       prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
                       placeholder="Төрсөн он, сар, өдөр"
                       className="FormItem"
-                      // onChange={onBirthDateChange}
                       defaultValue={
                         isEditMode
                           ? Trainerscontroller &&

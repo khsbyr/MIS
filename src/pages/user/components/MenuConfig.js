@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Modal, Tree, Alert, message } from 'antd';
 import { CheckSquareFilled } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { getService, putService } from '../../../service/service';
 import { ToolsContext } from '../../../context/Tools';
 import { errorCatch } from '../../../tools/Tools';
@@ -8,6 +9,7 @@ import { errorCatch } from '../../../tools/Tools';
 let allData = [];
 
 export default function MenuConfig(props) {
+  const { t } = useTranslation();
   const { visible, role } = props;
   const [checkedKeys, setCheckedKeys] = useState([]);
   const [roleTree, setRoleTree] = useState([]);
@@ -72,13 +74,13 @@ export default function MenuConfig(props) {
 
   return (
     <Modal
-      title="Цэс тохируулах"
+      title={t('Set the menu')}
       className="permission"
       visible={visible}
       centered
       width={700}
-      okText="Хадгалах"
-      cancelText="Болих"
+      okText={t('Save')}
+      cancelText={t('Cancel')}
       bodyStyle={{ height: '70vh' }}
       onOk={save}
       onCancel={() => props.close()}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { requireFieldFocus, errorCatch } from '../../../tools/Tools';
 import { getService, postService, putService } from '../../../service/service';
 import AutoCompleteSelect from '../../../components/Autocomplete';
@@ -17,6 +18,7 @@ export default function RoleModal(props) {
   const { roleController, visible, isEditMode } = props;
   const [form] = Form.useForm();
   const [stateRoleLevel, setStateRoleLevel] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     getService('roleLevel/get').then(result => {
@@ -66,9 +68,9 @@ export default function RoleModal(props) {
 
   return (
     <Modal
-      title="Хэрэглэгчийн дүр бүртгэх"
-      okText="Хадгалах"
-      cancelText="Буцах"
+      title={t('User role create')}
+      okText={t('Save')}
+      cancelText={t('Cancel')}
       width={460}
       alignItems="center"
       visible={visible}
@@ -89,13 +91,13 @@ export default function RoleModal(props) {
         onFinishFailed={requireFieldFocus}
       >
         <Form.Item
-          label="Дүрийн нэр"
+          label={t('Role name')}
           name="name"
           rules={[{ required: true, message: '' }]}
         >
           <Input />
         </Form.Item>
-        <Form.Item name="roleLevelId" layout="vertical" label="Дүрийн код:">
+        <Form.Item name="roleLevelId" layout="vertical" label={t('Role code')}>
           <AutoCompleteSelect
             valueField="id"
             size="medium"

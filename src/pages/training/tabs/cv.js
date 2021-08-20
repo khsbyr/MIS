@@ -21,7 +21,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState, useContext } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
-import { ToolsContext } from '../../../context/Tools';
+import { useToolsStore } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import ContentWrapper from '../../criteria/criteria.style';
@@ -35,7 +35,7 @@ let isEditMode;
 let trainerID;
 const CV = () => {
   const loadLazyTimeout = null;
-  const toolsStore = useContext(ToolsContext);
+  const toolsStore = useToolsStore();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams] = useState({
@@ -43,7 +43,6 @@ const CV = () => {
   });
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [stateOrg, setStateOrg] = useState([]);
   const [OrgID, setOrgID] = useState([]);
   const [isOnChange, setIsOnChange] = useState(false);
   const onInit = () => {
@@ -69,11 +68,6 @@ const CV = () => {
 
   useEffect(() => {
     onInit();
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrg(result.content || []);
-      }
-    });
   }, [lazyParams]);
 
   const selectOrg = value => {
@@ -221,7 +215,7 @@ const CV = () => {
                     <AutoCompleteSelect
                       valueField="id"
                       placeholder="Байгууллага сонгох"
-                      data={stateOrg}
+                      data={toolsStore.orgList}
                       onChange={value => selectOrg(value)}
                     />
                   </OrgaStyle>

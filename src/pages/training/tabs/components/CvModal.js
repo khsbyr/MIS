@@ -15,9 +15,9 @@ import {
   message,
 } from 'antd';
 import moment from 'moment';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
-import { ToolsContext } from '../../../../context/Tools';
+import { useToolsStore } from '../../../../context/Tools';
 import {
   getService,
   postService,
@@ -45,15 +45,12 @@ export default function CvModal(props) {
   const { Trainerscontroller, isModalVisible, isEditMode, trainerID, orgId } =
     props;
   const [form] = Form.useForm();
-  const toolsStore = useContext(ToolsContext);
-  const [stateAimag, setStateAimag] = useState([]);
+  const toolsStore = useToolsStore();
   const [stateSum, setStateSum] = useState([]);
-  const [stateCountry, setStateCountry] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const loadLazyTimeout = null;
   const [userID, setUserID] = useState();
   const [BirthDatee, setBirthDatee] = useState();
-  const [, setStateOrg] = useState([]);
   const [, setIsOnchange] = useState(false);
   const [options, setOptions] = useState([]);
   const onInit = () => {
@@ -65,24 +62,9 @@ export default function CvModal(props) {
 
   useEffect(() => {
     onInit();
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrg(result.content || []);
-      }
-    });
     getService(`user/getNotTrainerUserListByOrgId/${orgId}`).then(result => {
       if (result) {
         setOptions(result || []);
-      }
-    });
-    getService('country/get').then(result => {
-      if (result) {
-        setStateCountry(result || []);
-      }
-    });
-    getService('aimag/get').then(result => {
-      if (result) {
-        setStateAimag(result || []);
       }
     });
     if (Trainerscontroller !== null) {
@@ -103,7 +85,6 @@ export default function CvModal(props) {
     }
 
     if (isEditMode) {
-      // setChangedBirthDate(Trainerscontroller.birthDate);
       setUserID(Trainerscontroller.id);
       form.setFieldsValue({
         ...Trainerscontroller,
@@ -135,14 +116,6 @@ export default function CvModal(props) {
     }
   }, []);
 
-  const getAimag = countryId => {
-    getService(`aimag/getList/${countryId}`, {}).then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-  };
-
   const selectUser = (value, option) => {
     setIsOnchange(true);
     getService(`user/get/${option.key}`, {}).then(result => {
@@ -164,10 +137,6 @@ export default function CvModal(props) {
         });
       }
     });
-  };
-
-  const selectCountry = value => {
-    getAimag(value);
   };
 
   const getSum = aimagId => {
@@ -202,7 +171,6 @@ export default function CvModal(props) {
         if (isEditMode) {
           values.trainers = { purpose: values.purpose, skill: values.skill };
           values.id = userID;
-          // values.birthDate = changedBirthDate;
           values.address = {
             addressDetail: values.AddressDetail,
             country: {
@@ -235,7 +203,6 @@ export default function CvModal(props) {
             register: values.registerNumber,
             phoneNumber: values.phoneNumber,
             email: values.email,
-            // birthDate: changedBirthDate,
             address: {
               addressDetail: values.AddressDetail,
               country: {
@@ -315,7 +282,6 @@ export default function CvModal(props) {
                         .toUpperCase()
                         .indexOf(inputValue.toUpperCase()) !== -1
                     }
-                    // onChange={value => console.log(value)}
                   >
                     {options.map(value => (
                       <Option key={value.id} value={value.register}>
@@ -325,19 +291,11 @@ export default function CvModal(props) {
                   </AutoComplete>
                 </Form.Item>
                 <Form.Item name="lastname">
-                  <Input
-                    className="FormItem"
-                    placeholder="Овог:"
-                    // prefix={<FontAwesomeIcon icon={faUser} />}
-                  />
+                  <Input className="FormItem" placeholder="Овог:" />
                 </Form.Item>
 
                 <Form.Item name="firstname">
-                  <Input
-                    className="FormItem"
-                    placeholder="Нэр:"
-                    // prefix={<FontAwesomeIcon icon={faUser} />}
-                  />
+                  <Input className="FormItem" placeholder="Нэр:" />
                 </Form.Item>
                 <Form.Item name="phoneNumber">
                   <InputNumber
@@ -349,22 +307,8 @@ export default function CvModal(props) {
                   />
                 </Form.Item>
                 <Form.Item name="email">
-                  <Input
-                    className="FormItem"
-                    placeholder="И-мэйл хаяг:"
-                    // prefix={<FontAwesomeIcon icon={faEnvelope} />}
-                  />
+                  <Input className="FormItem" placeholder="И-мэйл хаяг:" />
                 </Form.Item>
-                {/* <Form.Item name="OrganizationName">
-                  <OrgaStyle>
-                    <AutoCompleteSelect
-                      valueField="id"
-                      placeholder="Байгууллага сонгох"
-                      data={stateOrg}
-                      onChange={value => selectOrg(value)}
-                    />
-                  </OrgaStyle>
-                </Form.Item> */}
               </Col>
 
               <Col xs={24} md={24} lg={9}>
@@ -373,8 +317,7 @@ export default function CvModal(props) {
                     className="FormItem"
                     placeholder="Улс сонгох"
                     valueField="id"
-                    data={stateCountry}
-                    onChange={value => selectCountry(value)}
+                    data={toolsStore.countryList}
                   />
                 </Form.Item>
                 <Form.Item name="AimagID">
@@ -382,7 +325,7 @@ export default function CvModal(props) {
                     className="FormItem"
                     placeholder="Аймаг, хот сонгох"
                     valueField="id"
-                    data={stateAimag}
+                    data={toolsStore.aimagList}
                     onChange={value => selectAimag(value)}
                   />
                 </Form.Item>
@@ -410,7 +353,6 @@ export default function CvModal(props) {
                       disabled
                       placeholder="Төрсөн он, сар, өдөр"
                       className="FormItem"
-                      // onChange={onBirthDateChange}
                       defaultValue={
                         isEditMode
                           ? Trainerscontroller &&

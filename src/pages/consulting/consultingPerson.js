@@ -32,7 +32,6 @@ const ConsultingPerson = () => {
   });
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [, setStateOrg] = useState([]);
   const [OrgID] = useState([]);
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
@@ -57,11 +56,6 @@ const ConsultingPerson = () => {
 
   useEffect(() => {
     onInit();
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrg(result.content || []);
-      }
-    });
   }, [lazyParams]);
 
   const add = () => {

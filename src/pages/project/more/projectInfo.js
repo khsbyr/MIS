@@ -1,11 +1,17 @@
 import { Tabs } from 'antd';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+<<<<<<< HEAD
 import { useProjectStore } from '../../../context/ProjectContext';
 import { useToolsStore } from '../../../context/Tools';
 import { getService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import BriefDraft from '../briefDraft';
+=======
+import ContentWrapper from './projectInfo.style';
+import BriefDraft from '../briefdraft';
+import MainInfo from '../mainInfo';
+>>>>>>> 1f84c72e84367c79df650e106447b27580aa15fa
 import Investment from '../investment';
 import MainInfo from '../mainInfo';
 import ProjectOrg from '../projectOrganizations';

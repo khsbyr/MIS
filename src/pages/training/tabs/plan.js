@@ -247,6 +247,7 @@ const Plan = props => {
               filterPlaceholder="Хайх"
               field="mission"
               editor={editData => missionEditor('list', editData)}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Багшийн нэрс"
@@ -254,6 +255,7 @@ const Plan = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

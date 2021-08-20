@@ -239,11 +239,13 @@ const TrainingReport = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              bodyStyle={{ textAlign: 'left' }}
             />
             <Column
               field=""
               header="Сургалт явуулсан байгууллага, хүний нэр"
               body={respoUserBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Үүссэн огноо"
@@ -252,6 +254,7 @@ const TrainingReport = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Зассан огноо"
@@ -260,6 +263,7 @@ const TrainingReport = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

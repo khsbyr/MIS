@@ -492,9 +492,9 @@ const Budget = props => {
     return <div>{Formatcurrency(total)}</div>;
   };
 
-  // const Alltotal = () => {
+  // const Alltotal = (total, HotelTotal, FuelTotal, StationaryTotal) => {
   //   const total = 0;
-  //   total === FuelTotal.total + HotelTotal.total + StationaryTotal.total;
+  //   total === FuelTotal.value + HotelTotal + StationaryTotal;
   //   console.log(total);
   //   return <div>{Formatcurrency(total)}</div>;
   // };
@@ -592,15 +592,7 @@ const Budget = props => {
           <DataTable
             value={list}
             emptyMessage="Өгөгдөл олдсонгүй..."
-            removableSort
-            paginator
-            rows={10}
             className="p-datatable-responsive-demo"
-            selection={selectedRows}
-            onSelectionChange={e => {
-              setSelectedRows(e.value);
-            }}
-            dataKey="id"
           >
             <Column
               header="Бичгийн хэрэгсэл нийт /₮/"
@@ -634,6 +626,7 @@ const Budget = props => {
             /> */}
           </DataTable>
         </div>
+        <br />
         {/* <Stationary /> */}
         <div className="datatable-responsive-demo">
           <Layout className="btn-layout">

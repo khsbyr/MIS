@@ -8,6 +8,7 @@ import {
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
+import { useToolsStore } from '../../../../context/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './attendance.style';
 
@@ -15,22 +16,9 @@ export default function TrainingProgramModal(props) {
   const { Attendancecontroller, isModalVisible, isEditMode, trainingID } =
     props;
   const [form] = Form.useForm();
-  const [stateAimag, setStateAimag] = useState([]);
+  const toolsStore = useToolsStore();
   const [stateSum, setStateSum] = useState([]);
-  const [stateCountry, setStateCountry] = useState([]);
   const [stateBag, setStateBag] = useState([]);
-
-  const getAimag = countryId => {
-    getService(`aimag/getList/${countryId}`, {}).then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-  };
-
-  const selectCountry = value => {
-    getAimag(value);
-  };
 
   const getSum = aimagId => {
     getService(`soum/getList/${aimagId}`, {}).then(result => {
@@ -57,31 +45,16 @@ export default function TrainingProgramModal(props) {
   };
 
   useEffect(() => {
-    getService('country/get').then(result => {
-      if (result) {
-        setStateCountry(result || []);
-      }
-    });
-    getService('aimag/get').then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-
     if (Attendancecontroller !== undefined) {
       getService(
-        `soum/getList/${
-          Attendancecontroller && Attendancecontroller.user.address.aimag.id
-        }`
+        `soum/getList/${Attendancecontroller.user.address.aimag.id}`
       ).then(result => {
         if (result) {
           setStateSum(result || []);
         }
       });
       getService(
-        `bag/getList/${
-          Attendancecontroller && Attendancecontroller.user.address.soum.id
-        }`
+        `bag/getList/${Attendancecontroller.user.address.soum.id}`
       ).then(result => {
         if (result) {
           setStateBag(result || []);
@@ -89,7 +62,6 @@ export default function TrainingProgramModal(props) {
       });
     }
     if (isEditMode) {
-      // setGenderID(Attendancecontroller.gender.id);
       form.setFieldsValue({
         ...Attendancecontroller,
         CountryID: Attendancecontroller.user.address
@@ -247,8 +219,7 @@ export default function TrainingProgramModal(props) {
                 >
                   <AutoCompleteSelect
                     valueField="id"
-                    data={stateCountry}
-                    onChange={value => selectCountry(value)}
+                    data={toolsStore.countryList}
                   />
                 </Form.Item>
                 <Form.Item
@@ -262,7 +233,7 @@ export default function TrainingProgramModal(props) {
                 >
                   <AutoCompleteSelect
                     valueField="id"
-                    data={stateAimag}
+                    data={toolsStore.aimagList}
                     onChange={value => selectAimag(value)}
                   />
                 </Form.Item>
@@ -311,16 +282,6 @@ export default function TrainingProgramModal(props) {
                 </Form.Item>
               </Col>
             </Row>
-            {/* <Form.Item label="Хүйс" name="Gender">
-              <Select
-                placeholder="Хүйс сонгох"
-                style={{ width: 150 }}
-                onChange={handleChange}
-              >
-                <Option value={1}>Эрэгтэй</Option>
-                <Option value={2}>Эмэгтэй</Option>
-              </Select>
-            </Form.Item> */}
           </Form>
         </ContentWrapper>
       </Modal>

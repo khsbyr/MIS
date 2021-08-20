@@ -4,12 +4,12 @@ import { Col, DatePicker, Form, Input, message, Modal, Row } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import CurrencyInput from 'react-currency-input';
 import AutoCompleteSelect from '../../components/Autocomplete';
 import MulticompleteSelect from '../../components/MulticompleteSelect';
 import { getService, postService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import validateMessages from '../../tools/validateMessage';
+import { useToolsStore } from '../../context/Tools';
 import ContentWrapper from './tabs/components/training.style';
 
 const layout = {
@@ -23,12 +23,10 @@ const layout = {
 export default function TrainingModal(props) {
   const { Trainingcontroller, isModalVisible, isEditMode, trainingID } = props;
   const [form] = Form.useForm();
-  const [stateOrg, setStateOrg] = useState([]);
+  const toolsStore = useToolsStore();
   const [startDate, setStartDate] = useState([]);
   const [endDate, setEndDate] = useState([]);
-  const [stateCountry, setStateCountry] = useState([]);
   const [stateCriteria, setStateCriteria] = useState([]);
-  const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const [selectedCriteria, setSelectedCriteria] = useState();
@@ -50,7 +48,6 @@ export default function TrainingModal(props) {
           if (isEditMode) {
             setStartDate(Trainingcontroller.trainingStartDate);
             setEndDate(Trainingcontroller.trainingEndDate);
-            // console.log(Trainingcontroller);
             form.setFieldsValue({
               ...Trainingcontroller,
               CriteriaID: list.map(item => item.id),
@@ -97,25 +94,6 @@ export default function TrainingModal(props) {
       }
     });
 
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrg(result.content || []);
-      }
-    });
-
-    getService('country/get').then(result => {
-      if (result) {
-        setStateCountry(result || []);
-        console.log(result[105]);
-      }
-    });
-
-    getService('aimag/get').then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-
     if (Trainingcontroller) {
       getService(
         `soum/getList/${
@@ -141,21 +119,6 @@ export default function TrainingModal(props) {
 
   const SelectCriteria = value => {
     setSelectedCriteria(value);
-  };
-  // const selectCriterias = (value, criteriaID) => {
-  //   setSelectedCriteria([value]);
-  //   console.log(value);
-  // };
-  const getAimag = countryId => {
-    getService(`aimag/getList/${countryId}`, {}).then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-  };
-
-  const selectCountry = value => {
-    getAimag(value);
   };
 
   const getSum = aimagId => {
@@ -186,7 +149,6 @@ export default function TrainingModal(props) {
     form
       .validateFields()
       .then(values => {
-        // values.criteriaIds = selectedCriteria;
         values.organization = { id: values.orgID };
         values.trainingStartDate = startDate;
         values.trainingEndDate = endDate;
@@ -346,9 +308,8 @@ export default function TrainingModal(props) {
                     <Form.Item label="Улс:" name="CountryID">
                       <AutoCompleteSelect
                         valueField="id"
-                        data={stateCountry}
+                        data={toolsStore.countryList}
                         size="medium"
-                        onChange={value => selectCountry(value)}
                       />
                     </Form.Item>
                   </Col>
@@ -360,7 +321,7 @@ export default function TrainingModal(props) {
                     >
                       <AutoCompleteSelect
                         valueField="id"
-                        data={stateAimag}
+                        data={toolsStore.aimagList}
                         size="medium"
                         onChange={value => selectAimag(value)}
                       />
@@ -401,7 +362,7 @@ export default function TrainingModal(props) {
                     >
                       <AutoCompleteSelect
                         valueField="id"
-                        data={stateOrg}
+                        data={toolsStore.orgList}
                         size="medium"
                       />
                     </Form.Item>

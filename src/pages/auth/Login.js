@@ -51,6 +51,16 @@ function Login() {
             toolsStore.setUser(user);
             history.push('user/users');
           });
+          getService('country/get').then(resultCountry => {
+            if (result) {
+              toolsStore.setCountryList(resultCountry || []);
+            }
+          });
+          getService('aimag/get').then(resultAimag => {
+            if (result) {
+              toolsStore.setAimagList(resultAimag || []);
+            }
+          });
         })
         .finally(() => {
           toolsStore.setIsShowLoader(false);
