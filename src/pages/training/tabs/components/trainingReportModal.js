@@ -9,6 +9,7 @@ import {
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import ContentWrapper from './trainingReport.style';
+import { useToolsStore } from '../../../../context/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 
 export default function TrainingReportModal(props) {
@@ -20,9 +21,8 @@ export default function TrainingReportModal(props) {
     trainingIDD,
   } = props;
   const [form] = Form.useForm();
-  const [stateAimag, setStateAimag] = useState([]);
+  const toolsStore = useToolsStore();
   const [stateSum, setStateSum] = useState([]);
-  const [stateCountry, setStateCountry] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const [training, setTraining] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
@@ -40,16 +40,6 @@ export default function TrainingReportModal(props) {
     getService(`training/getListForReport/${orgID}`).then(result => {
       if (result) {
         setTraining(result || []);
-      }
-    });
-    getService('country/get').then(result => {
-      if (result) {
-        setStateCountry(result || []);
-      }
-    });
-    getService('aimag/get').then(result => {
-      if (result) {
-        setStateAimag(result || []);
       }
     });
 
@@ -223,18 +213,6 @@ export default function TrainingReportModal(props) {
         });
       }
     });
-  };
-
-  const getAimag = countryId => {
-    getService(`aimag/getList/${countryId}`, {}).then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-  };
-
-  const selectCountry = value => {
-    getAimag(value);
   };
 
   const getSum = aimagId => {
@@ -412,15 +390,14 @@ export default function TrainingReportModal(props) {
                   <AutoCompleteSelect
                     disabled
                     valueField="id"
-                    data={stateCountry}
-                    onChange={value => selectCountry(value)}
+                    data={toolsStore.countryList}
                   />
                 </Form.Item>
                 <Form.Item label="Аймаг, хот:" name="AimagID">
                   <AutoCompleteSelect
                     disabled
                     valueField="id"
-                    data={stateAimag}
+                    data={toolsStore.aimagList}
                     onChange={value => selectAimag(value)}
                   />
                 </Form.Item>

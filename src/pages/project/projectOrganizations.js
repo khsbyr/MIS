@@ -2,53 +2,46 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
+  faPlus,
   faPrint,
   faTrash,
-  faPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row } from 'antd';
+import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
-import CriteriaModal from '../criteria/components/CriteriaModal';
-import ContentWrapper from '../criteria/criteria.style';
-import OrgaStyle from '../training/tabs/components/orga.style';
-import AutoCompleteSelect from '../../components/Autocomplete';
+import ContentWrapper from '../training/tabs/components/organization.style';
+import OrganizationModal from '../training/tabs/components/OrganizationModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const Organizationadd = () => {
+const ProjectOrg = props => {
   const loadLazyTimeout = null;
+  const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [stateTraining, setStateTraining] = useState([]);
-
+  const PAGESIZE = 20;
   const [lazyParams] = useState({
     page: 0,
   });
-  const PAGESIZE = 20;
-  const [selectedRows, setSelectedRows] = useState([]);
-  const toolsStore = useContext(ToolsContext);
-
   const onInit = () => {
-    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('organization/get', list)
+    toolsStore.setIsShowLoader(true);
+    getService(`/project/get/${props.projectId}`, list)
       .then(result => {
-        const listResult = result.content || [];
+        const listResult = result.projectOrganizations;
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
-        setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
@@ -56,19 +49,17 @@ const Organizationadd = () => {
         toolsStore.setIsShowLoader(false);
       });
   };
-
   useEffect(() => {
     onInit();
   }, [lazyParams]);
 
-  const selectTraining = value => {};
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
   };
 
   const edit = row => {
-    editRow = row;
+    editRow = row.organization;
     isEditMode = true;
     setIsModalVisible(true);
   };
@@ -78,8 +69,7 @@ const Organizationadd = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-
-    putService(`testAggregation/delete/${row.id}`)
+    putService(`organization/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -142,7 +132,35 @@ const Organizationadd = () => {
   const nameBodyTemplate = row => (
     <>
       <span className="p-column-title">Байгууллагын нэр</span>
-      {row.name}
+      {row.organization.name}
+    </>
+  );
+
+  const registerNumberBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Регистрийн дугаар</span>
+      {row.organization.registerNumber}
+    </>
+  );
+
+  const bankNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Банкны нэр</span>
+      {row.organization.bank.name}
+    </>
+  );
+
+  const accountNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дансны нэр</span>
+      {row.organization.accountName}
+    </>
+  );
+
+  const accountNumberBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дансны дугаар</span>
+      {row.organization.accountNumber}
     </>
   );
 
@@ -152,49 +170,40 @@ const Organizationadd = () => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={12}>
-                <p className="title">Байгууллага бүртгэх</p>
-              </Col>
-              <Col xs={24} md={24} lg={12}>
-                <Row gutter={[0, 15]}>
-                  <Col xs={8} md={8} lg={10} />
-                  <Col xs={8} md={8} lg={5}>
-                    <OrgaStyle>
-                      <AutoCompleteSelect
-                        valueField="id"
-                        placeholder="Сургалт сонгох"
-                        data={stateTraining}
-                        onChange={value => selectTraining(value)}
-                      />
-                    </OrgaStyle>
+              <Col xs={24} md={24} lg={24}>
+                <Row justify="end" gutter={[16, 16]}>
+                  <Col>
+                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        icon={<FontAwesomeIcon icon={faPrint} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
-
-                  <Col xs={8} md={8} lg={3}>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      Хэвлэх{' '}
-                    </Button>
+                  <Col>
+                    <Tooltip title="Экспорт" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFileExcel} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
-                  <Col xs={8} md={8} lg={3}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      Экспорт
-                    </Button>
-                  </Col>
-                  <Col xs={8} md={8} lg={3}>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      Нэмэх
-                    </Button>
+                  <Col>
+                    <Tooltip title="Нэмэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={add}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
                   </Col>
                 </Row>
               </Col>
@@ -206,29 +215,29 @@ const Organizationadd = () => {
             value={list}
             removableSort
             paginator
+            emptyMessage="Өгөгдөл олдсонгүй..."
             rows={10}
             className="p-datatable-responsive-demo"
-            selection={selectedRows}
-            // onRowClick={edit}
-            onSelectionChange={e => {
-              setSelectedRows(e.value);
-            }}
             dataKey="id"
           >
-            <Column field="index" body={indexBodyTemplate} sortable />
+            <Column header="№" body={indexBodyTemplate} style={{ width: 40 }} />
             <Column
-              field="name"
+              header="Байгууллагын нэр"
               body={nameBodyTemplate}
-              header="Улсын нэр"
               sortable
-              filter
-              filterPlaceholder="Хайх"
             />
+            <Column
+              header="Регистрийн дугаар"
+              body={registerNumberBodyTemplate}
+            />
+            <Column header="Банкны нэр" body={bankNameBodyTemplate} />
+            <Column header="Дансны нэр" body={accountNameBodyTemplate} />
+            <Column header="Дансны дугаар" body={accountNumberBodyTemplate} />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <CriteriaModal
-              Criteriacontroller={editRow}
+            <OrganizationModal
+              Orgcontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
@@ -240,4 +249,4 @@ const Organizationadd = () => {
   );
 };
 
-export default Organizationadd;
+export default ProjectOrg;

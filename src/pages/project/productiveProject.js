@@ -22,10 +22,10 @@ import {
 import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import AutoCompleteSelect from '../../components/Autocomplete';
-import { ToolsContext } from '../../context/Tools';
+import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import OrgaStyle from '../training/tabs/components/orga.style';
@@ -44,11 +44,9 @@ const productiveProject = () => {
   const [lazyParams] = useState({
     page: 0,
   });
-  const toolsStore = useContext(ToolsContext);
+  const toolsStore = useToolsStore();
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  // const [, setStateOrga] = useState([]);
-  const [stateOrga, setStateOrga] = useState([]);
   const history = useHistory();
 
   const onInit = () => {
@@ -74,16 +72,6 @@ const productiveProject = () => {
 
   useEffect(() => {
     onInit();
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrga(result.content || []);
-      }
-    });
-    // getService(`criteria/getListByForWhatId/1`).then(result => {
-    //   if (result) {
-    //     setStateCriteria(result.content || []);
-    //   }
-    // });
   }, [lazyParams]);
 
   const selectedStatus = event => {
@@ -216,7 +204,7 @@ const productiveProject = () => {
   const dateBodyTemplate = row => (
     <>
       <span className="p-column-title">Төсөл хэрэгжүүлэх хугацаа</span>
-      {row.period}
+      {row.period} сар
     </>
   );
 
@@ -262,7 +250,7 @@ const productiveProject = () => {
                     <AutoCompleteSelect
                       valueField="id"
                       placeholder="Байгууллага сонгох"
-                      data={stateOrga}
+                      data={toolsStore.orgList}
                       onChange={value => selectOrgs(value)}
                     />
                   </OrgaStyle>

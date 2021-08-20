@@ -19,6 +19,7 @@ import {
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
+import { useToolsStore } from '../../../../context/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './organization.style';
 
@@ -29,14 +30,12 @@ export default function OrganizationModal(props) {
   const [stateBank, setStateBank] = useState([]);
   const [stateCurrency, setStateCurrency] = useState([]);
   const [form] = Form.useForm();
-  const [stateAimag, setStateAimag] = useState([]);
+  const toolsStore = useToolsStore();
   const [stateSum, setStateSum] = useState([]);
-  const [stateCountry, setStateCountry] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const [responsibleUserID, setResponsibleUserID] = useState(null);
   const [role, setRole] = useState([]);
   const [, setRoleID] = useState([]);
-
   useEffect(() => {
     getService('bank/get').then(result => {
       if (result) {
@@ -53,16 +52,6 @@ export default function OrganizationModal(props) {
     getService('currency/get').then(result => {
       if (result) {
         setStateCurrency(result.content || []);
-      }
-    });
-    getService('country/get').then(result => {
-      if (result) {
-        setStateCountry(result || []);
-      }
-    });
-    getService('aimag/get').then(result => {
-      if (result) {
-        setStateAimag(result || []);
       }
     });
     if (Orgcontroller !== undefined) {
@@ -123,18 +112,6 @@ export default function OrganizationModal(props) {
 
   const selectRole = value => {
     setRoleID(value);
-  };
-
-  const getAimag = countryId => {
-    getService(`aimag/getList/${countryId}`, {}).then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-  };
-
-  const selectCountry = value => {
-    getAimag(value);
   };
 
   const getSum = aimagId => {
@@ -360,8 +337,7 @@ export default function OrganizationModal(props) {
                     <Form.Item label="Улс:" name="CountryID">
                       <AutoCompleteSelect
                         valueField="id"
-                        data={stateCountry}
-                        onChange={value => selectCountry(value)}
+                        data={toolsStore.countryList}
                       />
                     </Form.Item>
                   </Col>
@@ -369,7 +345,7 @@ export default function OrganizationModal(props) {
                     <Form.Item label="Аймаг, хот:" name="AimagID">
                       <AutoCompleteSelect
                         valueField="id"
-                        data={stateAimag}
+                        data={toolsStore.aimagList}
                         onChange={value => selectAimag(value)}
                       />
                     </Form.Item>

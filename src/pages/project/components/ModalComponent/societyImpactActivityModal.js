@@ -1,12 +1,58 @@
-import { Col, Form, Input, Modal, Row } from 'antd';
-import React from 'react';
+import { Col, Form, Input, message, Modal, Row } from 'antd';
+import React, { useEffect } from 'react';
+import { postService, putService } from '../../../../service/service';
+import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './Modal.style';
 
 const { TextArea } = Input;
 
 export default function societyImpactActivityModal(props) {
-  const { isModalVisible, isEditMode } = props;
+  const { seImpactController, isModalVisible, isEditMode, summaryID } = props;
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (isEditMode) {
+      form.setFieldsValue({
+        ...seImpactController,
+        keyActivities: seImpactController.seImpactActivities.keyActivities,
+        impactActivities:
+          seImpactController.seImpactActivities.impactActivities,
+      });
+    }
+  }, []);
+
+  const save = () => {
+    form
+      .validateFields()
+      .then(values => {
+        if (isEditMode) {
+          putService(
+            `seImpactActivities/update/${seImpactController.seImpactActivities.id}`,
+            values
+          )
+            .then(() => {
+              message.success('Амжилттай хадгаллаа');
+              props.close(true);
+            })
+            .catch(error => {
+              errorCatch(error);
+            });
+        } else {
+          postService(`seImpactActivities/post/${summaryID}`, values)
+            .then(() => {
+              message.success('Амжилттай хадгаллаа');
+              props.close(true);
+            })
+            .catch(error => {
+              errorCatch(error);
+            });
+        }
+      })
+      .catch(info => {
+        errorCatch(info);
+      });
+  };
   return (
     <div>
       <Modal
@@ -16,12 +62,12 @@ export default function societyImpactActivityModal(props) {
         width={800}
         alignItems="center"
         visible={isModalVisible}
-        // onOk={save}
+        onOk={save}
         onCancel={() => props.close()}
       >
         <ContentWrapper>
           <Form
-            // form={form}
+            form={form}
             labelAlign="left"
             layout="vertical"
             name="nest-messages"
@@ -31,7 +77,7 @@ export default function societyImpactActivityModal(props) {
               <Col span={24}>
                 <Form.Item
                   label="Үндсэн үйл ажиллагаа:"
-                  name="#"
+                  name="keyActivities"
                   rules={[
                     {
                       required: true,
@@ -42,7 +88,7 @@ export default function societyImpactActivityModal(props) {
                 </Form.Item>
                 <Form.Item
                   label="Байгаль орчин, нийгмийн болзошгүй нөлөөлөл/эрсдэл:"
-                  name="#"
+                  name="impactActivities"
                 >
                   <Input />
                 </Form.Item>

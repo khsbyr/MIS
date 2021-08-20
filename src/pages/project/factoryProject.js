@@ -70,7 +70,7 @@ const factoryProject = () => {
 
   useEffect(() => {
     onInit();
-    getService('organization/get').then(result => {
+    getService('').then(result => {
       if (result) {
         setStateOrga(result.content || []);
       }

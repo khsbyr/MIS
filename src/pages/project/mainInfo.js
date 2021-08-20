@@ -1,19 +1,20 @@
 import { Descriptions } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useProjectStore } from '../../context/ProjectContext';
 import { useToolsStore } from '../../context/Tools';
 import { getService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ContentWrapper from './more/briefDraft.style';
 
 function mainInfo(props) {
-  const [mainInfoRow, setMainInfoRow] = useState({});
   const { setIsShowLoader } = useToolsStore();
+  const { ProjectList, setProjectList } = useProjectStore();
 
   useEffect(() => {
     setIsShowLoader(true);
     getService(`/project/get/${props.projectId}`)
       .then(result => {
-        setMainInfoRow(result);
+        setProjectList(result);
       })
       .finally(setIsShowLoader(false))
       .catch(error => {
@@ -30,17 +31,17 @@ function mainInfo(props) {
             label="Төслийн нэр"
             contentStyle={{ width: '65%' }}
           >
-            {mainInfoRow.projectName}
+            {ProjectList.projectName}
           </Descriptions.Item>
           <Descriptions.Item label="Төсөл хэрэгжих байршил:">
             {' '}
-            {mainInfoRow.address && mainInfoRow.address.country.name},{' '}
-            {mainInfoRow.address && mainInfoRow.address.aimag.name},{' '}
-            {mainInfoRow.address && mainInfoRow.address.soum.name},{' '}
-            {mainInfoRow.address && mainInfoRow.address.bag.name}
+            {ProjectList.address && ProjectList.address.country.name},{' '}
+            {ProjectList.address && ProjectList.address.aimag.name},{' '}
+            {ProjectList.address && ProjectList.address.soum.name},{' '}
+            {ProjectList.address && ProjectList.address.bag.name}
           </Descriptions.Item>
           <Descriptions.Item label="Төсөл хэрэгжүүлэх хугацаа">
-            {mainInfoRow.period}
+            {ProjectList.period}
           </Descriptions.Item>
         </Descriptions>
 
@@ -52,41 +53,41 @@ function mainInfo(props) {
             label="Байгууллагын нэр"
             contentStyle={{ width: '65%' }}
           >
-            {mainInfoRow.organization && mainInfoRow.organization.name}
+            {ProjectList.organization && ProjectList.organization.name}
           </Descriptions.Item>
           <Descriptions.Item label="Байгууллагын pегистрийн дугаар:">
-            {mainInfoRow.organization &&
-              mainInfoRow.organization.registerNumber}
+            {ProjectList.organization &&
+              ProjectList.organization.registerNumber}
           </Descriptions.Item>
           <Descriptions.Item label="Байгууллагын улсын бүртгэлийн гэрчилгээний дугаар">
-            {mainInfoRow.organization &&
-              mainInfoRow.organization.certificateNumber}
+            {ProjectList.organization &&
+              ProjectList.organization.certificateNumber}
           </Descriptions.Item>
           <Descriptions.Item label="Байгуулагдсан он">
-            {mainInfoRow.organization && mainInfoRow.organization.foundedYear}
+            {ProjectList.organization && ProjectList.organization.foundedYear}
           </Descriptions.Item>
           <Descriptions.Item label="Эрх бүхий этгээд / Холбогдох ажилтан нэр">
-            {mainInfoRow.organization &&
-              mainInfoRow.organization.responsibleUser.firstname}
+            {ProjectList.organization &&
+              ProjectList.organization.responsibleUser.firstname}
           </Descriptions.Item>
           <Descriptions.Item label="Хаяг (Төв  оффис болон зорилтот сумд дахь салбарын хаяг)">
-            {mainInfoRow.organization &&
-              mainInfoRow.organization.address.country.name}
+            {ProjectList.organization &&
+              ProjectList.organization.address.country.name}
             ,{' '}
-            {mainInfoRow.organization &&
-              mainInfoRow.organization.address.aimag.name}
+            {ProjectList.organization &&
+              ProjectList.organization.address.aimag.name}
             ,{' '}
-            {mainInfoRow.organization &&
-              mainInfoRow.organization.address.soum.name}
+            {ProjectList.organization &&
+              ProjectList.organization.address.soum.name}
             ,{' '}
-            {mainInfoRow.organization &&
-              mainInfoRow.organization.address.bag.name}
+            {ProjectList.organization &&
+              ProjectList.organization.address.bag.name}
           </Descriptions.Item>
           <Descriptions.Item label="Утасны дугаар">
-            {mainInfoRow.organization && mainInfoRow.organization.phone}
+            {ProjectList.organization && ProjectList.organization.phone}
           </Descriptions.Item>
           <Descriptions.Item label="Цахим шуудангийн хаяг">
-            {mainInfoRow.organization && mainInfoRow.organization.email}
+            {ProjectList.organization && ProjectList.organization.email}
           </Descriptions.Item>
         </Descriptions>
 
@@ -96,13 +97,13 @@ function mainInfo(props) {
             label="Өргөдөл гаргагчийн туршлага болон үйл ажиллагааны чиглэл"
             contentStyle={{ width: '65%' }}
           >
-            {mainInfoRow && mainInfoRow.expierenceActivity}
+            {ProjectList && ProjectList.expierenceActivity}
           </Descriptions.Item>
           <Descriptions.Item label="Өргөдөл гаргагчийн санал болгож буй үйл ажиллагааны чиглэл">
-            {mainInfoRow && mainInfoRow.proposedActivity}
+            {ProjectList && ProjectList.proposedActivity}
           </Descriptions.Item>
           <Descriptions.Item label="Хамтран ажиллах түншлэгч байгууллагатай бол үйл ажиллагааны төрөл болон бусад дэлгэрэнгүй мэдээлэл">
-            {mainInfoRow && mainInfoRow.partnerActivity}
+            {ProjectList && ProjectList.partnerActivity}
           </Descriptions.Item>
         </Descriptions>
       </ContentWrapper>

@@ -28,9 +28,6 @@ const Uploadprops = {
     authorization: 'authorization-text',
   },
   onChange(info) {
-    if (info.file.status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
     if (info.file.status === 'done') {
       message.success(`${info.file.name} file uploaded successfully`);
     } else if (info.file.status === 'error') {
@@ -49,6 +46,8 @@ export default function productiveProjectModal(props) {
   const [stateOrg, setStateOrg] = useState([]);
   const [selectedOrg, setSelectedOrg] = useState();
   const [selectedProjectOrg, setSelectedProjectOrg] = useState([]);
+  const [multiSum, setMultiSum] = useState();
+
   const getAimag = countryId => {
     getService(`aimag/getList/${countryId}`, {}).then(result => {
       if (result) {
@@ -89,12 +88,17 @@ export default function productiveProjectModal(props) {
     setSelectedOrg(value);
   };
 
-  const ProjectOrgList = ProductiveController
-    ? ProductiveController.projectOrganizations.map(
-        item => item.organization.id
-      )
-    : '';
+  const selectSumMulti = value => {
+    setMultiSum(value);
+  };
 
+  const ProjectOrgList =
+    ProductiveController &&
+    ProductiveController.projectOrganizations.map(item => item.organization.id);
+
+  const ProjectChildrenAddress =
+    ProductiveController &&
+    ProductiveController.address.childrenAddress.map(item => item.soum.id);
   useEffect(() => {
     getService('organization/get').then(result => {
       if (result) {
@@ -151,6 +155,12 @@ export default function productiveProjectModal(props) {
           ? ProductiveController.address.bag.id
           : '',
         OrgID: ProductiveController.organization.id,
+        MultiAimagID: ProductiveController.address
+          ? ProductiveController.address.aimag.id
+          : '',
+        MultiSoumID: ProductiveController.address
+          ? ProductiveController.address.soum.id
+          : '',
       });
     }
   }, []);
@@ -189,6 +199,7 @@ export default function productiveProjectModal(props) {
           },
         };
         values.organizationIds = selectedProjectOrg;
+        values.soumList = multiSum;
         if (isEditMode) {
           putService(`project/update/${ProductiveController.id}`, values)
             .then(() => {
@@ -299,12 +310,34 @@ export default function productiveProjectModal(props) {
                     </Form.Item>
                   </Col>
                 </Row>
+                <Row gutter={[40]}>
+                  <Col xs={24} md={24} lg={12}>
+                    <Form.Item label="Аймаг, хот:" name="MultiAimagID">
+                      <AutoCompleteSelect
+                        valueField="id"
+                        data={stateAimag}
+                        onChange={value => selectAimag(value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={24} lg={12}>
+                    <Form.Item label="Сум, Дүүрэг:" valuePropName="option">
+                      <MulticompleteSelect
+                        data={stateSum}
+                        defaultValue={ProjectChildrenAddress}
+                        valueField="id"
+                        size="medium"
+                        onChange={value => selectSumMulti(value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
               </TabPane>
               <TabPane tab="Бусад мэдээлэл" key="2">
                 <Row gutter={40}>
                   <Col xs={24} md={24} lg={24}>
                     <Form.Item
-                      label="Түншлэгч бөйгууллага:"
+                      label="Түншлэгч байгууллага:"
                       valuePropName="option"
                     >
                       <MulticompleteSelect
