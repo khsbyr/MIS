@@ -48,12 +48,9 @@ const productiveProject = props => {
   const toolsStore = useToolsStore();
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-<<<<<<< HEAD
   const [stateOrga, setStateOrga] = useState([]);
   const [status, setStatus] = useState();
   const [projectID, setProjectID] = useState();
-=======
->>>>>>> 1f84c72e84367c79df650e106447b27580aa15fa
   const history = useHistory();
   const [form] = Form.useForm();
 
@@ -79,7 +76,6 @@ const productiveProject = props => {
 
   useEffect(() => {
     onInit();
-<<<<<<< HEAD
     getService('organization/get').then(result => {
       if (result) {
         setStateOrga(result.content || []);
@@ -93,8 +89,6 @@ const productiveProject = props => {
     form.setFieldsValue({
       ...list,
     });
-=======
->>>>>>> 1f84c72e84367c79df650e106447b27580aa15fa
   }, [lazyParams]);
   const selectedStatus = (event, row) => {
     event.preventDefault();
