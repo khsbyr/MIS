@@ -1,92 +1,196 @@
-import { Button, Tooltip } from 'antd';
-import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
-import React, { useState } from 'react';
-import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import ProjectPurposeModal from './ModalComponent/projectPurposeModal';
+import { Col, Form, Input, message, Row } from 'antd';
+import React, { useEffect } from 'react';
+import { useProjectStore } from '../../../context/ProjectContext';
+import { putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import validateMessages from '../../../tools/validateMessage';
 
-let isEditMode;
-let editRow;
+const { TextArea } = Input;
+
 function projectPurpose() {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [form] = Form.useForm();
+  const { ProjectList } = useProjectStore();
 
-  const add = () => {
-    setIsModalVisible(true);
-    isEditMode = false;
+  useEffect(() => {
+    form.setFieldsValue({
+      ...ProjectList.summaryBallotForm,
+      projectObj:
+        ProjectList.summaryBallotForm.solutionsSignificance?.projectObjectives,
+      solutionsStrategy:
+        ProjectList.summaryBallotForm.solutionsSignificance?.solutionsStrategy,
+      projectBeneficiaries:
+        ProjectList.summaryBallotForm.solutionsSignificance
+          ?.projectBeneficiaries,
+      projectEfficiency:
+        ProjectList.summaryBallotForm.solutionsSignificance?.projectEfficiency,
+      marketAssociationsCooperation:
+        ProjectList.summaryBallotForm.solutionsSignificance
+          ?.marketAssociationsCooperation,
+      timeAndStability:
+        ProjectList.summaryBallotForm.solutionsSignificance?.timeAndStability,
+    });
+  }, []);
+
+  const projectObj = value => {
+    form.validateFields().then(values => {
+      values.projectObjectives = value;
+      putService(
+        `solutionsSignificance/update/${ProjectList.summaryBallotForm.solutionsSignificance.id}`,
+        values
+      )
+        .then(() => {
+          message.success('Амжилттай хадгаллаа');
+        })
+        .catch(error => {
+          errorCatch(error);
+        });
+    });
   };
 
-  const edit = row => {
-    editRow = row;
-    isEditMode = true;
-    setIsModalVisible(true);
+  const projectBeneficiaries = value => {
+    form.validateFields().then(values => {
+      values.projectBeneficiaries = value;
+      putService(
+        `solutionsSignificance/update/${ProjectList.summaryBallotForm.solutionsSignificance.id}`,
+        values
+      )
+        .then(() => {
+          message.success('Амжилттай хадгаллаа');
+        })
+        .catch(error => {
+          errorCatch(error);
+        });
+    });
   };
 
-  const closeModal = (isSuccess = false) => {
-    setIsModalVisible(false);
-    // if (isSuccess) onInit();
+  const solutionsStrategy = value => {
+    form.validateFields().then(values => {
+      values.solutionsStrategy = value;
+      putService(
+        `solutionsSignificance/update/${ProjectList.summaryBallotForm.solutionsSignificance.id}`,
+        values
+      )
+        .then(() => {
+          message.success('Амжилттай хадгаллаа');
+        })
+        .catch(error => {
+          errorCatch(error);
+        });
+    });
   };
-  const action = row => (
-    <>
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
-      />
-      {/* <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
-      /> */}
-    </>
-  );
+
+  const projectEfficiency = value => {
+    form.validateFields().then(values => {
+      values.projectEfficiency = value;
+      putService(
+        `solutionsSignificance/update/${ProjectList.summaryBallotForm.solutionsSignificance.id}`,
+        values
+      )
+        .then(() => {
+          message.success('Амжилттай хадгаллаа');
+        })
+        .catch(error => {
+          errorCatch(error);
+        });
+    });
+  };
+
+  const marketAssociationsCooperation = value => {
+    form.validateFields().then(values => {
+      values.marketAssociationsCooperation = value;
+      putService(
+        `solutionsSignificance/update/${ProjectList.summaryBallotForm.solutionsSignificance.id}`,
+        values
+      )
+        .then(() => {
+          message.success('Амжилттай хадгаллаа');
+        })
+        .catch(error => {
+          errorCatch(error);
+        });
+    });
+  };
+
+  const timeAndStability = value => {
+    form.validateFields().then(values => {
+      values.timeAndStability = value;
+      putService(
+        `solutionsSignificance/update/${ProjectList.summaryBallotForm.solutionsSignificance.id}`,
+        values
+      )
+        .then(() => {
+          message.success('Амжилттай хадгаллаа');
+        })
+        .catch(error => {
+          errorCatch(error);
+        });
+    });
+  };
+
   return (
     <div>
-      <h2 className="title">
+      <h2 className="titleBrief">
         2. Төслийн зорилго, санал болгож буй шийдэл, ашиг хүртэгчид болон ач
         холбогдол
-        <Tooltip title="Нэмэх" arrowPointAtCenter>
-          <Button
-            type="text"
-            className="export"
-            icon={<FontAwesomeIcon icon={faPlus} />}
-            style={{ float: 'right' }}
-            onClick={add}
-          >
-            {' '}
-          </Button>
-        </Tooltip>
       </h2>
-      <div className="datatable-responsive-demo">
-        <DataTable
-          // value={listEducation}
-          removableSort
-          rows={10}
-          className="p-datatable-responsive-demo"
-          dataKey="id"
-        >
-          <Column field="index" header="№" style={{ width: '50px' }} />
-          <Column field="#" header="Төслийн зорилго" />
-          <Column
-            field="#"
-            header="Тулгамдаж буй хүндрэл, бэрхшээлүүдийг шийдвэрлэх"
-          />
-          <Column field="#" header="Төслийн ашиг хүртэгчид" />
-          <Column field="#" header="Төслийн үр ашиг" />
-          <Column field="#" header="Зах зээлийн холбоо, хамтын ажиллагаа" />
-          <Column field="#" header="Хугацаа болон тогтвортой байдал" />
-
-          <Column headerStyle={{ width: '7rem' }} body={action} />
-        </DataTable>
-      </div>
-      {isModalVisible && (
-        <ProjectPurposeModal
-          ProjectPurposeModalController={editRow}
-          isModalVisible={isModalVisible}
-          close={closeModal}
-          isEditMode={isEditMode}
-        />
-      )}
+      <Form
+        form={form}
+        labelAlign="left"
+        layout="vertical"
+        name="nest-messages"
+        validateMessages={validateMessages}
+      >
+        <Row gutter={[40, 30]}>
+          <Col xs={24} md={24} lg={8}>
+            <Form.Item name="projectObj">
+              <TextArea
+                rows={6}
+                placeholder="Төслийн зорилго"
+                onBlur={e => projectObj(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item name="projectBeneficiaries">
+              <TextArea
+                rows={6}
+                placeholder="Төслийн ашиг хүртэгчид"
+                onBlur={e => projectBeneficiaries(e.target.value)}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={24} md={24} lg={8}>
+            <Form.Item name="solutionsStrategy">
+              <TextArea
+                rows={6}
+                placeholder="Тулгамдаж буй хүндрэл, бэрхшээлүүдийг шийдвэрлэх"
+                onBlur={e => solutionsStrategy(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item name="projectEfficiency">
+              <TextArea
+                rows={6}
+                placeholder="Төслийн үр ашиг"
+                onBlur={e => projectEfficiency(e.target.value)}
+              />
+            </Form.Item>
+          </Col>{' '}
+          <Col xs={24} md={24} lg={8}>
+            <Form.Item name="marketAssociationsCooperation">
+              <TextArea
+                rows={6}
+                placeholder="Зах зээлийн холбоо, хамтын ажиллагаа"
+                onBlur={e => marketAssociationsCooperation(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item name="timeAndStability">
+              <TextArea
+                rows={6}
+                placeholder="Хугацаа болон тогтвортой байдал"
+                onBlur={e => timeAndStability(e.target.value)}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
     </div>
   );
 }

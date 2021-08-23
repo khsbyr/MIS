@@ -109,7 +109,7 @@ function result(props) {
   );
   return (
     <div>
-      <h2 className="title">
+      <h2 className="titleBrief">
         9. Төслийн хүрээнд гарах үр дүн
         <Tooltip title="Нэмэх" arrowPointAtCenter>
           <Button

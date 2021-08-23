@@ -9,6 +9,7 @@ import {
   Row,
   Tabs,
   Upload,
+  InputNumber,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
@@ -37,28 +38,16 @@ const Uploadprops = {
 };
 
 export default function productiveProjectModal(props) {
-  const { ProductiveController, isModalVisible, isEditMode } = props;
+  const { ProductiveController, isModalVisible, isEditMode, type } = props;
   const [form] = Form.useForm();
   const [stateAimag, setStateAimag] = useState([]);
   const [stateSum, setStateSum] = useState([]);
-  const [stateCountry, setStateCountry] = useState([]);
-  const [stateBag, setStateBag] = useState([]);
+  const [criteriaList, setCriteriaList] = useState([]);
+  const [criteriaListMulti, setCriteriaListMulti] = useState([]);
   const [stateOrg, setStateOrg] = useState([]);
   const [selectedOrg, setSelectedOrg] = useState();
   const [selectedProjectOrg, setSelectedProjectOrg] = useState([]);
   const [multiSum, setMultiSum] = useState();
-
-  const getAimag = countryId => {
-    getService(`aimag/getList/${countryId}`, {}).then(result => {
-      if (result) {
-        setStateAimag(result || []);
-      }
-    });
-  };
-
-  const selectCountry = value => {
-    getAimag(value);
-  };
 
   const getSum = aimagId => {
     getService(`soum/getList/${aimagId}`, {}).then(result => {
@@ -72,18 +61,6 @@ export default function productiveProjectModal(props) {
     getSum(value);
   };
 
-  const getBag = sumID => {
-    getService(`bag/getList/${sumID}`, {}).then(result => {
-      if (result) {
-        setStateBag(result || []);
-      }
-    });
-  };
-
-  const selectSum = value => {
-    getBag(value);
-  };
-
   const selectOrg = value => {
     setSelectedOrg(value);
   };
@@ -92,22 +69,23 @@ export default function productiveProjectModal(props) {
     setMultiSum(value);
   };
 
+  const selectCriteriaMulti = value => {
+    setCriteriaListMulti(value);
+  };
+
   const ProjectOrgList =
     ProductiveController &&
     ProductiveController.projectOrganizations.map(item => item.organization.id);
 
-  const ProjectChildrenAddress =
-    ProductiveController &&
-    ProductiveController.address.childrenAddress.map(item => item.soum.id);
   useEffect(() => {
+    getService('criteria/getListByForWhatId/2').then(result => {
+      if (result) {
+        setCriteriaList(result || []);
+      }
+    });
     getService('organization/get').then(result => {
       if (result) {
         setStateOrg(result.content || []);
-      }
-    });
-    getService('country/get').then(result => {
-      if (result) {
-        setStateCountry(result || []);
       }
     });
     getService('aimag/get').then(result => {
@@ -117,21 +95,10 @@ export default function productiveProjectModal(props) {
     });
     if (ProductiveController !== null) {
       getService(
-        `soum/getList/${
-          ProductiveController.address && ProductiveController.address.aimag.id
-        }`
+        `soum/getList/${ProductiveController.address?.aimag?.id}`
       ).then(result => {
         if (result) {
           setStateSum(result || []);
-        }
-      });
-      getService(
-        `bag/getList/${
-          ProductiveController.address && ProductiveController.address.soum.id
-        }`
-      ).then(result => {
-        if (result) {
-          setStateBag(result || []);
         }
       });
     }
@@ -142,25 +109,15 @@ export default function productiveProjectModal(props) {
         AddressDetail:
           ProductiveController.address &&
           ProductiveController.address.addressDetail,
-        CountryID: ProductiveController.address
-          ? ProductiveController.address.country.id
-          : '',
-        AimagID: ProductiveController.address
-          ? ProductiveController.address.aimag.id
-          : '',
-        SoumID: ProductiveController.address
-          ? ProductiveController.address.soum.id
-          : '',
-        BagID: ProductiveController.address
-          ? ProductiveController.address.bag.id
-          : '',
+        // CountryID: ProductiveController.address
+        //   ? ProductiveController.address.country.id
+        //   : '',
+        AimagID: ProductiveController.address?.aimag?.id,
+        SoumID: ProductiveController.address?.soum?.id,
+        // BagID: ProductiveController.address
+        //   ? ProductiveController.address.bag.id
+        //   : '',
         OrgID: ProductiveController.organization.id,
-        MultiAimagID: ProductiveController.address
-          ? ProductiveController.address.aimag.id
-          : '',
-        MultiSoumID: ProductiveController.address
-          ? ProductiveController.address.soum.id
-          : '',
       });
     }
   }, []);
@@ -181,24 +138,10 @@ export default function productiveProjectModal(props) {
           proposedActivity: values.proposedActivity,
           partnerActivity: values.partnerActivity,
           organization: { id: values.OrgID },
-          projectType: { id: 1 },
-          address: {
-            addressDetail: values.AddressDetail,
-            country: {
-              id: values.CountryID,
-            },
-            aimag: {
-              id: values.AimagID,
-            },
-            soum: {
-              id: values.SoumID,
-            },
-            bag: {
-              id: values.BagID,
-            },
-          },
+          projectType: { id: type },
         };
         values.organizationIds = selectedProjectOrg;
+        values.criteriaIds = criteriaListMulti;
         values.soumList = multiSum;
         if (isEditMode) {
           putService(`project/update/${ProductiveController.id}`, values)
@@ -224,6 +167,17 @@ export default function productiveProjectModal(props) {
         errorCatch(info);
       });
   };
+
+  const ProjectChildrenAddress =
+    ProductiveController &&
+    ProductiveController.address.childrenAddress.map(item => item.soum.id);
+
+  const ProjectCriteriaList =
+    ProductiveController &&
+    ProductiveController.projectCriterias.map(item => item.criteria.id);
+
+  // console.log(ProjectCriteriaList);
+
   return (
     <div>
       <Modal
@@ -235,6 +189,7 @@ export default function productiveProjectModal(props) {
         visible={isModalVisible}
         onOk={save}
         onCancel={() => props.close()}
+        maskClosable={false}
       >
         <ContentWrapper>
           <Form
@@ -251,13 +206,33 @@ export default function productiveProjectModal(props) {
                     <Form.Item label="Төслийн нэр:" name="projectName">
                       <Input />
                     </Form.Item>
+                    <Form.Item label="Төсөл хэрэгжүүлэх хугацаа:" name="period">
+                      <InputNumber type="number" />
+                    </Form.Item>
+                    <Form.Item label="Шалгуур үзүүлэлт:" valuePropName="option">
+                      {ProjectCriteriaList === null ? (
+                        <MulticompleteSelect
+                          data={criteriaList}
+                          valueField="id"
+                          size="medium"
+                          onChange={value => selectCriteriaMulti(value)}
+                        />
+                      ) : (
+                        <MulticompleteSelect
+                          data={criteriaList}
+                          defaultValue={ProjectCriteriaList}
+                          valueField="id"
+                          size="medium"
+                          onChange={value => selectCriteriaMulti(value)}
+                        />
+                      )}
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={24} lg={12}>
                     <Form.Item
                       label="Хариуцсан хүн:"
                       name="nameOfAuthorizedPerson"
                     >
-                      <Input />
-                    </Form.Item>
-                    <Form.Item label="Төсөл хэрэгжүүлэх хугацаа:" name="period">
                       <Input />
                     </Form.Item>
                     <Form.Item name="OrgID" label="Байгууллага сонгох:">
@@ -267,51 +242,6 @@ export default function productiveProjectModal(props) {
                         onChange={value => selectOrg(value)}
                       />
                     </Form.Item>
-                  </Col>
-                  <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Улс:" name="CountryID">
-                      <AutoCompleteSelect
-                        valueField="id"
-                        data={stateCountry}
-                        onChange={value => selectCountry(value)}
-                      />
-                    </Form.Item>
-                    <Form.Item label="Аймаг, хот:" name="AimagID">
-                      <AutoCompleteSelect
-                        valueField="id"
-                        data={stateAimag}
-                        onChange={value => selectAimag(value)}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="SoumID"
-                      layout="vertical"
-                      label="Сум, Дүүрэг:"
-                    >
-                      <AutoCompleteSelect
-                        valueField="id"
-                        data={stateSum}
-                        onChange={value => selectSum(value)}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="BagID"
-                      layout="vertical"
-                      label="Баг, Хороо:"
-                    >
-                      <AutoCompleteSelect valueField="id" data={stateBag} />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col xs={24} md={24} lg={24}>
-                    <Form.Item label="Дэлгэрэнгүй хаяг:" name="AddressDetail">
-                      <Input.TextArea />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={[40]}>
-                  <Col xs={24} md={24} lg={12}>
                     <Form.Item label="Аймаг, хот:" name="MultiAimagID">
                       <AutoCompleteSelect
                         valueField="id"
@@ -319,8 +249,6 @@ export default function productiveProjectModal(props) {
                         onChange={value => selectAimag(value)}
                       />
                     </Form.Item>
-                  </Col>
-                  <Col xs={24} md={24} lg={12}>
                     <Form.Item label="Сум, Дүүрэг:" valuePropName="option">
                       <MulticompleteSelect
                         data={stateSum}
@@ -332,6 +260,13 @@ export default function productiveProjectModal(props) {
                     </Form.Item>
                   </Col>
                 </Row>
+                <Row>
+                  <Col xs={24} md={24} lg={24}>
+                    <Form.Item label="Дэлгэрэнгүй хаяг:" name="AddressDetail">
+                      <Input.TextArea />
+                    </Form.Item>
+                  </Col>
+                </Row>
               </TabPane>
               <TabPane tab="Бусад мэдээлэл" key="2">
                 <Row gutter={40}>
@@ -340,13 +275,22 @@ export default function productiveProjectModal(props) {
                       label="Түншлэгч байгууллага:"
                       valuePropName="option"
                     >
-                      <MulticompleteSelect
-                        data={stateOrg}
-                        defaultValue={ProjectOrgList}
-                        valueField="id"
-                        size="medium"
-                        onChange={value => selectProjectOrg(value)}
-                      />
+                      {ProjectOrgList === null ? (
+                        <MulticompleteSelect
+                          data={stateOrg}
+                          valueField="id"
+                          size="medium"
+                          onChange={value => selectProjectOrg(value)}
+                        />
+                      ) : (
+                        <MulticompleteSelect
+                          data={stateOrg}
+                          defaultValue={ProjectOrgList}
+                          valueField="id"
+                          size="medium"
+                          onChange={value => selectProjectOrg(value)}
+                        />
+                      )}
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={24}>
