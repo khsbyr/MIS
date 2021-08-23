@@ -382,6 +382,7 @@ const productiveProject = props => {
             />
             <Column
               header="Төслийн нэр"
+              field="projectName"
               filter
               body={NameBodyTemplate}
               sortable

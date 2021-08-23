@@ -134,7 +134,7 @@ const investment = props => {
   const operationExpense = row => (
     <>
       <span className="p-column-title">Үйл ажиллагаа буюу зардал</span>
-      {row.projectInvestment.costOfCompany}
+      {row.projectInvestment.operationExpense}
     </>
   );
 

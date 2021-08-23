@@ -18,9 +18,11 @@ function mainInfo() {
             {ProjectList.projectName}
           </Descriptions.Item>
           <Descriptions.Item label="Төсөл хэрэгжих байршил:">
-            {ProjectList.address?.country?.name},
-            {ProjectList.address?.aimag?.name},{ProjectList.address?.soum?.name}
-            , {ProjectList.address?.bag?.name}
+            {ProjectList.address?.childrenAddress.map(z => (
+              <p>
+                {z.aimag.name}, {z.soum.name}
+              </p>
+            ))}
           </Descriptions.Item>
           <Descriptions.Item label="Төсөл хэрэгжүүлэх хугацаа">
             {ProjectList.period}
