@@ -1,5 +1,17 @@
-import { Col, Form, Input, Modal, Row, Select, message } from 'antd';
+import {
+  Col,
+  Form,
+  Input,
+  Modal,
+  Row,
+  Select,
+  message,
+  DatePicker,
+} from 'antd';
 import React, { useEffect, useState } from 'react';
+import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import moment from 'moment';
 import {
   postService,
   putService,
@@ -24,6 +36,17 @@ export default function TrainingProgramModal(props) {
     props;
   const [form] = Form.useForm();
   const [stateTrainers, setStateTrainers] = useState(false);
+  const [startDate, setStartDate] = useState([]);
+  const [endDate, setEndDate] = useState([]);
+
+  function onStartDateChange(date, value) {
+    setStartDate(value);
+  }
+
+  function onEndDateChange(date, value) {
+    setEndDate(value);
+  }
+
   useEffect(() => {
     getService(`trainingTeam/getList/${trainingID}`).then(result => {
       if (result) {
@@ -31,8 +54,16 @@ export default function TrainingProgramModal(props) {
       }
     });
     if (isEditMode) {
+      setStartDate(Trainingprogramcontroller.startDate);
+      setEndDate(Trainingprogramcontroller.endDate);
       form.setFieldsValue({
         ...Trainingprogramcontroller,
+        startDate: Trainingprogramcontroller
+          ? Trainingprogramcontroller.startDate
+          : '',
+        endDate: Trainingprogramcontroller
+          ? Trainingprogramcontroller.endDate
+          : '',
       });
     }
   }, []);
@@ -40,6 +71,8 @@ export default function TrainingProgramModal(props) {
     form
       .validateFields()
       .then(values => {
+        values.startDate = startDate;
+        values.endDate = endDate;
         values.training = { id: trainingID };
         if (isEditMode) {
           putService(
@@ -104,23 +137,39 @@ export default function TrainingProgramModal(props) {
                     >
                       <Input />
                     </Form.Item>
-                    <Form.Item
-                      name="duration"
-                      label="Хэрэгжих өдөр:"
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
-                      <Input />
+                    <Form.Item label="Эхэлсэн огноо:">
+                      <DatePicker
+                        format="YYYY-MM-DD HH:mm"
+                        showTime
+                        prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
+                        style={{ width: '100%', height: '40px' }}
+                        placeholder="Эхэлсэн огноо:"
+                        className="FormItem"
+                        onChange={onStartDateChange}
+                        defaultValue={
+                          isEditMode
+                            ? moment(Trainingprogramcontroller.startDate)
+                            : null
+                        }
+                      />
                     </Form.Item>
-                    {/* <Form.Item
-                      name="responsiblePersonName"
-                      label="Хариуцах эзэн:"
-                    >
-                      <Input />
-                    </Form.Item> */}
+
+                    <Form.Item label="Дууссан огноо:">
+                      <DatePicker
+                        format="YYYY-MM-DD HH:mm"
+                        showTime
+                        prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
+                        style={{ width: '100%', height: '40px' }}
+                        placeholder="Дууссан огноо:"
+                        className="FormItem"
+                        onChange={onEndDateChange}
+                        defaultValue={
+                          isEditMode
+                            ? moment(Trainingprogramcontroller.endDate)
+                            : null
+                        }
+                      />
+                    </Form.Item>
                     <Form.Item
                       layout="vertical"
                       label="Хариуцах эзэн:"
@@ -131,10 +180,6 @@ export default function TrainingProgramModal(props) {
                         style={{ width: '100%' }}
                         optionFilterProp="children"
                         maxTagCount="responsive"
-                        // filterOption={(input, option) =>
-                        //   option.children?.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        // }
-                        // onChange={props.onChange}
                       >
                         {stateTrainers &&
                           stateTrainers.map((z, index) => (

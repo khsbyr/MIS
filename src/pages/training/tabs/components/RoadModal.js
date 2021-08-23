@@ -115,7 +115,7 @@ export default function RoadModal(props) {
                 },
               ]}
             >
-              <Input precision="0" suffix=" ₮" />
+              <CurrencyInput precision="0" suffix=" ₮" />
             </Form.Item>
             <Form.Item
               label="Төлбөрийн төрөл"

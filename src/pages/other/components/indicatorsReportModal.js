@@ -11,11 +11,11 @@ import {
   Upload,
 } from 'antd';
 import React, { useContext, useEffect } from 'react';
-import { ToolsContext } from '../../../../context/Tools';
-import { postService, putService } from '../../../../service/service';
-import { errorCatch } from '../../../../tools/Tools';
-import validateMessages from '../../../../tools/validateMessage';
-import ContentWrapper from '../../../training/tabs/components/plan.styled';
+import { ToolsContext } from '../../../context/Tools';
+import { postService, putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import validateMessages from '../../../tools/validateMessage';
+import ContentWrapper from '../../training/tabs/components/plan.styled';
 
 const layout = {
   labelCol: {
@@ -27,7 +27,7 @@ const layout = {
 };
 
 export default function IndicatorsReportModal(props) {
-  const { Trainerscontroller, isModalVisible, isEditMode } = props;
+  const { IndicatorsReportcontroller, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
   const toolsStore = useContext(ToolsContext);
   const loadLazyTimeout = null;
@@ -41,7 +41,7 @@ export default function IndicatorsReportModal(props) {
     onInit();
     if (isEditMode) {
       form.setFieldsValue({
-        ...Trainerscontroller,
+        ...IndicatorsReportcontroller,
       });
     }
   }, []);
@@ -51,7 +51,10 @@ export default function IndicatorsReportModal(props) {
       .validateFields()
       .then(values => {
         if (isEditMode) {
-          putService(`userasd/update/${Trainerscontroller.id}`, values)
+          putService(
+            `feedbackCriteria/update/${IndicatorsReportcontroller.id}`,
+            values
+          )
             .then(() => {
               message.success('Амжилттай хадгаллаа');
               props.close(true);
@@ -60,7 +63,7 @@ export default function IndicatorsReportModal(props) {
               errorCatch(error);
             });
         } else {
-          postService(`personasd/post`, values)
+          postService(`feedbackCriteria/post`, values)
             .then(() => {
               message.success('Амжилттай хадгаллаа');
               props.close(true);
