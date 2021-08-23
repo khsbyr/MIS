@@ -13,6 +13,7 @@ import {
 import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import CurrencyInput from 'react-currency-input-field';
 import AutoCompleteSelect from '../../components/Autocomplete';
 import MulticompleteSelect from '../../components/MulticompleteSelect';
 import { getService, postService, putService } from '../../service/service';
@@ -41,7 +42,8 @@ export default function TrainingModal(props) {
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const [selectedCriteria, setSelectedCriteria] = useState();
-  const [stateSums, setStateSums] = useState([]);
+  const [setAimagSums, setStateAimagSums] = useState([]);
+  const [stateAimag, setStateAimag] = useState([]);
 
   function onStartDateChange(date, value) {
     setStartDate(value);
@@ -105,6 +107,11 @@ export default function TrainingModal(props) {
         setStateCriteria(result || []);
       }
     });
+    getService('aimag/get').then(result => {
+      if (result) {
+        setStateAimag(result || []);
+      }
+    });
 
     if (Trainingcontroller) {
       getService(
@@ -156,9 +163,33 @@ export default function TrainingModal(props) {
   const selectSum = value => {
     getBag(value);
   };
-
-  const selectSums = value => {
-    console.log(value);
+  const getDynamicChildNodes = child => {
+    if (!child) return [];
+    const childs = [];
+    for (let c = 0; c < child.length; c++) {
+      childs.push(
+        <TreeNode value={child[c].id} title={child[c].name} key={child[c].id} />
+      );
+    }
+    return childs;
+  };
+  const getDynamicTreeNodes = () => {
+    const results = [];
+    for (let i = 0; i < stateAimag.length; i++) {
+      results.push(
+        <TreeNode
+          value={stateAimag[i].id}
+          title={stateAimag[i].name}
+          key={stateAimag[i].id}
+        >
+          {getDynamicChildNodes(stateAimag[i].soum)}
+        </TreeNode>
+      );
+    }
+    return results;
+  };
+  const selectAimagSums = value => {
+    setStateAimagSums(value);
   };
   const save = () => {
     form
@@ -220,15 +251,6 @@ export default function TrainingModal(props) {
       .catch(info => {
         errorCatch(info);
       });
-  };
-  const onChange = (currentNode, selectedNodes) => {
-    console.log('onChange::', currentNode, selectedNodes);
-  };
-  const onAction = (node, action) => {
-    console.log('onAction::', action, node);
-  };
-  const onNodeToggle = currentNode => {
-    console.log('onNodeToggle::', currentNode);
   };
   return (
     <div>
@@ -391,40 +413,19 @@ export default function TrainingModal(props) {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={8}>
-                    <Form.Item
-                      name="AimagID"
-                      layout="vertical"
-                      label="aimag songo:"
-                    >
+                    <Form.Item layout="vertical" label="aimag songo:">
                       <TreeSelect
                         showSearch
                         style={{ width: '100%' }}
+                        value={stateAimag}
                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                         placeholder="Please select"
                         allowClear
                         multiple
                         treeDefaultExpandAll
-                        onChange={value => selectSums(value)}
-                        valueField="id"
+                        onChange={value => selectAimagSums(value)}
                       >
-                        <TreeNode
-                          valueField="id"
-                          value={stateAimag.id}
-                          title={stateAimag.name}
-                          // title="stateAimag.name"
-                          data={stateAimag}
-                        >
-                          <TreeNode value="parent 1-0" title="parent 1-0">
-                            <TreeNode value="leaf1" title="my leaf" />
-                            <TreeNode value="leaf2" title="your leaf" />
-                          </TreeNode>
-                          <TreeNode value="parent 1-1" title="parent 1-1">
-                            <TreeNode
-                              value="sss"
-                              title={<b style={{ color: '#08c' }}>sss</b>}
-                            />
-                          </TreeNode>
-                        </TreeNode>
+                        {getDynamicTreeNodes()}
                       </TreeSelect>
                     </Form.Item>
                   </Col>

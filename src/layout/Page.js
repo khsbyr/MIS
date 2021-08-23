@@ -70,12 +70,12 @@ const Activity = loadable({
 });
 
 const Feedback = loadable({
-  loader: () => import('../pages/feedback/feedback'),
+  loader: () => import('../pages/other/feedback'),
   loading: Loader,
 });
 
 const IndicatorsReport = loadable({
-  loader: () => import('../pages/other/IndicatorsReport/IndicatorsReport'),
+  loader: () => import('../pages/other/IndicatorsReport'),
   loading: Loader,
 });
 

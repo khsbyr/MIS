@@ -24,7 +24,7 @@ module.exports = {
     'no-shadow': ['error', { allow: ['state', 'getters'] }],
     'no-param-reassign': ['error', { props: false }],
     'func-names': ['error', 'as-needed'],
-    'linebreak-style': ['error', 'unix'],
+    'linebreak-style': ['error', 'windows'],
     curly: ['error'],
 
     'no-nested-ternary': 'warn',
