@@ -109,7 +109,7 @@ function projectInnovation(props) {
   );
   return (
     <div>
-      <h2 className="title">
+      <h2 className="titleBrief">
         6. Төслийн хүрээнд санал болгож буй инноваци
         <Tooltip title="Нэмэх" arrowPointAtCenter>
           <Button

@@ -90,10 +90,10 @@ export default function projectInnovationModal(props) {
           >
             <Row gutter={30}>
               <Col span={24}>
-                <Form.Item name="scopeName">
+                <Form.Item name="scopeName" label="Хамрах хүрээ">
                   <AutoCompleteSelect
                     valueField="id"
-                    placeholder="Багшаас сонгох"
+                    placeholder="Хамрах хүрээ сонгох"
                     data={stateScpe}
                     onChange={value => selectScope(value)}
                   />
