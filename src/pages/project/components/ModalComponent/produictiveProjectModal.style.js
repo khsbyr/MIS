@@ -81,6 +81,9 @@ const ContentWrapper = styled.div`
     color: #c2c2c2;
     font-size: 14px;
   }
+  .ant-input-number-input-wrap {
+    margin-top: 4px;
+  }
 `;
 
 export default ContentWrapper;

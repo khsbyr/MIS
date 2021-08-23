@@ -110,7 +110,7 @@ function societyActivity(props) {
   );
   return (
     <div>
-      <h2 className="title">
+      <h2 className="titleBrief">
         4. МУ-ын Засгийн газар болон МАА ЭЗЭН төслийн бодлогод нийцүүлж
         хэрэгжүүлэх нийгэм, байгаль орчны үйл ажиллагааны жагсаалт
         <Tooltip title="Нэмэх" arrowPointAtCenter>

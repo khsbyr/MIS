@@ -46,6 +46,7 @@ function societyImpactActivity(props) {
   useEffect(() => {
     onInit();
   }, [lazyParams]);
+
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
@@ -108,7 +109,7 @@ function societyImpactActivity(props) {
   );
   return (
     <div>
-      <h2 className="title">
+      <h2 className="titleBrief">
         5. Байгаль орчин, нийгмийн нөлөөлөл бүхий үйл ажиллагаанууд
         <Tooltip title="Нэмэх" arrowPointAtCenter>
           <Button

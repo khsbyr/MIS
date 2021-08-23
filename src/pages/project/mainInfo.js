@@ -1,27 +1,11 @@
 import { Descriptions } from 'antd';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useProjectStore } from '../../context/ProjectContext';
-import { useToolsStore } from '../../context/Tools';
-import { getService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
 import ContentWrapper from './more/briefDraft.style';
 
-function mainInfo(props) {
-  const { setIsShowLoader } = useToolsStore();
-  const { ProjectList, setProjectList } = useProjectStore();
+function mainInfo() {
+  const { ProjectList } = useProjectStore();
 
-  useEffect(() => {
-    setIsShowLoader(true);
-    getService(`/project/get/${props.projectId}`)
-      .then(result => {
-        setProjectList(result);
-      })
-      .finally(setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        setIsShowLoader(false);
-      });
-  }, []);
   return (
     <div>
       <ContentWrapper>
@@ -34,11 +18,9 @@ function mainInfo(props) {
             {ProjectList.projectName}
           </Descriptions.Item>
           <Descriptions.Item label="Төсөл хэрэгжих байршил:">
-            {' '}
-            {ProjectList.address && ProjectList.address.country.name},{' '}
-            {ProjectList.address && ProjectList.address.aimag.name},{' '}
-            {ProjectList.address && ProjectList.address.soum.name},{' '}
-            {ProjectList.address && ProjectList.address.bag.name}
+            {ProjectList.address?.country?.name},
+            {ProjectList.address?.aimag?.name},{ProjectList.address?.soum?.name}
+            , {ProjectList.address?.bag?.name}
           </Descriptions.Item>
           <Descriptions.Item label="Төсөл хэрэгжүүлэх хугацаа">
             {ProjectList.period}

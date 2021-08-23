@@ -111,7 +111,7 @@ function activity(props) {
   );
   return (
     <div>
-      <h2 className="title">
+      <h2 className="titleBrief">
         3. Үндсэн үйл ажиллагаанууд ба хариуцагч тал
         <Tooltip title="Нэмэх" arrowPointAtCenter>
           <Button
