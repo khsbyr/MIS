@@ -17,7 +17,6 @@ const ContentWrapper = styled.div`
 
   .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
     height: 33px;
-    padding-top: 6px;
     border: none;
     background-color: unset;
   }

@@ -142,14 +142,17 @@ function projectPurpose() {
       >
         <Row gutter={[40, 30]}>
           <Col xs={24} md={24} lg={8}>
-            <Form.Item name="projectObj">
+            <Form.Item name="projectObj" label="Төслийн зорилго">
               <TextArea
                 rows={6}
                 placeholder="Төслийн зорилго"
                 onBlur={e => projectObj(e.target.value)}
               />
             </Form.Item>
-            <Form.Item name="projectBeneficiaries">
+            <Form.Item
+              name="projectBeneficiaries"
+              label="Төслийн ашиг хүртэгчид"
+            >
               <TextArea
                 rows={6}
                 placeholder="Төслийн ашиг хүртэгчид"
@@ -158,14 +161,17 @@ function projectPurpose() {
             </Form.Item>
           </Col>
           <Col xs={24} md={24} lg={8}>
-            <Form.Item name="solutionsStrategy">
+            <Form.Item
+              name="solutionsStrategy"
+              label="Тулгамдаж буй хүндрэл, бэрхшээлүүдийг шийдвэрлэх"
+            >
               <TextArea
                 rows={6}
                 placeholder="Тулгамдаж буй хүндрэл, бэрхшээлүүдийг шийдвэрлэх"
                 onBlur={e => solutionsStrategy(e.target.value)}
               />
             </Form.Item>
-            <Form.Item name="projectEfficiency">
+            <Form.Item name="projectEfficiency" label="Төслийн үр ашиг">
               <TextArea
                 rows={6}
                 placeholder="Төслийн үр ашиг"
@@ -174,14 +180,20 @@ function projectPurpose() {
             </Form.Item>
           </Col>{' '}
           <Col xs={24} md={24} lg={8}>
-            <Form.Item name="marketAssociationsCooperation">
+            <Form.Item
+              name="marketAssociationsCooperation"
+              label="Зах зээлийн холбоо, хамтын ажиллагаа"
+            >
               <TextArea
                 rows={6}
                 placeholder="Зах зээлийн холбоо, хамтын ажиллагаа"
                 onBlur={e => marketAssociationsCooperation(e.target.value)}
               />
             </Form.Item>
-            <Form.Item name="timeAndStability">
+            <Form.Item
+              name="timeAndStability"
+              label="Хугацаа болон тогтвортой байдал"
+            >
               <TextArea
                 rows={6}
                 placeholder="Хугацаа болон тогтвортой байдал"

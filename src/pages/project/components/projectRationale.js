@@ -66,7 +66,7 @@ function projectRationale() {
       >
         <Row gutter={[40, 30]}>
           <Col xs={24} md={24} lg={12}>
-            <Form.Item name="rationale">
+            <Form.Item name="rationale" label="Төслийн үндэслэл">
               <TextArea
                 autoSize={{ minRows: 4, maxRows: 8 }}
                 placeholder="Төслийн үндэслэл"
@@ -75,7 +75,7 @@ function projectRationale() {
             </Form.Item>
           </Col>
           <Col xs={24} md={24} lg={12}>
-            <Form.Item name="challenges">
+            <Form.Item name="challenges" label="Тулгарч буй хүндрэл бэрхшээл">
               <TextArea
                 autoSize={{ minRows: 4, maxRows: 8 }}
                 placeholder="Тулгарч буй хүндрэл бэрхшээл"
