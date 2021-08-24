@@ -158,10 +158,16 @@ const TrainingProgram = props => {
     </>
   );
 
-  const durationtrainerBodyTemplate = row => (
+  const programDateBodyTemplate = row => (
     <>
       <span className="p-column-title">Хэрэгжих хугацаа</span>
-      {row.duration}
+      {row.programDate}
+    </>
+  );
+  const programHoursBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Хэрэгжих цаг</span>
+      {row.programHours}
     </>
   );
   const responsiblepersonameBodyTemplate = row => (
@@ -247,8 +253,16 @@ const TrainingProgram = props => {
               bodyStyle={{ textAlign: 'left' }}
             />
             <Column
-              header="Хэрэгжих өдөр"
-              body={durationtrainerBodyTemplate}
+              header="Хэрэгжих хугацаа"
+              body={programDateBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              bodyStyle={{ textAlign: 'center' }}
+            />
+            <Column
+              header="Хэрэгжих цаг"
+              body={programHoursBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
