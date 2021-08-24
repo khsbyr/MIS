@@ -257,7 +257,7 @@ export default function ConsultingPersonModal(props) {
                   <AutoCompleteSelect
                     className="FormItem"
                     placeholder="Улс сонгох"
-                    defaultValue={[105]}
+                    defaultValue={[107]}
                     valueField="id"
                     data={toolsStore.countryList}
                   />
@@ -298,7 +298,7 @@ export default function ConsultingPersonModal(props) {
                       defaultValue={
                         isEditMode
                           ? Trainerscontroller &&
-                            moment(Trainerscontroller.birthDate)
+                            moment(Trainerscontroller.birthDate).zone(0)
                           : BirthDatee
                       }
                     />

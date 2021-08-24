@@ -55,7 +55,7 @@ const TrainingList = () => {
     }
     getService('training/get', list)
       .then(result => {
-        const listResult = result.content || [];
+        const listResult = result || [];
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
