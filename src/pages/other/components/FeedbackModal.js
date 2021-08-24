@@ -20,14 +20,14 @@ const layout = {
 };
 
 export default function FeedbackModal(props) {
-  const { Feedbackcontroller, isModalVisible, isEditMode, disabled } = props;
+  const { Feedbackcontroller, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
   const [valueCheck, setValueCheck] = useState();
   const [stateFeedbackType, setStateFeedbackType] = useState([]);
   const [stateFeedbackID, setStateFeedbackID] = useState([]);
   const [stateUser, setStateUser] = useState([]);
   const [stateUserID, setStateUserID] = useState([]);
-  const [stateCriteria, setStateCriteria] = useState([23]);
+  const [stateCriteria, setStateCriteria] = useState([]);
   const [stateCriteriaID, setStateCriteriaID] = useState([]);
   const [stateOrg, setStateOrg] = useState([]);
   const [stateOrgID, setStateOrgID] = useState([]);
@@ -188,7 +188,7 @@ export default function FeedbackModal(props) {
                     onChange={onDateChange}
                     defaultValue={
                       Feedbackcontroller &&
-                      moment(Feedbackcontroller.feedbackDate)
+                      moment(Feedbackcontroller.feedbackDate).zone(0)
                     }
                   />
                 </Form.Item>
@@ -284,11 +284,16 @@ export default function FeedbackModal(props) {
                   <AutoCompleteSelect
                     placeholder="Шалгуур үзүүлэлт"
                     valueField="id"
+                    // defaultValue={
+                    //   Feedbackcontroller.criteria &&
+                    //   Feedbackcontroller.criteria[23].name
+                    // }
                     defaultValue={
-                      Feedbackcontroller.stateCriteria &&
-                      Feedbackcontroller.stateCriteria[23].name
+                      isEditMode
+                        ? Feedbackcontroller.stateCriteria &&
+                          Feedbackcontroller.stateCriteria[23].name
+                        : null
                     }
-                    disabled={disabled}
                     data={stateCriteria}
                     size="medium"
                     onChange={value => selectCriteria(value)}

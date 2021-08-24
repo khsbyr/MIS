@@ -10,10 +10,9 @@ import {
   Row,
   TreeSelect,
 } from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import CurrencyInput from 'react-currency-input-field';
+import CurrencyInput from 'react-currency-input';
 import AutoCompleteSelect from '../../components/Autocomplete';
 import MulticompleteSelect from '../../components/MulticompleteSelect';
 import { getService, postService, putService } from '../../service/service';
@@ -64,27 +63,15 @@ export default function TrainingModal(props) {
           if (isEditMode) {
             setStartDate(Trainingcontroller.trainingStartDate);
             setEndDate(Trainingcontroller.trainingEndDate);
+            setValueAddress(ProjectChildrenAddress);
             form.setFieldsValue({
               ...Trainingcontroller,
               CriteriaID: list.map(item => item.id),
               orgID: Trainingcontroller.organization
                 ? Trainingcontroller.organization.id
                 : '',
-              CountryID: Trainingcontroller.address
-                ? Trainingcontroller.address.country.id
-                : '',
-              AimagID: Trainingcontroller.address
-                ? Trainingcontroller.address.aimag.id
-                : '',
-              SoumID: Trainingcontroller.address
-                ? Trainingcontroller.address.soum.id
-                : '',
-              BagID: Trainingcontroller.address
-                ? Trainingcontroller.address.bag.id
-                : '',
-              AddressDetail: Trainingcontroller.address
-                ? Trainingcontroller.address.addressDetail
-                : '',
+              AimagID: Trainingcontroller.address?.aimag?.id,
+              SoumID: Trainingcontroller.address?.soum?.id,
               totalBudget: Trainingcontroller.trainingBudget
                 ? Trainingcontroller.trainingBudget.totalBudget
                 : '',
@@ -149,7 +136,6 @@ export default function TrainingModal(props) {
   const SelectCriteria = value => {
     setSelectedCriteria(value);
   };
-
   const save = () => {
     form
       .validateFields()
@@ -157,30 +143,14 @@ export default function TrainingModal(props) {
         values.organization = { id: values.orgID };
         values.trainingStartDate = startDate;
         values.trainingEndDate = endDate;
-        values.address = {
-          org: {
-            id: values.orgID,
-          },
-          country: {
-            id: values.CountryID,
-          },
-          aimag: {
-            id: values.AimagID,
-          },
-          soum: {
-            id: values.SoumID,
-          },
-          bag: {
-            id: values.BagID,
-          },
-          addressDetail: values.AddressDetail,
-        };
+        values.soumList = valueAddress;
         values.isTrue = true;
         if (isEditMode) {
           const saveData = {
             training: values,
             criteriaIds: values.CriteriaID,
             totalBudget: values.totalBudget,
+            soumList: valueAddress,
           };
           putService(`training/update/${Trainingcontroller.id}`, saveData)
             .then(() => {
@@ -195,6 +165,7 @@ export default function TrainingModal(props) {
             training: values,
             criteriaIds: values.CriteriaID,
             totalBudget: values.totalBudget,
+            soumList: valueAddress,
           };
 
           postService('training/post', saveData)
@@ -288,7 +259,7 @@ export default function TrainingModal(props) {
                         onChange={onStartDateChange}
                         defaultValue={
                           Trainingcontroller &&
-                          moment(Trainingcontroller.trainingStartDate)
+                          moment(Trainingcontroller.trainingStartDate).zone(0)
                         }
                       />
                     </Form.Item>
@@ -303,7 +274,7 @@ export default function TrainingModal(props) {
                         onChange={onEndDateChange}
                         defaultValue={
                           Trainingcontroller &&
-                          moment(Trainingcontroller.trainingEndDate)
+                          moment(Trainingcontroller.trainingEndDate).zone(0)
                         }
                       />
                     </Form.Item>
@@ -355,13 +326,6 @@ export default function TrainingModal(props) {
                           {getDynamicTreeNodes()}
                         </TreeSelect>
                       )}
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col xs={24} md={24} lg={24}>
-                    <Form.Item label="Хаяг:" name="AddressDetail">
-                      <TextArea style={{ width: '100%', height: '80px' }} />
                     </Form.Item>
                   </Col>
                 </Row>
