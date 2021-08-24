@@ -105,7 +105,7 @@ export default function StationaryModal(props) {
                 },
               ]}
             >
-              <Input precision="0" suffix=" ₮" />
+              <CurrencyInput precision="0" suffix=" ₮" />
             </Form.Item>
             <Form.Item
               name="quantity"

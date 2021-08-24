@@ -10,6 +10,7 @@ import {
   Tabs,
   Upload,
   InputNumber,
+  TreeSelect,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
@@ -21,6 +22,7 @@ import ContentWrapper from '../components/ModalComponent/produictiveProjectModal
 
 const { TextArea } = Input;
 const { TabPane } = Tabs;
+const { TreeNode } = TreeSelect;
 
 const Uploadprops = {
   name: 'file',
@@ -41,41 +43,63 @@ export default function productiveProjectModal(props) {
   const { ProductiveController, isModalVisible, isEditMode, type } = props;
   const [form] = Form.useForm();
   const [stateAimag, setStateAimag] = useState([]);
-  const [stateSum, setStateSum] = useState([]);
   const [criteriaList, setCriteriaList] = useState([]);
   const [criteriaListMulti, setCriteriaListMulti] = useState([]);
   const [stateOrg, setStateOrg] = useState([]);
   const [selectedOrg, setSelectedOrg] = useState();
   const [selectedProjectOrg, setSelectedProjectOrg] = useState([]);
-  const [multiSum, setMultiSum] = useState();
+  const [valueAddress, setValueAddress] = useState(undefined);
 
-  const getSum = aimagId => {
-    getService(`soum/getList/${aimagId}`, {}).then(result => {
-      if (result) {
-        setStateSum(result || []);
-      }
-    });
+  const ProjectOrgList =
+    ProductiveController &&
+    ProductiveController.projectOrganizations.map(item => item.organization.id);
+
+  const ProjectChildrenAddress =
+    ProductiveController &&
+    ProductiveController.address.childrenAddress.map(item => item.soum.id);
+
+  const ProjectCriteriaList = ProductiveController?.projectCriterias?.map(
+    item => item.criteria.id
+  );
+
+  const onChangeAddress = value => {
+    setValueAddress(value);
   };
 
-  const selectAimag = value => {
-    getSum(value);
+  const getDynamicChildNodes = child => {
+    const childs = [];
+    for (let c = 0; c < child.length; c++) {
+      childs.push(
+        <TreeNode value={child[c].id} title={child[c].name} key={child[c].id} />
+      );
+    }
+    return childs;
+  };
+
+  const getDynamicTreeNodes = () => {
+    const results = [];
+    for (let i = 0; i < stateAimag.length; i++) {
+      results.push(
+        <TreeNode
+          value={stateAimag[i].id + 400}
+          title={stateAimag[i].name}
+          key={stateAimag[i].id + 400}
+          disabled
+        >
+          {getDynamicChildNodes(stateAimag[i].soums)}
+        </TreeNode>
+      );
+    }
+    return results;
   };
 
   const selectOrg = value => {
     setSelectedOrg(value);
   };
 
-  const selectSumMulti = value => {
-    setMultiSum(value);
-  };
-
   const selectCriteriaMulti = value => {
     setCriteriaListMulti(value);
   };
-
-  const ProjectOrgList =
-    ProductiveController &&
-    ProductiveController.projectOrganizations.map(item => item.organization.id);
 
   useEffect(() => {
     getService('criteria/getListByForWhatId/2').then(result => {
@@ -93,30 +117,15 @@ export default function productiveProjectModal(props) {
         setStateAimag(result || []);
       }
     });
-    if (ProductiveController !== null) {
-      getService(
-        `soum/getList/${ProductiveController.address?.aimag?.id}`
-      ).then(result => {
-        if (result) {
-          setStateSum(result || []);
-        }
-      });
-    }
+
     if (isEditMode) {
       setSelectedProjectOrg(ProjectOrgList);
+      setValueAddress(ProjectChildrenAddress);
+      setCriteriaListMulti(ProjectCriteriaList);
       form.setFieldsValue({
         ...ProductiveController,
-        AddressDetail:
-          ProductiveController.address &&
-          ProductiveController.address.addressDetail,
-        // CountryID: ProductiveController.address
-        //   ? ProductiveController.address.country.id
-        //   : '',
         AimagID: ProductiveController.address?.aimag?.id,
         SoumID: ProductiveController.address?.soum?.id,
-        // BagID: ProductiveController.address
-        //   ? ProductiveController.address.bag.id
-        //   : '',
         OrgID: ProductiveController.organization.id,
       });
     }
@@ -142,7 +151,7 @@ export default function productiveProjectModal(props) {
         };
         values.organizationIds = selectedProjectOrg;
         values.criteriaIds = criteriaListMulti;
-        values.soumList = multiSum;
+        values.soumList = valueAddress;
         if (isEditMode) {
           putService(`project/update/${ProductiveController.id}`, values)
             .then(() => {
@@ -167,16 +176,6 @@ export default function productiveProjectModal(props) {
         errorCatch(info);
       });
   };
-
-  const ProjectChildrenAddress =
-    ProductiveController &&
-    ProductiveController.address.childrenAddress.map(item => item.soum.id);
-
-  const ProjectCriteriaList =
-    ProductiveController &&
-    ProductiveController.projectCriterias.map(item => item.criteria.id);
-
-  // console.log(ProjectCriteriaList);
 
   return (
     <div>
@@ -213,7 +212,7 @@ export default function productiveProjectModal(props) {
                       {ProjectCriteriaList === null ? (
                         <MulticompleteSelect
                           data={criteriaList}
-                          valueField="id"
+                          valuefield="id"
                           size="medium"
                           onChange={value => selectCriteriaMulti(value)}
                         />
@@ -221,7 +220,7 @@ export default function productiveProjectModal(props) {
                         <MulticompleteSelect
                           data={criteriaList}
                           defaultValue={ProjectCriteriaList}
-                          valueField="id"
+                          valuefield="id"
                           size="medium"
                           onChange={value => selectCriteriaMulti(value)}
                         />
@@ -242,34 +241,43 @@ export default function productiveProjectModal(props) {
                         onChange={value => selectOrg(value)}
                       />
                     </Form.Item>
-                    <Form.Item label="Аймаг, хот:" name="MultiAimagID">
-                      <AutoCompleteSelect
-                        valueField="id"
-                        data={stateAimag}
-                        onChange={value => selectAimag(value)}
-                      />
-                    </Form.Item>
-                    <Form.Item label="Сум, Дүүрэг:" valuePropName="option">
-                      <MulticompleteSelect
-                        data={stateSum}
-                        defaultValue={ProjectChildrenAddress}
-                        valueField="id"
-                        size="medium"
-                        onChange={value => selectSumMulti(value)}
-                      />
+                    <Form.Item label="Хаяг:">
+                      {ProjectChildrenAddress === null ? (
+                        <TreeSelect
+                          showSearch
+                          style={{ width: '100%' }}
+                          value={valueAddress}
+                          dropdownStyle={{ maxHeight: 450, overflow: 'auto' }}
+                          placeholder="Сонгох"
+                          allowClear
+                          multiple
+                          treeDefaultExpandAll
+                          maxTagCount="responsive"
+                          onChange={onChangeAddress}
+                        >
+                          {getDynamicTreeNodes()}
+                        </TreeSelect>
+                      ) : (
+                        <TreeSelect
+                          showSearch
+                          style={{ width: '100%' }}
+                          defaultValue={ProjectChildrenAddress}
+                          value={valueAddress}
+                          dropdownStyle={{ maxHeight: 450, overflow: 'auto' }}
+                          placeholder="Сонгох"
+                          allowClear
+                          multiple
+                          treeDefaultExpandAll
+                          maxTagCount="responsive"
+                          onChange={onChangeAddress}
+                        >
+                          {getDynamicTreeNodes()}
+                        </TreeSelect>
+                      )}
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row>
-                  <Col xs={24} md={24} lg={24}>
-                    <Form.Item label="Дэлгэрэнгүй хаяг:" name="AddressDetail">
-                      <Input.TextArea />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </TabPane>
-              <TabPane tab="Бусад мэдээлэл" key="2">
-                <Row gutter={40}>
                   <Col xs={24} md={24} lg={24}>
                     <Form.Item
                       label="Түншлэгч байгууллага:"
@@ -293,6 +301,10 @@ export default function productiveProjectModal(props) {
                       )}
                     </Form.Item>
                   </Col>
+                </Row>
+              </TabPane>
+              <TabPane tab="Бусад мэдээлэл" key="2">
+                <Row gutter={40}>
                   <Col xs={24} md={24} lg={24}>
                     <Form.Item
                       name="expierenceActivity"

@@ -2,64 +2,72 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
-  faPlus,
   faPrint,
   faTrash,
+  faPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState } from 'react';
-import { putService } from '../../service/service';
+import React, { useContext, useEffect, useState } from 'react';
+import moment from 'moment';
+import { ToolsContext } from '../../context/Tools';
+import { getService, deleteService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
-import FeedbackModal from './components/feedbackModal';
+import FeedbackModal from './components/FeedbackModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
 const Feedback = () => {
-  // const loadLazyTimeout = null;
-  // const [list, setList] = useState([]);
+  const loadLazyTimeout = null;
+  const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+
   const [lazyParams] = useState({
     page: 0,
   });
-  // const PAGESIZE = 20;
+  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  // const [trainingID, setTrainingID] = useState([]);
-  // const [orgID, setOrgID] = useState([]);
-  // const toolsStore = useContext(ToolsContext);
+  const toolsStore = useContext(ToolsContext);
+
   const onInit = () => {
-    // toolsStore.setIsShowLoader(true);
-    // if (loadLazyTimeout) {
-    //   clearTimeout(loadLazyTimeout);
-    // }
-    // getService(`training/get`, list)
-    //   .then(result => {
-    //     const listResult = result.trainingTeams || [];
-    //     setOrgID(result.organization.id);
-    //     setTrainingID(result.id);
-    //     listResult.forEach((item, index) => {
-    //       item.index = lazyParams.page * PAGESIZE + index + 1;
-    //     });
-    //     setList(listResult);
-    //     setSelectedRows([]);
-    //   })
-    //   .finally(toolsStore.setIsShowLoader(false))
-    //   .catch(error => {
-    //     errorCatch(error);
-    //     toolsStore.setIsShowLoader(false);
-    //   });
+    toolsStore.setIsShowLoader(true);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    getService('feedback/get', list)
+      .then(result => {
+        const listResult = result.content || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
+        setSelectedRows([]);
+      })
+      .finally(toolsStore.setIsShowLoader(false))
+      .catch(error => {
+        errorCatch(error);
+        toolsStore.setIsShowLoader(false);
+      });
   };
 
-  useEffect(() => {}, [lazyParams]);
+  useEffect(() => {
+    onInit();
+  }, [lazyParams]);
 
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
+  };
+
+  const edit = row => {
+    editRow = row;
+    isEditMode = true;
+    setIsModalVisible(true);
   };
 
   const handleDeleted = row => {
@@ -67,7 +75,8 @@ const Feedback = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`trainingTeam/delete/${row.id}`)
+
+    deleteService(`feedback/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -91,12 +100,6 @@ const Feedback = () => {
       onCancel() {},
     });
   }
-
-  const edit = row => {
-    editRow = row;
-    isEditMode = true;
-    setIsModalVisible(true);
-  };
 
   const pop = row => {
     if (row.length === 0) {
@@ -126,16 +129,53 @@ const Feedback = () => {
     if (isSuccess) onInit();
   };
 
+  const indexBodyTemplate = row => (
+    <>
+      <span className="p-column-title">№</span>
+      {row.index}
+    </>
+  );
+
+  const feedbackDateBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Огноо</span>
+      {moment(row.feedbackDate && row.feedbackDate).format('YYYY-MM-DD')}
+    </>
+  );
+
+  const feedbackTypeBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Санал, гомдлын төрөл</span>
+      {row.feedbackType.name}
+    </>
+  );
+  const complainantBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Санал, гомдол гаргагч</span>
+      {row.complainant}
+    </>
+  );
+  const userBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Хүлээн авагч</span>
+      {row.user && row.user.firstname}
+    </>
+  );
+  const measuresBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Хэлбэр</span>
+      {row.measures}
+    </>
+  );
   return (
     <ContentWrapper>
       <div className="button-demo">
-        {' '}
         <Content>
           <Row>
-            <Col xs={24} md={24} lg={14}>
+            <Col xs={24} md={12} lg={14}>
               <p className="title">Санал гомдол</p>
             </Col>
-            <Col xs={24} md={24} lg={10}>
+            <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col>
                   <Tooltip title="Хэвлэх" arrowPointAtCenter>
@@ -176,33 +216,62 @@ const Feedback = () => {
         </Content>
         <div className="datatable-responsive-demo">
           <DataTable
-            editMode="cell"
-            className="p-datatable-responsive-demo"
-            // value={list}
+            value={list}
             removableSort
             paginator
             rows={10}
+            className="p-datatable-responsive-demo"
             selection={selectedRows}
+            // onRowClick={edit}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
           >
-            <Column field="index" header="№" style={{ width: 40 }} />
-            <Column header="Огноо" field="mission" />
-            <Column header="Санал, гомдлын төрөл" />
-            <Column header="Санал, гомдол гаргагч" />
-            <Column header="Хүлээн авагч" />
-            <Column header="Хэлбэр (албан бичиг, мэдээлэл холбооны технологиор дамжуулан)" />
-            <Column header="Шийдвэрлэсэн эсэх" />
-            <Column header="Сэтгэл ханамж" />
-            <Column headerStyle={{ width: '7rem' }} body={action} />
+            <Column
+              field="index"
+              header="№"
+              body={indexBodyTemplate}
+              style={{ width: 40 }}
+            />
+            <Column
+              field="feedbackDate"
+              body={feedbackDateBodyTemplate}
+              header="Огноо"
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              header="Санал, гомдлын төрөл"
+              field="feedbackType.name"
+              sortable
+              filter
+              body={feedbackTypeBodyTemplate}
+            />
+            <Column
+              header="Санал, гомдол гаргагч"
+              field="complainant"
+              body={complainantBodyTemplate}
+            />
+            <Column
+              header="Хүлээн авагч"
+              field="user.firstname"
+              body={userBodyTemplate}
+            />
+            <Column
+              header="Хэлбэр"
+              field="measures"
+              body={measuresBodyTemplate}
+            />
+            <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <FeedbackModal
-              Plancontroller={editRow}
+              Feedbackcontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
+              isEditMode={isEditMode}
             />
           )}
         </div>
@@ -210,4 +279,5 @@ const Feedback = () => {
     </ContentWrapper>
   );
 };
+
 export default Feedback;
