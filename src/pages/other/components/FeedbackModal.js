@@ -38,7 +38,6 @@ export default function FeedbackModal(props) {
     setDate(value);
   }
   const onChangeCheck = e => {
-    console.log(e.target.value);
     setValueCheck(e.target.value);
   };
   useEffect(() => {
@@ -110,7 +109,6 @@ export default function FeedbackModal(props) {
     setStateOrgID(value);
   };
   const selectShape = value => {
-    console.log(value);
     setStateShapeID(value);
   };
 
