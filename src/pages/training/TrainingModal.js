@@ -1,9 +1,19 @@
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Col, DatePicker, Form, Input, message, Modal, Row } from 'antd';
+import {
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Modal,
+  Row,
+  TreeSelect,
+} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import CurrencyInput from 'react-currency-input-field';
 import AutoCompleteSelect from '../../components/Autocomplete';
 import MulticompleteSelect from '../../components/MulticompleteSelect';
 import { getService, postService, putService } from '../../service/service';
@@ -20,6 +30,8 @@ const layout = {
     span: 22,
   },
 };
+const { TreeNode } = TreeSelect;
+
 export default function TrainingModal(props) {
   const { Trainingcontroller, isModalVisible, isEditMode, trainingID } = props;
   const [form] = Form.useForm();
@@ -27,9 +39,13 @@ export default function TrainingModal(props) {
   const [startDate, setStartDate] = useState([]);
   const [endDate, setEndDate] = useState([]);
   const [stateCriteria, setStateCriteria] = useState([]);
-  const [stateSum, setStateSum] = useState([]);
-  const [stateBag, setStateBag] = useState([]);
   const [selectedCriteria, setSelectedCriteria] = useState();
+  const [valueAddress, setValueAddress] = useState(undefined);
+  const [stateAimag, setStateAimag] = useState([]);
+
+  const ProjectChildrenAddress =
+    Trainingcontroller &&
+    Trainingcontroller.address.childrenAddress.map(item => item.soum.id);
 
   function onStartDateChange(date, value) {
     setStartDate(value);
@@ -93,56 +109,45 @@ export default function TrainingModal(props) {
         setStateCriteria(result || []);
       }
     });
-
-    if (Trainingcontroller) {
-      getService(
-        `soum/getList/${
-          Trainingcontroller && Trainingcontroller.address.aimag.id
-        }`
-      ).then(result => {
-        if (result) {
-          setStateSum(result || []);
-        }
-      });
-
-      getService(
-        `bag/getList/${
-          Trainingcontroller && Trainingcontroller.address.soum.id
-        }`
-      ).then(result => {
-        if (result) {
-          setStateBag(result || []);
-        }
-      });
-    }
+    getService('aimag/get').then(result => {
+      if (result) {
+        setStateAimag(result || []);
+      }
+    });
   }, [Trainingcontroller, form, isEditMode]);
 
+  const onChangeAddress = value => {
+    setValueAddress(value);
+  };
+
+  const getDynamicChildNodes = child => {
+    const childs = [];
+    for (let c = 0; c < child.length; c++) {
+      childs.push(
+        <TreeNode value={child[c].id} title={child[c].name} key={child[c].id} />
+      );
+    }
+    return childs;
+  };
+
+  const getDynamicTreeNodes = () => {
+    const results = [];
+    for (let i = 0; i < stateAimag.length; i++) {
+      results.push(
+        <TreeNode
+          value={stateAimag[i].id + 400}
+          title={stateAimag[i].name}
+          key={stateAimag[i].id + 400}
+          disabled
+        >
+          {getDynamicChildNodes(stateAimag[i].soums)}
+        </TreeNode>
+      );
+    }
+    return results;
+  };
   const SelectCriteria = value => {
     setSelectedCriteria(value);
-  };
-
-  const getSum = aimagId => {
-    getService(`soum/getList/${aimagId}`, {}).then(result => {
-      if (result) {
-        setStateSum(result || []);
-      }
-    });
-  };
-
-  const selectAimag = value => {
-    getSum(value);
-  };
-
-  const getBag = sumID => {
-    getService(`bag/getList/${sumID}`, {}).then(result => {
-      if (result) {
-        setStateBag(result || []);
-      }
-    });
-  };
-
-  const selectSum = value => {
-    getBag(value);
   };
 
   const save = () => {
@@ -206,7 +211,6 @@ export default function TrainingModal(props) {
         errorCatch(info);
       });
   };
-
   return (
     <div>
       <Modal
@@ -271,7 +275,7 @@ export default function TrainingModal(props) {
                         },
                       ]}
                     >
-                      <Input precision="0" suffix=" ₮" />
+                      <CurrencyInput precision="0" suffix=" ₮" />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={8}>
@@ -305,56 +309,6 @@ export default function TrainingModal(props) {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={8}>
-                    <Form.Item label="Улс:" name="CountryID">
-                      <AutoCompleteSelect
-                        valueField="id"
-                        data={toolsStore.countryList}
-                        size="medium"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} md={24} lg={8}>
-                    <Form.Item
-                      name="AimagID"
-                      layout="vertical"
-                      label="Аймаг, Нийслэл:"
-                    >
-                      <AutoCompleteSelect
-                        valueField="id"
-                        data={toolsStore.aimagList}
-                        size="medium"
-                        onChange={value => selectAimag(value)}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} md={24} lg={8}>
-                    <Form.Item
-                      name="SoumID"
-                      layout="vertical"
-                      label="Сум, Дүүрэг:"
-                    >
-                      <AutoCompleteSelect
-                        valueField="id"
-                        data={stateSum}
-                        size="medium"
-                        onChange={value => selectSum(value)}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} md={24} lg={8}>
-                    <Form.Item
-                      name="BagID"
-                      layout="vertical"
-                      label="Баг, Хороо:"
-                    >
-                      <AutoCompleteSelect
-                        valueField="id"
-                        data={stateBag}
-                        size="medium"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} md={24} lg={8}>
                     <Form.Item
                       name="orgID"
                       layout="vertical"
@@ -365,6 +319,42 @@ export default function TrainingModal(props) {
                         data={toolsStore.orgList}
                         size="medium"
                       />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={24} lg={8}>
+                    <Form.Item label="Хаяг:">
+                      {ProjectChildrenAddress === null ? (
+                        <TreeSelect
+                          showSearch
+                          style={{ width: '100%' }}
+                          value={valueAddress}
+                          dropdownStyle={{ maxHeight: 450, overflow: 'auto' }}
+                          placeholder="Сонгох"
+                          allowClear
+                          multiple
+                          treeDefaultExpandAll
+                          maxTagCount="responsive"
+                          onChange={onChangeAddress}
+                        >
+                          {getDynamicTreeNodes()}
+                        </TreeSelect>
+                      ) : (
+                        <TreeSelect
+                          showSearch
+                          style={{ width: '100%' }}
+                          defaultValue={ProjectChildrenAddress}
+                          value={valueAddress}
+                          dropdownStyle={{ maxHeight: 450, overflow: 'auto' }}
+                          placeholder="Сонгох"
+                          allowClear
+                          multiple
+                          treeDefaultExpandAll
+                          maxTagCount="responsive"
+                          onChange={onChangeAddress}
+                        >
+                          {getDynamicTreeNodes()}
+                        </TreeSelect>
+                      )}
                     </Form.Item>
                   </Col>
                 </Row>

@@ -10,6 +10,13 @@ const ContentWrapper = styled.div`
     color: #0d0d0d;
     margin: 20px 0px 20px 0px;
   }
+
+  .titleBrief {
+    font-size: 15px;
+    font-weight: bold;
+    color: #0d0d0d;
+    margin: 20px 0px 20px 0px;
+  }
 `;
 
 export default ContentWrapper;

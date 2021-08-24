@@ -1,29 +1,24 @@
+import { Col, Row } from 'antd';
 import React from 'react';
-import { Input, Row, Col } from 'antd';
-import ContentWrapper from './more/briefDraft.style';
-import ProjectPurpose from './components/projectPurpose';
 import Activity from './components/activity';
+import Finance from './components/finance';
+import ProjectImplementer from './components/projectImplementer';
+import ProjectInnovation from './components/projectInnovation';
+import ProjectPurpose from './components/projectPurpose';
+import ProjectRationale from './components/projectRationale';
+import Result from './components/result';
 import SocietyActivity from './components/societyActivity';
 import SocietyImpactActivity from './components/societyImpactActivity';
-import ProjectInnovation from './components/projectInnovation';
-import ProjectImplementer from './components/projectImplementer';
-import Finance from './components/finance';
-import Result from './components/result';
-
-const { TextArea } = Input;
+import ContentWrapper from './more/briefDraft.style';
 
 const BriefDraft = props => (
   <ContentWrapper>
-    <h2 className="title">1. Төслийн үндэслэл болон тулгамдаж буй асуудал</h2>
     <Row gutter={[40, 30]}>
-      <Col xs={24} md={24} lg={12}>
-        <TextArea rows={4} placeholder="Төслийн үндэслэл" />
+      <Col xs={24} md={24} lg={24}>
+        <ProjectRationale projectId={props.projectId} />
       </Col>
-      <Col xs={24} md={24} lg={12}>
-        <TextArea rows={4} placeholder="Тулгарч буй хүндрэл бэрхшээл" />
-      </Col>
-      <Col>
-        <ProjectPurpose />
+      <Col xs={24} md={24} lg={24}>
+        <ProjectPurpose projectId={props.projectId} />
       </Col>
       <Col>
         <Activity projectId={props.projectId} />

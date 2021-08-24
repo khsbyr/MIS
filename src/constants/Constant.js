@@ -60,6 +60,21 @@ export const criteriaFrequencyData = [
   },
 ];
 
+export const shapeData = [
+  {
+    id: '1',
+    name: 'Албан бичиг',
+  },
+  {
+    id: 2,
+    name: 'Мэдээлэл холбооны технологиор дамжуулан',
+  },
+  {
+    id: 3,
+    name: 'Фэйсбүүк',
+  },
+];
+
 export default {
   criteriaFrequencyData,
 };

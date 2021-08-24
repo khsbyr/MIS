@@ -70,27 +70,17 @@ const Activity = loadable({
 });
 
 const Feedback = loadable({
-  loader: () => import('../pages/feedback/feedback'),
+  loader: () => import('../pages/other/feedback'),
   loading: Loader,
 });
 
 const IndicatorsReport = loadable({
-  loader: () => import('../pages/other/IndicatorsReport/IndicatorsReport'),
+  loader: () => import('../pages/other/IndicatorsReport'),
   loading: Loader,
 });
 
 const ProductiveProject = loadable({
   loader: () => import('../pages/project/productiveProject'),
-  loading: Loader,
-});
-
-const InnovativeProject = loadable({
-  loader: () => import('../pages/project/innovativeProject'),
-  loading: Loader,
-});
-
-const FactoryProject = loadable({
-  loader: () => import('../pages/project/factoryProject'),
   loading: Loader,
 });
 
@@ -155,13 +145,13 @@ const Page = ({ route }) => {
 
       /** Төсөл */
       case 'Productive Partnership Project'.toLowerCase():
-        return <ProductiveProject />;
+        return <ProductiveProject type={1} />;
 
       case 'Innovative project'.toLowerCase():
-        return <InnovativeProject />;
+        return <ProductiveProject type={2} />;
 
       case 'Factory'.toLowerCase():
-        return <FactoryProject />;
+        return <ProductiveProject type={3} />;
 
       case 'Young Veterinarian Program'.toLowerCase():
         return <VeterinarianProject />;

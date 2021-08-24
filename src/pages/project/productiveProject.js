@@ -18,6 +18,7 @@ import {
   Select,
   Tooltip,
   Tag,
+  Form,
 } from 'antd';
 import moment from 'moment';
 import { Column } from 'primereact/column';
@@ -37,7 +38,7 @@ const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const productiveProject = () => {
+const productiveProject = props => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -47,21 +48,24 @@ const productiveProject = () => {
   const toolsStore = useToolsStore();
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
+  const [stateOrga, setStateOrga] = useState([]);
+  const [status, setStatus] = useState();
+  const [projectID, setProjectID] = useState();
   const history = useHistory();
+  const [form] = Form.useForm();
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('project/getByProjectTypeId/1', list)
+    getService(`project/getByProjectTypeId/${props.type}`, list)
       .then(result => {
         const listResult = result;
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
-        setSelectedRows([]);
       })
       .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
@@ -72,14 +76,39 @@ const productiveProject = () => {
 
   useEffect(() => {
     onInit();
+    getService('organization/get').then(result => {
+      if (result) {
+        setStateOrga(result.content || []);
+      }
+    });
+    getService('projectStatus/get').then(result => {
+      if (result) {
+        setStatus(result || []);
+      }
+    });
+    form.setFieldsValue({
+      ...list,
+    });
   }, [lazyParams]);
-
-  const selectedStatus = event => {
+  const selectedStatus = (event, row) => {
     event.preventDefault();
     event.stopPropagation();
+    setProjectID(row.id);
   };
 
-  const onChangeStatus = () => {};
+  const onChangeStatus = value => {
+    const datas = {
+      statusId: value,
+      projectId: projectID,
+    };
+    putService(`project/updateStatus`, datas)
+      .then(() => {
+        message.success('Амжилттай хадгаллаа');
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+  };
 
   const getTraining = orgId => {
     getService(`training/getList/${orgId}`, {}).then(result => {
@@ -187,13 +216,6 @@ const productiveProject = () => {
     </>
   );
 
-  // const orgNameBodyTemplate = row => (
-  //   <>
-  //     <span className="p-column-title">Байгууллагын нэр</span>
-  //     {row.trainingBudget && row.trainingBudget.totalBudget}
-  //   </>
-  // );
-
   const userBodyTemplate = row => (
     <>
       <span className="p-column-title">Хариуцсан хүн</span>
@@ -215,20 +237,51 @@ const productiveProject = () => {
     </>
   );
 
+  const getColor = id => {
+    switch (id) {
+      case 1:
+        return 'success';
+      case 2:
+        return 'error';
+      case 3:
+        return 'processing';
+      default:
+        return 'processing';
+    }
+  };
+
+  const getName = type => {
+    switch (type) {
+      case 1:
+        return 'Бүтээмжит төсөл';
+      case 2:
+        return 'МАА-н инновацийн төсөл';
+      case 3:
+        return 'Тэжээлийн үйлдвэрийн төсөл';
+      default:
+        return '';
+    }
+  };
+
   const statusBodyTemplate = row => (
     <>
+      <span className="p-column-title">Статус</span>
+
       <Select
-        defaultValue="1"
+        defaultValue={
+          <Tag color={getColor(row.projectStatus.id)}>
+            {row.projectStatus.name}
+          </Tag>
+        }
         onChange={onChangeStatus}
         onClick={event => selectedStatus(event, row)}
         style={{ width: '70%' }}
       >
-        <Option key="1">
-          <Tag color="green">Зөвшөөрсөн</Tag>
-        </Option>
-        <Option key="2">
-          <Tag color="red">Цуцлагдсан</Tag>
-        </Option>
+        {status?.map(z => (
+          <Option key={z.id}>
+            <Tag color={getColor(z.id)}>{z.name}</Tag>
+          </Option>
+        ))}
       </Select>
     </>
   );
@@ -241,7 +294,7 @@ const productiveProject = () => {
         <Content>
           <Row>
             <Col xs={24} md={24} lg={14}>
-              <p className="title">Бүтээмжит төсөл</p>
+              <p className="title">{getName(props.type)}</p>
             </Col>
             <Col xs={24} md={18} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
@@ -329,6 +382,7 @@ const productiveProject = () => {
             />
             <Column
               header="Төслийн нэр"
+              field="projectName"
               filter
               body={NameBodyTemplate}
               sortable
@@ -353,6 +407,7 @@ const productiveProject = () => {
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+              type={props.type}
             />
           )}
         </div>

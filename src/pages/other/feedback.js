@@ -1,57 +1,45 @@
-import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
-  faPlus,
   faPrint,
   faTrash,
+  faPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Button,
-  Col,
-  DatePicker,
-  Layout,
-  message,
-  Modal,
-  Row,
-  Tooltip,
-} from 'antd';
-import moment from 'moment';
+import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useToolsStore } from '../../context/Tools';
-import { getService, putService } from '../../service/service';
+import React, { useContext, useEffect, useState } from 'react';
+import moment from 'moment';
+import { ToolsContext } from '../../context/Tools';
+import { getService, deleteService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
-// import TrainingModal from './TrainingModal';
-import OrgaStyle from '../training/tabs/components/orga.style';
-import AutoCompleteSelect from '../../components/Autocomplete';
+import FeedbackModal from './components/FeedbackModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const innovativeProject = () => {
+const Feedback = () => {
   const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+
   const [lazyParams] = useState({
     page: 0,
   });
-  const toolsStore = useToolsStore();
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const history = useHistory();
+  const toolsStore = useContext(ToolsContext);
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('training/get', list)
+    getService('feedback/get', list)
       .then(result => {
         const listResult = result.content || [];
         listResult.forEach((item, index) => {
@@ -71,32 +59,12 @@ const innovativeProject = () => {
     onInit();
   }, [lazyParams]);
 
-  const getTraining = orgId => {
-    getService(`training/getList/${orgId}`, {}).then(result => {
-      if (result) {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList(listResult);
-        setSelectedRows([]);
-      }
-    });
-  };
-
-  const selectOrgs = value => {
-    getTraining(value);
-  };
-
   const add = () => {
-    editRow = null;
     setIsModalVisible(true);
     isEditMode = false;
   };
 
-  const edit = (event, row) => {
-    event.preventDefault();
-    event.stopPropagation();
+  const edit = row => {
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
@@ -108,7 +76,7 @@ const innovativeProject = () => {
       return;
     }
 
-    putService(`training/delete/${row.id}`)
+    deleteService(`feedback/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -133,9 +101,7 @@ const innovativeProject = () => {
     });
   }
 
-  const pop = (event, row) => {
-    event.preventDefault();
-    event.stopPropagation();
+  const pop = row => {
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
@@ -148,12 +114,12 @@ const innovativeProject = () => {
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={event => edit(event, row)}
+        onClick={() => edit(row)}
       />
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={event => pop(event, row)}
+        onClick={() => pop(row)}
       />
     </>
   );
@@ -170,87 +136,48 @@ const innovativeProject = () => {
     </>
   );
 
-  const NameBodyTemplate = row => (
+  const feedbackDateBodyTemplate = row => (
     <>
-      <span className="p-column-title">Төслийн нэр</span>
-      {row.name}
+      <span className="p-column-title">Огноо</span>
+      {moment(row.feedbackDate && row.feedbackDate).format('YYYY-MM-DD')}
     </>
   );
 
-  const orgNameBodyTemplate = row => (
+  const feedbackTypeBodyTemplate = row => (
     <>
-      <span className="p-column-title">Байгууллагын нэр</span>
-      {row.trainingBudget && row.trainingBudget.totalBudget}
+      <span className="p-column-title">Санал, гомдлын төрөл</span>
+      {row.feedbackType.name}
     </>
   );
-
-  const activityDirectionBodyTemplate = row => (
+  const complainantBodyTemplate = row => (
     <>
-      <span className="p-column-title">Төслийн үйл ажиллагааны чиглэл</span>
-      {row.trainingBudget && row.trainingBudget.performanceBudget}
+      <span className="p-column-title">Санал, гомдол гаргагч</span>
+      {row.complainant}
     </>
   );
-
-  const fundingBodyTemplate = row => (
+  const userBodyTemplate = row => (
     <>
-      <span className="p-column-title">Төслийн санхүүжилт</span>
-      {moment(row.trainingStartDate && row.trainingStartDate).format(
-        'YYYY-M-D'
-      )}
+      <span className="p-column-title">Хүлээн авагч</span>
+      {row.user && row.user.firstname}
     </>
   );
-
-  const dateBodyTemplate = row => (
+  const measuresBodyTemplate = row => (
     <>
-      <span className="p-column-title">Төсөл хэрэгжүүлэх хугацаа</span>
-      {moment(row.trainingEndDate && row.trainingEndDate).format('YYYY-M-D')}
+      <span className="p-column-title">Хэлбэр</span>
+      {row.measures}
     </>
   );
-
-  const dateSentBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Төсөл ирүүлсэн огноо</span>
-      {row.totalParticipants}
-    </>
-  );
-
-  const ShowTrainingInfo = row => history.push(`/trainingList/${row.data.id}`);
-
   return (
     <ContentWrapper>
       <div className="button-demo">
         <Content>
           <Row>
-            <Col xs={24} md={24} lg={14}>
-              <p className="title">МАА-н инновацийн төсөл</p>
+            <Col xs={24} md={12} lg={14}>
+              <p className="title">Санал гомдол</p>
             </Col>
-            <Col xs={24} md={18} lg={10}>
+            <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
-                <Col xs={12} md={6} lg={7}>
-                  <OrgaStyle>
-                    <AutoCompleteSelect
-                      valueField="id"
-                      placeholder="Байгууллага сонгох"
-                      data={toolsStore.orgList}
-                      onChange={value => selectOrgs(value)}
-                    />
-                  </OrgaStyle>
-                </Col>
-                <Col xs={12} md={5} lg={5}>
-                  <DatePicker
-                    bordered={false}
-                    suffixIcon={<DownOutlined />}
-                    placeholder="Select year"
-                    picker="year"
-                    className="DatePicker"
-                    style={{
-                      width: '120px',
-                      color: 'black',
-                      cursor: 'pointer',
-                    }}
-                  />
-                </Col>
-                <Col xs={8} md={2} lg={2}>
+                <Col>
                   <Tooltip title="Хэвлэх" arrowPointAtCenter>
                     <Button
                       type="text"
@@ -260,7 +187,7 @@ const innovativeProject = () => {
                     </Button>
                   </Tooltip>
                 </Col>
-                <Col xs={8} md={2} lg={2}>
+                <Col>
                   <Tooltip title="Экспорт" arrowPointAtCenter>
                     <Button
                       type="text"
@@ -271,7 +198,7 @@ const innovativeProject = () => {
                     </Button>
                   </Tooltip>
                 </Col>
-                <Col xs={8} md={2} lg={2}>
+                <Col>
                   <Tooltip title="Нэмэх" arrowPointAtCenter>
                     <Button
                       type="text"
@@ -289,14 +216,13 @@ const innovativeProject = () => {
         </Content>
         <div className="datatable-responsive-demo">
           <DataTable
-            emptyMessage="Өгөгдөл олдсонгүй..."
             value={list}
             removableSort
             paginator
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            onRowClick={ShowTrainingInfo}
+            // onRowClick={edit}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
@@ -309,53 +235,49 @@ const innovativeProject = () => {
               style={{ width: 40 }}
             />
             <Column
-              header="Төслийн нэр"
-              filter
-              body={NameBodyTemplate}
+              field="feedbackDate"
+              body={feedbackDateBodyTemplate}
+              header="Огноо"
               sortable
+              filter
+              filterPlaceholder="Хайх"
             />
             <Column
-              header="Байгууллагын нэр"
-              thousandSeparator
+              header="Санал, гомдлын төрөл"
+              field="feedbackType.name"
+              sortable
               filter
-              body={orgNameBodyTemplate}
+              body={feedbackTypeBodyTemplate}
             />
             <Column
-              header="Төслийн үйл ажиллагааны чиглэл"
-              filter
-              body={activityDirectionBodyTemplate}
+              header="Санал, гомдол гаргагч"
+              field="complainant"
+              body={complainantBodyTemplate}
             />
             <Column
-              header="Төслийн санхүүжилт"
-              filter
-              body={fundingBodyTemplate}
+              header="Хүлээн авагч"
+              field="user.firstname"
+              body={userBodyTemplate}
             />
             <Column
-              header="Төсөл хэрэгжүүлэх хугацаа"
-              filter
-              body={dateBodyTemplate}
-            />
-            <Column
-              header="Төсөл ирүүлсэн огноо"
-              filter
-              body={dateSentBodyTemplate}
+              header="Хэлбэр"
+              field="measures"
+              body={measuresBodyTemplate}
             />
             <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>
-          {/* {isModalVisible && (
-            <TrainingModal
-              Trainingcontroller={editRow}
+          {isModalVisible && (
+            <FeedbackModal
+              Feedbackcontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              orgId={orgID}
-              trainingID={trainingID}
             />
-          )} */}
+          )}
         </div>
       </div>
     </ContentWrapper>
   );
 };
 
-export default innovativeProject;
+export default Feedback;

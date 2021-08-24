@@ -11,51 +11,53 @@ import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState } from 'react';
-import { putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from '../../criteria/criteria.style';
+import { putService, getService } from '../../service/service';
+import { errorCatch } from '../../tools/Tools';
+import ContentWrapper from '../criteria/criteria.style';
 import IndicatorsReportModal from './components/indicatorsReportModal';
+import { useToolsStore } from '../../context/Tools';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
 const IndicatorsReport = () => {
-  // const loadLazyTimeout = null;
-  // const [list, setList] = useState([]);
+  const loadLazyTimeout = null;
+  const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams] = useState({
     page: 0,
   });
-  // const PAGESIZE = 20;
+  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  // const [trainingID, setTrainingID] = useState([]);
-  // const [orgID, setOrgID] = useState([]);
-  // const toolsStore = useContext(ToolsContext);
+  const [trainingID, setTrainingID] = useState([]);
+  const [orgID, setOrgID] = useState([]);
+  const toolsStore = useToolsStore();
+
   const onInit = () => {
-    // toolsStore.setIsShowLoader(true);
-    // if (loadLazyTimeout) {
-    //   clearTimeout(loadLazyTimeout);
-    // }
-    // getService(`training/get`, list)
-    //   .then(result => {
-    //     const listResult = result.trainingTeams || [];
-    //     setOrgID(result.organization.id);
-    //     setTrainingID(result.id);
-    //     listResult.forEach((item, index) => {
-    //       item.index = lazyParams.page * PAGESIZE + index + 1;
-    //     });
-    //     setList(listResult);
-    //     setSelectedRows([]);
-    //   })
-    //   .finally(toolsStore.setIsShowLoader(false))
-    //   .catch(error => {
-    //     errorCatch(error);
-    //     toolsStore.setIsShowLoader(false);
-    //   });
+    toolsStore.setIsShowLoader(true);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    getService('feedbackCriteria/get', list)
+      .then(result => {
+        const listResult = result.content || [];
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
+        });
+        setList(listResult);
+        setSelectedRows([]);
+      })
+      .finally(toolsStore.setIsShowLoader(false))
+      .catch(error => {
+        errorCatch(error);
+        toolsStore.setIsShowLoader(false);
+      });
   };
 
-  useEffect(() => {}, [lazyParams]);
+  useEffect(() => {
+    onInit();
+  }, [lazyParams]);
 
   const add = () => {
     setIsModalVisible(true);
@@ -67,7 +69,7 @@ const IndicatorsReport = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`trainingTeam/delete/${row.id}`)
+    putService(`feedbackCriteria/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -197,8 +199,9 @@ const IndicatorsReport = () => {
           </DataTable>
           {isModalVisible && (
             <IndicatorsReportModal
-              Plancontroller={editRow}
+              IndicatorsReportcontroller={editRow}
               isModalVisible={isModalVisible}
+              isEditMode={isEditMode}
               close={closeModal}
             />
           )}
