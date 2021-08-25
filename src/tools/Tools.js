@@ -13,6 +13,7 @@ import {
 import { message, Tag } from 'antd';
 import { Warning } from '../components/Confirm';
 import { ORG_STEP, ORG_WISH } from '../constants/Constant';
+import { FILTER_MODE } from '../constants/LazyTable';
 
 export const convertLazyParamsToObj = (lazyParams, searchParam = null) => {
   const obj = { search: searchParam || '' };
@@ -21,7 +22,9 @@ export const convertLazyParamsToObj = (lazyParams, searchParam = null) => {
       lazyParams.sortOrder > 0 ? 'asc' : 'desc'
     }`;
   }
-  if (lazyParams.page) obj.page = lazyParams.page;
+  if (lazyParams.page) {
+    obj.page = lazyParams.page;
+  }
   if (lazyParams.filters) {
     Object.entries(lazyParams.filters).forEach(([key, value]) => {
       if (obj.search !== '') {
@@ -35,10 +38,14 @@ export const convertLazyParamsToObj = (lazyParams, searchParam = null) => {
           }${key}:${element}`;
         });
         obj.search += ')';
-      } else {
-        obj.search += `${key}:${value.matchMode === 'contains' ? '*' : ''}${
-          value.value
-        }*`;
+      } else if (value.matchMode === FILTER_MODE.CONTAINS) {
+        obj.search += `${key}:*${value.value}*`;
+      } else if (value.matchMode === FILTER_MODE.EQUALS) {
+        obj.search += `${key}:${value.value}`;
+      } else if (value.matchMode === FILTER_MODE.STARTS_WITH) {
+        obj.search += `${key}:${value.value}*`;
+      } else if (value.matchMode === FILTER_MODE.ENDS_WITH) {
+        obj.search += `${key}:*${value.value}`;
       }
     });
   }

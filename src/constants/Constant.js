@@ -1,4 +1,4 @@
-export const PAGESIZE = 25;
+export const PAGESIZE = 20;
 export const DATEFORMAT = 'YYYY-MM-DD';
 
 export const MSG = {
