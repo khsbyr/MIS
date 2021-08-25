@@ -38,7 +38,6 @@ export default function FeedbackModal(props) {
     setDate(value);
   }
   const onChangeCheck = e => {
-    console.log(e.target.value);
     setValueCheck(e.target.value);
   };
   useEffect(() => {
@@ -110,7 +109,6 @@ export default function FeedbackModal(props) {
     setStateOrgID(value);
   };
   const selectShape = value => {
-    console.log(value);
     setStateShapeID(value);
   };
 
@@ -187,8 +185,10 @@ export default function FeedbackModal(props) {
                     className="FormItem"
                     onChange={onDateChange}
                     defaultValue={
-                      Feedbackcontroller &&
-                      moment(Feedbackcontroller.feedbackDate).zone(0)
+                      isEditMode
+                        ? Feedbackcontroller &&
+                          moment(Feedbackcontroller.feedbackDate).zone(0)
+                        : null
                     }
                   />
                 </Form.Item>
