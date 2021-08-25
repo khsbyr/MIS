@@ -116,7 +116,6 @@ const productiveProject = props => {
       typeId: props.type,
       organizationId: orgId,
     };
-    console.log(data);
     getService(`project/getByTypeOrOrgId/typeId${props.type}/`).then(result => {
       if (result) {
         const listResult = result || [];
