@@ -33,6 +33,8 @@ import OrgaStyle from '../training/tabs/components/orga.style';
 import ContentWrapper from './more/productiveProject.style';
 import ProductiveProjectModal from './more/productiveProjectModal';
 
+import handleLogin from '../auth/Login';
+
 const { Option } = Select;
 const { Content } = Layout;
 
@@ -54,6 +56,12 @@ const productiveProject = props => {
   const [projectID, setProjectID] = useState();
   const history = useHistory();
   const [form] = Form.useForm();
+
+  if (toolsStore.user === undefined) {
+    handleLogin();
+  }
+
+  console.log(toolsStore);
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
@@ -91,6 +99,7 @@ const productiveProject = props => {
       ...list,
     });
   }, [lazyParams]);
+
   const selectedStatus = (event, row) => {
     event.preventDefault();
     event.stopPropagation();

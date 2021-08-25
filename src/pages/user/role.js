@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Suspense, useContext } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { Button, message, Layout, Checkbox, Row, Col, Tooltip } from 'antd';
+import { Button, message, Layout, Row, Col, Tooltip } from 'antd';
 import {
   faFileExcel,
   faPlus,
@@ -98,10 +98,6 @@ export default function Roles() {
     if (isSuccess) loadData();
   };
 
-  const activeBodyTemplate = rowData => (
-    <Checkbox defaultChecked={rowData.isActive} disabled />
-  );
-
   const roleBodyTemplate = rowData => (
     <>
       <Button
@@ -182,13 +178,6 @@ export default function Roles() {
           >
             <Column field="index" header="№" style={{ width: 40 }} />
             <Column field="name" header={t('Role name')} sortable filter />
-            <Column
-              field="isActive"
-              header={t('Active')}
-              sortable
-              style={{ width: '25%', textAlign: 'center' }}
-              body={activeBodyTemplate}
-            />
             <Column
               field=""
               header={t('Action')}
