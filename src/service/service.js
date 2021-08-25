@@ -16,7 +16,7 @@ export async function getService(serviceName, queryParams = null) {
   let params = `${serviceName.includes('?') ? '&' : '?'}`;
   if (queryParams) {
     if (queryParams.search) {
-      params += ` AND ${queryParams.search}`;
+      params += `search=${queryParams.search}`;
     }
     ['sort', 'page', 'size'].forEach(param => {
       if (queryParams[param]) {
