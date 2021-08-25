@@ -17,6 +17,12 @@ const ContentWrapper = styled.div`
     color: #0d0d0d;
     margin: 20px 0px 20px 0px;
   }
+
+  label {
+    font-size: 11px;
+    font-weight: 300;
+    color: gray;
+  }
 `;
 
 export default ContentWrapper;

@@ -46,7 +46,7 @@ export default function productiveProjectModal(props) {
   const [criteriaList, setCriteriaList] = useState([]);
   const [criteriaListMulti, setCriteriaListMulti] = useState([]);
   const [stateOrg, setStateOrg] = useState([]);
-  const [selectedOrg, setSelectedOrg] = useState();
+  const [, setSelectedOrg] = useState();
   const [selectedProjectOrg, setSelectedProjectOrg] = useState([]);
   const [valueAddress, setValueAddress] = useState(undefined);
 
@@ -251,7 +251,7 @@ export default function productiveProjectModal(props) {
                           placeholder="Сонгох"
                           allowClear
                           multiple
-                          treeDefaultExpandAll
+                          // treeDefaultExpandAll
                           maxTagCount="responsive"
                           onChange={onChangeAddress}
                         >
@@ -267,7 +267,7 @@ export default function productiveProjectModal(props) {
                           placeholder="Сонгох"
                           allowClear
                           multiple
-                          treeDefaultExpandAll
+                          // treeDefaultExpandAll
                           maxTagCount="responsive"
                           onChange={onChangeAddress}
                         >

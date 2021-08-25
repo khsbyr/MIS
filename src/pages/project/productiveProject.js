@@ -49,6 +49,7 @@ const productiveProject = props => {
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateOrga, setStateOrga] = useState([]);
+  const [orgID, setOrgID] = useState();
   const [status, setStatus] = useState();
   const [projectID, setProjectID] = useState();
   const history = useHistory();
@@ -111,19 +112,23 @@ const productiveProject = props => {
   };
 
   const getTraining = orgId => {
-    getService(`training/getList/${orgId}`, {}).then(result => {
+    const data = {
+      typeId: props.type,
+      organizationId: orgId,
+    };
+    getService(`project/getByTypeOrOrgId/typeId${props.type}/`).then(result => {
       if (result) {
         const listResult = result || [];
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
-        setSelectedRows([]);
       }
     });
   };
 
   const selectOrgs = value => {
+    setOrgID(value);
     getTraining(value);
   };
 
@@ -299,14 +304,18 @@ const productiveProject = props => {
             <Col xs={24} md={18} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col xs={12} md={6} lg={7}>
-                  <OrgaStyle>
-                    <AutoCompleteSelect
-                      valueField="id"
-                      placeholder="Байгууллага сонгох"
-                      data={toolsStore.orgList}
-                      onChange={value => selectOrgs(value)}
-                    />
-                  </OrgaStyle>
+                  {toolsStore.user.roleId === 1 ? (
+                    <OrgaStyle>
+                      <AutoCompleteSelect
+                        valueField="id"
+                        placeholder="Байгууллага сонгох"
+                        data={toolsStore.orgList}
+                        // onChange={value => selectOrgs(value)}
+                      />
+                    </OrgaStyle>
+                  ) : (
+                    ''
+                  )}
                 </Col>
                 <Col xs={12} md={5} lg={5}>
                   <DatePicker

@@ -12,38 +12,25 @@ const config = () => ({
   },
 });
 
-export async function getService(
-  serviceName,
-  // param = null,
-  isShowErrorMessage = true
-) {
-  // let params = "?search=status:true";
-  // let isSeparate = false;
-  // if (param) {
-  //   if (param.search) {
-  //     params += " AND " + param.search;
-  //     isSeparate = true;
-  //   }
-  //   if (param.sort) {
-  //     if (isSeparate) params += "&";
-  //     params += "sort=" + param.sort;
-  //     isSeparate = true;
-  //   }
-  //   if (param.page) {
-  //     if (isSeparate) params += "&";
-  //     params += "page=" + param.page;
-  //     isSeparate = true;
-  //   }
-  //   if (param.size) {
-  //     if (isSeparate) params += "&";
-  //     params += "size=" + param.size;
-  //     isSeparate = true;
-  //   }
-  // }
-  const response = await axios.get(serviceName, config()).catch(error => {
-    if (isShowErrorMessage) errorCatch(error);
+export async function getService(serviceName, queryParams = null) {
+  let params = `${serviceName.includes('?') ? '&' : '?'}`;
+  if (queryParams) {
+    if (queryParams.search) {
+      params += `search=${queryParams.search}`;
+    }
+    ['sort', 'page', 'size'].forEach(param => {
+      if (queryParams[param]) {
+        params += `&${param}=${queryParams[param]}`;
+      }
+    });
+  }
+  let response = null;
+  try {
+    response = await axios.get(serviceName + params, config());
+  } catch (error) {
+    errorCatch(error);
     throw error;
-  });
+  }
   return response?.data;
 }
 
