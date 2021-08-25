@@ -27,7 +27,7 @@ function result(props) {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService(`/project/get/${props.projectId}`, list)
+    getService(`/project/get/${props.projectId}`)
       .then(resultt => {
         const listResult = resultt.summaryBallotForm.sbf_projectresults;
         listResult.forEach((item, index) => {

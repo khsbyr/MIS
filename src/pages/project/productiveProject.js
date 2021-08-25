@@ -5,35 +5,36 @@ import {
   faPlus,
   faPrint,
   faTrash,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
   Col,
   DatePicker,
+  Form,
   Layout,
   message,
   Modal,
   Row,
   Select,
-  Tooltip,
   Tag,
-  Form,
+  Tooltip,
 } from 'antd';
 import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import AutoCompleteSelect from '../../components/Autocomplete';
+import { PAGESIZE } from '../../constants/Constant';
 import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
-import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
+import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import OrgaStyle from '../training/tabs/components/orga.style';
 import ContentWrapper from './more/productiveProject.style';
 import ProductiveProjectModal from './more/productiveProjectModal';
-import { PAGESIZE } from '../../constants/Constant';
-import handleLogin from '../auth/Login';
 
 const { Option } = Select;
 const { Content } = Layout;
@@ -41,6 +42,7 @@ const { Content } = Layout;
 let editRow;
 let isEditMode;
 const productiveProject = props => {
+  const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const toolsStore = useToolsStore();
@@ -60,10 +62,6 @@ const productiveProject = props => {
 
   let loadLazyTimeout = null;
 
-  if (toolsStore.user === undefined) {
-    handleLogin();
-  }
-
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
@@ -73,7 +71,7 @@ const productiveProject = props => {
       const obj = convertLazyParamsToObj(lazyParams);
       getService(`project/getByProjectTypeId/${props.type}`, obj)
         .then(result => {
-          const listResult = result.content;
+          const listResult = result;
           listResult.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });
@@ -362,8 +360,8 @@ const productiveProject = props => {
                     }}
                   />
                 </Col>
-                <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                <Col xs={6} md={2} lg={2}>
+                  <Tooltip title={t('print')} arrowPointAtCenter>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -372,8 +370,8 @@ const productiveProject = props => {
                     </Button>
                   </Tooltip>
                 </Col>
-                <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                <Col xs={6} md={2} lg={2}>
+                  <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -383,8 +381,19 @@ const productiveProject = props => {
                     </Button>
                   </Tooltip>
                 </Col>
-                <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Нэмэх" arrowPointAtCenter>
+                <Col xs={6} md={2} lg={2}>
+                  <Tooltip title={t('pdf')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFilePdf} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col xs={6} md={2} lg={2}>
+                  <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"

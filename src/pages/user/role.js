@@ -12,6 +12,7 @@ import {
   faFileExcel,
   faPlus,
   faPrint,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
@@ -165,6 +166,17 @@ export default function Roles() {
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faFileExcel} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col>
+                  <Tooltip title={t('pdf')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFilePdf} />}
                     >
                       {' '}
                     </Button>

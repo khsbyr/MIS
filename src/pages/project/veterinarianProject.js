@@ -1,6 +1,7 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
+  faFilePdf,
   faPen,
   faPlus,
   faPrint,
@@ -14,19 +15,20 @@ import {
   message,
   Modal,
   Row,
-  Tooltip,
   Select,
   Tag,
+  Tooltip,
 } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { PAGESIZE } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
-import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
+import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import ContentWrapper from './more/veterinarian.style';
 import VeterinarianProjectModal from './more/veterinarianProjectModal';
-import { PAGESIZE } from '../../constants/Constant';
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -35,6 +37,7 @@ let editRow;
 let isEditMode;
 let trainerID;
 const veterinarianProject = () => {
+  const { t } = useTranslation();
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -273,7 +276,7 @@ const veterinarianProject = () => {
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col>
-                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                  <Tooltip title={t('print')} arrowPointAtCenter>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -283,7 +286,7 @@ const veterinarianProject = () => {
                   </Tooltip>
                 </Col>
                 <Col>
-                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                  <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -294,7 +297,18 @@ const veterinarianProject = () => {
                   </Tooltip>
                 </Col>
                 <Col>
-                  <Tooltip title="Нэмэх" arrowPointAtCenter>
+                  <Tooltip title={t('pdf')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFilePdf} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col>
+                  <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -341,6 +355,7 @@ const veterinarianProject = () => {
             />
             <Column
               header="Малын эмчийн нэр"
+              field="firstname"
               body={FirstNameBodyTemplate}
               sortable
               filter
@@ -348,6 +363,7 @@ const veterinarianProject = () => {
             />
             <Column
               header="Утас"
+              field="phoneNumber"
               body={phoneBodyTemplate}
               sortable
               filter
@@ -363,6 +379,7 @@ const veterinarianProject = () => {
             />
             <Column
               header="Нас"
+              field="age"
               body={reportBodyTemplate}
               sortable
               filter
