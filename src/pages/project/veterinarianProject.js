@@ -1,4 +1,4 @@
-import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
@@ -10,49 +10,49 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
   Col,
-  DatePicker,
   Layout,
   message,
   Modal,
   Row,
   Tooltip,
+  Select,
+  Tag,
 } from 'antd';
-import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useToolsStore } from '../../context/Tools';
+import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
-import ContentWrapper from '../criteria/criteria.style';
-import OrgaStyle from '../training/tabs/components/orga.style';
-import AutoCompleteSelect from '../../components/Autocomplete';
+import ContentWrapper from './more/veterinarian.style';
+import VeterinarianProjectModal from './more/veterinarianProjectModal';
 
 const { Content } = Layout;
+const { Option } = Select;
 
 let editRow;
 let isEditMode;
+let trainerID;
 const veterinarianProject = () => {
   const loadLazyTimeout = null;
+  const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [status, setStatus] = useState();
   const [lazyParams] = useState({
     page: 0,
   });
-  const toolsStore = useToolsStore();
   const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
-  const history = useHistory();
-
+  const [doctorID, setDoctorID] = useState();
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('training/get', list)
+    getService(`user/getAllYoungDoctorUserList`, list)
       .then(result => {
-        const listResult = result.content || [];
+        const listResult = result || [];
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
@@ -68,24 +68,12 @@ const veterinarianProject = () => {
 
   useEffect(() => {
     onInit();
-  }, [lazyParams]);
-
-  const getTraining = orgId => {
-    getService(`training/getList/${orgId}`, {}).then(result => {
+    getService('youngDoctorStatus/get').then(result => {
       if (result) {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList(listResult);
-        setSelectedRows([]);
+        setStatus(result || []);
       }
     });
-  };
-
-  const selectOrgs = value => {
-    getTraining(value);
-  };
+  }, [lazyParams]);
 
   const add = () => {
     editRow = null;
@@ -93,21 +81,12 @@ const veterinarianProject = () => {
     isEditMode = false;
   };
 
-  const edit = (event, row) => {
-    event.preventDefault();
-    event.stopPropagation();
-    editRow = row;
-    isEditMode = true;
-    setIsModalVisible(true);
-  };
-
   const handleDeleted = row => {
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-
-    putService(`training/delete/${row.id}`)
+    putService(`youngDoctor/delete/${row.youngDoctor.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -126,15 +105,33 @@ const veterinarianProject = () => {
       cancelText: 'Буцах',
       onOk() {
         handleDeleted(row);
-        onInit();
+        // onInit();
       },
       onCancel() {},
     });
   }
 
-  const pop = (event, row) => {
+  const onChangeStatus = value => {
+    const datas = {
+      statusId: value,
+      youngDoctorId: doctorID,
+    };
+    putService(`youngDoctorStatus/updateDoctorStatus`, datas)
+      .then(() => {
+        message.success('Амжилттай хадгаллаа');
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+  };
+
+  const selectedStatus = (event, row) => {
     event.preventDefault();
     event.stopPropagation();
+    setDoctorID(row.youngDoctor.id);
+  };
+
+  const pop = row => {
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
@@ -142,17 +139,24 @@ const veterinarianProject = () => {
     }
   };
 
+  const edit = row => {
+    trainerID = row.youngDoctor.id;
+    editRow = row;
+    isEditMode = true;
+    setIsModalVisible(true);
+  };
+
   const action = row => (
     <>
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={event => edit(event, row)}
+        onClick={() => edit(row)}
       />
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={event => pop(event, row)}
+        onClick={() => pop(row)}
       />
     </>
   );
@@ -169,87 +173,81 @@ const veterinarianProject = () => {
     </>
   );
 
-  const NameBodyTemplate = row => (
+  const FirstNameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Сургалтын нэр</span>
-      {row.name}
+      <span className="p-column-title">Малын эмчийн нэр</span>
+      {row.firstname}
     </>
   );
 
-  const totalBudgetBodyTemplate = row => (
+  const phoneBodyTemplate = row => (
     <>
-      <span className="p-column-title">Төсөв</span>
-      {row.trainingBudget && row.trainingBudget.totalBudget}
+      <span className="p-column-title">Утас</span>
+      {row.phoneNumber}
     </>
   );
 
-  const performanceBudgetBodyTemplate = row => (
+  const registerBodyTemplate = row => (
     <>
-      <span className="p-column-title">Гүйцэтгэлийн төсөв</span>
-      {row.trainingBudget && row.trainingBudget.performanceBudget}
+      <span className="p-column-title">Регистер</span>
+      {row.register}
     </>
   );
 
-  const startDateBodyTemplate = row => (
+  const reportBodyTemplate = row => (
     <>
-      <span className="p-column-title">Эхэлсэн огноо</span>
-      {moment(row.trainingStartDate && row.trainingStartDate).format(
-        'YYYY-M-D'
-      )}
+      <span className="p-column-title">Нас</span>
+      {row.age}
     </>
   );
 
-  const endDateBodyTemplate = row => (
+  const getColor = id => {
+    switch (id) {
+      case 1:
+        return 'processing';
+      case 2:
+        return 'success';
+      case 3:
+        return 'error';
+      default:
+        return 'processing';
+    }
+  };
+
+  const statusBodyTemplate = row => (
     <>
-      <span className="p-column-title">Дууссан огноо</span>
-      {moment(row.trainingEndDate && row.trainingEndDate).format('YYYY-M-D')}
+      <span className="p-column-title">Статус</span>
+
+      <Select
+        defaultValue={
+          <Tag color={getColor(row.youngDoctor.youngDoctorStatus.id)}>
+            {row.youngDoctor.youngDoctorStatus.status}
+          </Tag>
+        }
+        onChange={onChangeStatus}
+        onClick={event => selectedStatus(event, row)}
+        style={{ width: '60%', background: 'unset' }}
+      >
+        {status?.map(z => (
+          <Option key={z.id}>
+            <Tag color={getColor(z.id)}>{z.status}</Tag>
+          </Option>
+        ))}
+      </Select>
     </>
   );
-
-  const participantBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Оролцогчдын тоо</span>
-      {row.totalParticipants}
-    </>
-  );
-
-  const ShowTrainingInfo = row => history.push(`/trainingList/${row.data.id}`);
 
   return (
     <ContentWrapper>
       <div className="button-demo">
         <Content>
           <Row>
-            <Col xs={24} md={24} lg={14}>
-              <p className="title">Малын залуу эмч хөтөлбөр</p>
+            <Col xs={24} md={12} lg={14}>
+              <p className="title">Залуу малын эмч хөтөлбөр</p>
             </Col>
-            <Col xs={24} md={18} lg={10}>
+            <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
-                <Col xs={12} md={6} lg={7}>
-                  <OrgaStyle>
-                    <AutoCompleteSelect
-                      valueField="id"
-                      placeholder="Байгууллага сонгох"
-                      data={toolsStore.orgList}
-                      onChange={value => selectOrgs(value)}
-                    />
-                  </OrgaStyle>
-                </Col>
-                <Col xs={12} md={5} lg={5}>
-                  <DatePicker
-                    bordered={false}
-                    suffixIcon={<DownOutlined />}
-                    placeholder="Select year"
-                    picker="year"
-                    className="DatePicker"
-                    style={{
-                      width: '120px',
-                      color: 'black',
-                      cursor: 'pointer',
-                    }}
-                  />
-                </Col>
-                <Col xs={8} md={2} lg={2}>
+                <Col>
                   <Tooltip title="Хэвлэх" arrowPointAtCenter>
                     <Button
                       type="text"
@@ -259,7 +257,7 @@ const veterinarianProject = () => {
                     </Button>
                   </Tooltip>
                 </Col>
-                <Col xs={8} md={2} lg={2}>
+                <Col>
                   <Tooltip title="Экспорт" arrowPointAtCenter>
                     <Button
                       type="text"
@@ -270,7 +268,7 @@ const veterinarianProject = () => {
                     </Button>
                   </Tooltip>
                 </Col>
-                <Col xs={8} md={2} lg={2}>
+                <Col>
                   <Tooltip title="Нэмэх" arrowPointAtCenter>
                     <Button
                       type="text"
@@ -286,16 +284,15 @@ const veterinarianProject = () => {
             </Col>
           </Row>
         </Content>
+
         <div className="datatable-responsive-demo">
           <DataTable
-            emptyMessage="Өгөгдөл олдсонгүй..."
             value={list}
             removableSort
             paginator
             rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            onRowClick={ShowTrainingInfo}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
@@ -308,59 +305,44 @@ const veterinarianProject = () => {
               style={{ width: 40 }}
             />
             <Column
-              header="Сургалтын сэдэв"
-              filter
-              body={NameBodyTemplate}
+              header="Малын эмчийн нэр"
+              body={FirstNameBodyTemplate}
               sortable
+              filter
+              filterPlaceholder="Хайх"
             />
             <Column
-              header="Төсөв /₮/"
-              thousandSeparator
-              headerStyle={{ width: '10rem' }}
-              filter
-              body={totalBudgetBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
+              header="Утас"
+              body={phoneBodyTemplate}
+              filterPlaceholder="Хайх"
             />
             <Column
-              header="Төсвийн гүйцэтгэл /₮/"
-              headerStyle={{ width: '10rem' }}
-              filter
-              body={performanceBudgetBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
+              field="registerNumber"
+              header="Регистер"
+              body={registerBodyTemplate}
+              filterPlaceholder="Хайх"
             />
             <Column
-              header="Эхэлсэн огноо"
-              headerStyle={{ width: '10rem' }}
-              filter
-              body={startDateBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
+              header="Нас"
+              body={reportBodyTemplate}
+              filterPlaceholder="Хайх"
             />
             <Column
-              header="Дууссан огноо"
-              headerStyle={{ width: '10rem' }}
-              filter
-              body={endDateBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
+              header="Төлөв"
+              body={statusBodyTemplate}
+              filterPlaceholder="Хайх"
             />
-            <Column
-              header="Оролцогчдын тоо"
-              headerStyle={{ width: '10rem' }}
-              filter
-              body={participantBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
-            />
-            <Column headerStyle={{ width: '6rem' }} body={action} />
+            <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
-          {/* {isModalVisible && (
-            <TrainingModal
-              Trainingcontroller={editRow}
+          {isModalVisible && (
+            <VeterinarianProjectModal
+              EditRow={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              orgId={orgID}
-              trainingID={trainingID}
+              trainerID={trainerID}
             />
-          )} */}
+          )}
         </div>
       </div>
     </ContentWrapper>

@@ -5,7 +5,7 @@ import { useProjectStore } from '../../../context/ProjectContext';
 import { useToolsStore } from '../../../context/Tools';
 import { getService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
-import BriefDraft from './briefDraft.style';
+import BriefDraft from '../briefdraft';
 import Investment from '../investment';
 import MainInfo from '../mainInfo';
 import ProjectOrg from '../projectOrganizations';

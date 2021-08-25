@@ -1,4 +1,4 @@
-import { InboxOutlined } from '@ant-design/icons';
+import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
 import { faCalendarAlt, faPhone } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -11,6 +11,7 @@ import {
   Modal,
   Row,
   Upload,
+  Button,
 } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -20,7 +21,8 @@ import { getService, postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 import ContentWrapper from '../../training/tabs/components/cv.styled';
-import ConsultingShowModal from './ConsultingShowModal';
+import VeterinarianEducation from './veterinarianEducation';
+import VeterinarianExperience from './veterinarianExperience';
 
 const { Dragger } = Upload;
 const layout = {
@@ -32,8 +34,8 @@ const layout = {
   },
 };
 
-export default function ConsultingPersonModal(props) {
-  const { Trainerscontroller, isModalVisible, isEditMode, trainerID } = props;
+export default function veterinarianProjectModal(props) {
+  const { EditRow, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
   const toolsStore = useToolsStore();
   const [stateSum, setStateSum] = useState([]);
@@ -41,7 +43,6 @@ export default function ConsultingPersonModal(props) {
   const loadLazyTimeout = null;
   const [userID, setUserID] = useState();
   const [BirthDatee] = useState();
-  const [personID] = useState();
   const onInit = () => {
     toolsStore.setIsShowLoader(false);
     if (loadLazyTimeout) {
@@ -50,48 +51,34 @@ export default function ConsultingPersonModal(props) {
   };
   useEffect(() => {
     onInit();
-    if (Trainerscontroller !== null) {
-      getService(`soum/getList/${Trainerscontroller.address.aimag.id}`).then(
-        result => {
-          if (result) {
-            setStateSum(result || []);
-          }
+    if (EditRow !== null) {
+      getService(`soum/getList/${EditRow.address?.aimag.id}`).then(result => {
+        if (result) {
+          setStateSum(result || []);
         }
-      );
-      getService(`bag/getList/${Trainerscontroller.address.soum.id}`).then(
-        result => {
-          if (result) {
-            setStateBag(result || []);
-          }
+      });
+      getService(`bag/getList/${EditRow.address?.soum.id}`).then(result => {
+        if (result) {
+          setStateBag(result || []);
         }
-      );
+      });
     }
-
     if (isEditMode) {
-      setUserID(Trainerscontroller.id);
+      setUserID(EditRow.id);
       form.setFieldsValue({
-        ...Trainerscontroller,
-        lastname: Trainerscontroller.lastname,
-        firstname: Trainerscontroller.firstname,
-        registerNumber: Trainerscontroller.register,
-        phoneNumber: Trainerscontroller.phoneNumber,
-        email: Trainerscontroller.email,
-        OrganizationName: Trainerscontroller.orgName,
-        AddressDetail: Trainerscontroller.address
-          ? Trainerscontroller.address.addressDetail
-          : '',
-        CountryID: Trainerscontroller.address
-          ? Trainerscontroller.address.country.id
-          : '',
-        AimagID: Trainerscontroller.address
-          ? Trainerscontroller.address.aimag.id
-          : '',
-        SoumID: Trainerscontroller.address
-          ? Trainerscontroller.address.soum.id
-          : '',
-        BagID: Trainerscontroller.address
-          ? Trainerscontroller.address.bag.id
-          : '',
+        ...EditRow,
+        lastname: EditRow.lastname,
+        firstname: EditRow.firstname,
+        registerNumber: EditRow.register,
+        phoneNumber: EditRow.phoneNumber,
+        email: EditRow.email,
+        OrganizationName: EditRow.orgName,
+        purpose: EditRow.youngDoctor ? EditRow.youngDoctor.purpose : '',
+        AddressDetail: EditRow.address ? EditRow.address.addressDetail : '',
+        CountryID: EditRow.address ? EditRow.address.country.id : '',
+        AimagID: EditRow.address ? EditRow.address.aimag.id : '',
+        SoumID: EditRow.address ? EditRow.address.soum.id : '',
+        BagID: EditRow.address ? EditRow.address.bag.id : '',
       });
     }
   }, []);
@@ -141,7 +128,8 @@ export default function ConsultingPersonModal(props) {
               id: values.BagID,
             },
           };
-          putService(`user/update/${Trainerscontroller.id}`, values)
+          values.youngDoctor = { purpose: values.purpose };
+          putService(`user/update/${EditRow.id}`, values)
             .then(() => {
               message.success('Амжилттай хадгаллаа');
               props.close(true);
@@ -150,18 +138,17 @@ export default function ConsultingPersonModal(props) {
               errorCatch(error);
             });
         } else {
-          values.person = { id: personID };
           values.user = {
-            id: userID,
             firstname: values.firstname,
             lastname: values.lastname,
             register: values.registerNumber,
             phoneNumber: values.phoneNumber,
             email: values.email,
+            roleId: 15,
             address: {
               addressDetail: values.AddressDetail,
               country: {
-                id: values.CountryID,
+                id: 107,
               },
               aimag: {
                 id: values.AimagID,
@@ -174,7 +161,8 @@ export default function ConsultingPersonModal(props) {
               },
             },
           };
-          postService(`person/post`, values)
+          values.youngDoctor = { purpose: values.purpose };
+          postService(`youngDoctor/post`, values)
             .then(() => {
               message.success('Амжилттай хадгаллаа');
               props.close(true);
@@ -191,7 +179,7 @@ export default function ConsultingPersonModal(props) {
   return (
     <div>
       <Modal
-        title="Зөвлөх хувь хүн бүртгэх"
+        title="Залуу малын эмч бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
         width={1200}
@@ -297,8 +285,7 @@ export default function ConsultingPersonModal(props) {
                       className="FormItem"
                       defaultValue={
                         isEditMode
-                          ? Trainerscontroller &&
-                            moment(Trainerscontroller.birthDate).zone(0)
+                          ? EditRow && moment(EditRow.birthDate).zone(0)
                           : BirthDatee
                       }
                     />
@@ -311,7 +298,21 @@ export default function ConsultingPersonModal(props) {
               <Col xs={24} md={24} lg={24}>
                 <Form.Item name="AddressDetail">
                   <Input.TextArea
-                    placeholder="(Дэлгэрэнгүй хаягаа оруулна уу)"
+                    placeholder="(Ажлын зорилгоо оруулна уу)"
+                    style={{
+                      width: '100%',
+                      height: '100px',
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <h2 className="title">2. Ажлын зорилго</h2>
+            <Row>
+              <Col xs={24} md={24} lg={24}>
+                <Form.Item name="purpose">
+                  <Input.TextArea
+                    placeholder="(Ажлын зорилгоо оруулна уу)"
                     style={{
                       width: '100%',
                       height: '100px',
@@ -321,13 +322,29 @@ export default function ConsultingPersonModal(props) {
               </Col>
             </Row>
             {isEditMode ? (
-              <ConsultingShowModal
-                Trainerscontroller={Trainerscontroller}
-                isModalVisible={isModalVisible}
-                isEditMode={isEditMode}
-                trainerID={trainerID}
-              />
-            ) : null}
+              <Row>
+                <Col xs={24} md={24} lg={24}>
+                  <VeterinarianEducation
+                    youngDoctorID={EditRow?.youngDoctor.id}
+                  />
+                </Col>
+                <Col xs={24} md={24} lg={24}>
+                  <VeterinarianExperience
+                    youngDoctorID={EditRow?.youngDoctor.id}
+                  />
+                </Col>
+                <h2 className="title">5. Тайлан</h2>
+                <Col xs={24} md={24} lg={24}>
+                  <Upload>
+                    <Button icon={<UploadOutlined />}>Тайлан хавсаргах</Button>
+                  </Upload>
+                </Col>
+              </Row>
+            ) : (
+              ''
+            )}
+
+            <Row />
           </Form>
         </ContentWrapper>
       </Modal>
