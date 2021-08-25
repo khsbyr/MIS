@@ -1,4 +1,10 @@
-import React, { useState, useEffect, Suspense, useContext } from 'react';
+import React, {
+  useState,
+  useEffect,
+  Suspense,
+  useContext,
+  useRef,
+} from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button, message, Layout, Row, Col, Tooltip } from 'antd';
@@ -28,11 +34,13 @@ export default function Roles() {
   const [isShowModal, setIsShowModal] = useState(false);
   const [isShowConfigMenu, setIsShowConfigMenu] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
-  const [lazyParams] = useState({
+  const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
   });
   const toolsStore = useContext(ToolsContext);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const dt = useRef(null);
 
   let loadLazyTimeout = null;
 
@@ -49,6 +57,7 @@ export default function Roles() {
           listResult.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });
+          setTotalRecords(data.totalElements);
           setList(listResult);
         })
         .finally(toolsStore.setIsShowLoader(false))
@@ -114,6 +123,22 @@ export default function Roles() {
     </>
   );
 
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
+  };
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -163,10 +188,20 @@ export default function Roles() {
         </Content>
         <div className="datatable-responsive-demo">
           <DataTable
+            ref={dt}
             value={list}
             removableSort
+            lazy
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
             paginator
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRow}
             editMode="row"
