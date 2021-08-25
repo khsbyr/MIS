@@ -20,12 +20,13 @@ import {
 } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
+import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
 import ContentWrapper from './more/veterinarian.style';
 import VeterinarianProjectModal from './more/veterinarianProjectModal';
+import { PAGESIZE } from '../../constants/Constant';
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -34,36 +35,44 @@ let editRow;
 let isEditMode;
 let trainerID;
 const veterinarianProject = () => {
-  const loadLazyTimeout = null;
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [status, setStatus] = useState();
-  const [lazyParams] = useState({
-    page: 0,
-  });
-  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [doctorID, setDoctorID] = useState();
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
+    page: 0,
+  });
+  const [totalRecords, setTotalRecords] = useState(0);
+  const dt = useRef(null);
+
+  let loadLazyTimeout = null;
+
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`user/getAllYoungDoctorUserList`, list)
-      .then(result => {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService(`user/getAllYoungDoctorUserList`, obj)
+        .then(result => {
+          const listResult = result || [];
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(result.totalElements);
+          setList(listResult);
+          setSelectedRows([]);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
@@ -237,6 +246,22 @@ const veterinarianProject = () => {
     </>
   );
 
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
+  };
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -290,13 +315,23 @@ const veterinarianProject = () => {
             value={list}
             removableSort
             paginator
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
+            ref={dt}
+            lazy
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
           >
             <Column
               field="index"
@@ -314,17 +349,23 @@ const veterinarianProject = () => {
             <Column
               header="Утас"
               body={phoneBodyTemplate}
+              sortable
+              filter
               filterPlaceholder="Хайх"
             />
             <Column
               field="registerNumber"
               header="Регистер"
               body={registerBodyTemplate}
+              sortable
+              filter
               filterPlaceholder="Хайх"
             />
             <Column
               header="Нас"
               body={reportBodyTemplate}
+              sortable
+              filter
               filterPlaceholder="Хайх"
             />
             <Column

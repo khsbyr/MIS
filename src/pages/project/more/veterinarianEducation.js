@@ -44,7 +44,7 @@ function veterinarianEducation(props) {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService(`/education/getByYoungDoctorId/${props.youngDoctorID}`, list)
+    getService(`/education/getByYoungDoctorId/${props.youngDoctorID}`)
       .then(result => {
         const listResult = result;
         listResult.forEach((item, index) => {

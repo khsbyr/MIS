@@ -30,6 +30,7 @@ let selectedRole;
 
 export default function Roles() {
   const { t } = useTranslation();
+  const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isShowModal, setIsShowModal] = useState(false);
   const [isShowConfigMenu, setIsShowConfigMenu] = useState(false);
@@ -38,7 +39,6 @@ export default function Roles() {
     first: 0,
     page: 0,
   });
-  const toolsStore = useContext(ToolsContext);
   const [totalRecords, setTotalRecords] = useState(0);
   const dt = useRef(null);
 
@@ -53,7 +53,7 @@ export default function Roles() {
       const obj = convertLazyParamsToObj(lazyParams);
       getService('role/get', obj)
         .then(data => {
-          const listResult = data || [];
+          const listResult = data.content || [];
           listResult.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });
@@ -212,7 +212,13 @@ export default function Roles() {
             onRowClick={edit}
           >
             <Column field="index" header="№" style={{ width: 40 }} />
-            <Column field="name" header={t('Role name')} sortable filter />
+            <Column
+              field="name"
+              header={t('Role name')}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
             <Column
               field=""
               header={t('Action')}

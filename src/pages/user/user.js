@@ -276,14 +276,24 @@ const User = () => {
               header="Регистрийн дугаар"
               body={registerBodyTemplate}
               sortable
+              filter
+              filterPlaceholder="Хайх"
             />
             <Column
               field="email"
               header="Й-мэйл"
               body={emailBodyTemplate}
               sortable
+              filter
+              filterPlaceholder="Хайх"
             />
-            <Column field="role.name" header="Эрх" sortable />
+            <Column
+              field="role.name"
+              header="Эрх"
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (

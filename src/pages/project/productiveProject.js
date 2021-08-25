@@ -23,16 +23,16 @@ import {
 import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import AutoCompleteSelect from '../../components/Autocomplete';
 import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
+import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
 import OrgaStyle from '../training/tabs/components/orga.style';
 import ContentWrapper from './more/productiveProject.style';
 import ProductiveProjectModal from './more/productiveProjectModal';
-
+import { PAGESIZE } from '../../constants/Constant';
 import handleLogin from '../auth/Login';
 
 const { Option } = Select;
@@ -41,14 +41,9 @@ const { Content } = Layout;
 let editRow;
 let isEditMode;
 const productiveProject = props => {
-  const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams] = useState({
-    page: 0,
-  });
   const toolsStore = useToolsStore();
-  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateOrga, setStateOrga] = useState([]);
   const [orgID, setOrgID] = useState();
@@ -56,31 +51,41 @@ const productiveProject = props => {
   const [projectID, setProjectID] = useState();
   const history = useHistory();
   const [form] = Form.useForm();
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
+    page: 0,
+  });
+  const [totalRecords, setTotalRecords] = useState(0);
+  const dt = useRef(null);
+
+  let loadLazyTimeout = null;
 
   if (toolsStore.user === undefined) {
     handleLogin();
   }
-
-  console.log(toolsStore);
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`project/getByProjectTypeId/${props.type}`, list)
-      .then(result => {
-        const listResult = result;
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService(`project/getByProjectTypeId/${props.type}`, obj)
+        .then(result => {
+          const listResult = result.content;
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(result.totalElements);
+          setList(listResult);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
@@ -302,6 +307,23 @@ const productiveProject = props => {
 
   const ShowProjectInfo = row => history.push(`/projectList/${row.data.id}`);
 
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
+    console.log(params);
+  };
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -383,7 +405,6 @@ const productiveProject = props => {
             value={list}
             removableSort
             paginator
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             onRowClick={ShowProjectInfo}
@@ -391,6 +412,17 @@ const productiveProject = props => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
+            ref={dt}
+            lazy
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
           >
             <Column
               field="index"
@@ -404,19 +436,33 @@ const productiveProject = props => {
               filter
               body={NameBodyTemplate}
               sortable
+              filterPlaceholder="Хайх"
             />
-            <Column header="Хариуцсан хүн" filter body={userBodyTemplate} />
+            <Column
+              header="Хариуцсан хүн"
+              field="nameOfAuthorizedPerson"
+              filter
+              sortable
+              body={userBodyTemplate}
+              filterPlaceholder="Хайх"
+            />
             <Column
               header="Төсөл хэрэгжүүлэх хугацаа"
+              field="period"
               filter
+              sortable
               body={dateBodyTemplate}
+              filterPlaceholder="Хайх"
             />
             <Column
               header="Төсөл ирүүлсэн огноо"
+              field="createdDate"
               filter
+              sortable
               body={dateSentBodyTemplate}
+              filterPlaceholder="Хайх"
             />
-            <Column header="Статус" body={statusBodyTemplate} />
+            <Column header="Статус" body={statusBodyTemplate} sortable />
             <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
