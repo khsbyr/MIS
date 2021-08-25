@@ -153,7 +153,6 @@ export default function OrganizationModal(props) {
     form
       .validateFields()
       .then(values => {
-        console.log(values);
         values.foundedYear = foundedDate;
         values.bank = { id: values.bankID };
         values.currency = { id: values.Currency };
