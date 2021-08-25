@@ -1,4 +1,7 @@
 import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
+import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import moment from 'moment';
 import {
   Button,
   Checkbox,
@@ -10,6 +13,7 @@ import {
   Upload,
   message,
   InputNumber,
+  DatePicker,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
@@ -36,6 +40,12 @@ export default function OrganizationModal(props) {
   const [responsibleUserID, setResponsibleUserID] = useState(null);
   const [role, setRole] = useState([]);
   const [, setRoleID] = useState([]);
+  const [foundedDate, setFoundedDate] = useState([]);
+
+  function onDateChange(date, value) {
+    setFoundedDate(value);
+  }
+
   useEffect(() => {
     getService('bank/get').then(result => {
       if (result) {
@@ -79,6 +89,7 @@ export default function OrganizationModal(props) {
       setRoleID(Orgcontroller.roleId);
       form.setFieldsValue({
         ...Orgcontroller,
+        foundedYear: Orgcontroller ? Orgcontroller.foundedYear : '',
         bankID: Orgcontroller.bank && Orgcontroller.bank.id,
         Currency: Orgcontroller.currency && Orgcontroller.currency.id,
         CountryID: Orgcontroller.address
@@ -142,6 +153,8 @@ export default function OrganizationModal(props) {
     form
       .validateFields()
       .then(values => {
+        console.log(values);
+        values.foundedYear = foundedDate;
         values.bank = { id: values.bankID };
         values.currency = { id: values.Currency };
         values.address = {
@@ -192,6 +205,7 @@ export default function OrganizationModal(props) {
         errorCatch(info);
       });
   };
+  const dateFormat = 'YYYY-MM-DD';
 
   return (
     <div>
@@ -244,6 +258,45 @@ export default function OrganizationModal(props) {
                     <Form.Item
                       label="Регистрийн дугаар:"
                       name="registerNumber"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={24} lg={12}>
+                    <Form.Item
+                      label="Байгуулагдсан он:"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <DatePicker
+                        prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
+                        onChange={onDateChange}
+                        placeholder="Байгуулагдсан он"
+                        style={{
+                          height: '39px',
+                          width: '100%',
+                          borderRadius: '3px',
+                        }}
+                        defaultValue={
+                          isEditMode
+                            ? moment(Orgcontroller.foundedYear, dateFormat)
+                            : null
+                        }
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={24} lg={12}>
+                    <Form.Item
+                      label="БУБГД:"
+                      name="certificateNumber"
                       rules={[
                         {
                           required: true,
@@ -336,6 +389,7 @@ export default function OrganizationModal(props) {
                   <Col xs={24} md={24} lg={12}>
                     <Form.Item label="Улс:" name="CountryID">
                       <AutoCompleteSelect
+                        // defaultValue={[107]}
                         valueField="id"
                         data={toolsStore.countryList}
                       />

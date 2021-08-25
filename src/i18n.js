@@ -12,6 +12,7 @@ i18n
       ? localStorage.getItem('i18nextLng')
       : 'en',
     debug: false,
+    lng: 'mn',
     detection: {
       order: ['queryString', 'cookie'],
       cache: ['cookie'],
