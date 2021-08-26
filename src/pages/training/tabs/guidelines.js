@@ -31,7 +31,7 @@ const Guidelines = props => {
       const obj = convertLazyParamsToObj(lazyParams);
       getService(`training/get/${props.id}`, obj)
         .then(data => {
-          const dataList = data;
+          const dataList = data.training_guidelines;
           console.log(dataList);
           setTrainingID(data.id);
           setOrgID(data.organization.id);
@@ -79,7 +79,7 @@ const Guidelines = props => {
     form.validateFields().then(values => {
       values.training = { id: trainingID };
       values.reason = value;
-      putService(`trainingGuidelines/update/${Guidelinescontroller.id}`, values)
+      putService(`trainingGuidelines/update/${list.id}`, values)
         .then(() => {
           message.success('Амжилттай хадгаллаа');
         })
@@ -93,7 +93,7 @@ const Guidelines = props => {
     form.validateFields().then(values => {
       values.training = { id: trainingID };
       values.aim = value;
-      putService(`trainingGuidelines/update/${Guidelinescontroller.id}`, values)
+      putService(`trainingGuidelines/update/${list.id}`, values)
         .then(() => {
           message.success('Амжилттай хадгаллаа');
         })
@@ -107,7 +107,7 @@ const Guidelines = props => {
     form.validateFields().then(values => {
       values.training = { id: trainingID };
       values.operation = value;
-      putService(`trainingGuidelines/update/${Guidelinescontroller.id}`, values)
+      putService(`trainingGuidelines/update/${list.id}`, values)
         .then(() => {
           message.success('Амжилттай хадгаллаа');
         })
@@ -121,7 +121,7 @@ const Guidelines = props => {
     form.validateFields().then(values => {
       values.training = { id: trainingID };
       values.result = value;
-      putService(`trainingGuidelines/update/${Guidelinescontroller.id}`, values)
+      putService(`trainingGuidelines/update/${list.id}`, values)
         .then(() => {
           message.success('Амжилттай хадгаллаа');
         })
