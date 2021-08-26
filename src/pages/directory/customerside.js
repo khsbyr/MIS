@@ -5,19 +5,22 @@ import {
   faPlus,
   faPrint,
   faTrash,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../context/Tools';
 import { deleteService, getService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
+import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
 // import OrgaStyle from '../training/tabs/components/orga.style';
 // import AutoCompleteSelect from '../../components/Autocomplete';
 import CustomerSideModal from './components/CustomerSideModal';
+import { PAGESIZE } from '../../constants/Constant';
 
 // function onChange(date, dateString) {
 //   console.log(date, dateString);
@@ -26,36 +29,43 @@ const { Content } = Layout;
 
 let editRow;
 let isEditMode;
+let loadLazyTimeout = null;
+
 const Customerside = () => {
-  const loadLazyTimeout = null;
+  const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams] = useState({
-    page: 0,
-  });
-  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const toolsStore = useContext(ToolsContext);
+  const dt = useRef(null);
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
+    page: 0,
+  });
+  const [totalRecords, setTotalRecords] = useState(0);
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('customerSide/get', list)
-      .then(result => {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService('customerSide/get', obj)
+        .then(data => {
+          const dataList = data || [];
+          dataList.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(data.totalElements);
+          setList(dataList);
+          toolsStore.setIsShowLoader(false);
+        })
+        .catch(error => {
+          message.error(error.toString());
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
@@ -72,6 +82,22 @@ const Customerside = () => {
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
+  };
+
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
   };
 
   const handleDeleted = row => {
@@ -153,12 +179,12 @@ const Customerside = () => {
         <Content>
           <Row>
             <Col xs={24} md={12} lg={14}>
-              <p className="title">Харилцах тал</p>
+              <p className="title">{t('Party in charge')}</p>
             </Col>
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col>
-                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                  <Tooltip title={t('print')} arrowPointAtCenter>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -168,7 +194,7 @@ const Customerside = () => {
                   </Tooltip>
                 </Col>
                 <Col>
-                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                  <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -179,7 +205,18 @@ const Customerside = () => {
                   </Tooltip>
                 </Col>
                 <Col>
-                  <Tooltip title="Нэмэх" arrowPointAtCenter>
+                  <Tooltip title={t('pdf')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFilePdf} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col>
+                  <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -196,10 +233,21 @@ const Customerside = () => {
         </Content>
         <div className="datatable-responsive-demo">
           <DataTable
+            ref={dt}
+            emptyMessage="Өгөгдөл олдсонгүй..."
             value={list}
-            removableSort
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
+            tableStyle={{ minWidth: 1000 }}
+            lazy
             paginator
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             onSelectionChange={e => {

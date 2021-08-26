@@ -185,8 +185,10 @@ export default function FeedbackModal(props) {
                     className="FormItem"
                     onChange={onDateChange}
                     defaultValue={
-                      Feedbackcontroller &&
-                      moment(Feedbackcontroller.feedbackDate).zone(0)
+                      isEditMode
+                        ? Feedbackcontroller &&
+                          moment(Feedbackcontroller.feedbackDate).zone(0)
+                        : null
                     }
                   />
                 </Form.Item>

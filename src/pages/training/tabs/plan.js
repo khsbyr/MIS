@@ -5,55 +5,66 @@ import {
   faPlus,
   faPrint,
   faTrash,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Input, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
+import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
 import ContentWrapper from './components/plan.styled';
 import PlanModal from './components/PlanModal';
+import { PAGESIZE } from '../../../constants/Constant';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
+let loadLazyTimeout = null;
+
 const Plan = props => {
-  const loadLazyTimeout = null;
+  const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams] = useState({
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
     page: 0,
   });
-  const PAGESIZE = 20;
+  const dt = useRef(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
   const [orgID, setOrgID] = useState([]);
   const toolsStore = useContext(ToolsContext);
+
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`training/get/${props.id}`, list)
-      .then(result => {
-        const listResult = result.trainingTeams || [];
-        setOrgID(result.organization.id);
-        setTrainingID(result.id);
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService(`training/get/${props.id}`, obj)
+        .then(data => {
+          const dataList = data.trainingTeams || [];
+          setOrgID(data.organization.id);
+          setTrainingID(data.id);
+          dataList.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(data.totalElements);
+          setList(dataList);
+          toolsStore.setIsShowLoader(false);
+        })
+        .catch(error => {
+          message.error(error.toString());
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
@@ -83,6 +94,22 @@ const Plan = props => {
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
+  };
+
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
   };
 
   const handleDeleted = row => {
@@ -178,8 +205,8 @@ const Plan = props => {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Row justify="end" gutter={[16, 16]}>
-                  <Col>
-                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                  {/* <Col>
+                    <Tooltip title={t('print')} arrowPointAtCenter>
                       <Button
                         type="text"
                         icon={<FontAwesomeIcon icon={faPrint} />}
@@ -189,7 +216,7 @@ const Plan = props => {
                     </Tooltip>
                   </Col>
                   <Col>
-                    <Tooltip title="Экспорт" arrowPointAtCenter>
+                    <Tooltip title={t('export')} arrowPointAtCenter>
                       <Button
                         type="text"
                         className="export"
@@ -200,7 +227,18 @@ const Plan = props => {
                     </Tooltip>
                   </Col>
                   <Col>
-                    <Tooltip title="Нэмэх" arrowPointAtCenter>
+                    <Tooltip title={t('pdf')} arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFilePdf} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
+                  </Col> */}
+                  <Col>
+                    <Tooltip title={t('add')} arrowPointAtCenter>
                       <Button
                         type="text"
                         className="export"
@@ -218,15 +256,24 @@ const Plan = props => {
         </Layout>
         <div className="datatable-responsive-demo">
           <DataTable
+            ref={dt}
             editMode="cell"
-            // className="editable-cells-table"
+            lazy
             value={list}
-            removableSort
             paginator
             emptyMessage="Өгөгдөл олдсонгүй..."
-            rows={10}
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
+            tableStyle={{ minWidth: 1000 }}
             // onRowClick={edit}
             onSelectionChange={e => {
               setSelectedRows(e.value);
@@ -248,9 +295,11 @@ const Plan = props => {
               field="mission"
               editor={editData => missionEditor('list', editData)}
               bodyStyle={{ textAlign: 'center' }}
+              filterMatchMode="contains"
             />
             <Column
               header="Багшийн нэрс"
+              field="user.fullName"
               body={nameTrainerBodyTemplate}
               sortable
               filter

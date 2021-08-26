@@ -5,6 +5,7 @@ import {
   faPlus,
   faPrint,
   faTrash,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -20,53 +21,62 @@ import {
 import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
+import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
 import ContentWrapper from './training.style';
 import TrainingModal from './TrainingModal';
 import OrgaStyle from './tabs/components/orga.style';
 import AutoCompleteSelect from '../../components/Autocomplete';
+import { PAGESIZE } from '../../constants/Constant';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
+let loadLazyTimeout = null;
+
 const TrainingList = () => {
-  const loadLazyTimeout = null;
+  const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams] = useState({
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
     page: 0,
   });
   const toolsStore = useToolsStore();
-  const PAGESIZE = 20;
-  const [selectedRows, setSelectedRows] = useState([]);
   const [orgID] = useState([]);
   const [trainingID, setTrainingID] = useState();
   const history = useHistory();
+  const [totalRecords, setTotalRecords] = useState(0);
+  const dt = useRef(null);
+  const [selectedRows, setSelectedRows] = useState([]);
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('training/get', list)
-      .then(result => {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService('training/get', obj)
+        .then(data => {
+          const dataList = data.content || [];
+          dataList.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(data.totalElements);
+          setList(dataList);
+          toolsStore.setIsShowLoader(false);
+        })
+        .catch(error => {
+          message.error(error.toString());
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
@@ -76,7 +86,7 @@ const TrainingList = () => {
   const getTraining = orgId => {
     getService(`training/getList/${orgId}`, {}).then(result => {
       if (result) {
-        const listResult = result || [];
+        const listResult = result.content || [];
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
@@ -103,6 +113,22 @@ const TrainingList = () => {
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
+  };
+
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
   };
 
   const handleDeleted = row => {
@@ -188,16 +214,14 @@ const TrainingList = () => {
   const totalBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Төсөв</span>
-      {Formatcurrency(row.trainingBudget && row.trainingBudget.totalBudget)}
+      {Formatcurrency(row.trainingBudget.totalBudget)}
     </>
   );
 
   const performanceBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Гүйцэтгэлийн төсөв</span>
-      {Formatcurrency(
-        row.trainingBudget && row.trainingBudget.performanceBudget
-      )}
+      {Formatcurrency(row.trainingBudget.performanceBudget)}
     </>
   );
 
@@ -205,7 +229,7 @@ const TrainingList = () => {
     <>
       <span className="p-column-title">Эхэлсэн огноо</span>
       {moment(row.trainingStartDate && row.trainingStartDate).format(
-        'YYYY-M-D'
+        'YYYY-MM-DD'
       )}
     </>
   );
@@ -213,7 +237,7 @@ const TrainingList = () => {
   const endDateBodyTemplate = row => (
     <>
       <span className="p-column-title">Дууссан огноо</span>
-      {moment(row.trainingEndDate && row.trainingEndDate).format('YYYY-M-D')}
+      {moment(row.trainingEndDate && row.trainingEndDate).format('YYYY-MM-DD')}
     </>
   );
 
@@ -236,7 +260,7 @@ const TrainingList = () => {
             </Col>
             <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>
-                <Col xs={12} md={12} lg={10}>
+                <Col xs={12} md={12} lg={8}>
                   <OrgaStyle>
                     <AutoCompleteSelect
                       valueField="id"
@@ -250,7 +274,7 @@ const TrainingList = () => {
                   <DatePicker
                     bordered={false}
                     suffixIcon={<DownOutlined />}
-                    placeholder="Select year"
+                    placeholder="Жил сонгох"
                     picker="year"
                     className="DatePicker"
                     style={{
@@ -261,7 +285,7 @@ const TrainingList = () => {
                   />
                 </Col>
                 <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                  <Tooltip title={t('print')} arrowPointAtCenter>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -271,7 +295,7 @@ const TrainingList = () => {
                   </Tooltip>
                 </Col>
                 <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                  <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -282,7 +306,18 @@ const TrainingList = () => {
                   </Tooltip>
                 </Col>
                 <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Нэмэх" arrowPointAtCenter>
+                  <Tooltip title={t('pdf')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFilePdf} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col xs={8} md={2} lg={2}>
+                  <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -300,12 +335,22 @@ const TrainingList = () => {
         <div className="datatable-responsive-demo">
           <div className="datatable-selection-demo">
             <DataTable
+              ref={dt}
               selectionMode="single"
               emptyMessage="Өгөгдөл олдсонгүй..."
               value={list}
-              removableSort
+              first={lazyParams.first}
+              rows={PAGESIZE}
+              totalRecords={totalRecords}
+              onPage={onPage}
+              onSort={onSort}
+              sortField={lazyParams.sortField}
+              sortOrder={lazyParams.sortOrder}
+              onFilter={onFilter}
+              filters={lazyParams.filters}
+              tableStyle={{ minWidth: 1000 }}
+              lazy
               paginator
-              rows={10}
               className="p-datatable-responsive-demo"
               selection={selectedRows}
               onRowClick={ShowTrainingInfo}
@@ -321,45 +366,62 @@ const TrainingList = () => {
                 style={{ width: 40 }}
               />
               <Column
+                field="name"
                 header="Сургалтын сэдэв"
                 filter
                 body={NameBodyTemplate}
                 sortable
+                filterPlaceholder="Хайх"
+                filterMatchMode="contains"
               />
               <Column
+                field="trainingBudget.totalBudget"
                 header="Төсөв /₮/"
                 headerStyle={{ width: '10rem' }}
                 filter
+                filterPlaceholder="Хайх"
+                sortable
                 body={totalBudgetBodyTemplate}
                 bodyStyle={{ textAlign: 'center' }}
+                filterMatchMode="equals"
               />
               <Column
+                field="trainingBudget.performanceBudget"
                 header="Төсвийн гүйцэтгэл /₮/"
-                headerStyle={{ width: '10rem' }}
+                filterPlaceholder="Хайх"
+                headerStyle={{ width: '12rem' }}
                 filter
+                sortable
                 body={performanceBudgetBodyTemplate}
                 bodyStyle={{ textAlign: 'center' }}
+                filterMatchMode="equals"
               />
               <Column
+                field="trainingStartDate"
                 header="Эхэлсэн огноо"
+                sortable
                 headerStyle={{ width: '10rem' }}
-                filter
                 body={startDateBodyTemplate}
                 bodyStyle={{ textAlign: 'center' }}
               />
               <Column
+                field="trainingEndDate"
                 header="Дууссан огноо"
+                sortable
                 headerStyle={{ width: '10rem' }}
-                filter
                 body={endDateBodyTemplate}
                 bodyStyle={{ textAlign: 'center' }}
               />
               <Column
+                field="totalParticipants"
                 header="Оролцогчдын тоо"
+                filterPlaceholder="Хайх"
                 headerStyle={{ width: '10rem' }}
                 filter
+                sortable
                 body={participantBodyTemplate}
                 bodyStyle={{ textAlign: 'center' }}
+                filterMatchMode="equals"
               />
               <Column headerStyle={{ width: '6rem' }} body={action} />
             </DataTable>

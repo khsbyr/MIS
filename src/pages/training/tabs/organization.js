@@ -5,15 +5,17 @@ import {
   faPlus,
   faPrint,
   faTrash,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
+import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
 import ContentWrapper from './components/organization.style';
 import OrganizationModal from './components/OrganizationModal';
 
@@ -21,36 +23,45 @@ const { Content } = Layout;
 
 let editRow;
 let isEditMode;
+let loadLazyTimeout = null;
+
 const Organization = props => {
-  const loadLazyTimeout = null;
+  const { t } = useTranslation();
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams] = useState({
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
     page: 0,
   });
-  // const PAGESIZE = 20;
+  const dt = useRef(null);
   const [selectedRows, setSelectedRows] = useState([]);
+
   const onInit = () => {
+    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    toolsStore.setIsShowLoader(true);
-    getService(`training/get/${props.id}`, list)
-      .then(result => {
-        const listResult = result.organization;
-        // listResult.forEach((item, index) => {
-        //   item.index = lazyParams.page * PAGESIZE + index + 1;
-        // });
-        setList([listResult]);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService(`training/get/${props.id}`, obj)
+        .then(data => {
+          const dataList = data.organization;
+          // dataList.forEach((item, index) => {
+          //   item.index = lazyParams.page * PAGESIZE + index + 1;
+          // });
+          setTotalRecords(data.totalElements);
+          setList([dataList]);
+          toolsStore.setIsShowLoader(false);
+        })
+        .catch(error => {
+          message.error(error.toString());
+          toolsStore.setIsShowLoader(false);
+        });
+    }, 500);
   };
+
   useEffect(() => {
     onInit();
   }, [lazyParams]);
@@ -64,6 +75,22 @@ const Organization = props => {
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
+  };
+
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
   };
 
   const handleDeleted = row => {
@@ -167,8 +194,8 @@ const Organization = props => {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Row justify="end" gutter={[16, 16]}>
-                  <Col>
-                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                  {/* <Col>
+                    <Tooltip title={t('print')} arrowPointAtCenter>
                       <Button
                         type="text"
                         icon={<FontAwesomeIcon icon={faPrint} />}
@@ -178,7 +205,7 @@ const Organization = props => {
                     </Tooltip>
                   </Col>
                   <Col>
-                    <Tooltip title="Экспорт" arrowPointAtCenter>
+                    <Tooltip title={t('export')} arrowPointAtCenter>
                       <Button
                         type="text"
                         className="export"
@@ -189,7 +216,18 @@ const Organization = props => {
                     </Tooltip>
                   </Col>
                   <Col>
-                    <Tooltip title="Нэмэх" arrowPointAtCenter>
+                    <Tooltip title={t('pdf')} arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFilePdf} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
+                  </Col> */}
+                  <Col>
+                    <Tooltip title={t('add')} arrowPointAtCenter>
                       <Button
                         type="text"
                         className="export"
@@ -208,13 +246,21 @@ const Organization = props => {
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}
+            ref={dt}
+            lazy
             removableSort
             paginator
             emptyMessage="Өгөгдөл олдсонгүй..."
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            // onRowClick={edit}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
+            tableStyle={{ minWidth: 1000 }}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
