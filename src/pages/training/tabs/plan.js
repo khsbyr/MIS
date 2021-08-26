@@ -5,12 +5,14 @@ import {
   faPlus,
   faPrint,
   faTrash,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Input, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
@@ -25,6 +27,7 @@ let isEditMode;
 let loadLazyTimeout = null;
 
 const Plan = props => {
+  const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -202,8 +205,8 @@ const Plan = props => {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Row justify="end" gutter={[16, 16]}>
-                  <Col>
-                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                  {/* <Col>
+                    <Tooltip title={t('print')} arrowPointAtCenter>
                       <Button
                         type="text"
                         icon={<FontAwesomeIcon icon={faPrint} />}
@@ -213,7 +216,7 @@ const Plan = props => {
                     </Tooltip>
                   </Col>
                   <Col>
-                    <Tooltip title="Экспорт" arrowPointAtCenter>
+                    <Tooltip title={t('export')} arrowPointAtCenter>
                       <Button
                         type="text"
                         className="export"
@@ -224,7 +227,18 @@ const Plan = props => {
                     </Tooltip>
                   </Col>
                   <Col>
-                    <Tooltip title="Нэмэх" arrowPointAtCenter>
+                    <Tooltip title={t('pdf')} arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFilePdf} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
+                  </Col> */}
+                  <Col>
+                    <Tooltip title={t('add')} arrowPointAtCenter>
                       <Button
                         type="text"
                         className="export"
@@ -281,9 +295,11 @@ const Plan = props => {
               field="mission"
               editor={editData => missionEditor('list', editData)}
               bodyStyle={{ textAlign: 'center' }}
+              filterMatchMode="contains"
             />
             <Column
               header="Багшийн нэрс"
+              field="user.fullName"
               body={nameTrainerBodyTemplate}
               sortable
               filter

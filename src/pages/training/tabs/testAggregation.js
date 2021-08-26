@@ -5,6 +5,7 @@ import {
   faPlus,
   faPrint,
   faTrash,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
@@ -13,6 +14,7 @@ import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import moment from 'moment';
+import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
@@ -27,6 +29,7 @@ let isEditMode;
 let loadLazyTimeout = null;
 
 const TestAggregation = props => {
+  const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [trainingID, setTrainingID] = useState([]);
@@ -199,7 +202,7 @@ const TestAggregation = props => {
               <Col xs={24} md={24} lg={24}>
                 <Row justify="end" gutter={[16, 16]}>
                   <Col>
-                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                    <Tooltip title={t('print')} arrowPointAtCenter>
                       <Button
                         type="text"
                         icon={<FontAwesomeIcon icon={faPrint} />}
@@ -209,7 +212,7 @@ const TestAggregation = props => {
                     </Tooltip>
                   </Col>
                   <Col>
-                    <Tooltip title="Экспорт" arrowPointAtCenter>
+                    <Tooltip title={t('export')} arrowPointAtCenter>
                       <Button
                         type="text"
                         className="export"
@@ -220,7 +223,18 @@ const TestAggregation = props => {
                     </Tooltip>
                   </Col>
                   <Col>
-                    <Tooltip title="Нэмэх" arrowPointAtCenter>
+                    <Tooltip title={t('pdf')} arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFilePdf} />}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
+                  </Col>
+                  <Col>
+                    <Tooltip title={t('add')} arrowPointAtCenter>
                       <Button
                         type="text"
                         className="export"
@@ -277,11 +291,15 @@ const TestAggregation = props => {
               body={ShouldTakenBodyTemplate}
               bodyStyle={{ textAlign: 'center' }}
               sortable
+              filter
+              filterPlaceholder="Хайх"
             />
             <Column
               header="Огноо"
               body={DateBodyTemplate}
               sortable
+              filter
+              filterPlaceholder="Хайх"
               bodyStyle={{ textAlign: 'center' }}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />

@@ -5,53 +5,64 @@ import {
   faPlus,
   faPrint,
   faTrash,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
+import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
 import ConsultingPersonModal from './components/ConsultingPersonModal';
+import { PAGESIZE } from '../../constants/Constant';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
 let trainerID;
+let loadLazyTimeout = null;
+
 const ConsultingPerson = () => {
-  const loadLazyTimeout = null;
+  const { t } = useTranslation();
+  const dt = useRef(null);
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams] = useState({
-    page: 0,
-  });
-  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [OrgID] = useState([]);
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
+    page: 0,
+  });
+  const [totalRecords, setTotalRecords] = useState(0);
+
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`user/getAllPersonUserList`, list)
-      .then(result => {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService(`user/getAllPersonUserList`, obj)
+        .then(data => {
+          const dataList = data || [];
+          dataList.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(data.totalElements);
+          setList(dataList);
+          toolsStore.setIsShowLoader(false);
+        })
+        .catch(error => {
+          message.error(error.toString());
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
@@ -62,6 +73,22 @@ const ConsultingPerson = () => {
     editRow = null;
     setIsModalVisible(true);
     isEditMode = false;
+  };
+
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
   };
 
   const handleDeleted = row => {
@@ -174,7 +201,7 @@ const ConsultingPerson = () => {
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col>
-                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                  <Tooltip title={t('print')} arrowPointAtCenter>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -184,7 +211,7 @@ const ConsultingPerson = () => {
                   </Tooltip>
                 </Col>
                 <Col>
-                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                  <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -195,7 +222,18 @@ const ConsultingPerson = () => {
                   </Tooltip>
                 </Col>
                 <Col>
-                  <Tooltip title="Нэмэх" arrowPointAtCenter>
+                  <Tooltip title={t('pdf')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFilePdf} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col>
+                  <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -213,10 +251,21 @@ const ConsultingPerson = () => {
 
         <div className="datatable-responsive-demo">
           <DataTable
+            ref={dt}
+            emptyMessage="Өгөгдөл олдсонгүй..."
             value={list}
-            removableSort
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
+            tableStyle={{ minWidth: 1000 }}
+            lazy
             paginator
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             onSelectionChange={e => {
@@ -231,20 +280,23 @@ const ConsultingPerson = () => {
               style={{ width: 40 }}
             />
             <Column
+              field="firstname"
               header="Овог"
-              body={LastNameBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              header="Нэр"
               body={FirstNameBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
             />
             <Column
+              field="lastname"
+              header="Нэр"
+              body={LastNameBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              field="phoneNumber"
               header="Утас"
               body={phoneBodyTemplate}
               sortable
@@ -252,7 +304,7 @@ const ConsultingPerson = () => {
               filterPlaceholder="Хайх"
             />
             <Column
-              field="registerNumber"
+              field="register"
               header="Регистер"
               body={registerBodyTemplate}
               sortable

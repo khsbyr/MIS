@@ -5,6 +5,7 @@ import {
   faPlus,
   faPrint,
   faTrash,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -19,7 +20,8 @@ import {
 } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import { useToolsStore } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
@@ -37,6 +39,7 @@ let trainerID;
 let loadLazyTimeout = null;
 
 const CV = () => {
+  const { t } = useTranslation();
   const toolsStore = useToolsStore();
   const [totalRecords, setTotalRecords] = useState(0);
   const [list, setList] = useState([]);
@@ -49,26 +52,6 @@ const CV = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [OrgID, setOrgID] = useState([]);
   const [isOnChange, setIsOnChange] = useState(false);
-  // const onInit = () => {
-  //   toolsStore.setIsShowLoader(true);
-  //   if (loadLazyTimeout) {
-  //     clearTimeout(loadLazyTimeout);
-  //   }
-  //   getService(`user/getAllTrainerUserList`, list)
-  //     .then(result => {
-  //       const listResult = result || [];
-  //       listResult.forEach((item, index) => {
-  //         item.index = lazyParams.page * PAGESIZE + index + 1;
-  //       });
-  //       setList(listResult);
-  //       setSelectedRows([]);
-  //     })
-  //     .finally(toolsStore.setIsShowLoader(false))
-  //     .catch(error => {
-  //       errorCatch(error);
-  //       toolsStore.setIsShowLoader(false);
-  //     });
-  // };
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
@@ -248,12 +231,12 @@ const CV = () => {
       <div className="button-demo">
         <Content>
           <Row>
-            <Col xs={24} md={24} lg={14}>
+            <Col xs={24} md={24} lg={10}>
               <p className="title">Хүний нөөц</p>
             </Col>
-            <Col xs={24} md={18} lg={10}>
+            <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>
-                <Col xs={12} md={6} lg={7}>
+                <Col xs={12} md={6} lg={9}>
                   <OrgaStyle>
                     <AutoCompleteSelect
                       valueField="id"
@@ -267,7 +250,7 @@ const CV = () => {
                   <DatePicker
                     bordered={false}
                     suffixIcon={<DownOutlined />}
-                    placeholder="Select year"
+                    placeholder="Жил сонгох"
                     picker="year"
                     className="DatePicker"
                     style={{
@@ -278,7 +261,7 @@ const CV = () => {
                   />
                 </Col>
                 <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                  <Tooltip title={t('print')} arrowPointAtCenter>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -288,7 +271,7 @@ const CV = () => {
                   </Tooltip>
                 </Col>
                 <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                  <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -299,7 +282,18 @@ const CV = () => {
                   </Tooltip>
                 </Col>
                 <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Нэмэх" arrowPointAtCenter>
+                  <Tooltip title={t('pdf')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFilePdf} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col xs={8} md={2} lg={2}>
+                  <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -348,7 +342,7 @@ const CV = () => {
             <Column
               header="Овог"
               field="firstname"
-              body={LastNameBodyTemplate}
+              body={FirstNameBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
@@ -356,7 +350,7 @@ const CV = () => {
             <Column
               header="Нэр"
               field="lastname"
-              body={FirstNameBodyTemplate}
+              body={LastNameBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"

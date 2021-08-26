@@ -5,6 +5,7 @@ import {
   faPlus,
   faPrint,
   faTrash,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -22,6 +23,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
@@ -38,6 +40,7 @@ let isEditMode;
 let loadLazyTimeout = null;
 
 const TrainingList = () => {
+  const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lazyParams, setLazyParams] = useState({
@@ -127,6 +130,7 @@ const TrainingList = () => {
     params.first = 0;
     setLazyParams(params);
   };
+
   const handleDeleted = row => {
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
@@ -210,16 +214,14 @@ const TrainingList = () => {
   const totalBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Төсөв</span>
-      {Formatcurrency(row.trainingBudget && row.trainingBudget.totalBudget)}
+      {Formatcurrency(row.trainingBudget.totalBudget)}
     </>
   );
 
   const performanceBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Гүйцэтгэлийн төсөв</span>
-      {Formatcurrency(
-        row.trainingBudget && row.trainingBudget.performanceBudget
-      )}
+      {Formatcurrency(row.trainingBudget.performanceBudget)}
     </>
   );
 
@@ -227,7 +229,7 @@ const TrainingList = () => {
     <>
       <span className="p-column-title">Эхэлсэн огноо</span>
       {moment(row.trainingStartDate && row.trainingStartDate).format(
-        'YYYY-M-D'
+        'YYYY-MM-DD'
       )}
     </>
   );
@@ -235,7 +237,7 @@ const TrainingList = () => {
   const endDateBodyTemplate = row => (
     <>
       <span className="p-column-title">Дууссан огноо</span>
-      {moment(row.trainingEndDate && row.trainingEndDate).format('YYYY-M-D')}
+      {moment(row.trainingEndDate && row.trainingEndDate).format('YYYY-MM-DD')}
     </>
   );
 
@@ -258,7 +260,7 @@ const TrainingList = () => {
             </Col>
             <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>
-                <Col xs={12} md={12} lg={10}>
+                <Col xs={12} md={12} lg={8}>
                   <OrgaStyle>
                     <AutoCompleteSelect
                       valueField="id"
@@ -272,7 +274,7 @@ const TrainingList = () => {
                   <DatePicker
                     bordered={false}
                     suffixIcon={<DownOutlined />}
-                    placeholder="Select year"
+                    placeholder="Жил сонгох"
                     picker="year"
                     className="DatePicker"
                     style={{
@@ -283,7 +285,7 @@ const TrainingList = () => {
                   />
                 </Col>
                 <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                  <Tooltip title={t('print')} arrowPointAtCenter>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -293,7 +295,7 @@ const TrainingList = () => {
                   </Tooltip>
                 </Col>
                 <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                  <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -304,7 +306,18 @@ const TrainingList = () => {
                   </Tooltip>
                 </Col>
                 <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Нэмэх" arrowPointAtCenter>
+                  <Tooltip title={t('pdf')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFilePdf} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col xs={8} md={2} lg={2}>
+                  <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -337,7 +350,6 @@ const TrainingList = () => {
               filters={lazyParams.filters}
               tableStyle={{ minWidth: 1000 }}
               lazy
-              removableSort
               paginator
               className="p-datatable-responsive-demo"
               selection={selectedRows}
@@ -354,45 +366,62 @@ const TrainingList = () => {
                 style={{ width: 40 }}
               />
               <Column
+                field="name"
                 header="Сургалтын сэдэв"
                 filter
                 body={NameBodyTemplate}
                 sortable
+                filterPlaceholder="Хайх"
+                filterMatchMode="contains"
               />
               <Column
+                field="trainingBudget.totalBudget"
                 header="Төсөв /₮/"
                 headerStyle={{ width: '10rem' }}
                 filter
+                filterPlaceholder="Хайх"
+                sortable
                 body={totalBudgetBodyTemplate}
                 bodyStyle={{ textAlign: 'center' }}
+                filterMatchMode="equals"
               />
               <Column
+                field="trainingBudget.performanceBudget"
                 header="Төсвийн гүйцэтгэл /₮/"
-                headerStyle={{ width: '10rem' }}
+                filterPlaceholder="Хайх"
+                headerStyle={{ width: '12rem' }}
                 filter
+                sortable
                 body={performanceBudgetBodyTemplate}
                 bodyStyle={{ textAlign: 'center' }}
+                filterMatchMode="equals"
               />
               <Column
+                field="trainingStartDate"
                 header="Эхэлсэн огноо"
+                sortable
                 headerStyle={{ width: '10rem' }}
-                filter
                 body={startDateBodyTemplate}
                 bodyStyle={{ textAlign: 'center' }}
               />
               <Column
+                field="trainingEndDate"
                 header="Дууссан огноо"
+                sortable
                 headerStyle={{ width: '10rem' }}
-                filter
                 body={endDateBodyTemplate}
                 bodyStyle={{ textAlign: 'center' }}
               />
               <Column
+                field="totalParticipants"
                 header="Оролцогчдын тоо"
+                filterPlaceholder="Хайх"
                 headerStyle={{ width: '10rem' }}
                 filter
+                sortable
                 body={participantBodyTemplate}
                 bodyStyle={{ textAlign: 'center' }}
+                filterMatchMode="equals"
               />
               <Column headerStyle={{ width: '6rem' }} body={action} />
             </DataTable>
