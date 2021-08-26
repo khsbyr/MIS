@@ -1,43 +1,50 @@
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { message, Button } from 'antd';
-import { MSG } from '../../constants/Constant';
+import { MSG, PAGESIZE } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
+import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
 import { Confirm } from '../../components/Confirm';
 
 const signUpRequest = () => {
   const toolsStore = useContext(ToolsContext);
-  const loadLazyTimeout = null;
   const [list, setList] = useState([]);
-  const [lazyParams] = useState({
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
     page: 0,
   });
-  const PAGESIZE = 20;
-  const [selectedRows, setSelectedRows] = useState([]);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const dt = useRef(null);
+
+  let loadLazyTimeout = null;
 
   const onInit = () => {
+    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    toolsStore.setIsShowLoader(true);
-    getService('signUpRequest/get', list)
-      .then(result => {
-        const datas = result || [];
-        datas.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService('signUpRequest/get', obj)
+        .then(result => {
+          const datas = result.content || [];
+          datas.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(result.totalElements);
+          setList(datas);
+          setSelectedRows([]);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
         });
-        setList(datas);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
@@ -128,6 +135,22 @@ const signUpRequest = () => {
     );
   };
 
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
+  };
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -137,7 +160,6 @@ const signUpRequest = () => {
             value={list}
             removableSort
             paginator
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             editMode="row"
@@ -145,6 +167,17 @@ const signUpRequest = () => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
+            ref={dt}
+            lazy
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
           >
             <Column
               field="index"
@@ -173,15 +206,32 @@ const signUpRequest = () => {
               header="Регистрийн дугаар"
               body={registerBodyTemplate}
               sortable
+              filter
+              filterPlaceholder="Хайх"
             />
             <Column
               field="email"
               header="Й-мэйл"
               body={emailBodyTemplate}
               sortable
+              filter
+              filterPlaceholder="Хайх"
             />
-            <Column field="user.role.name" header="Дүр" sortable />
-            <Column field="status.status" header="Төлөв" sortable />
+            <Column
+              field="user.role.name"
+              header="Дүр"
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
+            />
+            <Column
+              field="status.status"
+              header="Төлөв"
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
             <Column
               field=""
               header="Үйлдэл"

@@ -48,18 +48,8 @@ function Login() {
               'name',
               user.firstname ? user.firstname : user.username
             );
-            toolsStore.setUser(user);
+            localStorage.setItem('userId', result.data.userId);
             history.push('user/users');
-          });
-          getService('country/get').then(resultCountry => {
-            if (result) {
-              toolsStore.setCountryList(resultCountry || []);
-            }
-          });
-          getService('aimag/get').then(resultAimag => {
-            if (result) {
-              toolsStore.setAimagList(resultAimag || []);
-            }
           });
         })
         .finally(() => {

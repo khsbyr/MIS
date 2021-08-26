@@ -12,7 +12,6 @@ export default function ContextProvider({ children }) {
   const [orgList, setOrgList] = useState();
   const [countryList, setCountryList] = useState();
   const [aimagList, setAimagList] = useState();
-
   return (
     <ToolsContext.Provider
       value={{

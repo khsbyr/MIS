@@ -5,30 +5,33 @@ import {
   faPlus,
   faPrint,
   faTrash,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
   Col,
   DatePicker,
+  Form,
   Layout,
   message,
   Modal,
   Row,
   Select,
-  Tooltip,
   Tag,
-  Form,
+  Tooltip,
 } from 'antd';
 import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import AutoCompleteSelect from '../../components/Autocomplete';
+import { PAGESIZE } from '../../constants/Constant';
 import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
+import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import OrgaStyle from '../training/tabs/components/orga.style';
 import ContentWrapper from './more/productiveProject.style';
 import ProductiveProjectModal from './more/productiveProjectModal';
@@ -39,14 +42,10 @@ const { Content } = Layout;
 let editRow;
 let isEditMode;
 const productiveProject = props => {
-  const loadLazyTimeout = null;
+  const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams] = useState({
-    page: 0,
-  });
   const toolsStore = useToolsStore();
-  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateOrga, setStateOrga] = useState([]);
   const [orgID, setOrgID] = useState();
@@ -54,25 +53,37 @@ const productiveProject = props => {
   const [projectID, setProjectID] = useState();
   const history = useHistory();
   const [form] = Form.useForm();
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
+    page: 0,
+  });
+  const [totalRecords, setTotalRecords] = useState(0);
+  const dt = useRef(null);
+
+  let loadLazyTimeout = null;
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`project/getByProjectTypeId/${props.type}`, list)
-      .then(result => {
-        const listResult = result;
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService(`project/getByProjectTypeId/${props.type}`, obj)
+        .then(result => {
+          const listResult = result.content;
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(result.totalElements);
+          setList(listResult);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
@@ -91,6 +102,7 @@ const productiveProject = props => {
       ...list,
     });
   }, [lazyParams]);
+
   const selectedStatus = (event, row) => {
     event.preventDefault();
     event.stopPropagation();
@@ -293,6 +305,23 @@ const productiveProject = props => {
 
   const ShowProjectInfo = row => history.push(`/projectList/${row.data.id}`);
 
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
+    console.log(params);
+  };
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -331,8 +360,8 @@ const productiveProject = props => {
                     }}
                   />
                 </Col>
-                <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                <Col xs={6} md={2} lg={2}>
+                  <Tooltip title={t('print')} arrowPointAtCenter>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -341,8 +370,8 @@ const productiveProject = props => {
                     </Button>
                   </Tooltip>
                 </Col>
-                <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                <Col xs={6} md={2} lg={2}>
+                  <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -352,8 +381,19 @@ const productiveProject = props => {
                     </Button>
                   </Tooltip>
                 </Col>
-                <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Нэмэх" arrowPointAtCenter>
+                <Col xs={6} md={2} lg={2}>
+                  <Tooltip title={t('pdf')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFilePdf} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col xs={6} md={2} lg={2}>
+                  <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -374,7 +414,6 @@ const productiveProject = props => {
             value={list}
             removableSort
             paginator
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             onRowClick={ShowProjectInfo}
@@ -382,6 +421,17 @@ const productiveProject = props => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
+            ref={dt}
+            lazy
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
           >
             <Column
               field="index"
@@ -395,19 +445,32 @@ const productiveProject = props => {
               filter
               body={NameBodyTemplate}
               sortable
+              filterPlaceholder="Хайх"
             />
-            <Column header="Хариуцсан хүн" filter body={userBodyTemplate} />
+            <Column
+              header="Хариуцсан хүн"
+              field="nameOfAuthorizedPerson"
+              filter
+              sortable
+              body={userBodyTemplate}
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
+            />
             <Column
               header="Төсөл хэрэгжүүлэх хугацаа"
+              field="period"
               filter
+              sortable
               body={dateBodyTemplate}
+              filterPlaceholder="Хайх"
             />
             <Column
               header="Төсөл ирүүлсэн огноо"
-              filter
+              field="createdDate"
+              sortable
               body={dateSentBodyTemplate}
             />
-            <Column header="Статус" body={statusBodyTemplate} />
+            <Column header="Статус" body={statusBodyTemplate} sortable />
             <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>
           {isModalVisible && (

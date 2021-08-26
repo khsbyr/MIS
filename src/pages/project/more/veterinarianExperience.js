@@ -44,7 +44,7 @@ function veterinarianExperience(props) {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService(`/expierence/getByYoungDoctorId/${props.youngDoctorID}`, list)
+    getService(`/expierence/getByYoungDoctorId/${props.youngDoctorID}`)
       .then(result => {
         const listResult = result;
         listResult.forEach((item, index) => {

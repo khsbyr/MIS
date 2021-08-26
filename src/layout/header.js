@@ -19,7 +19,7 @@ const { Header } = Layout;
 const AvatarDropdown = () => {
   function logout() {
     localStorage.clear();
-    window.location.href = '/login';
+    window.location.href = '/';
   }
   return (
     <Menu className="app-header-dropdown">

@@ -18,7 +18,7 @@ export default function UserModal(props) {
   useEffect(() => {
     getService('role/get').then(result => {
       if (result) {
-        setStateRole(result || []);
+        setStateRole(result.content || []);
       }
     });
 
@@ -41,6 +41,8 @@ export default function UserModal(props) {
         );
       }
     }
+
+    console.log(Usercontroller);
 
     if (isEditMode) {
       setStateTrue(Usercontroller.isTrue);
