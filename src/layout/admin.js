@@ -38,42 +38,43 @@ function Admin() {
     // if (!toolsStore.user) return;
     if (!isLoggged) {
       history.push('/login');
-    }
-    getService('/menus/getByToken').then(resultMenu => {
-      if (resultMenu) {
-        menus = resultMenu;
-        setRoutes(generateRoutes(resultMenu));
-      }
-    });
-    if (!toolsStore.orgList) {
-      getService('organization/get').then(resultOrg => {
-        if (resultOrg) {
-          toolsStore.setOrgList(resultOrg.content || []);
+    } else {
+      getService('/menus/getByToken').then(resultMenu => {
+        if (resultMenu) {
+          menus = resultMenu;
+          setRoutes(generateRoutes(resultMenu));
         }
       });
-    }
-    if (!toolsStore.countryList) {
-      getService('country/get').then(resultCountry => {
-        if (resultCountry) {
-          toolsStore.setCountryList(resultCountry || []);
-        }
-      });
-    }
-    if (!toolsStore.aimagList) {
-      getService('aimag/get').then(resultAimag => {
-        if (resultAimag) {
-          toolsStore.setAimagList(resultAimag || []);
-        }
-      });
-    }
-    if (!toolsStore.user) {
-      getService(`/user/get/${localStorage.getItem('userId')}`).then(
-        resultUser => {
-          if (resultUser) {
-            toolsStore.setUser(resultUser || []);
+      if (!toolsStore.orgList) {
+        getService('organization/get').then(resultOrg => {
+          if (resultOrg) {
+            toolsStore.setOrgList(resultOrg.content || []);
           }
-        }
-      );
+        });
+      }
+      if (!toolsStore.countryList) {
+        getService('country/get').then(resultCountry => {
+          if (resultCountry) {
+            toolsStore.setCountryList(resultCountry || []);
+          }
+        });
+      }
+      if (!toolsStore.aimagList) {
+        getService('aimag/get').then(resultAimag => {
+          if (resultAimag) {
+            toolsStore.setAimagList(resultAimag || []);
+          }
+        });
+      }
+      if (!toolsStore.user) {
+        getService(`/user/get/${localStorage.getItem('userId')}`).then(
+          resultUser => {
+            if (resultUser) {
+              toolsStore.setUser(resultUser || []);
+            }
+          }
+        );
+      }
     }
   }, []);
 
