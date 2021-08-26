@@ -32,7 +32,6 @@ const Guidelines = props => {
       getService(`training/get/${props.id}`, obj)
         .then(data => {
           const dataList = data.training_guidelines;
-          console.log(dataList);
           setTrainingID(data.id);
           setOrgID(data.organization.id);
           // dataList.forEach((item, index) => {
