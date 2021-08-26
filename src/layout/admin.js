@@ -29,9 +29,11 @@ function Admin() {
   const [routes, setRoutes] = React.useState([]);
   const isLoggged = localStorage.getItem('token');
   const history = useHistory();
+
   const toggle = () => {
     setCollapsed(!collapsed);
   };
+
   useEffect(() => {
     // if (!toolsStore.user) return;
     if (!isLoggged) {
@@ -80,7 +82,6 @@ function Admin() {
       <Layout>
         <Sider
           className="site-layout-background"
-          style={{ background: '#fff' }}
           breakpoint="lg"
           width="300px"
           collapsedWidth="70"
@@ -88,6 +89,14 @@ function Admin() {
           trigger={null}
           collapsed={collapsed}
           onCollapse={toggle}
+          style={{
+            background: '#fff',
+            overflow: 'auto',
+            height: '100vh',
+            position: 'sticky',
+            top: 0,
+            left: 0,
+          }}
         >
           {!collapsed ? (
             <img
