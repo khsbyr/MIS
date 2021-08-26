@@ -151,38 +151,12 @@ const Criteria = () => {
     onInit();
     getService('/criteriaReference/get').then(result => {
       if (result) {
-        setCriteriaReferenceList(result || []);
+        setCriteriaReferenceList(result.content || []);
       }
     });
   }, [lazyParams]);
 
-  const getComposition = compId => {
-    toolsStore.setIsShowLoader(true);
-    if (loadLazyTimeout) {
-      clearTimeout(loadLazyTimeout);
-    }
-    loadLazyTimeout = setTimeout(() => {
-      const obj = convertLazyParamsToObj(lazyParams);
-      getService(`/criteria/getListByCriteriaReferenceId/${compId}`, obj)
-        .then(result => {
-          const listResult = result || [];
-          listResult.forEach((item, index) => {
-            item.index = lazyParams.page * PAGESIZE + index + 1;
-          });
-          setTotalRecords(result.totalElements);
-          setList(listResult);
-          setSelectedRows([]);
-        })
-        .finally(toolsStore.setIsShowLoader(false))
-        .catch(error => {
-          errorCatch(error);
-          toolsStore.setIsShowLoader(false);
-        });
-    }, 500);
-  };
-
   const selectComposition = value => {
-    // getComposition(value);
     onInit(value);
   };
 
@@ -240,8 +214,7 @@ const Criteria = () => {
   };
 
   const onFilter = event => {
-    const params = { ...lazyParams, ...event };
-    params.first = 0;
+    const params = { ...lazyParams, ...event, page: 0 };
     setLazyParams(params);
   };
 
@@ -349,6 +322,7 @@ const Criteria = () => {
               filter
               sortable
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               field="resultTobeAchieved"
@@ -357,14 +331,16 @@ const Criteria = () => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="equals"
             />
             <Column
-              field="upIndicator"
+              field="processResult"
               header={t('Execution of results')}
               body={upIndicatorBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="equals"
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
