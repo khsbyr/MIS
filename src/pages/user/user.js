@@ -262,6 +262,7 @@ const User = () => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               field="lastname"
