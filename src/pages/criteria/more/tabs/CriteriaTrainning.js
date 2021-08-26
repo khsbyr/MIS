@@ -23,9 +23,9 @@ const CriteriaTrainning = props => {
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`/criteria/getById/${props.id}`)
+    getService(`/training/getListByCriteria/${props.id}`)
       .then(result => {
-        const listResult = result.training || [];
+        const listResult = result.content || [];
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
@@ -117,28 +117,33 @@ const CriteriaTrainning = props => {
               filter
               body={NameBodyTemplate}
               sortable
+              filterPlaceholder="Хайх"
             />
             <Column
               header="Төсөв"
               headerStyle={{ width: '10rem' }}
               filter
               body={totalBudgetBodyTemplate}
+              filterPlaceholder="Хайх"
             />
             <Column
               header="Гүйцэтгэлийн төсөв"
               headerStyle={{ width: '10rem' }}
               filter
               body={performanceBudgetBodyTemplate}
+              filterPlaceholder="Хайх"
             />
             <Column
               header="Эхэлсэн огноо"
               headerStyle={{ width: '10rem' }}
+              filterPlaceholder="Хайх"
               filter
               body={startDateBodyTemplate}
             />
             <Column
               header="Дууссан огноо"
               headerStyle={{ width: '10rem' }}
+              filterPlaceholder="Хайх"
               filter
               body={endDateBodyTemplate}
             />
@@ -147,6 +152,7 @@ const CriteriaTrainning = props => {
               headerStyle={{ width: '10rem' }}
               filter
               body={participantBodyTemplate}
+              filterPlaceholder="Хайх"
             />
           </DataTable>
         </div>

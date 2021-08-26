@@ -42,6 +42,11 @@ export default function TrainingReportModal(props) {
         setTraining(result || []);
       }
     });
+    getService(`training/get/${trainingIDD}`).then(result => {
+      if (result) {
+        // setTraining(result || []);
+      }
+    });
 
     if (TrainingReportController !== undefined) {
       getService(
@@ -437,9 +442,12 @@ export default function TrainingReportModal(props) {
                 </h1>
                 <Row gutter={[32, 32]}>
                   <Col xs={24} md={12} lg={12}>
-                    <Form.Item name="PerformedProcess1">
+                    <Form.Item
+                      name="PerformedProcess1"
+                      label="2.1. Суралцагчийн ирцийн мэдээлэл, нэгтгэл, дүгнэлт"
+                    >
                       <Input.TextArea
-                        placeholder="(2.1. Суралцагчийн ирцийн мэдээлэл, нэгтгэл, дүгнэлт)"
+                        placeholder="(Суралцагчийн ирцийн мэдээлэл, нэгтгэл, дүгнэлт...)"
                         style={{
                           width: '100%',
                           height: '140px',
@@ -448,9 +456,12 @@ export default function TrainingReportModal(props) {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={12} lg={12}>
-                    <Form.Item name="PerformedProcess2">
+                    <Form.Item
+                      name="PerformedProcess2"
+                      label="2.2. Хичээлийн явц, сургалтын хэлбэр, аргачлал"
+                    >
                       <Input.TextArea
-                        placeholder="(2.2. Хичээлийн явц, сургалтын хэлбэр, аргачлал)"
+                        placeholder="(Хичээлийн явц, сургалтын хэлбэр, аргачлал...)"
                         style={{
                           width: '100%',
                           height: '140px',
@@ -461,9 +472,12 @@ export default function TrainingReportModal(props) {
                 </Row>
                 <Row gutter={[32, 32]} style={{ marginTop: '32px' }}>
                   <Col xs={24} md={12} lg={12}>
-                    <Form.Item name="PerformedProcess3">
+                    <Form.Item
+                      name="PerformedProcess3"
+                      label="2.3. Сургалтын тараах материал,  гарын авлагын тухай"
+                    >
                       <Input.TextArea
-                        placeholder="(2.3. Сургалтын тараах материал,  гарын авлагын тухай)"
+                        placeholder="(Сургалтын тараах материал,  гарын авлагын тухай...)"
                         style={{
                           width: '100%',
                           height: '140px',
@@ -472,9 +486,12 @@ export default function TrainingReportModal(props) {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={12} lg={12}>
-                    <Form.Item name="PerformedProcess4">
+                    <Form.Item
+                      name="PerformedProcess4"
+                      label="2.4. Сургалтын танхим, зохион байгуулалтын тухай"
+                    >
                       <Input.TextArea
-                        placeholder="(2.4. Сургалтын танхим, зохион байгуулалтын тухай)"
+                        placeholder="(Сургалтын танхим, зохион байгуулалтын тухай...)"
                         style={{
                           width: '100%',
                           height: '140px',

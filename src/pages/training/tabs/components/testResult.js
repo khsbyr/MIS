@@ -9,61 +9,80 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { ToolsContext } from '../../../../context/Tools';
 import { getService, putService } from '../../../../service/service';
-import { errorCatch } from '../../../../tools/Tools';
+import { errorCatch, convertLazyParamsToObj } from '../../../../tools/Tools';
 import ContentWrapper from './testResult.style';
 import TestResultModal from './testResultModal';
+import { PAGESIZE } from '../../../../constants/Constant';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
+let loadLazyTimeout = null;
+
 const TestResult = () => {
-  const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [trainingID, setTrainingID] = useState([]);
-  const [lazyParams] = useState({
-    page: 0,
-  });
-  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const toolsStore = useContext(ToolsContext);
   const history = useHistory();
   const { id } = useParams();
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
+    page: 0,
+  });
+  const dt = useRef(null);
+
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`testPoint/getByTestId/${id}`, list)
-      .then(result => {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService(`testPoint/getByTestId/${id}`, obj)
+        .then(data => {
+          const dataList = data.content || [];
+          dataList.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTrainingID(data.id);
+          setTotalRecords(data.totalElements);
+          setList(dataList);
+          toolsStore.setIsShowLoader(false);
+        })
+        .catch(error => {
+          message.error(error.toString());
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setTrainingID(result.id);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
     onInit();
   }, [lazyParams]);
 
-  // const add = () => {
-  //   setIsModalVisible(true);
-  //   isEditMode = false;
-  // };
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
+  };
 
   const edit = (event, row) => {
     event.preventDefault();
@@ -222,11 +241,23 @@ const TestResult = () => {
         </Content>
         <div className="datatable-responsive-demo">
           <DataTable
+            ref={dt}
+            lazy
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
+            emptyMessage="Өгөгдөл олдсонгүй..."
             value={list}
+            tableStyle={{ minWidth: 1000 }}
             onRowClick={showParticipants}
             removableSort
             paginator
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             // onRowClick={edit}

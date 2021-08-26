@@ -48,7 +48,6 @@ const productiveProject = props => {
   const toolsStore = useToolsStore();
   const [selectedRows, setSelectedRows] = useState([]);
   const [stateOrga, setStateOrga] = useState([]);
-  const [orgID, setOrgID] = useState();
   const [status, setStatus] = useState();
   const [projectID, setProjectID] = useState();
   const history = useHistory();
@@ -124,13 +123,11 @@ const productiveProject = props => {
   };
 
   const getTraining = orgId => {
-    const data = {
-      typeId: props.type,
-      organizationId: orgId,
-    };
-    getService(`project/getByTypeOrOrgId/typeId${props.type}/`).then(result => {
+    getService(
+      `project/getByProjectTypeId/${props.type}?search=organization.id:${orgId}`
+    ).then(result => {
       if (result) {
-        const listResult = result || [];
+        const listResult = result.content || [];
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
@@ -140,7 +137,6 @@ const productiveProject = props => {
   };
 
   const selectOrgs = value => {
-    setOrgID(value);
     getTraining(value);
   };
 
@@ -316,10 +312,8 @@ const productiveProject = props => {
   };
 
   const onFilter = event => {
-    const params = { ...lazyParams, ...event };
-    params.first = 0;
+    const params = { ...lazyParams, ...event, page: 0 };
     setLazyParams(params);
-    console.log(params);
   };
 
   return (
@@ -339,7 +333,7 @@ const productiveProject = props => {
                         valueField="id"
                         placeholder="Байгууллага сонгох"
                         data={toolsStore.orgList}
-                        // onChange={value => selectOrgs(value)}
+                        onChange={value => selectOrgs(value)}
                       />
                     </OrgaStyle>
                   ) : (
@@ -446,6 +440,7 @@ const productiveProject = props => {
               body={NameBodyTemplate}
               sortable
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               header="Хариуцсан хүн"
@@ -463,6 +458,7 @@ const productiveProject = props => {
               sortable
               body={dateBodyTemplate}
               filterPlaceholder="Хайх"
+              filterMatchMode="equals"
             />
             <Column
               header="Төсөл ирүүлсэн огноо"
@@ -470,7 +466,12 @@ const productiveProject = props => {
               sortable
               body={dateSentBodyTemplate}
             />
-            <Column header="Статус" body={statusBodyTemplate} sortable />
+            <Column
+              field="projectStatus.name"
+              header="Статус"
+              body={statusBodyTemplate}
+              sortable
+            />
             <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>
           {isModalVisible && (

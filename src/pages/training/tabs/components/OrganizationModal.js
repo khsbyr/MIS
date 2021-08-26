@@ -427,10 +427,7 @@ export default function OrganizationModal(props) {
                   </Col>
                   <Col xs={24} md={24} lg={12}>
                     <Form.Item label="Утас:" name="phone">
-                      <InputNumber
-                        parser={value => value.substring(0, 12)}
-                        type="number"
-                      />
+                      <Input parser={value => value.substring(8, 12)} />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={12}>

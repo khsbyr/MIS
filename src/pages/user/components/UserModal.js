@@ -44,20 +44,16 @@ export default function UserModal(props) {
       }
     }
     if (isEditMode) {
-      setStateTrue(Usercontroller.isTrue);
+      setStateTrue(Usercontroller && Usercontroller.isTrue);
       form.setFieldsValue({
         ...Usercontroller,
-        CountryID: Usercontroller.address
-          ? Usercontroller.address.country.id
-          : '',
-        AimagID: Usercontroller.address ? Usercontroller.address.aimag.id : '',
-        SoumID: Usercontroller.address ? Usercontroller.address.soum.id : '',
-        BagID: Usercontroller.address ? Usercontroller.address.bag.id : '',
-        AddressDetail: Usercontroller.address
-          ? Usercontroller.address.addressDetail
-          : '',
-        RoleID: Usercontroller.role ? Usercontroller.role.id : '',
-        GenderID: Usercontroller.gender ? Usercontroller.gender.id : '',
+        CountryID: Usercontroller?.address?.country?.id,
+        AimagID: Usercontroller?.address?.aimag?.id,
+        SoumID: Usercontroller?.address?.soum?.id,
+        BagID: Usercontroller?.address?.bag?.id,
+        AddressDetail: Usercontroller?.address?.addressDetail,
+        RoleID: Usercontroller?.role?.id,
+        GenderID: Usercontroller?.gender?.id,
       });
     }
   }, [Usercontroller, form, isEditMode]);
@@ -98,7 +94,7 @@ export default function UserModal(props) {
         };
         values.address = {
           country: {
-            id: values.CountryID,
+            id: 107,
           },
           aimag: {
             id: values.AimagID,
@@ -220,6 +216,7 @@ export default function UserModal(props) {
               <Form.Item label="Улс:" name="CountryID">
                 <AutoCompleteSelect
                   valueField="id"
+                  defaultValue={107}
                   data={toolsStore.countryList}
                   size="medium"
                 />
