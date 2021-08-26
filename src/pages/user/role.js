@@ -1,20 +1,35 @@
-import React, { useState, useEffect, Suspense, useContext } from 'react';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { Button, message, Layout, Checkbox, Row, Col, Tooltip } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
+  faFilePdf,
+  faPen,
   faPlus,
   faPrint,
+  faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import React, {
+  Suspense,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { ToolsContext } from '../../context/Tools';
-import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
-import { getService, postService, putService } from '../../service/service';
 import { PAGESIZE } from '../../constants/Constant';
-import RoleModal from './components/RoleModal';
+import { ToolsContext } from '../../context/Tools';
+import {
+  getService,
+  postService,
+  putService,
+  deleteService,
+} from '../../service/service';
+import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
+import RoleModal from './components/RoleModal';
 
 const MenuConfig = React.lazy(() => import('./components/MenuConfig'));
 const { Content } = Layout;
@@ -24,15 +39,17 @@ let selectedRole;
 
 export default function Roles() {
   const { t } = useTranslation();
+  const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isShowModal, setIsShowModal] = useState(false);
   const [isShowConfigMenu, setIsShowConfigMenu] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
-  const [lazyParams] = useState({
+  const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
   });
-  const toolsStore = useContext(ToolsContext);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const dt = useRef(null);
 
   let loadLazyTimeout = null;
 
@@ -45,10 +62,11 @@ export default function Roles() {
       const obj = convertLazyParamsToObj(lazyParams);
       getService('role/get', obj)
         .then(data => {
-          const listResult = data || [];
+          const listResult = data.content || [];
           listResult.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });
+          setTotalRecords(data.totalElements);
           setList(listResult);
         })
         .finally(toolsStore.setIsShowLoader(false))
@@ -98,10 +116,6 @@ export default function Roles() {
     if (isSuccess) loadData();
   };
 
-  const activeBodyTemplate = rowData => (
-    <Checkbox defaultChecked={rowData.isActive} disabled />
-  );
-
   const roleBodyTemplate = rowData => (
     <>
       <Button
@@ -117,6 +131,76 @@ export default function Roles() {
       </Button>
     </>
   );
+
+  const handleDeleted = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+      return;
+    }
+    deleteService(`role/delete/${row.id}`)
+      .then(() => {
+        message.success('Амжилттай устлаа');
+        loadData();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+  };
+
+  function confirm(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeleted(row);
+        loadData();
+      },
+      onCancel() {},
+    });
+  }
+
+  const pop = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+    } else {
+      confirm(row);
+    }
+  };
+
+  const action = row => (
+    <>
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={() => edit(row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={event => pop(event, row)}
+      />
+    </>
+  );
+
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event, page: 0 };
+    setLazyParams(params);
+  };
 
   return (
     <ContentWrapper>
@@ -150,6 +234,17 @@ export default function Roles() {
                   </Tooltip>
                 </Col>
                 <Col>
+                  <Tooltip title={t('pdf')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFilePdf} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col>
                   <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button
                       type="text"
@@ -167,10 +262,20 @@ export default function Roles() {
         </Content>
         <div className="datatable-responsive-demo">
           <DataTable
+            ref={dt}
             value={list}
             removableSort
+            lazy
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
             paginator
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRow}
             editMode="row"
@@ -181,13 +286,13 @@ export default function Roles() {
             onRowClick={edit}
           >
             <Column field="index" header="№" style={{ width: 40 }} />
-            <Column field="name" header={t('Role name')} sortable filter />
             <Column
-              field="isActive"
-              header={t('Active')}
+              field="name"
+              header={t('Role name')}
               sortable
-              style={{ width: '25%', textAlign: 'center' }}
-              body={activeBodyTemplate}
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               field=""
@@ -195,6 +300,7 @@ export default function Roles() {
               style={{ width: 200, textAlign: 'right' }}
               body={roleBodyTemplate}
             />
+            <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
         </div>
         {isShowModal && (

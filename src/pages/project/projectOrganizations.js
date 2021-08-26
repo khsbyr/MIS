@@ -35,7 +35,7 @@ const ProjectOrg = props => {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService(`/project/get/${props.projectId}`, list)
+    getService(`/project/get/${props.projectId}`)
       .then(result => {
         const listResult = result.projectOrganizations;
         listResult.forEach((item, index) => {

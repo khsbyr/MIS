@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
@@ -17,10 +17,15 @@ import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../context/Tools';
 import { useCriteriaStore } from '../../context/CriteriaContext';
 import { getService, putService } from '../../service/service';
-import { errorCatch, formatIndicator } from '../../tools/Tools';
+import {
+  errorCatch,
+  formatIndicator,
+  convertLazyParamsToObj,
+} from '../../tools/Tools';
 import AutoCompleteSelect from '../../components/Autocomplete';
 import CriteriaModal from './components/CriteriaModal';
 import ContentWrapper from './criteria.style';
+import { PAGESIZE } from '../../constants/Constant';
 
 const { Content } = Layout;
 
@@ -29,40 +34,57 @@ let isEditMode;
 
 const Criteria = () => {
   const { t } = useTranslation();
-  const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { criteriaReferenceList, setCriteriaReferenceList } =
     useCriteriaStore();
-  const [lazyParams] = useState({
-    page: 0,
-  });
-  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const toolsStore = useContext(ToolsContext);
   const history = useHistory();
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
+    page: 0,
+  });
+  const [totalRecords, setTotalRecords] = useState(0);
+  const dt = useRef(null);
 
-  const onInit = () => {
+  let loadLazyTimeout = null;
+
+  const onInit = value => {
+    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    toolsStore.setIsShowLoader(true);
-    getService('/criteria/get')
-      .then(result => {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      const url = value
+        ? `/criteria/getListByCriteriaReferenceId/${value}`
+        : '/criteria/get';
+      getService(`${url}`, obj)
+        .then(result => {
+          if (value) {
+            const listResult = result || [];
+            setList(listResult);
+            listResult.forEach((item, index) => {
+              item.index = lazyParams.page * PAGESIZE + index + 1;
+            });
+          } else {
+            const listResult = result.content || [];
+            setList(listResult);
+            listResult.forEach((item, index) => {
+              item.index = lazyParams.page * PAGESIZE + index + 1;
+            });
+          }
+          setTotalRecords(result.totalElements);
+          setSelectedRows([]);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
-
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
@@ -129,28 +151,13 @@ const Criteria = () => {
     onInit();
     getService('/criteriaReference/get').then(result => {
       if (result) {
-        setCriteriaReferenceList(result || []);
+        setCriteriaReferenceList(result.content || []);
       }
     });
   }, [lazyParams]);
 
-  const getComposition = compId => {
-    getService(`/criteria/getListByCriteriaReferenceId/${compId}`).then(
-      result => {
-        if (result) {
-          const listResult = result || [];
-          listResult.forEach((item, index) => {
-            item.index = lazyParams.page * PAGESIZE + index + 1;
-          });
-          setList(listResult);
-          setSelectedRows([]);
-        }
-      }
-    );
-  };
-
   const selectComposition = value => {
-    getComposition(value);
+    onInit(value);
   };
 
   const action = row => (
@@ -195,6 +202,22 @@ const Criteria = () => {
       {row.processResult + formatIndicator(row.indicator)}
     </>
   );
+
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event, page: 0 };
+    setLazyParams(params);
+  };
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -266,7 +289,6 @@ const Criteria = () => {
             value={list}
             removableSort
             paginator
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             onRowClick={more}
@@ -274,6 +296,17 @@ const Criteria = () => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
+            ref={dt}
+            lazy
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
           >
             <Column
               field="index"
@@ -286,16 +319,28 @@ const Criteria = () => {
               headerStyle={{ width: '30rem' }}
               header={t('Indicator name')}
               body={nameBodyTemplate}
+              filter
+              sortable
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               field="resultTobeAchieved"
               header={t('Achieved result')}
               body={indicatorProcessBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="equals"
             />
             <Column
-              field="upIndicator"
+              field="processResult"
               header={t('Execution of results')}
               body={upIndicatorBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="equals"
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

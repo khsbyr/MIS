@@ -33,6 +33,9 @@ export default function TraningInfo() {
         <TabPane tab={t('training_program')} key="4">
           <TrainingProgram id={id} />
         </TabPane>
+        <TabPane tab={t('training_budget')} key="8">
+          <Budget id={id} />
+        </TabPane>
         <TabPane tab={t('attendance_registration')} key="5">
           <Attendance id={id} />
         </TabPane>
@@ -41,9 +44,6 @@ export default function TraningInfo() {
         </TabPane>
         <TabPane tab={t('training_report')} key="7">
           <TrainingReport id={id} />
-        </TabPane>
-        <TabPane tab={t('training_budget')} key="8">
-          <Budget id={id} />
         </TabPane>
       </Tabs>
     </ContentWrapper>

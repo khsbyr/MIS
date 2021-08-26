@@ -5,20 +5,24 @@ import {
   faPlus,
   faPrint,
   faTrash,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { ColumnGroup } from 'primereact/columngroup';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
+import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
 import ContentWrapper from './components/attendance.style';
 import FuelModal from './components/FuelModal';
 import RoadModal from './components/RoadModal';
 import StationaryModal from './components/StationaryModal';
+import { PAGESIZE } from '../../../constants/Constant';
+
 // function onChange(date, dateString) {
 //   console.log(date, dateString);
 // }
@@ -28,8 +32,10 @@ let editRow;
 let isEditMode;
 let isEditModeFuel;
 let isEditModeRoad;
+let loadLazyTimeout = null;
+
 const Budget = props => {
-  const loadLazyTimeout = null;
+  const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [list1, setList1] = useState([]);
   const [list2, setList2] = useState([]);
@@ -37,58 +43,65 @@ const Budget = props => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisibleFuel, setIsModalVisibleFuel] = useState(false);
   const [isModalVisibleRoad, setIsModalVisibleRoad] = useState(false);
-  const [lazyParams] = useState({
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
     page: 0,
   });
-  const PAGESIZE = 20;
+  const dt = useRef(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [budgetID, setBudgetID] = useState([]);
+  const [totalRecords, setTotalRecords] = useState(0);
 
   // const [setTrainingID] = useState([]);
   const toolsStore = useContext(ToolsContext);
+
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`training/get/${props.id}`, list)
-      .then(result => {
-        const listResult = result.trainingBudget || [];
-        setBudgetID(result.trainingBudget.id);
-        setList([listResult]);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
-    getService(`stationeryExpenses/getListBy/${props.id}`, list1).then(
-      result => {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService(`training/get/${props.id}`, obj)
+        .then(data => {
+          const dataList = data.trainingBudget || [];
+          setBudgetID(data.trainingBudget.id);
+          setTotalRecords(data.totalElements);
+          setList([dataList]);
+          setSelectedRows([]);
+          toolsStore.setIsShowLoader(false);
+        })
+        .catch(error => {
+          message.error(error.toString());
+          toolsStore.setIsShowLoader(false);
         });
-        setList1(listResult);
-        setSelectedRows([]);
-      }
-    );
-    getService(`hotelTravelExpenses/getListBy/${props.id}`, list2).then(
-      result => {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList2(listResult);
-        setSelectedRows([]);
-      }
-    );
-    getService(`fuelExpenses/getListBy/${props.id}`, list3).then(result => {
-      const listResult = result || [];
-      listResult.forEach((item, index) => {
+    }, 500);
+    const obj = convertLazyParamsToObj(lazyParams);
+    getService(`stationeryExpenses/getListBy/${props.id}`, obj).then(data => {
+      const dataList = data || [];
+      dataList.forEach((item, index) => {
         item.index = lazyParams.page * PAGESIZE + index + 1;
       });
-      setList3(listResult);
+      setTotalRecords(data.totalElements);
+      setList1(dataList);
+      setSelectedRows([]);
+    });
+    getService(`hotelTravelExpenses/getListBy/${props.id}`, obj).then(data => {
+      const dataList = data || [];
+      dataList.forEach((item, index) => {
+        item.index = lazyParams.page * PAGESIZE + index + 1;
+      });
+      setTotalRecords(data.totalElements);
+      setList2(dataList);
+      setSelectedRows([]);
+    });
+    getService(`fuelExpenses/getListBy/${props.id}`, obj).then(data => {
+      const dataList = data || [];
+      dataList.forEach((item, index) => {
+        item.index = lazyParams.page * PAGESIZE + index + 1;
+      });
+      setTotalRecords(data.totalElements);
+      setList3(dataList);
       setSelectedRows([]);
     });
   };
@@ -106,6 +119,54 @@ const Budget = props => {
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
+  };
+
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
+  };
+
+  const onPage1 = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort1 = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter1 = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
+  };
+
+  const onPage2 = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort2 = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter2 = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
   };
 
   const handleDeleted = row => {
@@ -564,7 +625,7 @@ const Budget = props => {
               <Col xs={24} md={24} lg={24}>
                 <Row justify="end" gutter={[16, 16]}>
                   <Col>
-                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                    <Tooltip title={t('print')} arrowPointAtCenter>
                       <Button
                         type="text"
                         icon={<FontAwesomeIcon icon={faPrint} />}
@@ -574,7 +635,7 @@ const Budget = props => {
                     </Tooltip>
                   </Col>
                   <Col>
-                    <Tooltip title="Экспорт" arrowPointAtCenter>
+                    <Tooltip title={t('export')} arrowPointAtCenter>
                       <Button
                         type="text"
                         className="export"
@@ -584,18 +645,17 @@ const Budget = props => {
                       </Button>
                     </Tooltip>
                   </Col>
-                  {/* <Col>
-                    <Tooltip title="Нэмэх" arrowPointAtCenter>
+                  <Col>
+                    <Tooltip title={t('pdf')} arrowPointAtCenter>
                       <Button
                         type="text"
                         className="export"
-                        icon={<FontAwesomeIcon icon={faPlus} />}
-                        onClick={add}
+                        icon={<FontAwesomeIcon icon={faFilePdf} />}
                       >
                         {' '}
                       </Button>
                     </Tooltip>
-                  </Col> */}
+                  </Col>
                 </Row>
               </Col>
             </Row>
@@ -653,7 +713,7 @@ const Budget = props => {
                     <Col xs={8} md={8} lg={10} />
                     <Col xs={8} md={8} lg={11} />
                     <Col xs={8} md={8} lg={3}>
-                      <Tooltip title="Нэмэх" arrowPointAtCenter>
+                      <Tooltip title={t('add')} arrowPointAtCenter>
                         <Button
                           type="text"
                           className="export"
@@ -670,11 +730,23 @@ const Budget = props => {
             </Content>
           </Layout>
           <DataTable
+            ref={dt}
+            lazy
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage1}
+            onSort={onSort1}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter1}
+            filters={lazyParams.filters}
             footerColumnGroup={footerGroup}
+            tableStyle={{ minWidth: 1000 }}
+            emptyMessage="Өгөгдөл олдсонгүй..."
             value={list1}
             removableSort
             paginator
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             onSelectionChange={e => {
@@ -757,7 +829,7 @@ const Budget = props => {
                     <Col xs={8} md={8} lg={10} />
                     <Col xs={8} md={8} lg={11} />
                     <Col xs={8} md={8} lg={3}>
-                      <Tooltip title="Нэмэх" arrowPointAtCenter>
+                      <Tooltip title={t('add')} arrowPointAtCenter>
                         <Button
                           type="text"
                           className="export"
@@ -778,7 +850,18 @@ const Budget = props => {
             value={list2}
             removableSort
             paginator
-            rows={10}
+            ref={dt}
+            lazy
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage2}
+            onSort={onSort2}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter2}
+            filters={lazyParams.filters}
+            tableStyle={{ minWidth: 1000 }}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             onSelectionChange={e => {
@@ -860,7 +943,7 @@ const Budget = props => {
                     <Col xs={8} md={8} lg={10} />
                     <Col xs={8} md={8} lg={11} />
                     <Col xs={8} md={8} lg={3}>
-                      <Tooltip title="Нэмэх" arrowPointAtCenter>
+                      <Tooltip title={t('add')} arrowPointAtCenter>
                         <Button
                           type="text"
                           className="export"
@@ -881,7 +964,18 @@ const Budget = props => {
             value={list3}
             removableSort
             paginator
-            rows={10}
+            ref={dt}
+            lazy
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
+            tableStyle={{ minWidth: 1000 }}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             onSelectionChange={e => {

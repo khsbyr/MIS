@@ -285,7 +285,7 @@ export default function veterinarianProjectModal(props) {
                       className="FormItem"
                       defaultValue={
                         isEditMode
-                          ? EditRow && moment(EditRow.birthDate).zone(0)
+                          ? EditRow && moment(EditRow.birthDate).zone(1)
                           : BirthDatee
                       }
                     />

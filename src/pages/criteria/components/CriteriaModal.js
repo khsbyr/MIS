@@ -1,5 +1,14 @@
 import React, { useEffect } from 'react';
-import { Modal, Form, Input, Radio, InputNumber, Row, Col } from 'antd';
+import {
+  Modal,
+  Form,
+  Input,
+  Radio,
+  InputNumber,
+  Row,
+  Col,
+  message,
+} from 'antd';
 import { useTranslation } from 'react-i18next';
 import { postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
@@ -39,6 +48,7 @@ export default function CriteriaModal(props) {
         if (isEditMode) {
           putService(`criteria/update/${Criteriacontroller.id}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -47,6 +57,7 @@ export default function CriteriaModal(props) {
         } else {
           postService('criteria/post', values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -194,10 +205,10 @@ export default function CriteriaModal(props) {
                 ]}
               >
                 <Radio.Group onChange={onChange} value={stateIndicator}>
-                  <Radio value={1} defaultChecked>
+                  <Radio value={2} defaultChecked>
                     {t('Number')}
                   </Radio>
-                  <Radio value={2}>{t('Percent')}</Radio>
+                  <Radio value={1}>{t('Percent')}</Radio>
                   <Radio value={3}>{t('Formula')}</Radio>
                 </Radio.Group>
               </Form.Item>

@@ -1,6 +1,7 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
+  faFilePdf,
   faPen,
   faPlus,
   faPrint,
@@ -14,16 +15,18 @@ import {
   message,
   Modal,
   Row,
-  Tooltip,
   Select,
   Tag,
+  Tooltip,
 } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { PAGESIZE } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
+import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import ContentWrapper from './more/veterinarian.style';
 import VeterinarianProjectModal from './more/veterinarianProjectModal';
 
@@ -34,36 +37,45 @@ let editRow;
 let isEditMode;
 let trainerID;
 const veterinarianProject = () => {
-  const loadLazyTimeout = null;
+  const { t } = useTranslation();
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [status, setStatus] = useState();
-  const [lazyParams] = useState({
-    page: 0,
-  });
-  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [doctorID, setDoctorID] = useState();
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
+    page: 0,
+  });
+  const [totalRecords, setTotalRecords] = useState(0);
+  const dt = useRef(null);
+
+  let loadLazyTimeout = null;
+
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`user/getAllYoungDoctorUserList`, list)
-      .then(result => {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService(`user/getAllYoungDoctorUserList`, obj)
+        .then(result => {
+          const listResult = result || [];
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(result.totalElements);
+          setList(listResult);
+          setSelectedRows([]);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
@@ -237,6 +249,21 @@ const veterinarianProject = () => {
     </>
   );
 
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event, page: 0 };
+    setLazyParams(params);
+  };
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -248,7 +275,7 @@ const veterinarianProject = () => {
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col>
-                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                  <Tooltip title={t('print')} arrowPointAtCenter>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -258,7 +285,7 @@ const veterinarianProject = () => {
                   </Tooltip>
                 </Col>
                 <Col>
-                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                  <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -269,7 +296,18 @@ const veterinarianProject = () => {
                   </Tooltip>
                 </Col>
                 <Col>
-                  <Tooltip title="Нэмэх" arrowPointAtCenter>
+                  <Tooltip title={t('pdf')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFilePdf} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col>
+                  <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -290,13 +328,23 @@ const veterinarianProject = () => {
             value={list}
             removableSort
             paginator
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
+            ref={dt}
+            lazy
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
           >
             <Column
               field="index"
@@ -306,26 +354,39 @@ const veterinarianProject = () => {
             />
             <Column
               header="Малын эмчийн нэр"
+              field="firstname"
               body={FirstNameBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               header="Утас"
+              field="phoneNumber"
               body={phoneBodyTemplate}
+              sortable
+              filter
               filterPlaceholder="Хайх"
+              filterMatchMode="startsWith"
             />
             <Column
-              field="registerNumber"
+              field="register"
               header="Регистер"
               body={registerBodyTemplate}
+              sortable
+              filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               header="Нас"
+              field="age"
               body={reportBodyTemplate}
+              sortable
+              filter
               filterPlaceholder="Хайх"
+              filterMatchMode="equals"
             />
             <Column
               header="Төлөв"

@@ -1,6 +1,7 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
+  faFilePdf,
   faPen,
   faPlus,
   faPrint,
@@ -10,59 +11,59 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PAGESIZE } from '../../constants/Constant';
 import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
+import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
 import UserModal from './components/UserModal';
 
 const { Content } = Layout;
 
-let editRow;
 let isEditMode;
+let loadLazyTimeout = null;
 
 const User = () => {
-  const toolsStore = useToolsStore();
   const { t } = useTranslation();
-  const loadLazyTimeout = null;
+  const toolsStore = useToolsStore();
+  const [totalRecords, setTotalRecords] = useState(0);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams] = useState({
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
     page: 0,
   });
-  const PAGESIZE = 20;
-  const [selectedRows, setSelectedRows] = useState([]);
+  const dt = useRef(null);
+  const [selectedRow, setSelectedRow] = useState({});
 
   const onInit = () => {
+    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    toolsStore.setIsShowLoader(true);
-    getService('user/get', list)
-      .then(result => {
-        const datas = result.content || [];
-        datas.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService('user/get', obj)
+        .then(data => {
+          const dataList = data.content || [];
+          dataList.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(data.totalElements);
+          setList(dataList);
+          toolsStore.setIsShowLoader(false);
+        })
+        .catch(error => {
+          message.error(error.toString());
+          toolsStore.setIsShowLoader(false);
         });
-        setList(datas);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
     onInit();
-    getService('organization/get').then(result => {
-      if (result) {
-        toolsStore.setOrgList(result.content || []);
-      }
-    });
   }, [lazyParams]);
 
   const add = () => {
@@ -71,9 +72,24 @@ const User = () => {
   };
 
   const edit = row => {
-    editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
+    setSelectedRow(row.data);
+  };
+
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event, page: 0 };
+    setLazyParams(params);
   };
 
   const handleDeleted = row => {
@@ -106,7 +122,9 @@ const User = () => {
     });
   }
 
-  const pop = row => {
+  const pop = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
@@ -124,7 +142,7 @@ const User = () => {
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
+        onClick={event => pop(event, row)}
       />
     </>
   );
@@ -179,7 +197,7 @@ const User = () => {
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col>
-                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                  <Tooltip title={t('print')} arrowPointAtCenter>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -189,7 +207,7 @@ const User = () => {
                   </Tooltip>
                 </Col>
                 <Col>
-                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                  <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -200,7 +218,18 @@ const User = () => {
                   </Tooltip>
                 </Col>
                 <Col>
-                  <Tooltip title="Нэмэх" arrowPointAtCenter>
+                  <Tooltip title={t('pdf')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFilePdf} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col>
+                  <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -217,17 +246,23 @@ const User = () => {
         </Content>
         <div className="datatable-responsive-demo">
           <DataTable
+            ref={dt}
             value={list}
-            removableSort
+            lazy
             paginator
-            rows={10}
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
+            emptyMessage="Өгөгдөл олдсонгүй..."
+            tableStyle={{ minWidth: 1000 }}
+            onRowClick={edit}
             className="p-datatable-responsive-demo"
-            selection={selectedRows}
-            editMode="row"
-            onSelectionChange={e => {
-              setSelectedRows(e.value);
-            }}
-            dataKey="id"
           >
             <Column
               field="index"
@@ -242,6 +277,7 @@ const User = () => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               field="lastname"
@@ -250,25 +286,39 @@ const User = () => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               field="register"
               header="Регистрийн дугаар"
               body={registerBodyTemplate}
               sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               field="email"
               header="Й-мэйл"
               body={emailBodyTemplate}
               sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
-            <Column field="role.name" header="Эрх" sortable />
+            <Column
+              field="role.name"
+              header="Эрх"
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
+            />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <UserModal
-              Usercontroller={editRow}
+              Usercontroller={selectedRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}

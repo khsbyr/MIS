@@ -5,6 +5,7 @@ import {
   faPlus,
   faPrint,
   faTrash,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -19,53 +20,62 @@ import {
 } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import { useToolsStore } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
+import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
 import ContentWrapper from '../../criteria/criteria.style';
 import CvModal from './components/CvModal';
 import OrgaStyle from './components/orga.style';
+import { PAGESIZE } from '../../../constants/Constant';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
 let trainerID;
+let loadLazyTimeout = null;
+
 const CV = () => {
-  const loadLazyTimeout = null;
+  const { t } = useTranslation();
   const toolsStore = useToolsStore();
+  const [totalRecords, setTotalRecords] = useState(0);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams] = useState({
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
     page: 0,
   });
-  const PAGESIZE = 20;
+  const dt = useRef(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [OrgID, setOrgID] = useState([]);
   const [isOnChange, setIsOnChange] = useState(false);
+
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`user/getAllTrainerUserList`, list)
-      .then(result => {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService('user/getAllTrainerUserList', obj)
+        .then(data => {
+          const dataList = data || [];
+          dataList.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(data.totalElements);
+          setList(dataList);
+          toolsStore.setIsShowLoader(false);
+        })
+        .catch(error => {
+          message.error(error.toString());
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
-
   useEffect(() => {
     onInit();
   }, [lazyParams]);
@@ -146,6 +156,22 @@ const CV = () => {
     }
   };
 
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
+  };
+
   const action = row => (
     <>
       <Button
@@ -205,12 +231,12 @@ const CV = () => {
       <div className="button-demo">
         <Content>
           <Row>
-            <Col xs={24} md={24} lg={14}>
+            <Col xs={24} md={24} lg={10}>
               <p className="title">Хүний нөөц</p>
             </Col>
-            <Col xs={24} md={18} lg={10}>
+            <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>
-                <Col xs={12} md={6} lg={7}>
+                <Col xs={12} md={6} lg={9}>
                   <OrgaStyle>
                     <AutoCompleteSelect
                       valueField="id"
@@ -224,7 +250,7 @@ const CV = () => {
                   <DatePicker
                     bordered={false}
                     suffixIcon={<DownOutlined />}
-                    placeholder="Select year"
+                    placeholder="Жил сонгох"
                     picker="year"
                     className="DatePicker"
                     style={{
@@ -235,7 +261,7 @@ const CV = () => {
                   />
                 </Col>
                 <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                  <Tooltip title={t('print')} arrowPointAtCenter>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -245,7 +271,7 @@ const CV = () => {
                   </Tooltip>
                 </Col>
                 <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                  <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -256,7 +282,18 @@ const CV = () => {
                   </Tooltip>
                 </Col>
                 <Col xs={8} md={2} lg={2}>
-                  <Tooltip title="Нэмэх" arrowPointAtCenter>
+                  <Tooltip title={t('pdf')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFilePdf} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col xs={8} md={2} lg={2}>
+                  <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -273,11 +310,22 @@ const CV = () => {
         </Content>
         <div className="datatable-responsive-demo">
           <DataTable
+            ref={dt}
+            lazy
             emptyMessage="Өгөгдөл олдсонгүй..."
             value={list}
             removableSort
             paginator
-            rows={10}
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
+            tableStyle={{ minWidth: 1000 }}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             onSelectionChange={e => {
@@ -293,27 +341,30 @@ const CV = () => {
             />
             <Column
               header="Овог"
-              body={LastNameBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              header="Нэр"
+              field="firstname"
               body={FirstNameBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
             />
             <Column
+              header="Нэр"
+              field="lastname"
+              body={LastNameBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
               header="Утас"
+              field="phoneNumber"
               body={phoneBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
             />
             <Column
-              field="registerNumber"
+              field="register"
               header="Сургагч багшийн регистер"
               body={registerBodyTemplate}
               sortable
