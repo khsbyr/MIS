@@ -50,21 +50,32 @@ const Criteria = () => {
 
   let loadLazyTimeout = null;
 
-  const onInit = () => {
+  const onInit = value => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService('/criteria/get', obj)
+      const url = value
+        ? `/criteria/getListByCriteriaReferenceId/${value}`
+        : '/criteria/get';
+      getService(`${url}`, obj)
         .then(result => {
-          const listResult = result.content || [];
-          listResult.forEach((item, index) => {
-            item.index = lazyParams.page * PAGESIZE + index + 1;
-          });
+          if (value) {
+            const listResult = result || [];
+            setList(listResult);
+            listResult.forEach((item, index) => {
+              item.index = lazyParams.page * PAGESIZE + index + 1;
+            });
+          } else {
+            const listResult = result.content || [];
+            setList(listResult);
+            listResult.forEach((item, index) => {
+              item.index = lazyParams.page * PAGESIZE + index + 1;
+            });
+          }
           setTotalRecords(result.totalElements);
-          setList(listResult);
           setSelectedRows([]);
         })
         .finally(toolsStore.setIsShowLoader(false))
@@ -74,7 +85,6 @@ const Criteria = () => {
         });
     }, 500);
   };
-
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
@@ -147,22 +157,33 @@ const Criteria = () => {
   }, [lazyParams]);
 
   const getComposition = compId => {
-    getService(`/criteria/getListByCriteriaReferenceId/${compId}`).then(
-      result => {
-        if (result) {
+    toolsStore.setIsShowLoader(true);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService(`/criteria/getListByCriteriaReferenceId/${compId}`, obj)
+        .then(result => {
           const listResult = result || [];
           listResult.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });
+          setTotalRecords(result.totalElements);
           setList(listResult);
           setSelectedRows([]);
-        }
-      }
-    );
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
+        });
+    }, 500);
   };
 
   const selectComposition = value => {
-    getComposition(value);
+    // getComposition(value);
+    onInit(value);
   };
 
   const action = row => (

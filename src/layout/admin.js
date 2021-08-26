@@ -29,9 +29,11 @@ function Admin() {
   const [routes, setRoutes] = React.useState([]);
   const isLoggged = localStorage.getItem('token');
   const history = useHistory();
+
   const toggle = () => {
     setCollapsed(!collapsed);
   };
+
   useEffect(() => {
     // if (!toolsStore.user) return;
     if (!isLoggged) {

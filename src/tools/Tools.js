@@ -117,9 +117,9 @@ export const convertOrgStep = step => {
 export const formatIndicator = indicator => {
   switch (indicator) {
     case 1:
-      return '';
-    case 2:
       return '%';
+    case 2:
+      return '';
     case 3:
       return '';
     default:
@@ -145,9 +145,9 @@ export const formatFrequency = frequency => {
 export const formatFormula = indicator => {
   switch (indicator) {
     case 1:
-      return 'Тоо';
-    case 2:
       return 'Хувь';
+    case 2:
+      return 'Тоо';
     case 3:
       return 'Томьёо';
     default:

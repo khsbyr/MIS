@@ -205,10 +205,10 @@ export default function CriteriaModal(props) {
                 ]}
               >
                 <Radio.Group onChange={onChange} value={stateIndicator}>
-                  <Radio value={1} defaultChecked>
+                  <Radio value={2} defaultChecked>
                     {t('Number')}
                   </Radio>
-                  <Radio value={2}>{t('Percent')}</Radio>
+                  <Radio value={1}>{t('Percent')}</Radio>
                   <Radio value={3}>{t('Formula')}</Radio>
                 </Radio.Group>
               </Form.Item>

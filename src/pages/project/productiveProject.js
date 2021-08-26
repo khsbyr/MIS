@@ -71,7 +71,7 @@ const productiveProject = props => {
       const obj = convertLazyParamsToObj(lazyParams);
       getService(`project/getByProjectTypeId/${props.type}`, obj)
         .then(result => {
-          const listResult = result;
+          const listResult = result.content;
           listResult.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });
@@ -454,6 +454,7 @@ const productiveProject = props => {
               sortable
               body={userBodyTemplate}
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               header="Төсөл хэрэгжүүлэх хугацаа"
@@ -466,10 +467,8 @@ const productiveProject = props => {
             <Column
               header="Төсөл ирүүлсэн огноо"
               field="createdDate"
-              filter
               sortable
               body={dateSentBodyTemplate}
-              filterPlaceholder="Хайх"
             />
             <Column header="Статус" body={statusBodyTemplate} sortable />
             <Column headerStyle={{ width: '6rem' }} body={action} />

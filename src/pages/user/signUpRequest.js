@@ -223,6 +223,7 @@ const signUpRequest = () => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               field="status.status"

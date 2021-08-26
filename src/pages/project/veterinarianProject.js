@@ -370,12 +370,13 @@ const veterinarianProject = () => {
               filterPlaceholder="Хайх"
             />
             <Column
-              field="registerNumber"
+              field="register"
               header="Регистер"
               body={registerBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               header="Нас"

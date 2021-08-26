@@ -230,6 +230,7 @@ export default function Roles() {
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               field=""

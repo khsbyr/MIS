@@ -307,6 +307,7 @@ const User = () => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
