@@ -260,8 +260,7 @@ const veterinarianProject = () => {
   };
 
   const onFilter = event => {
-    const params = { ...lazyParams, ...event };
-    params.first = 0;
+    const params = { ...lazyParams, ...event, page: 0 };
     setLazyParams(params);
   };
 
@@ -360,6 +359,7 @@ const veterinarianProject = () => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               header="Утас"
@@ -368,6 +368,7 @@ const veterinarianProject = () => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="startsWith"
             />
             <Column
               field="register"
@@ -385,6 +386,7 @@ const veterinarianProject = () => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="equals"
             />
             <Column
               header="Төлөв"

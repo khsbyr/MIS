@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import ContentWrapper from '../criteria.style';
 import CriteriaDetail from './tabs/CriteriaDetail';
 import CriteriaTrainning from './tabs/CriteriaTrainning';
+import CriteriaProject from './tabs/CriteriaProject';
 
 const { TabPane } = Tabs;
 const tabPosition = 'top';
@@ -20,7 +21,7 @@ export default function CriteriaMore() {
           <CriteriaTrainning id={id} />
         </TabPane>
         <TabPane tab="Төсөл" key="3">
-          Content 3
+          <CriteriaProject id={id} />
         </TabPane>
         <TabPane tab="MAKHIS" key="4">
           Content 4

@@ -59,7 +59,7 @@ export default function productiveProjectModal(props) {
     ProductiveController.address.childrenAddress.map(item => item.soum.id);
 
   const ProjectCriteriaList = ProductiveController?.projectCriterias?.map(
-    item => item.criteria.id
+    item => item.criteriasId
   );
 
   const onChangeAddress = value => {

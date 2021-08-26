@@ -1,27 +1,35 @@
-import React, {
-  useState,
-  useEffect,
-  Suspense,
-  useContext,
-  useRef,
-} from 'react';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { Button, message, Layout, Row, Col, Tooltip } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
+  faFilePdf,
+  faPen,
   faPlus,
   faPrint,
-  faFilePdf,
+  faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import React, {
+  Suspense,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { ToolsContext } from '../../context/Tools';
-import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
-import { getService, postService, putService } from '../../service/service';
 import { PAGESIZE } from '../../constants/Constant';
-import RoleModal from './components/RoleModal';
+import { ToolsContext } from '../../context/Tools';
+import {
+  getService,
+  postService,
+  putService,
+  deleteService,
+} from '../../service/service';
+import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
+import RoleModal from './components/RoleModal';
 
 const MenuConfig = React.lazy(() => import('./components/MenuConfig'));
 const { Content } = Layout;
@@ -124,6 +132,61 @@ export default function Roles() {
     </>
   );
 
+  const handleDeleted = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+      return;
+    }
+    deleteService(`role/delete/${row.id}`)
+      .then(() => {
+        message.success('Амжилттай устлаа');
+        loadData();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+  };
+
+  function confirm(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeleted(row);
+        loadData();
+      },
+      onCancel() {},
+    });
+  }
+
+  const pop = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+    } else {
+      confirm(row);
+    }
+  };
+
+  const action = row => (
+    <>
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={() => edit(row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={event => pop(event, row)}
+      />
+    </>
+  );
+
   const onPage = event => {
     const params = { ...lazyParams, ...event };
     setLazyParams(params);
@@ -135,8 +198,7 @@ export default function Roles() {
   };
 
   const onFilter = event => {
-    const params = { ...lazyParams, ...event };
-    params.first = 0;
+    const params = { ...lazyParams, ...event, page: 0 };
     setLazyParams(params);
   };
 
@@ -238,6 +300,7 @@ export default function Roles() {
               style={{ width: 200, textAlign: 'right' }}
               body={roleBodyTemplate}
             />
+            <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
         </div>
         {isShowModal && (

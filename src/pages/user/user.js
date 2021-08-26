@@ -88,8 +88,7 @@ const User = () => {
   };
 
   const onFilter = event => {
-    const params = { ...lazyParams, ...event };
-    params.first = 0;
+    const params = { ...lazyParams, ...event, page: 0 };
     setLazyParams(params);
   };
 
@@ -123,7 +122,9 @@ const User = () => {
     });
   }
 
-  const pop = row => {
+  const pop = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
@@ -141,7 +142,7 @@ const User = () => {
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
+        onClick={event => pop(event, row)}
       />
     </>
   );
@@ -285,6 +286,7 @@ const User = () => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               field="register"
@@ -293,6 +295,7 @@ const User = () => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               field="email"
@@ -301,6 +304,7 @@ const User = () => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               field="role.name"
