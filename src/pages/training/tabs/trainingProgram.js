@@ -10,50 +10,58 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
+import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
 import ContentWrapper from './components/trainingProgram.style';
 import TrainingProgramModal from './components/trainingProgramModal';
+import { PAGESIZE } from '../../../constants/Constant';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
+let loadLazyTimeout = null;
+
 const TrainingProgram = props => {
-  const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams] = useState({
-    page: 0,
-  });
-  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
   const [orgID, setOrgID] = useState([]);
   const toolsStore = useContext(ToolsContext);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
+    page: 0,
+  });
+  const dt = useRef(null);
+
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`training/get/${props.id}`, list)
-      .then(result => {
-        const listResult = result.trainingPrograms || [];
-        setTrainingID(result.id);
-        setOrgID(result.organization.id);
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService(`training/get/${props.id}`, obj)
+        .then(data => {
+          const dataList = data.trainingPrograms || [];
+          setOrgID(data.organization.id);
+          setTrainingID(data.id);
+          dataList.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(data.totalElements);
+          setList(dataList);
+          toolsStore.setIsShowLoader(false);
+        })
+        .catch(error => {
+          message.error(error.toString());
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
@@ -78,6 +86,22 @@ const TrainingProgram = props => {
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
+  };
+
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
   };
 
   const handleDeleted = row => {
@@ -225,11 +249,21 @@ const TrainingProgram = props => {
         </Layout>
         <div className="datatable-responsive-demo">
           <DataTable
+            ref={dt}
+            lazy
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
             value={list}
-            removableSort
+            tableStyle={{ minWidth: 1000 }}
             emptyMessage="Өгөгдөл олдсонгүй..."
             paginator
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             // onRowClick={edit}
@@ -245,6 +279,7 @@ const TrainingProgram = props => {
               style={{ width: 40 }}
             />
             <Column
+              field="operation"
               header="Үйл ажиллагаа"
               body={operationBodyTemplate}
               sortable
@@ -253,6 +288,7 @@ const TrainingProgram = props => {
               bodyStyle={{ textAlign: 'left' }}
             />
             <Column
+              field="programDate"
               header="Хэрэгжих хугацаа"
               body={programDateBodyTemplate}
               sortable
@@ -261,6 +297,7 @@ const TrainingProgram = props => {
               bodyStyle={{ textAlign: 'center' }}
             />
             <Column
+              field="programHours"
               header="Хэрэгжих цаг"
               body={programHoursBodyTemplate}
               sortable
@@ -269,6 +306,7 @@ const TrainingProgram = props => {
               bodyStyle={{ textAlign: 'center' }}
             />
             <Column
+              field="responsiblePersonName"
               header="Хариуцах эзэн"
               filter
               filterPlaceholder="Хайх"

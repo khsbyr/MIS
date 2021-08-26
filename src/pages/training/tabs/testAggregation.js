@@ -10,52 +10,59 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
+import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
 import ContentWrapper from './components/attendance.style';
 import TestModal from './components/testModal';
+import { PAGESIZE } from '../../../constants/Constant';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
+let loadLazyTimeout = null;
+
 const TestAggregation = props => {
-  const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [trainingID, setTrainingID] = useState([]);
-  const [lazyParams] = useState({
-    page: 0,
-  });
-  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const toolsStore = useContext(ToolsContext);
   const history = useHistory();
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
+    page: 0,
+  });
+  const dt = useRef(null);
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`training/get/${props.id}`, list)
-      .then(result => {
-        const listResult = result.tests || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService(`training/get/${props.id}`, obj)
+        .then(data => {
+          const dataList = data.tests || [];
+          setTrainingID(data.id);
+          dataList.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(data.totalElements);
+          setList(dataList);
+          toolsStore.setIsShowLoader(false);
+        })
+        .catch(error => {
+          message.error(error.toString());
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setTrainingID(result.id);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
@@ -65,6 +72,22 @@ const TestAggregation = props => {
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
+  };
+
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
   };
 
   const edit = (event, row) => {
@@ -215,12 +238,23 @@ const TestAggregation = props => {
         </Layout>
         <div className="datatable-responsive-demo">
           <DataTable
+            ref={dt}
+            lazy
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
             value={list}
+            tableStyle={{ minWidth: 1000 }}
             onRowClick={showParticipants}
             removableSort
             paginator
             emptyMessage="Өгөгдөл олдсонгүй..."
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             // onRowClick={edit}

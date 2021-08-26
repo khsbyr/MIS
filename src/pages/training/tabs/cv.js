@@ -19,53 +19,80 @@ import {
 } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import { useToolsStore } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
+import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
 import ContentWrapper from '../../criteria/criteria.style';
 import CvModal from './components/CvModal';
 import OrgaStyle from './components/orga.style';
+import { PAGESIZE } from '../../../constants/Constant';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
 let trainerID;
+let loadLazyTimeout = null;
+
 const CV = () => {
-  const loadLazyTimeout = null;
   const toolsStore = useToolsStore();
+  const [totalRecords, setTotalRecords] = useState(0);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams] = useState({
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
     page: 0,
   });
-  const PAGESIZE = 20;
+  const dt = useRef(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [OrgID, setOrgID] = useState([]);
   const [isOnChange, setIsOnChange] = useState(false);
+  // const onInit = () => {
+  //   toolsStore.setIsShowLoader(true);
+  //   if (loadLazyTimeout) {
+  //     clearTimeout(loadLazyTimeout);
+  //   }
+  //   getService(`user/getAllTrainerUserList`, list)
+  //     .then(result => {
+  //       const listResult = result || [];
+  //       listResult.forEach((item, index) => {
+  //         item.index = lazyParams.page * PAGESIZE + index + 1;
+  //       });
+  //       setList(listResult);
+  //       setSelectedRows([]);
+  //     })
+  //     .finally(toolsStore.setIsShowLoader(false))
+  //     .catch(error => {
+  //       errorCatch(error);
+  //       toolsStore.setIsShowLoader(false);
+  //     });
+  // };
+
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`user/getAllTrainerUserList`, list)
-      .then(result => {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService('user/getAllTrainerUserList', obj)
+        .then(data => {
+          const dataList = data || [];
+          dataList.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(data.totalElements);
+          setList(dataList);
+          toolsStore.setIsShowLoader(false);
+        })
+        .catch(error => {
+          message.error(error.toString());
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
-
   useEffect(() => {
     onInit();
   }, [lazyParams]);
@@ -144,6 +171,22 @@ const CV = () => {
       isEditMode = true;
       setIsModalVisible(true);
     }
+  };
+
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
   };
 
   const action = row => (
@@ -273,11 +316,22 @@ const CV = () => {
         </Content>
         <div className="datatable-responsive-demo">
           <DataTable
+            ref={dt}
+            lazy
             emptyMessage="Өгөгдөл олдсонгүй..."
             value={list}
             removableSort
             paginator
-            rows={10}
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
+            tableStyle={{ minWidth: 1000 }}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             onSelectionChange={e => {
@@ -293,6 +347,7 @@ const CV = () => {
             />
             <Column
               header="Овог"
+              field="firstname"
               body={LastNameBodyTemplate}
               sortable
               filter
@@ -300,6 +355,7 @@ const CV = () => {
             />
             <Column
               header="Нэр"
+              field="lastname"
               body={FirstNameBodyTemplate}
               sortable
               filter
@@ -307,13 +363,14 @@ const CV = () => {
             />
             <Column
               header="Утас"
+              field="phoneNumber"
               body={phoneBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
             />
             <Column
-              field="registerNumber"
+              field="register"
               header="Сургагч багшийн регистер"
               body={registerBodyTemplate}
               sortable

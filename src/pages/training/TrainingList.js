@@ -20,53 +20,60 @@ import {
 import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
+import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
 import ContentWrapper from './training.style';
 import TrainingModal from './TrainingModal';
 import OrgaStyle from './tabs/components/orga.style';
 import AutoCompleteSelect from '../../components/Autocomplete';
+import { PAGESIZE } from '../../constants/Constant';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
+let loadLazyTimeout = null;
+
 const TrainingList = () => {
-  const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams] = useState({
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
     page: 0,
   });
   const toolsStore = useToolsStore();
-  const PAGESIZE = 20;
-  const [selectedRows, setSelectedRows] = useState([]);
   const [orgID] = useState([]);
   const [trainingID, setTrainingID] = useState();
   const history = useHistory();
+  const [totalRecords, setTotalRecords] = useState(0);
+  const dt = useRef(null);
+  const [selectedRows, setSelectedRows] = useState([]);
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('training/get', list)
-      .then(result => {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService('training/get', obj)
+        .then(data => {
+          const dataList = data.content || [];
+          dataList.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(data.totalElements);
+          setList(dataList);
+          toolsStore.setIsShowLoader(false);
+        })
+        .catch(error => {
+          message.error(error.toString());
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
@@ -76,7 +83,7 @@ const TrainingList = () => {
   const getTraining = orgId => {
     getService(`training/getList/${orgId}`, {}).then(result => {
       if (result) {
-        const listResult = result || [];
+        const listResult = result.content || [];
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
@@ -105,6 +112,21 @@ const TrainingList = () => {
     setIsModalVisible(true);
   };
 
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
+  };
   const handleDeleted = row => {
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
@@ -300,12 +322,23 @@ const TrainingList = () => {
         <div className="datatable-responsive-demo">
           <div className="datatable-selection-demo">
             <DataTable
+              ref={dt}
               selectionMode="single"
               emptyMessage="Өгөгдөл олдсонгүй..."
               value={list}
+              first={lazyParams.first}
+              rows={PAGESIZE}
+              totalRecords={totalRecords}
+              onPage={onPage}
+              onSort={onSort}
+              sortField={lazyParams.sortField}
+              sortOrder={lazyParams.sortOrder}
+              onFilter={onFilter}
+              filters={lazyParams.filters}
+              tableStyle={{ minWidth: 1000 }}
+              lazy
               removableSort
               paginator
-              rows={10}
               className="p-datatable-responsive-demo"
               selection={selectedRows}
               onRowClick={ShowTrainingInfo}

@@ -10,50 +10,57 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
+import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
 import ContentWrapper from './components/attendance.style';
 import AttendanceModal from './components/attendanceModal';
+import { PAGESIZE } from '../../../constants/Constant';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
+let loadLazyTimeout = null;
+
 const Attendance = props => {
-  const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams] = useState({
-    page: 0,
-  });
   const toolsStore = useContext(ToolsContext);
-  const PAGESIZE = 20;
   const [selectedRows, setSelectedRows] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
   const [orgID] = useState([]);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
+    page: 0,
+  });
+  const dt = useRef(null);
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService(`training/get/${props.id}`, list)
-      .then(result => {
-        const listResult = result.participants || [];
-        setTrainingID(result.id);
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService(`training/get/${props.id}`, obj)
+        .then(data => {
+          const dataList = data.participants || [];
+          setTrainingID(data.id);
+          dataList.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(data.totalElements);
+          setList(dataList);
+          toolsStore.setIsShowLoader(false);
+        })
+        .catch(error => {
+          message.error(error.toString());
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
@@ -63,6 +70,22 @@ const Attendance = props => {
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
+  };
+
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
   };
 
   const edit = row => {
@@ -143,7 +166,7 @@ const Attendance = props => {
     </>
   );
 
-  const nameBodyTemplate = row => (
+  const LastNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Овог</span>
       {row.user.lastname}
@@ -230,10 +253,20 @@ const Attendance = props => {
             value={list}
             removableSort
             paginator
-            rows={10}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            // onRowClick={edit}
+            ref={dt}
+            lazy
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
+            tableStyle={{ minWidth: 1000 }}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
@@ -246,16 +279,16 @@ const Attendance = props => {
               style={{ width: 40 }}
             />
             <Column
-              field="name"
+              field="lastname"
               header="Овог"
               sortable
               filter
               filterPlaceholder="Хайх"
-              body={nameBodyTemplate}
+              body={LastNameBodyTemplate}
               bodyStyle={{ textAlign: 'left' }}
             />
             <Column
-              field="name"
+              field="firstname"
               header="Нэр"
               sortable
               filter
