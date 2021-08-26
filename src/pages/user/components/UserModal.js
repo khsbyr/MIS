@@ -5,6 +5,8 @@ import { errorCatch } from '../../../tools/Tools';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import validateMessages from '../../../tools/validateMessage';
 import { useToolsStore } from '../../../context/Tools';
+import FormItemEmail from '../../../components/FormItemEmail';
+import PhoneNumber from '../../../components/PhoneNumber';
 
 export default function UserModal(props) {
   const toolsStore = useToolsStore();
@@ -41,9 +43,6 @@ export default function UserModal(props) {
         );
       }
     }
-
-    console.log(Usercontroller);
-
     if (isEditMode) {
       setStateTrue(Usercontroller.isTrue);
       form.setFieldsValue({
@@ -93,7 +92,6 @@ export default function UserModal(props) {
 
   const save = () => {
     form
-      .validateFields()
       .then(values => {
         values.role = {
           id: values.roleId,
@@ -197,14 +195,10 @@ export default function UserModal(props) {
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
-              <Form.Item label="Утасны дугаар:" name="phoneNumber">
-                <Input placeholder="Утасны дугаар..." />
-              </Form.Item>
+              <PhoneNumber />
             </Col>
             <Col xs={24} md={24} lg={6}>
-              <Form.Item label="И-мэйл хаяг:" name="email">
-                <Input placeholder="И-мэйл хаяг..." />
-              </Form.Item>
+              <FormItemEmail />
             </Col>
             <Col xs={24} md={24} lg={6}>
               <Form.Item
