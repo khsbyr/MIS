@@ -1,13 +1,13 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { Layout } from 'antd';
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Route,
   Switch,
   useHistory,
 } from 'react-router-dom';
-import { ToolsContext } from '../context/Tools';
+import { useToolsStore } from '../context/Tools';
 import CriteriaContextProvider from '../context/CriteriaContext';
 import TrainingInfo from '../pages/training/more/TraningInfo';
 import ProjectInfo from '../pages/project/more/projectInfo';
@@ -24,7 +24,7 @@ const { Sider, Content } = Layout;
 let menus = [];
 
 function Admin() {
-  const toolsStore = useContext(ToolsContext);
+  const toolsStore = useToolsStore();
   const [collapsed, setCollapsed] = React.useState(false);
   const [routes, setRoutes] = React.useState([]);
   const isLoggged = localStorage.getItem('token');
@@ -39,11 +39,42 @@ function Admin() {
     if (!isLoggged) {
       history.push('/login');
     }
-    getService('/menus/getByToken').then(result => {
-      if (!result) return;
-      menus = result;
-      setRoutes(generateRoutes(result));
+    getService('/menus/getByToken').then(resultMenu => {
+      if (resultMenu) {
+        menus = resultMenu;
+        setRoutes(generateRoutes(resultMenu));
+      }
     });
+    if (!toolsStore.orgList) {
+      getService('organization/get').then(resultOrg => {
+        if (resultOrg) {
+          toolsStore.setOrgList(resultOrg.content || []);
+        }
+      });
+    }
+    if (!toolsStore.countryList) {
+      getService('country/get').then(resultCountry => {
+        if (resultCountry) {
+          toolsStore.setCountryList(resultCountry || []);
+        }
+      });
+    }
+    if (!toolsStore.aimagList) {
+      getService('aimag/get').then(resultAimag => {
+        if (resultAimag) {
+          toolsStore.setAimagList(resultAimag || []);
+        }
+      });
+    }
+    if (!toolsStore.user) {
+      getService(`/user/get/${localStorage.getItem('userId')}`).then(
+        resultUser => {
+          if (resultUser) {
+            toolsStore.setUser(resultUser || []);
+          }
+        }
+      );
+    }
   }, []);
 
   return (
