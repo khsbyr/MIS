@@ -25,6 +25,9 @@ export const convertLazyParamsToObj = (lazyParams, searchParam = null) => {
   if (lazyParams.page) {
     obj.page = lazyParams.page;
   }
+  if (lazyParams.page) {
+    obj.size = lazyParams.size;
+  }
   if (lazyParams.filters) {
     Object.entries(lazyParams.filters).forEach(([key, value]) => {
       if (obj.search !== '') {

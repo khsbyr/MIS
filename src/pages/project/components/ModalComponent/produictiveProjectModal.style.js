@@ -60,8 +60,11 @@ const ContentWrapper = styled.div`
     border-radius: 3px;
     height: 40px;
   }
-  .ant-input-number-handler-wrap {
+  /* .ant-input-number-handler-wrap {
     display: none;
+  } */
+  input[type='number'] {
+    appearance: none;
   }
   .ant-select-selection-search {
     margin-top: 8px;
@@ -83,6 +86,9 @@ const ContentWrapper = styled.div`
   }
   .ant-input-number-input-wrap {
     margin-top: 4px;
+  }
+  .ant-select-selector {
+    height: 40px;
   }
 `;
 

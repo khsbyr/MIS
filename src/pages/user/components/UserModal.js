@@ -196,7 +196,11 @@ export default function UserModal(props) {
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
-              <Form.Item label="И-мэйл хаяг:" name="email">
+              <Form.Item
+                label="И-мэйл хаяг:"
+                name="email"
+                rules={[{ type: 'email' }]}
+              >
                 <Input placeholder="И-мэйл хаяг..." />
               </Form.Item>
             </Col>

@@ -2,7 +2,7 @@
 const validateMessages = {
   required: '${label} хоосон байна!',
   types: {
-    email: '${label} is not a valid email!',
+    email: '${label} Формат буруу байна!',
     number: '${label} is not a valid number!',
   },
   number: {

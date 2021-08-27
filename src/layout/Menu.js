@@ -21,7 +21,7 @@ const rootSubmenuKeys = [
 
 export default function AppMenu({ menus, collapsed }) {
   const { t } = useTranslation();
-  const [openKeys, setOpenKeys] = useState(['User0']);
+  const [openKeys, setOpenKeys] = useState(['Dashboard8']);
 
   const onOpenChange = keys => {
     const latestOpenKey = keys.find(key => openKeys.indexOf(key) === -1);
