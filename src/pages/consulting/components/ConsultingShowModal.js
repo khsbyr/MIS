@@ -79,10 +79,7 @@ export default function ConsultingShowModal(props) {
       clearTimeout(loadLazyTimeout);
     }
     if (Trainerscontroller !== null) {
-      getService(
-        `education/getByPersonId/${Trainerscontroller.person.id}`,
-        listEducation
-      )
+      getService(`education/getByPersonId/${Trainerscontroller.person.id}`)
         .then(result => {
           const listeducation = result || [];
           listeducation.forEach((item, index) => {
@@ -105,10 +102,7 @@ export default function ConsultingShowModal(props) {
       clearTimeout(loadLazyTimeout);
     }
     if (Trainerscontroller !== null) {
-      getService(
-        `expierence/getByPersonId/${Trainerscontroller.person.id}`,
-        listExperience
-      )
+      getService(`expierence/getByPersonId/${Trainerscontroller.person.id}`)
         .then(result => {
           const listexperience = result || [];
           listexperience.forEach((item, index) => {
@@ -132,8 +126,7 @@ export default function ConsultingShowModal(props) {
     }
     if (Trainerscontroller !== null) {
       getService(
-        `expierenceForAdvice/getByPersonId/${Trainerscontroller.person.id}`,
-        listExperienceAdvice
+        `expierenceForAdvice/getByPersonId/${Trainerscontroller.person.id}`
       )
         .then(result => {
           const listexperienceAdvice = result || [];
@@ -158,8 +151,7 @@ export default function ConsultingShowModal(props) {
     }
     if (Trainerscontroller !== null) {
       getService(
-        `expierenceForTeach/getByPersonId/${Trainerscontroller.person.id}`,
-        listExperienceTeacher
+        `expierenceForTeach/getByPersonId/${Trainerscontroller.person.id}`
       )
         .then(result => {
           const listexperienceTeacher = result || [];
@@ -183,10 +175,7 @@ export default function ConsultingShowModal(props) {
       clearTimeout(loadLazyTimeout);
     }
     if (Trainerscontroller !== null) {
-      getService(
-        `publishedWork/getByPersonId/${Trainerscontroller.person.id}`,
-        listPublishedWork
-      )
+      getService(`publishedWork/getByPersonId/${Trainerscontroller.person.id}`)
         .then(result => {
           const listpublishedWork = result || [];
           listpublishedWork.forEach((item, index) => {
@@ -210,8 +199,7 @@ export default function ConsultingShowModal(props) {
     }
     if (Trainerscontroller !== null) {
       getService(
-        `propertyLicense/getByPersonId/${Trainerscontroller.person.id}`,
-        listLicense
+        `propertyLicense/getByPersonId/${Trainerscontroller.person.id}`
       )
         .then(result => {
           const listlicense = result || [];
@@ -235,10 +223,7 @@ export default function ConsultingShowModal(props) {
       clearTimeout(loadLazyTimeout);
     }
     if (Trainerscontroller !== null) {
-      getService(
-        `membership/getByPersonId/${Trainerscontroller.person.id}`,
-        listMembership
-      )
+      getService(`membership/getByPersonId/${Trainerscontroller.person.id}`)
         .then(result => {
           const listmembership = result || [];
           listmembership.forEach((item, index) => {

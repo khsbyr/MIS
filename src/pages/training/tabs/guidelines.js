@@ -1,8 +1,8 @@
-import { Col, message, Row, Form, Input } from 'antd';
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import { Col, Form, Input, message, Row } from 'antd';
+import React, { useContext, useEffect, useState } from 'react';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
-import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
+import { convertLazyParamsToObj, errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 
 const { TextArea } = Input;
@@ -10,14 +10,11 @@ const { TextArea } = Input;
 let loadLazyTimeout = null;
 
 const Guidelines = props => {
-  const { Guidelinescontroller } = props;
   const [form] = Form.useForm();
   const [list, setList] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
-  const [orgID, setOrgID] = useState([]);
   const toolsStore = useContext(ToolsContext);
-  const [totalRecords, setTotalRecords] = useState(0);
-  const [lazyParams, setLazyParams] = useState({
+  const [lazyParams] = useState({
     first: 0,
     page: 0,
   });
@@ -33,12 +30,8 @@ const Guidelines = props => {
         .then(data => {
           const dataList = data.training_guidelines;
           setTrainingID(data.id);
-          setOrgID(data.organization.id);
-          // dataList.forEach((item, index) => {
-          //   item.index = lazyParams.page * PAGESIZE + index + 1;
-          // });
-          setTotalRecords(data.totalElements);
           setList(dataList);
+          // console.log(data.training_guidelines);
           toolsStore.setIsShowLoader(false);
         })
         .catch(error => {
@@ -51,12 +44,12 @@ const Guidelines = props => {
   useEffect(() => {
     onInit();
     form.setFieldsValue({
-      ...Guidelinescontroller,
-      subject: Guidelinescontroller?.training_guidelines?.subject,
-      reason: Guidelinescontroller?.training_guidelines?.reason,
-      aim: Guidelinescontroller?.training_guidelines?.aim,
-      operation: Guidelinescontroller?.training_guidelines?.operation,
-      result: Guidelinescontroller?.training_guidelines?.result,
+      ...list,
+      subject: list?.subject,
+      reason: list?.reason,
+      aim: list?.aim,
+      operation: list?.operation,
+      result: list?.result,
     });
   }, [lazyParams]);
 
