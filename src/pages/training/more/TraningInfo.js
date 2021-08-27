@@ -1,7 +1,9 @@
 import { Tabs } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { getService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
 import ContentWrapper from './TrainingInfo.style';
 import Organization from '../tabs/organization';
 import TrainingTeam from '../tabs/plan';
@@ -11,6 +13,8 @@ import Guidelines from '../tabs/guidelines';
 import TrainingProgram from '../tabs/trainingProgram';
 import Budget from '../tabs/budget';
 import TrainingTest from '../tabs/testAggregation';
+import { useTrainingStore } from '../../../context/TrainingContext';
+import { useToolsStore } from '../../../context/Tools';
 
 const { TabPane } = Tabs;
 const tabPosition = 'top';
@@ -18,6 +22,21 @@ const tabPosition = 'top';
 export default function TraningInfo() {
   const { t } = useTranslation();
   const { id } = useParams();
+  const { setIsShowLoader } = useToolsStore();
+  const { TrainingList, setTrainingList } = useTrainingStore();
+
+  useEffect(() => {
+    setIsShowLoader(true);
+    getService(`/training/get/${id}`)
+      .then(result => {
+        setTrainingList(result);
+      })
+      .finally(setIsShowLoader(false))
+      .catch(error => {
+        errorCatch(error);
+        setIsShowLoader(false);
+      });
+  }, []);
   return (
     <ContentWrapper>
       <Tabs tabPosition={tabPosition}>

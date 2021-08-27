@@ -53,7 +53,7 @@ export default function FeedbackModal(props) {
     });
     getService('criteria/get').then(result => {
       if (result) {
-        setStateCriteria(result || []);
+        setStateCriteria(result.content || []);
       }
     });
     getService('organization/get').then(result => {

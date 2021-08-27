@@ -1,63 +1,34 @@
 import { Col, Form, Input, message, Row } from 'antd';
-import React, { useContext, useEffect, useState } from 'react';
-import { ToolsContext } from '../../../context/Tools';
-import { getService, putService } from '../../../service/service';
-import { convertLazyParamsToObj, errorCatch } from '../../../tools/Tools';
+import React, { useEffect } from 'react';
+import { putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
+import { useTrainingStore } from '../../../context/TrainingContext';
 
 const { TextArea } = Input;
 
-let loadLazyTimeout = null;
-
-const Guidelines = props => {
+function Guidelines() {
+  const { TrainingList } = useTrainingStore();
   const [form] = Form.useForm();
-  const [list, setList] = useState([]);
-  const [trainingID, setTrainingID] = useState([]);
-  const toolsStore = useContext(ToolsContext);
-  const [lazyParams] = useState({
-    first: 0,
-    page: 0,
-  });
-
-  const onInit = () => {
-    toolsStore.setIsShowLoader(true);
-    if (loadLazyTimeout) {
-      clearTimeout(loadLazyTimeout);
-    }
-    loadLazyTimeout = setTimeout(() => {
-      const obj = convertLazyParamsToObj(lazyParams);
-      getService(`training/get/${props.id}`, obj)
-        .then(data => {
-          const dataList = data.training_guidelines;
-          setTrainingID(data.id);
-          setList(dataList);
-          // console.log(data.training_guidelines);
-          toolsStore.setIsShowLoader(false);
-        })
-        .catch(error => {
-          message.error(error.toString());
-          toolsStore.setIsShowLoader(false);
-        });
-    }, 500);
-  };
 
   useEffect(() => {
-    onInit();
     form.setFieldsValue({
-      ...list,
-      subject: list?.subject,
-      reason: list?.reason,
-      aim: list?.aim,
-      operation: list?.operation,
-      result: list?.result,
+      ...(TrainingList && TrainingList.training_guidelines),
+      subject: TrainingList?.training_guidelines?.subject,
+      reason: TrainingList?.training_guidelines?.reason,
+      aim: TrainingList?.training_guidelines?.aim,
+      operation: TrainingList?.training_guidelines?.operation,
+      result: TrainingList?.training_guidelines?.result,
     });
-  }, [lazyParams]);
+  }, []);
 
   const subject = value => {
     form.validateFields().then(values => {
-      values.training = { id: trainingID };
       values.subject = value;
-      putService(`trainingGuidelines/update/${list.id}`, values)
+      putService(
+        `trainingGuidelines/update/${TrainingList.training_guidelines.id}`,
+        values
+      )
         .then(() => {
           message.success('Амжилттай хадгаллаа');
         })
@@ -69,9 +40,11 @@ const Guidelines = props => {
 
   const reason = value => {
     form.validateFields().then(values => {
-      values.training = { id: trainingID };
       values.reason = value;
-      putService(`trainingGuidelines/update/${list.id}`, values)
+      putService(
+        `trainingGuidelines/update/${TrainingList.training_guidelines.id}`,
+        values
+      )
         .then(() => {
           message.success('Амжилттай хадгаллаа');
         })
@@ -83,9 +56,11 @@ const Guidelines = props => {
 
   const aim = value => {
     form.validateFields().then(values => {
-      values.training = { id: trainingID };
       values.aim = value;
-      putService(`trainingGuidelines/update/${list.id}`, values)
+      putService(
+        `trainingGuidelines/update/${TrainingList.training_guidelines.id}`,
+        values
+      )
         .then(() => {
           message.success('Амжилттай хадгаллаа');
         })
@@ -97,9 +72,11 @@ const Guidelines = props => {
 
   const operation = value => {
     form.validateFields().then(values => {
-      values.training = { id: trainingID };
       values.operation = value;
-      putService(`trainingGuidelines/update/${list.id}`, values)
+      putService(
+        `trainingGuidelines/update/${TrainingList.training_guidelines.id}`,
+        values
+      )
         .then(() => {
           message.success('Амжилттай хадгаллаа');
         })
@@ -111,9 +88,11 @@ const Guidelines = props => {
 
   const result = value => {
     form.validateFields().then(values => {
-      values.training = { id: trainingID };
       values.result = value;
-      putService(`trainingGuidelines/update/${list.id}`, values)
+      putService(
+        `trainingGuidelines/update/${TrainingList.training_guidelines.id}`,
+        values
+      )
         .then(() => {
           message.success('Амжилттай хадгаллаа');
         })
@@ -173,5 +152,5 @@ const Guidelines = props => {
       </Form>
     </div>
   );
-};
+}
 export default Guidelines;

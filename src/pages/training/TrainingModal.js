@@ -303,7 +303,6 @@ export default function TrainingModal(props) {
                           placeholder="Сонгох"
                           allowClear
                           multiple
-                          treeDefaultExpandAll
                           maxTagCount="responsive"
                           onChange={onChangeAddress}
                         >

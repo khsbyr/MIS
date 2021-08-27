@@ -33,7 +33,7 @@ const TrainingReport = props => {
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [orgID, setOrgID] = useState([]);
+  const [orgID] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const dt = useRef(null);
   const [lazyParams, setLazyParams] = useState({

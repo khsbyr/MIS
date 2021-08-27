@@ -50,7 +50,7 @@ export default function TrainingProgramModal(props) {
   useEffect(() => {
     getService(`trainingTeam/getList/${trainingID}`).then(result => {
       if (result) {
-        setStateTrainers(result || []);
+        setStateTrainers(result.content || []);
       }
     });
     if (isEditMode) {

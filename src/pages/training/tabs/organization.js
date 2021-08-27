@@ -1,21 +1,15 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import {
-  faFileExcel,
-  faPen,
-  faPlus,
-  faPrint,
-  faTrash,
-  faFilePdf,
-} from '@fortawesome/free-solid-svg-icons';
+import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../../context/Tools';
+import { useTrainingStore } from '../../../context/TrainingContext';
 import { getService, putService } from '../../../service/service';
-import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
+import { convertLazyParamsToObj, errorCatch } from '../../../tools/Tools';
 import ContentWrapper from './components/organization.style';
 import OrganizationModal from './components/OrganizationModal';
 
@@ -37,6 +31,7 @@ const Organization = props => {
   });
   const dt = useRef(null);
   const [selectedRows, setSelectedRows] = useState([]);
+  const { TrainingList, setTrainingList } = useTrainingStore();
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
@@ -51,6 +46,7 @@ const Organization = props => {
           // dataList.forEach((item, index) => {
           //   item.index = lazyParams.page * PAGESIZE + index + 1;
           // });
+          setTrainingList(data);
           setTotalRecords(data.totalElements);
           setList([dataList]);
           toolsStore.setIsShowLoader(false);

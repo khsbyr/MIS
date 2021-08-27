@@ -1,133 +1,40 @@
 import { UploadOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Input, Modal, Row, Upload, message } from 'antd';
+import { Button, Col, Form, Input, message, Modal, Row, Upload } from 'antd';
 import React, { useEffect, useState } from 'react';
-import AutoCompleteSelect from '../../../../components/Autocomplete';
-import {
-  getService,
-  postService,
-  putService,
-} from '../../../../service/service';
-import { errorCatch } from '../../../../tools/Tools';
-import ContentWrapper from './trainingReport.style';
 import { useToolsStore } from '../../../../context/Tools';
+import { postService, putService } from '../../../../service/service';
+import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
+import { useTrainingStore } from '../../../../context/TrainingContext';
+import ContentWrapper from './trainingReport.style';
 
 export default function TrainingReportModal(props) {
-  const {
-    TrainingReportController,
-    isModalVisible,
-    isEditMode,
-    orgID,
-    trainingIDD,
-  } = props;
+  const { TrainingReportController, isModalVisible, isEditMode, trainingIDD } =
+    props;
   const [form] = Form.useForm();
   const toolsStore = useToolsStore();
-  const [stateSum, setStateSum] = useState([]);
-  const [stateBag, setStateBag] = useState([]);
-  const [training, setTraining] = useState([]);
-  const [trainingID, setTrainingID] = useState([]);
-  const [guidelinesID, setGuidelinesID] = useState([]);
-  const [reportsAimID, setReportsAimID] = useState([]);
-  const [tipsID, setTipsID] = useState([]);
-  const [resultID, setResultID] = useState([]);
-  const [successID, setSuccessID] = useState([]);
-  const [performedProcess1ID, setPerformedProcess1ID] = useState();
-  const [performedProcess2ID, setPerformedProcess2ID] = useState();
-  const [performedProcess3ID, setPerformedProcess3ID] = useState();
-  const [performedProcess4ID, setPerformedProcess4ID] = useState();
+  const [reportsAimID] = useState();
+  const [tipsID] = useState();
+  const [resultID] = useState();
+  const [successID] = useState();
+  const [performedProcess1ID] = useState();
+  const [performedProcess2ID] = useState();
+  const [performedProcess3ID] = useState();
+  const [performedProcess4ID] = useState();
+  const { TrainingList } = useTrainingStore();
 
   useEffect(() => {
-    getService(`training/getListForReport/${orgID}`).then(result => {
-      if (result) {
-        setTraining(result || []);
-      }
-    });
-    getService(`training/get/${trainingIDD}`).then(result => {
-      if (result) {
-        // setTraining(result || []);
-      }
-    });
-
-    if (TrainingReportController !== undefined) {
-      getService(
-        `soum/getList/${TrainingReportController.address.aimag.id}`
-      ).then(result => {
-        if (result) {
-          setStateSum(result || []);
-        }
-      });
-      getService(
-        `bag/getList/${TrainingReportController.address.soum.id}`
-      ).then(result => {
-        if (result) {
-          setStateBag(result || []);
-        }
-      });
-    }
-
     if (isEditMode) {
-      setTrainingID(TrainingReportController.id);
-      setGuidelinesID(
-        TrainingReportController.training_guidelines &&
-          TrainingReportController.training_guidelines.id
-      );
-      setReportsAimID(
-        TrainingReportController.trainingReport &&
-          TrainingReportController.trainingReport.reportsAim.id
-      );
-      setTipsID(
-        TrainingReportController.trainingReport &&
-          TrainingReportController.trainingReport.reportsTips.id
-      );
-      setResultID(
-        TrainingReportController.trainingReport &&
-          TrainingReportController.trainingReport.reportsResult.id
-      );
-      setSuccessID(
-        TrainingReportController.trainingReport &&
-          TrainingReportController.trainingReport.reportsSuccessOverview.id
-      );
-      setPerformedProcess1ID(
-        TrainingReportController.trainingReport &&
-          TrainingReportController.trainingReport.reportsPerformedProcess1.id
-      );
-      setPerformedProcess2ID(
-        TrainingReportController.trainingReport &&
-          TrainingReportController.trainingReport.reportsPerformedProcess2.id
-      );
-      setPerformedProcess3ID(
-        TrainingReportController.trainingReport &&
-          TrainingReportController.trainingReport.reportsPerformedProcess3.id
-      );
-      setPerformedProcess4ID(
-        TrainingReportController.trainingReport &&
-          TrainingReportController.trainingReport.reportsPerformedProcess4.id
-      );
-
       form.setFieldsValue({
         ...TrainingReportController,
-        CountryID: TrainingReportController.address
-          ? TrainingReportController.address.country.id
-          : '',
-        AimagID: TrainingReportController.address
-          ? TrainingReportController.address.aimag.id
-          : '',
-        SoumID: TrainingReportController.address
-          ? TrainingReportController.address.soum.id
-          : '',
-        BagID: TrainingReportController.address
-          ? TrainingReportController.address.bag.id
-          : '',
-        TrainingName: TrainingReportController && TrainingReportController.name,
-        TotalParticipants:
-          TrainingReportController &&
-          TrainingReportController.totalParticipants,
+        CountryID: TrainingList.address.childrenAddress.map(z => z.soum.name),
+        TrainingName: TrainingList && TrainingList?.name,
+        TotalParticipants: TrainingList && TrainingList?.totalParticipants,
         ResponsibleUserName:
-          TrainingReportController.organization.responsibleUser &&
-          TrainingReportController.organization.responsibleUser.firstname,
+          TrainingList &&
+          TrainingList?.organization?.responsibleUser?.firstname,
         PerformanceBudget:
-          TrainingReportController.trainingBudget &&
-          TrainingReportController.trainingBudget.performanceBudget,
+          TrainingList && TrainingList?.trainingBudget?.performanceBudget,
         ReportsAim:
           TrainingReportController.trainingReport &&
           TrainingReportController.trainingReport.reportsAim.inputText,
@@ -161,117 +68,10 @@ export default function TrainingReportModal(props) {
     }
   }, []);
 
-  const selectTraining = value => {
-    getService(`training/get/${value}`).then(result => {
-      if (result) {
-        const selectedTraining = result;
-        setTrainingID(selectedTraining.id);
-        setGuidelinesID(
-          selectedTraining.training_guidelines &&
-            selectedTraining.training_guidelines.id
-        );
-        setReportsAimID(
-          selectedTraining.reportsAim && selectedTraining.reportsAim.id
-        );
-        setTipsID(
-          selectedTraining.reportsTips && selectedTraining.reportsTips.id
-        );
-        setResultID(
-          selectedTraining.reportsResult && selectedTraining.reportsResult.id
-        );
-        setSuccessID(
-          selectedTraining.reportsSuccessOverview &&
-            selectedTraining.reportsSuccessOverview.id
-        );
-        setPerformedProcess1ID(
-          selectedTraining.reportsPerformedProcess1 &&
-            selectedTraining.reportsPerformedProcess1.id
-        );
-        setPerformedProcess2ID(
-          selectedTraining.reportsPerformedProcess1 &&
-            selectedTraining.reportsPerformedProcess2.id
-        );
-        setPerformedProcess3ID(
-          selectedTraining.reportsPerformedProcess1 &&
-            selectedTraining.reportsPerformedProcess3.id
-        );
-        setPerformedProcess4ID(
-          selectedTraining.reportsPerformedProcess1 &&
-            selectedTraining.reportsPerformedProcess4.id
-        );
-
-        form.setFieldsValue({
-          ...selectedTraining,
-          CountryID: selectedTraining && selectedTraining.address.country.id,
-          AimagID: selectedTraining ? selectedTraining.address.aimag.id : '',
-          SoumID: selectedTraining ? selectedTraining.address.soum.id : '',
-          BagID: selectedTraining ? selectedTraining.address.bag.id : '',
-          TrainingName: selectedTraining && selectedTraining.name,
-          TotalParticipants:
-            selectedTraining && selectedTraining.totalParticipants,
-          PerformanceBudget:
-            selectedTraining.trainingBudget &&
-            selectedTraining.trainingBudget.performanceBudget,
-          ResponsibleUserName:
-            selectedTraining.organization &&
-            selectedTraining.organization.responsibleUser.firstname,
-        });
-      }
-    });
-  };
-
-  const getSum = aimagId => {
-    getService(`soum/getList/${aimagId}`, {}).then(result => {
-      if (result) {
-        setStateSum(result || []);
-      }
-    });
-  };
-
-  const selectAimag = value => {
-    getSum(value);
-  };
-
-  const getBag = sumID => {
-    getService(`bag/getList/${sumID}`, {}).then(result => {
-      if (result) {
-        setStateBag(result || []);
-      }
-    });
-  };
-
-  const selectSum = value => {
-    getBag(value);
-  };
-
   const save = () => {
     form
       .validateFields()
       .then(values => {
-        values.training = {
-          id: trainingID,
-          totalParticipants: values.TotalParticipants,
-          organization: {
-            id: orgID,
-          },
-          training_guidelines: {
-            id: guidelinesID,
-            address: {
-              country: {
-                id: values.CountryID,
-              },
-              aimag: {
-                id: values.AimagID,
-              },
-              soum: {
-                id: values.SoumID,
-              },
-              bag: {
-                id: values.BagID,
-              },
-            },
-          },
-        };
         values.reportsAim = { id: reportsAimID, inputText: values.ReportsAim };
         values.reportsTips = { id: tipsID, inputText: values.ReportsTips };
         values.reportsResult = {
@@ -344,37 +144,23 @@ export default function TrainingReportModal(props) {
             labelAlign="left"
             name="nest-messages"
             validateMessages={validateMessages}
+            initialValues={{
+              name: TrainingList.name,
+              TotalParticipants: TrainingList.totalParticipants,
+              ResponsibleUserName:
+                TrainingList.organization.responsibleUser.firstname,
+              PerformanceBudget: TrainingList.trainingBudget.performanceBudget,
+              CountryID: TrainingList.address.childrenAddress.map(
+                z => z.soum.name
+              ),
+              AimagID: TrainingList.address.aimag,
+              SoumID: TrainingList.address.soum,
+              BagID: TrainingList.address.bag,
+            }}
           >
             <Row gutter={[72]}>
               <Col xs={24} md={24} lg={12}>
-                <Form.Item
-                  label="Сургалтын нэр:"
-                  name="TrainingName"
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
-                  {isEditMode ? (
-                    <AutoCompleteSelect
-                      disabled
-                      valueField="id"
-                      data={training}
-                    />
-                  ) : (
-                    <AutoCompleteSelect
-                      valueField="id"
-                      data={training}
-                      onChange={value => selectTraining(value)}
-                    />
-                  )}
-                </Form.Item>
-
-                <Form.Item
-                  label="Сургалтад хамрагдсан:"
-                  name="TotalParticipants"
-                >
+                <Form.Item label="Сургалтын нэр:" name="name">
                   <Input className="FormItem" disabled />
                 </Form.Item>
 
@@ -391,34 +177,18 @@ export default function TrainingReportModal(props) {
               </Col>
 
               <Col xs={24} md={24} lg={12}>
+                <Form.Item
+                  label="Сургалтад хамрагдсан:"
+                  name="TotalParticipants"
+                >
+                  <Input className="FormItem" disabled />
+                </Form.Item>
                 <Form.Item label="Сургалт явагдсан газар:" name="CountryID">
-                  <AutoCompleteSelect
+                  <Input
+                    className="FormItem"
                     disabled
                     valueField="id"
                     data={toolsStore.countryList}
-                  />
-                </Form.Item>
-                <Form.Item label="Аймаг, хот:" name="AimagID">
-                  <AutoCompleteSelect
-                    disabled
-                    valueField="id"
-                    data={toolsStore.aimagList}
-                    onChange={value => selectAimag(value)}
-                  />
-                </Form.Item>
-                <Form.Item name="SoumID" layout="vertical" label="Сум, Дүүрэг:">
-                  <AutoCompleteSelect
-                    disabled
-                    valueField="id"
-                    data={stateSum}
-                    onChange={value => selectSum(value)}
-                  />
-                </Form.Item>
-                <Form.Item name="BagID" layout="vertical" label="Баг, Хороо:">
-                  <AutoCompleteSelect
-                    disabled
-                    valueField="id"
-                    data={stateBag}
                   />
                 </Form.Item>
               </Col>
