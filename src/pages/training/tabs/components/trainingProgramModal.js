@@ -7,6 +7,7 @@ import {
   Select,
   message,
   DatePicker,
+  AutoComplete,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
@@ -19,7 +20,7 @@ import {
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
-import ContentWrapper from './guidelines.style';
+import ContentWrapper from './trainingProgram.style';
 
 const { Option } = Select;
 const layout = {
@@ -38,6 +39,7 @@ export default function TrainingProgramModal(props) {
   const [stateTrainers, setStateTrainers] = useState(false);
   const [startDate, setStartDate] = useState([]);
   const [endDate, setEndDate] = useState([]);
+  const [, setIsOnchange] = useState(false);
 
   function onStartDateChange(date, value) {
     setStartDate(value);
@@ -67,6 +69,7 @@ export default function TrainingProgramModal(props) {
       });
     }
   }, []);
+
   const save = () => {
     form
       .validateFields()
@@ -170,7 +173,7 @@ export default function TrainingProgramModal(props) {
                         }
                       />
                     </Form.Item>
-                    <Form.Item
+                    {/* <Form.Item
                       layout="vertical"
                       label="Хариуцах эзэн:"
                       name="responsiblePersonName"
@@ -188,6 +191,33 @@ export default function TrainingProgramModal(props) {
                             </Option>
                           ))}
                       </Select>
+                    </Form.Item> */}
+                    <Form.Item
+                      name="responsiblePersonName"
+                      layout="vertical"
+                      label="Хариуцах эзэн:"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <AutoComplete
+                        placeholder="Хариуцах эзэн"
+                        // onSelect={selectUser}
+                        filterOption={(inputValue, option) =>
+                          option.children
+                            .toUpperCase()
+                            .indexOf(inputValue.toUpperCase()) !== -1
+                        }
+                      >
+                        {stateTrainers &&
+                          stateTrainers.map((z, index) => (
+                            <Option key={index} value={z.user.fullName}>
+                              {z.user.fullName}
+                            </Option>
+                          ))}
+                      </AutoComplete>
                     </Form.Item>
                   </Col>
                 </Row>

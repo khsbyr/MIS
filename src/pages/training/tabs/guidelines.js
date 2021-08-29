@@ -4,6 +4,7 @@ import { putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 import { useTrainingStore } from '../../../context/TrainingContext';
+import ContentWrapper from './components/guidelines.style';
 
 const { TextArea } = Input;
 
@@ -103,53 +104,58 @@ function Guidelines() {
   };
   return (
     <div>
-      <Form
-        form={form}
-        labelAlign="left"
-        layout="vertical"
-        name="nest-messages"
-        validateMessages={validateMessages}
-      >
-        <Row gutter={[40, 30]}>
-          <Col xs={24} md={24} lg={24}>
-            <Form.Item name="subject" label="Сургалтын сэдэв">
-              <TextArea
-                rows={6}
-                placeholder="Сургалтын сэдэв"
-                onBlur={e => subject(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item name="reason" label="Сургалт зохион байгуулах үндэслэл">
-              <TextArea
-                rows={6}
-                placeholder="Сургалт зохион байгуулах үндэслэл"
-                onBlur={e => reason(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item name="aim" label="Сургалтын зорилго">
-              <TextArea
-                rows={6}
-                placeholder="Сургалтын зорилго"
-                onBlur={e => aim(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item name="operation" label="Хэрэгжүүлэх үйл ажиллагаа">
-              <TextArea
-                rows={6}
-                placeholder="Хэрэгжүүлэх үйл ажиллагаа"
-                onBlur={e => operation(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item name="result" label="Хүлээгдэж буй үр дүн">
-              <TextArea
-                rows={6}
-                placeholder="Хүлээгдэж буй үр дүн"
-                onBlur={e => result(e.target.value)}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
+      <ContentWrapper>
+        <Form
+          form={form}
+          labelAlign="left"
+          layout="vertical"
+          name="nest-messages"
+          validateMessages={validateMessages}
+        >
+          <Row gutter={[40, 30]}>
+            <Col xs={24} md={24} lg={24}>
+              <Form.Item name="subject" label="Сургалтын сэдэв">
+                <TextArea
+                  rows={6}
+                  placeholder="Сургалтын сэдэв"
+                  onBlur={e => subject(e.target.value)}
+                />
+              </Form.Item>
+              <Form.Item
+                name="reason"
+                label="Сургалт зохион байгуулах үндэслэл"
+              >
+                <TextArea
+                  rows={6}
+                  placeholder="Сургалт зохион байгуулах үндэслэл"
+                  onBlur={e => reason(e.target.value)}
+                />
+              </Form.Item>
+              <Form.Item name="aim" label="Сургалтын зорилго">
+                <TextArea
+                  rows={6}
+                  placeholder="Сургалтын зорилго"
+                  onBlur={e => aim(e.target.value)}
+                />
+              </Form.Item>
+              <Form.Item name="operation" label="Хэрэгжүүлэх үйл ажиллагаа">
+                <TextArea
+                  rows={6}
+                  placeholder="Хэрэгжүүлэх үйл ажиллагаа"
+                  onBlur={e => operation(e.target.value)}
+                />
+              </Form.Item>
+              <Form.Item name="result" label="Хүлээгдэж буй үр дүн">
+                <TextArea
+                  rows={6}
+                  placeholder="Хүлээгдэж буй үр дүн"
+                  onBlur={e => result(e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </ContentWrapper>
     </div>
   );
 }
