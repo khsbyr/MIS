@@ -36,7 +36,6 @@ function Admin() {
   };
 
   useEffect(() => {
-    // if (!toolsStore.user) return;
     if (!isLoggged) {
       history.push('/login');
     } else {

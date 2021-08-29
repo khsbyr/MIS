@@ -193,18 +193,6 @@ const ProjectOrg = props => {
                       </Button>
                     </Tooltip>
                   </Col>
-                  <Col>
-                    <Tooltip title="Нэмэх" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faPlus} />}
-                        onClick={add}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
                 </Row>
               </Col>
             </Row>
