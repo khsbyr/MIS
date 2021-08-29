@@ -105,7 +105,7 @@ function Register() {
             </Form.Item>
             <Form.Item name="code" className="underline">
               <Select
-                placeholder="Хэрэглэгчийн төрөл"
+                placeholder={t('user_role')}
                 style={{ width: '100%' }}
                 bordered={false}
                 allowClear

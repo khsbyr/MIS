@@ -19,7 +19,7 @@ export default function projectInnovationModal(props) {
   useEffect(() => {
     getService(`scope/get`).then(result => {
       if (result) {
-        setStateScope(result || []);
+        setStateScope(result.content || []);
       }
     });
     if (isEditMode) {

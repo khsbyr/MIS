@@ -206,7 +206,7 @@ export default function productiveProjectModal(props) {
                       <Input />
                     </Form.Item>
                     <Form.Item label="Төсөл хэрэгжүүлэх хугацаа:" name="period">
-                      <InputNumber type="number" />
+                      <InputNumber />
                     </Form.Item>
                     <Form.Item label="Шалгуур үзүүлэлт:" valuePropName="option">
                       {ProjectCriteriaList === null ? (
