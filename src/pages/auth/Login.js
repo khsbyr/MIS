@@ -49,7 +49,7 @@ function Login() {
               user.firstname ? user.firstname : user.username
             );
             localStorage.setItem('userId', result.data.userId);
-            history.push('user/users');
+            history.push('dashboard');
           });
         })
         .finally(() => {
