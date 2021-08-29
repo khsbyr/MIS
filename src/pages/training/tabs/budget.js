@@ -105,6 +105,8 @@ const Budget = props => {
       setSelectedRows([]);
     });
   };
+
+  console.log(list);
   useEffect(() => {
     onInit();
   }, [lazyParams]);

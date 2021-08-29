@@ -76,6 +76,63 @@ const ContentWrapper = styled.div`
   .ant-select-selection-search {
     margin-top: 4px;
   }
+  #nest-messages_total {
+    height: 40px;
+    border: 1px solid rgb(217, 217, 217);
+    padding: 4px 11px;
+  }
+  #nest-messages_total:focus-visible {
+    outline: none;
+  }
+  #nest-messages_total:focus {
+    border-color: #40a9ff;
+    box-shadow: 0 0 0 0.025rem #1890ff;
+  }
+
+  #nest-messages_total:hover {
+    border-color: #40a9ff;
+  }
+  #nest-messages_total:focus {
+    border-color: #1890ff;
+  }
+  #nest-messages_costOfCompany {
+    height: 40px;
+    border: 1px solid rgb(217, 217, 217);
+    padding: 4px 11px;
+  }
+  #nest-messages_costOfCompany:focus-visible {
+    outline: none;
+  }
+  #nest-messages_costOfCompany:focus {
+    border-color: #40a9ff;
+    box-shadow: 0 0 0 0.025rem #1890ff;
+  }
+
+  #nest-messages_costOfCompany:hover {
+    border-color: #40a9ff;
+  }
+  #nest-messages_costOfCompany:focus {
+    border-color: #1890ff;
+  }
+  #nest-messages_projectInvestment {
+    height: 40px;
+    border: 1px solid rgb(217, 217, 217);
+    padding: 4px 11px;
+  }
+  #nest-messages_projectInvestment:focus-visible {
+    outline: none;
+  }
+  #nest-messages_projectInvestment:focus {
+    border-color: #40a9ff;
+    box-shadow: 0 0 0 0.025rem #1890ff;
+  }
+
+  #nest-messages_projectInvestment:hover {
+    border-color: #40a9ff;
+  }
+  #nest-messages_projectInvestment:focus {
+    border-color: #1890ff;
+  }
 `;
 
 export default ContentWrapper;
