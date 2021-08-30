@@ -70,6 +70,7 @@ const CV = () => {
           setList(dataList);
           toolsStore.setIsShowLoader(false);
         })
+        .finally(toolsStore.setIsShowLoader(false))
         .catch(error => {
           message.error(error.toString());
           toolsStore.setIsShowLoader(false);
@@ -82,13 +83,13 @@ const CV = () => {
 
   const selectOrg = value => {
     setIsOnChange(true);
-    getService(`user/getTrainerListByOrgId/${value}`, {}).then(result => {
-      if (result) {
-        const listResult = result || [];
-        listResult.forEach((item, index) => {
+    getService(`user/getTrainerListByOrgId/${value}`, {}).then(data => {
+      if (data) {
+        const dataList = data || [];
+        dataList.forEach((item, index) => {
           item.index = index + 1;
         });
-        setList(listResult);
+        setList(dataList);
         setOrgID(value);
         setSelectedRows([]);
       }
