@@ -262,14 +262,19 @@ const TrainingList = () => {
             <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col xs={12} md={12} lg={8}>
-                  <OrgaStyle>
-                    <AutoCompleteSelect
-                      valueField="id"
-                      placeholder="Байгууллага сонгох"
-                      data={toolsStore.orgList}
-                      onChange={value => selectOrgs(value)}
-                    />
-                  </OrgaStyle>
+                  {toolsStore.user.roleId === 1 ? (
+                    <OrgaStyle>
+                      <AutoCompleteSelect
+                        valueField="id"
+                        initialValue="All"
+                        placeholder="Байгууллага сонгох"
+                        data={toolsStore.orgList}
+                        onChange={value => selectOrgs(value)}
+                      />
+                    </OrgaStyle>
+                  ) : (
+                    ''
+                  )}
                 </Col>
                 <Col xs={12} md={5} lg={5}>
                   <DatePicker

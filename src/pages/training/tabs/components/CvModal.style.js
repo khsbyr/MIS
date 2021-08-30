@@ -47,6 +47,10 @@ const ContentWrapper = styled.div`
     width: 100%;
     height: 40px;
   }
+
+  .ant-select-selection-overflow {
+    height: 38px;
+  }
 `;
 
 export default ContentWrapper;

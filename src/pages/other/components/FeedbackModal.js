@@ -66,13 +66,14 @@ export default function FeedbackModal(props) {
       setStateFeedbackID(Feedbackcontroller.feedbackType.id);
       setStateUserID(Feedbackcontroller.user && Feedbackcontroller.user.id);
       setStateCriteriaID(
-        Feedbackcontroller.criteria && Feedbackcontroller.criteria.id
+        Feedbackcontroller.feedbackCriteria &&
+          Feedbackcontroller.feedbackCriteria.id
       );
       setStateOrgID(
         Feedbackcontroller.organization && Feedbackcontroller.organization.id
       );
       setStateShapeID(
-        Feedbackcontroller.shapeData && Feedbackcontroller.shapeData.id
+        Feedbackcontroller.feedbackShape && Feedbackcontroller.feedbackShape.id
       );
       form.setFieldsValue({
         ...Feedbackcontroller,
@@ -82,14 +83,14 @@ export default function FeedbackModal(props) {
         UserID: Feedbackcontroller.user
           ? Feedbackcontroller.user.firstname
           : '',
-        CriteriaID: Feedbackcontroller.criteria
-          ? Feedbackcontroller.criteria.name
+        CriteriaID: Feedbackcontroller.feedbackCriteria
+          ? Feedbackcontroller.feedbackCriteria.name
           : '',
         OrgID: Feedbackcontroller.organization
           ? Feedbackcontroller.organization.name
           : '',
-        ShapeID: Feedbackcontroller.shapeData
-          ? Feedbackcontroller.shapeData.name
+        ShapeID: Feedbackcontroller.feedbackShape
+          ? Feedbackcontroller.feedbackShape.name
           : '',
         feedbackDate: Feedbackcontroller ? Feedbackcontroller.feedbackDate : '',
       });
@@ -118,14 +119,13 @@ export default function FeedbackModal(props) {
       .then(values => {
         values.feedbackType = { id: stateFeedbackID };
         values.user = { id: stateUserID };
-        values.criteria = { id: stateCriteriaID };
         values.organization = { id: stateOrgID };
-        values.shapeData = { id: stateShapeID };
+        values.feedbackShape = { id: stateShapeID };
         values.feedbackDate = Date;
         if (isEditMode) {
           const saveData = {
             feedback: values,
-            criteriaIds: [values.CriteriaID],
+            criteriaIds: [23],
           };
           putService(`feedback/update/${Feedbackcontroller.id}`, saveData)
             .then(() => {
@@ -138,7 +138,7 @@ export default function FeedbackModal(props) {
         } else {
           const saveData = {
             feedback: values,
-            criteriaIds: [values.CriteriaID],
+            criteriaIds: [23],
           };
           postService(`feedback/post`, saveData)
             .then(() => {
@@ -234,6 +234,12 @@ export default function FeedbackModal(props) {
                     placeholder="Хэлбэр"
                     data={shapeData}
                     onChange={value => selectShape(value)}
+                    defaultValue={
+                      isEditMode
+                        ? Feedbackcontroller &&
+                          Feedbackcontroller.feedbackShape.name
+                        : null
+                    }
                   />
                 </Form.Item>
               </Col>
@@ -272,15 +278,7 @@ export default function FeedbackModal(props) {
                 </Form.Item>
               </Col>
               <Col xs={24} md={24} lg={24}>
-                <Form.Item
-                  name="CriteriaID"
-                  placeholder="Шалгуур үзүүлэлт:"
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
+                <Form.Item name="CriteriaID" placeholder="Шалгуур үзүүлэлт:">
                   <AutoCompleteSelect
                     placeholder="Шалгуур үзүүлэлт"
                     valueField="id"
@@ -288,12 +286,7 @@ export default function FeedbackModal(props) {
                     //   Feedbackcontroller.criteria &&
                     //   Feedbackcontroller.criteria[23].name
                     // }
-                    defaultValue={
-                      isEditMode
-                        ? Feedbackcontroller.stateCriteria &&
-                          Feedbackcontroller.stateCriteria[23].name
-                        : null
-                    }
+                    defaultValue={23}
                     data={stateCriteria}
                     size="medium"
                     onChange={value => selectCriteria(value)}
