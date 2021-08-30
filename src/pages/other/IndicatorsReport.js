@@ -1,61 +1,68 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
+  faFilePdf,
   faPen,
   faPlus,
   faPrint,
   faTrash,
-  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState } from 'react';
+import moment from 'moment';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { putService, getService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
+import { PAGESIZE } from '../../constants/Constant';
+import { useToolsStore } from '../../context/Tools';
+import { getService, putService } from '../../service/service';
+import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
 import IndicatorsReportModal from './components/indicatorsReportModal';
-import { useToolsStore } from '../../context/Tools';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
+let loadLazyTimeout = null;
+
 const IndicatorsReport = () => {
   const { t } = useTranslation();
-  const loadLazyTimeout = null;
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [lazyParams] = useState({
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
     page: 0,
   });
-  const PAGESIZE = 20;
+  const dt = useRef(null);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [trainingID, setTrainingID] = useState([]);
-  const [orgID, setOrgID] = useState([]);
   const toolsStore = useToolsStore();
+  const [totalRecords, setTotalRecords] = useState(0);
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    getService('feedbackCriteria/get', list)
-      .then(result => {
-        const listResult = result.content || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService('criteriaResults/get', obj)
+        .then(data => {
+          const dataList = data.content || [];
+          dataList.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(data.totalElements);
+          setList(dataList);
+          toolsStore.setIsShowLoader(false);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          message.error(error.toString());
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
@@ -67,12 +74,28 @@ const IndicatorsReport = () => {
     isEditMode = false;
   };
 
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
+  };
+
   const handleDeleted = row => {
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`feedbackCriteria/delete/${row.id}`)
+    putService(`criteriaResults/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -130,6 +153,42 @@ const IndicatorsReport = () => {
     setIsModalVisible(false);
     if (isSuccess) onInit();
   };
+
+  const indexBodyTemplate = row => (
+    <>
+      <span className="p-column-title">№</span>
+      {row.index}
+    </>
+  );
+  const criteriaBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Шалгуур үзүүлэлтийн нэр</span>
+      {row.criteria.name}
+    </>
+  );
+  const addressBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Хаяг</span>
+      {row.address.aimag.name}, {row.address.soum.name}
+    </>
+  );
+  const dateBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Огноо</span>
+      {moment(row.date && row.date).format('YYYY-MM-DD')}
+    </>
+  );
+  const processResultBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Үр дүн</span>
+      {row.processResult}
+    </>
+  );
+  const fileBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Файл</span>
+    </>
+  );
 
   return (
     <ContentWrapper>
@@ -194,21 +253,79 @@ const IndicatorsReport = () => {
           <DataTable
             editMode="cell"
             className="p-datatable-responsive-demo"
-            // value={list}
+            value={list}
             removableSort
+            emptyMessage="Өгөгдөл олдсонгүй..."
+            first={lazyParams.first}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
+            filters={lazyParams.filters}
             paginator
-            rows={10}
+            ref={dt}
+            lazy
             selection={selectedRows}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
           >
-            <Column field="index" header="№" style={{ width: 40 }} />
-            <Column header="Шалгуур үзүүлэлтийн нэр" field="mission" />
-            <Column header="Байршил" />
-            <Column header="Огноо" />
-            <Column header="Файл" />
+            <Column
+              field="index"
+              header="№"
+              body={indexBodyTemplate}
+              style={{ width: 40 }}
+            />
+            <Column
+              header="Шалгуур үзүүлэлтийн нэр"
+              field="criteria.name"
+              body={criteriaBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
+            />
+            <Column
+              header="Хаяг"
+              field="address.soum.name"
+              body={addressBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
+              bodyStyle={{ textAlign: 'center' }}
+            />
+            <Column
+              header="Огноо"
+              field="date"
+              body={dateBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              bodyStyle={{ textAlign: 'center' }}
+            />
+            <Column
+              header="Үр дүн"
+              field="processResult"
+              body={processResultBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              bodyStyle={{ textAlign: 'center' }}
+            />
+            <Column
+              header="Файл"
+              field=""
+              body={fileBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              bodyStyle={{ textAlign: 'center' }}
+            />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (

@@ -189,7 +189,7 @@ const Feedback = () => {
   const measuresBodyTemplate = row => (
     <>
       <span className="p-column-title">Хэлбэр</span>
-      {row.measures}
+      {row.feedbackShape.name}
     </>
   );
   return (
@@ -309,7 +309,7 @@ const Feedback = () => {
             />
             <Column
               header="Хэлбэр"
-              field="measures"
+              field="feedbackShape.name"
               body={measuresBodyTemplate}
             />
             <Column headerStyle={{ width: '6rem' }} body={action} />

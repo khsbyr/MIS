@@ -129,7 +129,7 @@ export default function ConsultingPersonModal(props) {
           values.address = {
             addressDetail: values.AddressDetail,
             country: {
-              id: values.CountryID,
+              id: 107,
             },
             aimag: {
               id: values.AimagID,
@@ -161,7 +161,7 @@ export default function ConsultingPersonModal(props) {
             address: {
               addressDetail: values.AddressDetail,
               country: {
-                id: values.CountryID,
+                id: 107,
               },
               aimag: {
                 id: values.AimagID,
