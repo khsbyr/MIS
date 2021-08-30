@@ -1,24 +1,30 @@
-import React, { useEffect, useState, useContext } from 'react';
+import { Button, Col, Form, Input, message, Row, Select } from 'antd';
 import 'antd/dist/antd.css';
-import { Button, Row, Col, Form, Input, Select, message } from 'antd';
+import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LogIn } from './Login.style';
-import Partner from './components/Partner';
-import { postService, getService } from '../../service/service';
-import { requireFieldFocus, errorCatch } from '../../tools/Tools';
+import { useHistory } from 'react-router-dom';
 import { ToolsContext } from '../../context/Tools';
+import { getService, postService } from '../../service/service';
+import { errorCatch, requireFieldFocus } from '../../tools/Tools';
+import Partner from './components/Partner';
+import { LogIn } from './Login.style';
 
 function Register() {
   const { t } = useTranslation();
   const [userRoles, setUserRoles] = useState([]);
   const { Option } = Select;
   const toolsStore = useContext(ToolsContext);
+  const history = useHistory();
 
   useEffect(() => {
     getService('/role/getAdmin').then(result => {
       setUserRoles(result);
     });
   }, []);
+
+  function Login() {
+    history.push('/login');
+  }
 
   const requestNewUser = values => {
     if (values.password !== values.confirmPassword) {
@@ -48,7 +54,6 @@ function Register() {
         });
     }
   };
-
   return (
     <Row>
       <Partner />
@@ -163,6 +168,14 @@ function Register() {
                 className="login-form-button"
               >
                 {t('register')}
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="login-form-button"
+                onClick={Login}
+              >
+                {t('login')}
               </Button>
             </Form.Item>
             <Form.Item>
