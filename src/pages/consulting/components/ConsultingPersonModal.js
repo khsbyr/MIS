@@ -49,7 +49,6 @@ export default function ConsultingPersonModal(props) {
     }
   };
 
-  console.log(Trainerscontroller);
   useEffect(() => {
     onInit();
     if (Trainerscontroller !== null) {
