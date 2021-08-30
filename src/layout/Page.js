@@ -94,6 +94,16 @@ const Dashboard = loadable({
   loading: Loader,
 });
 
+const Plan = loadable({
+  loader: () => import('../pages/projectReport/plan'),
+  loading: Loader,
+});
+
+const Report = loadable({
+  loader: () => import('../pages/projectReport/report'),
+  loading: Loader,
+});
+
 const Page = ({ route }) => {
   const PageContent = () => {
     switch (route.code.toLowerCase()) {
@@ -164,6 +174,12 @@ const Page = ({ route }) => {
       /** Dashboard */
       case 'Dashboard'.toLowerCase():
         return <Dashboard />;
+
+      case 'plan'.toLowerCase():
+        return <Plan />;
+
+      case 'report'.toLowerCase():
+        return <Report />;
 
       default:
         return null;

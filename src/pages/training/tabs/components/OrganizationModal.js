@@ -30,7 +30,13 @@ import ContentWrapper from './organization.style';
 const { Dragger } = Upload;
 
 export default function OrganizationModal(props) {
-  const { Orgcontroller, isModalVisible, isEditMode, isOrg = false } = props;
+  const {
+    Orgcontroller,
+    isModalVisible,
+    isEditMode,
+    isOrg = false,
+    orgId,
+  } = props;
   const [stateBank, setStateBank] = useState([]);
   const [stateCurrency, setStateCurrency] = useState([]);
   const [form] = Form.useForm();
@@ -83,40 +89,42 @@ export default function OrganizationModal(props) {
       });
     }
     if (isEditMode) {
+      setFoundedDate(Orgcontroller?.foundedYear);
       setResponsibleUserID(
-        Orgcontroller.responsibleUser && Orgcontroller.responsibleUser.id
+        Orgcontroller?.responsibleUser && Orgcontroller.responsibleUser.id
       );
-      setRoleID(Orgcontroller.roleId);
+      setRoleID(Orgcontroller?.roleId);
       form.setFieldsValue({
         ...Orgcontroller,
         foundedYear: Orgcontroller ? Orgcontroller.foundedYear : '',
-        bankID: Orgcontroller.bank && Orgcontroller.bank.id,
-        Currency: Orgcontroller.currency && Orgcontroller.currency.id,
-        CountryID: Orgcontroller.address
-          ? Orgcontroller.address.country.id
+        bankID: Orgcontroller?.bank && Orgcontroller?.bank.id,
+        Currency: Orgcontroller?.currency && Orgcontroller?.currency.id,
+        CountryID: Orgcontroller?.address
+          ? Orgcontroller?.address.country.id
           : '',
-        AimagID: Orgcontroller.address ? Orgcontroller.address.aimag.id : '',
-        SoumID: Orgcontroller.address ? Orgcontroller.address.soum.id : '',
-        BagID: Orgcontroller.address ? Orgcontroller.address.bag.id : '',
+        AimagID: Orgcontroller?.address ? Orgcontroller?.address.aimag.id : '',
+        SoumID: Orgcontroller?.address ? Orgcontroller?.address.soum.id : '',
+        BagID: Orgcontroller?.address ? Orgcontroller?.address.bag.id : '',
         AddressDetail:
-          Orgcontroller.address && Orgcontroller.address.addressDetail,
+          Orgcontroller?.address && Orgcontroller?.address.addressDetail,
         RespoUserFirstName:
-          Orgcontroller.responsibleUser &&
-          Orgcontroller.responsibleUser.firstname,
+          Orgcontroller?.responsibleUser &&
+          Orgcontroller?.responsibleUser.firstname,
         RespoUserLastName:
-          Orgcontroller.responsibleUser &&
-          Orgcontroller.responsibleUser.lastname,
+          Orgcontroller?.responsibleUser &&
+          Orgcontroller?.responsibleUser.lastname,
         RespoUserRegister:
-          Orgcontroller.responsibleUser &&
-          Orgcontroller.responsibleUser.register,
+          Orgcontroller?.responsibleUser &&
+          Orgcontroller?.responsibleUser.register,
         RespoUserPosition:
-          Orgcontroller.responsibleUser &&
-          Orgcontroller.responsibleUser.position,
+          Orgcontroller?.responsibleUser &&
+          Orgcontroller?.responsibleUser.position,
         RespoUserPhone:
-          Orgcontroller.responsibleUser &&
-          Orgcontroller.responsibleUser.phoneNumber,
+          Orgcontroller?.responsibleUser &&
+          Orgcontroller?.responsibleUser.phoneNumber,
         RespoUserEmail:
-          Orgcontroller.responsibleUser && Orgcontroller.responsibleUser.email,
+          Orgcontroller?.responsibleUser &&
+          Orgcontroller?.responsibleUser.email,
       });
     }
   }, []);
@@ -159,7 +167,7 @@ export default function OrganizationModal(props) {
         values.address = {
           addressDetail: values.AddressDetail,
           country: {
-            id: values.CountryID,
+            id: 107,
           },
           aimag: {
             id: values.AimagID,
@@ -181,8 +189,16 @@ export default function OrganizationModal(props) {
           email: values.RespoUserEmail,
         };
         if (isEditMode) {
-          putService(`organization/update/${Orgcontroller.id}`, values)
+          const url = orgId
+            ? `organization/update/${orgId}`
+            : `organization/update/${Orgcontroller.id}`;
+          putService(`${url}`, values)
             .then(() => {
+              getService('organization/getAll').then(resultOrg => {
+                if (resultOrg) {
+                  toolsStore.setOrgList(resultOrg || []);
+                }
+              });
               message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
@@ -289,7 +305,7 @@ export default function OrganizationModal(props) {
                         }}
                         defaultValue={
                           isEditMode
-                            ? moment(Orgcontroller.foundedYear, dateFormat)
+                            ? moment(Orgcontroller?.foundedYear, dateFormat)
                             : null
                         }
                       />
@@ -391,7 +407,7 @@ export default function OrganizationModal(props) {
                   <Col xs={24} md={24} lg={12}>
                     <Form.Item label="Улс:" name="CountryID">
                       <AutoCompleteSelect
-                        // defaultValue={[107]}
+                        defaultValue={[107]}
                         valueField="id"
                         data={toolsStore.countryList}
                       />

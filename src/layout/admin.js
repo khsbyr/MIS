@@ -1,6 +1,6 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { Layout } from 'antd';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -18,6 +18,8 @@ import Page from './Page';
 import CriteriaMore from '../pages/criteria/more/CriteriaMore';
 import { buildPaths, generateRoutes } from './utils';
 import ProjectContextProvider from '../context/ProjectContext';
+import PlanMore from '../pages/projectReport/more/PlanMore';
+import OrganizationModal from '../pages/training/tabs/components/OrganizationModal';
 import TrainingContextProvider from '../context/TrainingContext';
 
 const { Sider, Content } = Layout;
@@ -30,6 +32,10 @@ function Admin() {
   const [routes, setRoutes] = React.useState([]);
   const isLoggged = localStorage.getItem('token');
   const history = useHistory();
+  const [isModalVisible, setIsModalVisible] = useState(true);
+  const closeModal = (isSuccess = false) => {
+    setIsModalVisible(false);
+  };
 
   const toggle = () => {
     setCollapsed(!collapsed);
@@ -46,9 +52,16 @@ function Admin() {
         }
       });
       if (!toolsStore.orgList) {
-        getService('organization/get').then(resultOrg => {
+        getService('organization/getAll').then(resultOrg => {
           if (resultOrg) {
-            toolsStore.setOrgList(resultOrg.content || []);
+            toolsStore.setOrgList(resultOrg || []);
+          }
+        });
+      }
+      if (!toolsStore.partnerList) {
+        getService('organization/getAllForTunshlegch').then(resultPartner => {
+          if (resultPartner) {
+            toolsStore.setPartnerList(resultPartner || []);
           }
         });
       }
@@ -99,6 +112,17 @@ function Admin() {
             left: 0,
           }}
         >
+          {localStorage.getItem('orgName') === '' ? (
+            <OrganizationModal
+              isModalVisible={isModalVisible}
+              close={closeModal}
+              isOrg
+              isEditMode
+              orgId={localStorage.getItem('orgId')}
+            />
+          ) : (
+            ''
+          )}
           {!collapsed ? (
             <img
               src="https://i.imgur.com/qmWx2x8.png"
@@ -156,7 +180,6 @@ function Admin() {
                     <Route path="/criteriaDetail/:id">
                       <CriteriaMore />
                     </Route>
-
                     <Route path="/trainingList/:id">
                       <TrainingInfo />
                     </Route>
@@ -165,6 +188,9 @@ function Admin() {
                     </Route>
                     <Route path="/projectList/:id">
                       <ProjectInfo />
+                    </Route>
+                    <Route path="/planDetail/:id">
+                      <PlanMore />
                     </Route>
                   </Switch>
                 </TrainingContextProvider>
