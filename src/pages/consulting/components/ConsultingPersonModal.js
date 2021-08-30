@@ -48,17 +48,19 @@ export default function ConsultingPersonModal(props) {
       clearTimeout(loadLazyTimeout);
     }
   };
+
+  console.log(Trainerscontroller);
   useEffect(() => {
     onInit();
     if (Trainerscontroller !== null) {
-      getService(`soum/getList/${Trainerscontroller.address.aimag.id}`).then(
+      getService(`soum/getList/${Trainerscontroller?.address?.aimag.id}`).then(
         result => {
           if (result) {
             setStateSum(result || []);
           }
         }
       );
-      getService(`bag/getList/${Trainerscontroller.address.soum.id}`).then(
+      getService(`bag/getList/${Trainerscontroller?.address?.soum.id}`).then(
         result => {
           if (result) {
             setStateBag(result || []);
