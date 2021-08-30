@@ -48,17 +48,19 @@ export default function ConsultingPersonModal(props) {
       clearTimeout(loadLazyTimeout);
     }
   };
+
+  console.log(Trainerscontroller);
   useEffect(() => {
     onInit();
     if (Trainerscontroller !== null) {
-      getService(`soum/getList/${Trainerscontroller.address.aimag.id}`).then(
+      getService(`soum/getList/${Trainerscontroller?.address?.aimag.id}`).then(
         result => {
           if (result) {
             setStateSum(result || []);
           }
         }
       );
-      getService(`bag/getList/${Trainerscontroller.address.soum.id}`).then(
+      getService(`bag/getList/${Trainerscontroller?.address?.soum.id}`).then(
         result => {
           if (result) {
             setStateBag(result || []);
@@ -129,7 +131,7 @@ export default function ConsultingPersonModal(props) {
           values.address = {
             addressDetail: values.AddressDetail,
             country: {
-              id: values.CountryID,
+              id: 107,
             },
             aimag: {
               id: values.AimagID,
@@ -161,7 +163,7 @@ export default function ConsultingPersonModal(props) {
             address: {
               addressDetail: values.AddressDetail,
               country: {
-                id: values.CountryID,
+                id: 107,
               },
               aimag: {
                 id: values.AimagID,

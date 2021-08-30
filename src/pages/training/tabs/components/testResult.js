@@ -71,6 +71,7 @@ const TestResult = () => {
           setList(dataList);
           toolsStore.setIsShowLoader(false);
         })
+        .finally(toolsStore.setIsShowLoader(false))
         .catch(error => {
           message.error(error.toString());
           toolsStore.setIsShowLoader(false);
@@ -293,6 +294,7 @@ const TestResult = () => {
               filter
               filterPlaceholder="Хайх"
               body={FirstNameBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               field=""
@@ -301,13 +303,20 @@ const TestResult = () => {
               filter
               filterPlaceholder="Хайх"
               body={registerNumberBodyTemplate}
+              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
+              bodyStyle={{ textAlign: 'center' }}
               header="Авбал зохих"
               body={shouldTakenBodyTemplate}
               sortable
             />
-            <Column header="Авсан" body={takenBodyTemplate} sortable />
+            <Column
+              header="Авсан"
+              body={takenBodyTemplate}
+              sortable
+              bodyStyle={{ textAlign: 'center' }}
+            />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
