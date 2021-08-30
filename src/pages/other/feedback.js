@@ -294,6 +294,7 @@ const Feedback = () => {
               field="feedbackType.name"
               sortable
               filter
+              filterPlaceholder="Хайх"
               body={feedbackTypeBodyTemplate}
             />
             <Column

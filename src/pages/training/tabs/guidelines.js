@@ -1,63 +1,35 @@
 import { Col, Form, Input, message, Row } from 'antd';
-import React, { useContext, useEffect, useState } from 'react';
-import { ToolsContext } from '../../../context/Tools';
-import { getService, putService } from '../../../service/service';
-import { convertLazyParamsToObj, errorCatch } from '../../../tools/Tools';
+import React, { useEffect } from 'react';
+import { putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
+import { useTrainingStore } from '../../../context/TrainingContext';
+import ContentWrapper from './components/guidelines.style';
 
 const { TextArea } = Input;
 
-let loadLazyTimeout = null;
-
-const Guidelines = props => {
+function Guidelines() {
+  const { TrainingList } = useTrainingStore();
   const [form] = Form.useForm();
-  const [list, setList] = useState([]);
-  const [trainingID, setTrainingID] = useState([]);
-  const toolsStore = useContext(ToolsContext);
-  const [lazyParams] = useState({
-    first: 0,
-    page: 0,
-  });
-
-  const onInit = () => {
-    toolsStore.setIsShowLoader(true);
-    if (loadLazyTimeout) {
-      clearTimeout(loadLazyTimeout);
-    }
-    loadLazyTimeout = setTimeout(() => {
-      const obj = convertLazyParamsToObj(lazyParams);
-      getService(`training/get/${props.id}`, obj)
-        .then(data => {
-          const dataList = data.training_guidelines;
-          setTrainingID(data.id);
-          setList(dataList);
-          // console.log(data.training_guidelines);
-          toolsStore.setIsShowLoader(false);
-        })
-        .catch(error => {
-          message.error(error.toString());
-          toolsStore.setIsShowLoader(false);
-        });
-    }, 500);
-  };
 
   useEffect(() => {
-    onInit();
     form.setFieldsValue({
-      ...list,
-      subject: list?.subject,
-      reason: list?.reason,
-      aim: list?.aim,
-      operation: list?.operation,
-      result: list?.result,
+      ...(TrainingList && TrainingList.training_guidelines),
+      subject: TrainingList?.training_guidelines?.subject,
+      reason: TrainingList?.training_guidelines?.reason,
+      aim: TrainingList?.training_guidelines?.aim,
+      operation: TrainingList?.training_guidelines?.operation,
+      result: TrainingList?.training_guidelines?.result,
     });
-  }, [lazyParams]);
+  }, []);
 
   const subject = value => {
     form.validateFields().then(values => {
-      values.training = { id: trainingID };
       values.subject = value;
-      putService(`trainingGuidelines/update/${list.id}`, values)
+      putService(
+        `trainingGuidelines/update/${TrainingList.training_guidelines.id}`,
+        values
+      )
         .then(() => {
           message.success('Амжилттай хадгаллаа');
         })
@@ -69,9 +41,11 @@ const Guidelines = props => {
 
   const reason = value => {
     form.validateFields().then(values => {
-      values.training = { id: trainingID };
       values.reason = value;
-      putService(`trainingGuidelines/update/${list.id}`, values)
+      putService(
+        `trainingGuidelines/update/${TrainingList.training_guidelines.id}`,
+        values
+      )
         .then(() => {
           message.success('Амжилттай хадгаллаа');
         })
@@ -83,9 +57,11 @@ const Guidelines = props => {
 
   const aim = value => {
     form.validateFields().then(values => {
-      values.training = { id: trainingID };
       values.aim = value;
-      putService(`trainingGuidelines/update/${list.id}`, values)
+      putService(
+        `trainingGuidelines/update/${TrainingList.training_guidelines.id}`,
+        values
+      )
         .then(() => {
           message.success('Амжилттай хадгаллаа');
         })
@@ -97,9 +73,11 @@ const Guidelines = props => {
 
   const operation = value => {
     form.validateFields().then(values => {
-      values.training = { id: trainingID };
       values.operation = value;
-      putService(`trainingGuidelines/update/${list.id}`, values)
+      putService(
+        `trainingGuidelines/update/${TrainingList.training_guidelines.id}`,
+        values
+      )
         .then(() => {
           message.success('Амжилттай хадгаллаа');
         })
@@ -111,9 +89,11 @@ const Guidelines = props => {
 
   const result = value => {
     form.validateFields().then(values => {
-      values.training = { id: trainingID };
       values.result = value;
-      putService(`trainingGuidelines/update/${list.id}`, values)
+      putService(
+        `trainingGuidelines/update/${TrainingList.training_guidelines.id}`,
+        values
+      )
         .then(() => {
           message.success('Амжилттай хадгаллаа');
         })
@@ -124,54 +104,59 @@ const Guidelines = props => {
   };
   return (
     <div>
-      <Form
-        form={form}
-        labelAlign="left"
-        layout="vertical"
-        name="nest-messages"
-        validateMessages={validateMessages}
-      >
-        <Row gutter={[40, 30]}>
-          <Col xs={24} md={24} lg={24}>
-            <Form.Item name="subject" label="Сургалтын сэдэв">
-              <TextArea
-                rows={6}
-                placeholder="Сургалтын сэдэв"
-                onBlur={e => subject(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item name="reason" label="Сургалт зохион байгуулах үндэслэл">
-              <TextArea
-                rows={6}
-                placeholder="Сургалт зохион байгуулах үндэслэл"
-                onBlur={e => reason(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item name="aim" label="Сургалтын зорилго">
-              <TextArea
-                rows={6}
-                placeholder="Сургалтын зорилго"
-                onBlur={e => aim(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item name="operation" label="Хэрэгжүүлэх үйл ажиллагаа">
-              <TextArea
-                rows={6}
-                placeholder="Хэрэгжүүлэх үйл ажиллагаа"
-                onBlur={e => operation(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item name="result" label="Хүлээгдэж буй үр дүн">
-              <TextArea
-                rows={6}
-                placeholder="Хүлээгдэж буй үр дүн"
-                onBlur={e => result(e.target.value)}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
+      <ContentWrapper>
+        <Form
+          form={form}
+          labelAlign="left"
+          layout="vertical"
+          name="nest-messages"
+          validateMessages={validateMessages}
+        >
+          <Row gutter={[40, 30]}>
+            <Col xs={24} md={24} lg={24}>
+              <Form.Item name="subject" label="Сургалтын сэдэв">
+                <TextArea
+                  rows={6}
+                  placeholder="Сургалтын сэдэв"
+                  onBlur={e => subject(e.target.value)}
+                />
+              </Form.Item>
+              <Form.Item
+                name="reason"
+                label="Сургалт зохион байгуулах үндэслэл"
+              >
+                <TextArea
+                  rows={6}
+                  placeholder="Сургалт зохион байгуулах үндэслэл"
+                  onBlur={e => reason(e.target.value)}
+                />
+              </Form.Item>
+              <Form.Item name="aim" label="Сургалтын зорилго">
+                <TextArea
+                  rows={6}
+                  placeholder="Сургалтын зорилго"
+                  onBlur={e => aim(e.target.value)}
+                />
+              </Form.Item>
+              <Form.Item name="operation" label="Хэрэгжүүлэх үйл ажиллагаа">
+                <TextArea
+                  rows={6}
+                  placeholder="Хэрэгжүүлэх үйл ажиллагаа"
+                  onBlur={e => operation(e.target.value)}
+                />
+              </Form.Item>
+              <Form.Item name="result" label="Хүлээгдэж буй үр дүн">
+                <TextArea
+                  rows={6}
+                  placeholder="Хүлээгдэж буй үр дүн"
+                  onBlur={e => result(e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </ContentWrapper>
     </div>
   );
-};
+}
 export default Guidelines;

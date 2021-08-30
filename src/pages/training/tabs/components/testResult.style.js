@@ -10,6 +10,14 @@ const ContentWrapper = styled.div`
     font-weight: bold;
     color: #103154;
   }
+  .ant-breadcrumb {
+    margin-top: 0px !important;
+    margin-left: 0px !important;
+    margin-bottom: 0px !important;
+  }
+  .ant-btn .ant-btn-text {
+    margin-top: 3px;
+  }
 `;
 
 export default ContentWrapper;

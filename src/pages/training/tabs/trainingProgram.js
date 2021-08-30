@@ -1,24 +1,17 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import {
-  faFileExcel,
-  faPen,
-  faPlus,
-  faPrint,
-  faTrash,
-  faFilePdf,
-} from '@fortawesome/free-solid-svg-icons';
+import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PAGESIZE } from '../../../constants/Constant';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
-import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
+import { convertLazyParamsToObj, errorCatch } from '../../../tools/Tools';
 import ContentWrapper from './components/trainingProgram.style';
 import TrainingProgramModal from './components/trainingProgramModal';
-import { PAGESIZE } from '../../../constants/Constant';
 
 const { Content } = Layout;
 
@@ -69,21 +62,6 @@ const TrainingProgram = props => {
 
   useEffect(() => {
     onInit();
-    getService(`training/get/${props.id}`)
-      .then(result => {
-        const listResult = result.trainingPrograms || [];
-        setTrainingID(result.id);
-        setOrgID(result.organization.id);
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setSelectedRows([]);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
   }, [lazyParams]);
 
   const add = () => {

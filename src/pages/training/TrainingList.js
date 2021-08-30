@@ -72,6 +72,7 @@ const TrainingList = () => {
           setList(dataList);
           toolsStore.setIsShowLoader(false);
         })
+        .finally(toolsStore.setIsShowLoader(false))
         .catch(error => {
           message.error(error.toString());
           toolsStore.setIsShowLoader(false);

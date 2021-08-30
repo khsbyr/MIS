@@ -95,7 +95,7 @@ export default function TrainingProgramModal(props) {
         values.address = {
           addressDetail: values.addressDetail,
           country: {
-            id: values.CountryID,
+            id: 107,
           },
           aimag: {
             id: values.AimagID,
@@ -208,16 +208,9 @@ export default function TrainingProgramModal(props) {
                 <Form.Item name="email" label="Email хаяг:">
                   <Input />
                 </Form.Item>
-                <Form.Item
-                  label="Улс:"
-                  name="CountryID"
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
+                <Form.Item label="Улс:" name="CountryID">
                   <AutoCompleteSelect
+                    defaultValue={107}
                     valueField="id"
                     data={toolsStore.countryList}
                   />

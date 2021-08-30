@@ -67,6 +67,20 @@ const ContentWrapper = styled.div`
   .ant-select-selection-search {
     margin-top: 4px;
   }
+  Select {
+    text-align: center;
+  }
+
+  /* .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+    height: 33px;
+    padding-top: 6px;
+    border: none;
+  } */
+  .p-datatable.p-datatable-hoverable-rows
+    .p-datatable-tbody
+    > tr:not(.p-highlight):hover {
+    background: #e6f7ff !important;
+  }
 `;
 
 export default ContentWrapper;
