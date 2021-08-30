@@ -23,9 +23,6 @@ import RoadModal from './components/RoadModal';
 import StationaryModal from './components/StationaryModal';
 import { PAGESIZE } from '../../../constants/Constant';
 
-// function onChange(date, dateString) {
-//   console.log(date, dateString);
-// }
 const { Content } = Layout;
 
 let editRow;
@@ -106,7 +103,6 @@ const Budget = props => {
     });
   };
 
-  console.log(list);
   useEffect(() => {
     onInit();
   }, [lazyParams]);
