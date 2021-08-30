@@ -85,7 +85,6 @@ const CV = () => {
     setIsOnChange(true);
     getService(`user/getTrainerListByOrgId/${value}`, {}).then(data => {
       if (data) {
-        console.log(data);
         const dataList = data || [];
         dataList.forEach((item, index) => {
           item.index = index + 1;

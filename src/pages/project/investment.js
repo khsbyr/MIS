@@ -86,8 +86,6 @@ const investment = props => {
       });
   };
 
-  console.log(list);
-
   function confirm(row) {
     Modal.confirm({
       title: 'Та устгахдаа итгэлтэй байна уу ?',
