@@ -79,10 +79,7 @@ export default function CvShowModal(props) {
       clearTimeout(loadLazyTimeout);
     }
     if (Trainerscontroller !== null) {
-      getService(
-        `education/getByTrainerId/${Trainerscontroller.trainers.id}`,
-        listEducation
-      )
+      getService(`education/getByTrainerId/${Trainerscontroller.trainers.id}`)
         .then(result => {
           const listeducation = result || [];
           listeducation.forEach((item, index) => {
@@ -105,10 +102,7 @@ export default function CvShowModal(props) {
       clearTimeout(loadLazyTimeout);
     }
     if (Trainerscontroller !== null) {
-      getService(
-        `expierence/getByTrainerId/${Trainerscontroller.trainers.id}`,
-        listExperience
-      )
+      getService(`expierence/getByTrainerId/${Trainerscontroller.trainers.id}`)
         .then(result => {
           const listexperience = result || [];
           listexperience.forEach((item, index) => {
@@ -132,8 +126,7 @@ export default function CvShowModal(props) {
     }
     if (Trainerscontroller !== null) {
       getService(
-        `expierenceForAdvice/getByTrainerId/${Trainerscontroller.trainers.id}`,
-        listExperienceAdvice
+        `expierenceForAdvice/getByTrainerId/${Trainerscontroller.trainers.id}`
       )
         .then(result => {
           const listexperienceAdvice = result || [];
@@ -158,8 +151,7 @@ export default function CvShowModal(props) {
     }
     if (Trainerscontroller !== null) {
       getService(
-        `expierenceForTeach/getByTrainerId/${Trainerscontroller.trainers.id}`,
-        listExperienceTeacher
+        `expierenceForTeach/getByTrainerId/${Trainerscontroller.trainers.id}`
       )
         .then(result => {
           const listexperienceTeacher = result || [];
@@ -184,8 +176,7 @@ export default function CvShowModal(props) {
     }
     if (Trainerscontroller !== null) {
       getService(
-        `publishedWork/getByTrainerId/${Trainerscontroller.trainers.id}`,
-        listPublishedWork
+        `publishedWork/getByTrainerId/${Trainerscontroller.trainers.id}`
       )
         .then(result => {
           const listpublishedWork = result || [];
@@ -210,8 +201,7 @@ export default function CvShowModal(props) {
     }
     if (Trainerscontroller !== null) {
       getService(
-        `propertyLicense/getByTrainerId/${Trainerscontroller.trainers.id}`,
-        listLicense
+        `propertyLicense/getByTrainerId/${Trainerscontroller.trainers.id}`
       )
         .then(result => {
           const listlicense = result || [];
@@ -235,10 +225,7 @@ export default function CvShowModal(props) {
       clearTimeout(loadLazyTimeout);
     }
     if (Trainerscontroller !== null) {
-      getService(
-        `membership/getByTrainerId/${Trainerscontroller.trainers.id}`,
-        listMembership
-      )
+      getService(`membership/getByTrainerId/${Trainerscontroller.trainers.id}`)
         .then(result => {
           const listmembership = result || [];
           listmembership.forEach((item, index) => {

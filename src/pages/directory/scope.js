@@ -48,7 +48,7 @@ const Scope = () => {
       const obj = convertLazyParamsToObj(lazyParams);
       getService('scope/get', obj)
         .then(data => {
-          const dataList = data || [];
+          const dataList = data.content || [];
           dataList.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });

@@ -1,5 +1,6 @@
 import { Col, Form, Input, InputNumber, message, Modal, Row } from 'antd';
 import React, { useEffect } from 'react';
+import CurrencyInput from 'react-currency-input';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
@@ -41,9 +42,7 @@ export default function investmentModal(props) {
     form
       .validateFields()
       .then(values => {
-        if (values.costOfCompany + values.projectInvestment > values.total) {
-          message.warning('Нийт дүнгээс их байх боломжгүй!');
-        } else if (isEditMode) {
+        if (isEditMode) {
           putService(
             `projectInvestment/update/${EditRow.projectInvestment.id}`,
             values
@@ -103,18 +102,19 @@ export default function investmentModal(props) {
                   label="МАА-н ЭЗЭН төслийн хөрөнгө оруулалт:"
                   name="projectInvestment"
                 >
-                  <InputNumber type="number" style={{ width: '100%' }} />
+                  <CurrencyInput precision="0" suffix=" ₮" />
                 </Form.Item>
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Form.Item label="Нийт  дүн:" name="total">
-                  <InputNumber type="number" style={{ width: '100%' }} />
+                  {/* <InputNumber type="number" style={{ width: '100%' }} /> */}
+                  <CurrencyInput precision="0" suffix=" ₮" />
                 </Form.Item>
                 <Form.Item
                   label="Компаниас гаргах зардал хуваалт"
                   name="costOfCompany"
                 >
-                  <InputNumber type="number" style={{ width: '100%' }} />
+                  <CurrencyInput precision="0" suffix=" ₮" />
                 </Form.Item>
               </Col>
               <Col xs={24} md={24} lg={24}>

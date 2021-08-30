@@ -23,9 +23,6 @@ import RoadModal from './components/RoadModal';
 import StationaryModal from './components/StationaryModal';
 import { PAGESIZE } from '../../../constants/Constant';
 
-// function onChange(date, dateString) {
-//   console.log(date, dateString);
-// }
 const { Content } = Layout;
 
 let editRow;
@@ -105,6 +102,7 @@ const Budget = props => {
       setSelectedRows([]);
     });
   };
+
   useEffect(() => {
     onInit();
   }, [lazyParams]);
@@ -702,16 +700,18 @@ const Budget = props => {
         <br />
         {/* <Stationary /> */}
         <div className="datatable-responsive-demo">
-          <Layout className="btn-layout">
+          <Layout
+            className="btn-layout"
+            style={{ marginBottom: '-20px', padding: '0px' }}
+          >
             <Content>
               <Row>
                 <Col xs={24} md={24} lg={12}>
                   <h3>1. Бичгийн хэрэгсэл</h3>
                 </Col>
                 <Col xs={24} md={24} lg={12}>
-                  <Row gutter={[0, 15]}>
-                    <Col xs={8} md={8} lg={10} />
-                    <Col xs={8} md={8} lg={11} />
+                  <Row justify="end" gutter={[16, 16]}>
+                    <Col xs={8} md={8} lg={21} />
                     <Col xs={8} md={8} lg={3}>
                       <Tooltip title={t('add')} arrowPointAtCenter>
                         <Button
@@ -818,16 +818,18 @@ const Budget = props => {
           )}
         </div>
         <div className="datatable-responsive-demo">
-          <Layout className="btn-layout">
+          <Layout
+            className="btn-layout"
+            style={{ marginBottom: '-20px', padding: '0px' }}
+          >
             <Content>
               <Row>
                 <Col xs={24} md={24} lg={12}>
                   <h3>2. Зам хоног, буудлын зардал</h3>
                 </Col>
                 <Col xs={24} md={24} lg={12}>
-                  <Row gutter={[0, 15]}>
-                    <Col xs={8} md={8} lg={10} />
-                    <Col xs={8} md={8} lg={11} />
+                  <Row justify="end" gutter={[16, 16]}>
+                    <Col xs={8} md={8} lg={21} />
                     <Col xs={8} md={8} lg={3}>
                       <Tooltip title={t('add')} arrowPointAtCenter>
                         <Button
@@ -932,16 +934,18 @@ const Budget = props => {
           )}
         </div>
         <div className="datatable-responsive-demo">
-          <Layout className="btn-layout">
+          <Layout
+            className="btn-layout"
+            style={{ marginBottom: '-20px', padding: '0px' }}
+          >
             <Content>
               <Row>
                 <Col xs={24} md={24} lg={12}>
                   <h3>3. Шатахууны зардал /маршрутаар/</h3>
                 </Col>
                 <Col xs={24} md={24} lg={12}>
-                  <Row gutter={[0, 15]}>
-                    <Col xs={8} md={8} lg={10} />
-                    <Col xs={8} md={8} lg={11} />
+                  <Row justify="end" gutter={[16, 16]}>
+                    <Col xs={8} md={8} lg={21} />
                     <Col xs={8} md={8} lg={3}>
                       <Tooltip title={t('add')} arrowPointAtCenter>
                         <Button

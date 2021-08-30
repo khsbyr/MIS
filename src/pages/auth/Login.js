@@ -49,7 +49,9 @@ function Login() {
               user.firstname ? user.firstname : user.username
             );
             localStorage.setItem('userId', result.data.userId);
-            history.push('user/users');
+            localStorage.setItem('orgName', user.orgName ? user.orgName : '');
+
+            history.push('dashboard');
           });
         })
         .finally(() => {

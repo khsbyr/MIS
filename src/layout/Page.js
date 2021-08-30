@@ -89,6 +89,11 @@ const VeterinarianProject = loadable({
   loading: Loader,
 });
 
+const Dashboard = loadable({
+  loader: () => import('../pages/dashboard/dashboard'),
+  loading: Loader,
+});
+
 const Page = ({ route }) => {
   const PageContent = () => {
     switch (route.code.toLowerCase()) {
@@ -155,6 +160,10 @@ const Page = ({ route }) => {
 
       case 'Young Veterinarian Program'.toLowerCase():
         return <VeterinarianProject />;
+
+      /** Dashboard */
+      case 'Dashboard'.toLowerCase():
+        return <Dashboard />;
 
       default:
         return null;

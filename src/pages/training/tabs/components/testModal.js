@@ -1,4 +1,4 @@
-import { Col, Form, Input, message, Modal, Row } from 'antd';
+import { Col, Form, Input, InputNumber, message, Modal, Row } from 'antd';
 import React, { useEffect } from 'react';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';

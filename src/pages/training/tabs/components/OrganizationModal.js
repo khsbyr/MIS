@@ -30,7 +30,7 @@ import ContentWrapper from './organization.style';
 const { Dragger } = Upload;
 
 export default function OrganizationModal(props) {
-  const { Orgcontroller, isModalVisible, isEditMode } = props;
+  const { Orgcontroller, isModalVisible, isEditMode, isOrg = false } = props;
   const [stateBank, setStateBank] = useState([]);
   const [stateCurrency, setStateCurrency] = useState([]);
   const [form] = Form.useForm();
@@ -217,6 +217,9 @@ export default function OrganizationModal(props) {
         visible={isModalVisible}
         onOk={save}
         onCancel={() => props.close()}
+        cancelButtonProps={{ disabled: !!isOrg }}
+        maskClosable={!isOrg}
+        closable={!isOrg}
       >
         <ContentWrapper>
           <Form

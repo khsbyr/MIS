@@ -88,6 +88,7 @@ export default function UserModal(props) {
 
   const save = () => {
     form
+      .validateFields()
       .then(values => {
         values.role = {
           id: values.roleId,
