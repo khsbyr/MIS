@@ -55,6 +55,11 @@ const investment = props => {
     onInit();
   }, [lazyParams]);
 
+  function Formatcurrency(value) {
+    const values = value || 0;
+    return `${values?.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}₮`;
+  }
+
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;

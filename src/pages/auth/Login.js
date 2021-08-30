@@ -49,6 +49,8 @@ function Login() {
               user.firstname ? user.firstname : user.username
             );
             localStorage.setItem('userId', result.data.userId);
+            localStorage.setItem('orgName', user.orgName ? user.orgName : '');
+
             history.push('dashboard');
           });
         })
