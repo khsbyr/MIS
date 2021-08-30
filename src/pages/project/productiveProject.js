@@ -279,7 +279,6 @@ const productiveProject = props => {
   const statusBodyTemplate = row => (
     <>
       <span className="p-column-title">Статус</span>
-
       <Select
         defaultValue={
           <Tag color={getColor(row.projectStatus.id)}>

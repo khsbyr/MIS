@@ -8,19 +8,8 @@ function dashboard() {
   const closeModal = (isSuccess = false) => {
     setIsModalVisible(false);
   };
-  return (
-    <div>
-      {localStorage.getItem('orgName') === '' ? (
-        <OrganizationModal
-          isModalVisible={isModalVisible}
-          close={closeModal}
-          isOrg
-        />
-      ) : (
-        ''
-      )}
-    </div>
-  );
+
+  return <div />;
 }
 
 export default dashboard;

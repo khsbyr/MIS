@@ -50,7 +50,7 @@ function Login() {
             );
             localStorage.setItem('userId', result.data.userId);
             localStorage.setItem('orgName', user.orgName ? user.orgName : '');
-
+            localStorage.setItem('orgId', user.orgId ? user.orgId : '');
             history.push('dashboard');
           });
         })
@@ -60,7 +60,7 @@ function Login() {
         .catch(error => {
           if (error?.response) {
             if (error?.response.status === 400) {
-              message.error('Таны нэр нууц үг буруу байна!!!');
+              message.error(error?.response.data);
             } else if (error?.response.status === 401) {
               message.warning('Системд нэвтрэхэд алдаа гарлаа');
             } else errorCatch(error);

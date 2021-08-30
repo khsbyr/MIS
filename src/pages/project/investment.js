@@ -86,6 +86,8 @@ const investment = props => {
       });
   };
 
+  console.log(list);
+
   function confirm(row) {
     Modal.confirm({
       title: 'Та устгахдаа итгэлтэй байна уу ?',
@@ -146,14 +148,14 @@ const investment = props => {
   const total = row => (
     <>
       <span className="p-column-title">Нийт дүн</span>
-      {row.projectInvestment.total}
+      {Formatcurrency(row.projectInvestment.longTotal)}
     </>
   );
 
   const costOfCompany = row => (
     <>
       <span className="p-column-title">Компаниас гаргах зардал хуваалт</span>
-      {row.projectInvestment.costOfCompany} (
+      {Formatcurrency(row.projectInvestment.longCostOfCompany)} (
       {row.projectInvestment.percentOfCompany} %)
     </>
   );
@@ -163,7 +165,7 @@ const investment = props => {
       <span className="p-column-title">
         МАА-н ЭЗЭН төслийн хөрөнгө оруулалт
       </span>
-      {row.projectInvestment.projectInvestment} (
+      {Formatcurrency(row.projectInvestment.longProjectInvestment)} (
       {row.projectInvestment.percentOfProjectInvestment} %)
     </>
   );
