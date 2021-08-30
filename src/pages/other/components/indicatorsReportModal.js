@@ -1,4 +1,3 @@
-import { UploadOutlined } from '@ant-design/icons';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -9,17 +8,15 @@ import {
   message,
   Modal,
   Row,
-  Button,
-  Upload,
   TreeSelect,
 } from 'antd';
-import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { postService, putService, getService } from '../../../service/service';
+import React, { useEffect, useState } from 'react';
+import AutoCompleteSelect from '../../../components/Autocomplete';
+import { getService, postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 import ContentWrapper from './feedback.style';
-import AutoCompleteSelect from '../../../components/Autocomplete';
 
 const layout = {
   labelCol: {
@@ -47,7 +44,7 @@ export default function IndicatorsReportModal(props) {
       item => item.soum.id
     );
 
-  function onDateChange(date, value) {
+  function onDateChange(value) {
     setDate(value);
   }
 
@@ -64,13 +61,14 @@ export default function IndicatorsReportModal(props) {
     });
     if (isEditMode) {
       setDate(IndicatorsReportcontroller.date);
+      setValueAddress(ProjectChildrenAddress);
       setStateCriteriaID(
         IndicatorsReportcontroller.criteria &&
           IndicatorsReportcontroller.criteria.id
       );
       form.setFieldsValue({
         ...IndicatorsReportcontroller,
-        CriteriaID: IndicatorsReportcontroller.criteria
+        stateCriteriaID: IndicatorsReportcontroller.criteria
           ? IndicatorsReportcontroller.criteria.name
           : '',
         date: IndicatorsReportcontroller ? IndicatorsReportcontroller.date : '',
@@ -116,8 +114,8 @@ export default function IndicatorsReportModal(props) {
       .validateFields()
       .then(values => {
         values.date = Date;
-        values.soumList = valueAddress;
-        values.criteria = { id: stateCriteriaID };
+        values.soumIds = valueAddress;
+        values.criteriaId = stateCriteriaID;
         if (isEditMode) {
           putService(
             `criteriaResults/update/${IndicatorsReportcontroller.id}`,
@@ -169,7 +167,7 @@ export default function IndicatorsReportModal(props) {
             <Row gutter={[30, 30]}>
               <Col xs={24} md={24} lg={24}>
                 <Form.Item
-                  name="CriteriaID"
+                  name="stateCriteriaID"
                   label="Шалгуур үзүүлэлтийн нэр:"
                   rules={[
                     {
@@ -183,7 +181,7 @@ export default function IndicatorsReportModal(props) {
                     defaultValue={
                       isEditMode
                         ? IndicatorsReportcontroller.stateCriteria &&
-                          IndicatorsReportcontroller.stateCriteria[23].name
+                          IndicatorsReportcontroller.stateCriteria.name
                         : null
                     }
                     data={stateCriteria}
@@ -210,7 +208,6 @@ export default function IndicatorsReportModal(props) {
                     <TreeSelect
                       showSearch
                       style={{ width: '100%' }}
-                      defaultValue={ProjectChildrenAddress}
                       value={valueAddress}
                       dropdownStyle={{ maxHeight: 450, overflow: 'auto' }}
                       placeholder="Сонгох"
@@ -236,7 +233,6 @@ export default function IndicatorsReportModal(props) {
                 </Form.Item>
                 <Form.Item
                   label="Огноо:"
-                  name="date"
                   rules={[
                     {
                       required: true,
@@ -249,22 +245,9 @@ export default function IndicatorsReportModal(props) {
                     placeholder="Огноо"
                     onChange={onDateChange}
                     defaultValue={
-                      isEditMode
-                        ? IndicatorsReportcontroller &&
-                          moment(IndicatorsReportcontroller.date).zone(0)
-                        : null
+                      isEditMode ? moment(IndicatorsReportcontroller.date) : ''
                     }
                   />
-                </Form.Item>
-                <Form.Item label="Файл:" name="mission">
-                  <Upload style={{ width: '100%', height: '40px' }}>
-                    <Button
-                      icon={<UploadOutlined />}
-                      style={{ width: '100%', height: '40px' }}
-                    >
-                      Файл хавсаргах
-                    </Button>
-                  </Upload>
                 </Form.Item>
               </Col>
             </Row>
