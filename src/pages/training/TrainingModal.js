@@ -41,6 +41,9 @@ export default function TrainingModal(props) {
   const [selectedCriteria, setSelectedCriteria] = useState();
   const [valueAddress, setValueAddress] = useState(undefined);
   const [stateAimag, setStateAimag] = useState([]);
+  const selectedCriterias = Trainingcontroller?.trainingCriteria.map(
+    z => z.criteriasId
+  );
 
   const ProjectChildrenAddress =
     Trainingcontroller &&
@@ -182,6 +185,7 @@ export default function TrainingModal(props) {
         errorCatch(info);
       });
   };
+
   return (
     <div>
       <Modal
@@ -212,10 +216,17 @@ export default function TrainingModal(props) {
                       name="CriteriaID"
                       valuePropName="option"
                     >
-                      {selectedCriteria && (
+                      {selectedCriterias ? (
                         <MulticompleteSelect
                           data={stateCriteria}
-                          defaultValue={selectedCriteria.map(row => row.id)}
+                          defaultValue={selectedCriterias}
+                          valueField="id"
+                          size="medium"
+                          onChange={value => SelectCriteria(value)}
+                        />
+                      ) : (
+                        <MulticompleteSelect
+                          data={stateCriteria}
                           valueField="id"
                           size="medium"
                           onChange={value => SelectCriteria(value)}
@@ -303,7 +314,6 @@ export default function TrainingModal(props) {
                           placeholder="Сонгох"
                           allowClear
                           multiple
-                          treeDefaultExpandAll
                           maxTagCount="responsive"
                           onChange={onChangeAddress}
                         >

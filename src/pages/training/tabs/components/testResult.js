@@ -4,19 +4,31 @@ import {
   faPen,
   faPrint,
   faTrash,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import {
+  Button,
+  Col,
+  Layout,
+  message,
+  Modal,
+  Row,
+  Tooltip,
+  Breadcrumb,
+} from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../../../context/Tools';
 import { getService, putService } from '../../../../service/service';
 import { errorCatch, convertLazyParamsToObj } from '../../../../tools/Tools';
 import ContentWrapper from './testResult.style';
 import TestResultModal from './testResultModal';
 import { PAGESIZE } from '../../../../constants/Constant';
+import { useTrainingStore } from '../../../../context/TrainingContext';
 
 const { Content } = Layout;
 
@@ -25,6 +37,8 @@ let isEditMode;
 let loadLazyTimeout = null;
 
 const TestResult = () => {
+  const { TrainingList } = useTrainingStore();
+  const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [trainingID, setTrainingID] = useState([]);
@@ -187,23 +201,30 @@ const TestResult = () => {
     </>
   );
 
-  const showParticipants = row =>
-    history.push(`/participantsList/${row.data.id}`);
+  const handleClick = () => history.push(`/TrainingList/${TrainingList.id}`);
 
   return (
     <ContentWrapper>
       <div className="button-demo">
+        <Breadcrumb style={{ margin: '16px 0' }}>
+          <Breadcrumb.Item onClick={handleClick} style={{ cursor: 'pointer' }}>
+            Сорилын нэгтгэл
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>
+            Сорил : {list[0] && list[0].test.testName}
+          </Breadcrumb.Item>
+        </Breadcrumb>
         <Content>
           <Row>
             <Col xs={24} md={12} lg={14}>
-              <p className="title">
+              {/* <p className="title">
                 Сорил : {list[0] && list[0].test.testName}
-              </p>
+              </p> */}
             </Col>
             <Col xs={24} md={24} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col>
-                  <Tooltip title="Хэвлэх" arrowPointAtCenter>
+                  <Tooltip title={t('print')} arrowPointAtCenter>
                     <Button
                       type="text"
                       icon={<FontAwesomeIcon icon={faPrint} />}
@@ -213,7 +234,7 @@ const TestResult = () => {
                   </Tooltip>
                 </Col>
                 <Col>
-                  <Tooltip title="Экспорт" arrowPointAtCenter>
+                  <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
@@ -223,18 +244,17 @@ const TestResult = () => {
                     </Button>
                   </Tooltip>
                 </Col>
-                {/* <Col>
-                    <Tooltip title="Нэмэх" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faPlus} />}
-                        onClick={add}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col> */}
+                <Col>
+                  <Tooltip title={t('pdf')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFilePdf} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
               </Row>
             </Col>
           </Row>
@@ -255,7 +275,6 @@ const TestResult = () => {
             emptyMessage="Өгөгдөл олдсонгүй..."
             value={list}
             tableStyle={{ minWidth: 1000 }}
-            onRowClick={showParticipants}
             removableSort
             paginator
             className="p-datatable-responsive-demo"

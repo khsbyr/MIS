@@ -1,11 +1,11 @@
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
+  faFilePdf,
   faPen,
   faPlus,
   faPrint,
   faTrash,
-  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -20,16 +20,16 @@ import {
 } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AutoCompleteSelect from '../../../components/Autocomplete';
+import { PAGESIZE } from '../../../constants/Constant';
 import { useToolsStore } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
-import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
+import { convertLazyParamsToObj, errorCatch } from '../../../tools/Tools';
 import ContentWrapper from '../../criteria/criteria.style';
 import CvModal from './components/CvModal';
 import OrgaStyle from './components/orga.style';
-import { PAGESIZE } from '../../../constants/Constant';
 
 const { Content } = Layout;
 

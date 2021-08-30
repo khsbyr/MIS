@@ -251,68 +251,75 @@ const TestAggregation = props => {
           </Content>
         </Layout>
         <div className="datatable-responsive-demo">
-          <DataTable
-            ref={dt}
-            lazy
-            first={lazyParams.first}
-            rows={PAGESIZE}
-            totalRecords={totalRecords}
-            onPage={onPage}
-            onSort={onSort}
-            sortField={lazyParams.sortField}
-            sortOrder={lazyParams.sortOrder}
-            onFilter={onFilter}
-            filters={lazyParams.filters}
-            value={list}
-            tableStyle={{ minWidth: 1000 }}
-            onRowClick={showParticipants}
-            removableSort
-            paginator
-            emptyMessage="Өгөгдөл олдсонгүй..."
-            className="p-datatable-responsive-demo"
-            selection={selectedRows}
-            // onRowClick={edit}
-            onSelectionChange={e => {
-              setSelectedRows(e.value);
-            }}
-            dataKey="id"
-          >
-            <Column header="№" body={indexBodyTemplate} style={{ width: 40 }} />
-            <Column
-              header="Сорилын нэр"
-              body={nameBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-              bodyStyle={{ textAlign: 'left' }}
-            />
-            <Column
-              header="Авбал зохих"
-              body={ShouldTakenBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              header="Огноо"
-              body={DateBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-              bodyStyle={{ textAlign: 'center' }}
-            />
-            <Column headerStyle={{ width: '7rem' }} body={action} />
-          </DataTable>
-          {isModalVisible && (
-            <TestModal
-              TestController={editRow}
-              isModalVisible={isModalVisible}
-              close={closeModal}
-              isEditMode={isEditMode}
-              trainingID={trainingID}
-            />
-          )}
+          <div className="datatable-selection-demo">
+            <DataTable
+              ref={dt}
+              selectionMode="single"
+              lazy
+              first={lazyParams.first}
+              rows={PAGESIZE}
+              totalRecords={totalRecords}
+              onPage={onPage}
+              onSort={onSort}
+              sortField={lazyParams.sortField}
+              sortOrder={lazyParams.sortOrder}
+              onFilter={onFilter}
+              filters={lazyParams.filters}
+              value={list}
+              tableStyle={{ minWidth: 1000 }}
+              onRowClick={showParticipants}
+              removableSort
+              paginator
+              emptyMessage="Өгөгдөл олдсонгүй..."
+              className="p-datatable-responsive-demo"
+              selection={selectedRows}
+              // onRowClick={edit}
+              onSelectionChange={e => {
+                setSelectedRows(e.value);
+              }}
+              dataKey="id"
+            >
+              <Column
+                header="№"
+                body={indexBodyTemplate}
+                style={{ width: 40 }}
+              />
+              <Column
+                header="Сорилын нэр"
+                body={nameBodyTemplate}
+                sortable
+                filter
+                filterPlaceholder="Хайх"
+                bodyStyle={{ textAlign: 'left' }}
+              />
+              <Column
+                header="Авбал зохих"
+                body={ShouldTakenBodyTemplate}
+                bodyStyle={{ textAlign: 'center' }}
+                sortable
+                filter
+                filterPlaceholder="Хайх"
+              />
+              <Column
+                header="Огноо"
+                body={DateBodyTemplate}
+                sortable
+                filter
+                filterPlaceholder="Хайх"
+                bodyStyle={{ textAlign: 'center' }}
+              />
+              <Column headerStyle={{ width: '7rem' }} body={action} />
+            </DataTable>
+            {isModalVisible && (
+              <TestModal
+                TestController={editRow}
+                isModalVisible={isModalVisible}
+                close={closeModal}
+                isEditMode={isEditMode}
+                trainingID={trainingID}
+              />
+            )}
+          </div>
         </div>
       </div>
     </ContentWrapper>

@@ -20,6 +20,7 @@ import { buildPaths, generateRoutes } from './utils';
 import ProjectContextProvider from '../context/ProjectContext';
 import PlanMore from '../pages/projectReport/more/PlanMore';
 import OrganizationModal from '../pages/training/tabs/components/OrganizationModal';
+import TrainingContextProvider from '../context/TrainingContext';
 
 const { Sider, Content } = Layout;
 
@@ -169,29 +170,30 @@ function Admin() {
           >
             <CriteriaContextProvider>
               <ProjectContextProvider>
-                <Switch>
-                  {routes.map(route => (
-                    <Route key={route.code} path={route.path}>
-                      <Page route={route} />
+                <TrainingContextProvider>
+                  <Switch>
+                    {routes.map(route => (
+                      <Route key={route.code} path={route.path}>
+                        <Page route={route} />
+                      </Route>
+                    ))}
+                    <Route path="/criteriaDetail/:id">
+                      <CriteriaMore />
                     </Route>
-                  ))}
-                  <Route path="/criteriaDetail/:id">
-                    <CriteriaMore />
-                  </Route>
-
-                  <Route path="/trainingList/:id">
-                    <TrainingInfo />
-                  </Route>
-                  <Route path="/participantsList/:id">
-                    <TestResult />
-                  </Route>
-                  <Route path="/projectList/:id">
-                    <ProjectInfo />
-                  </Route>
-                  <Route path="/planDetail/:id">
-                    <PlanMore />
-                  </Route>
-                </Switch>
+                    <Route path="/trainingList/:id">
+                      <TrainingInfo />
+                    </Route>
+                    <Route path="/participantsList/:id">
+                      <TestResult />
+                    </Route>
+                    <Route path="/projectList/:id">
+                      <ProjectInfo />
+                    </Route>
+                    <Route path="/planDetail/:id">
+                      <PlanMore />
+                    </Route>
+                  </Switch>
+                </TrainingContextProvider>
               </ProjectContextProvider>
             </CriteriaContextProvider>
           </Content>

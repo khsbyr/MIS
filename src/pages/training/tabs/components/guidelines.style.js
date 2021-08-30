@@ -4,7 +4,7 @@ const ContentWrapper = styled.div`
   margin-left: 45px;
   margin-right: 45px;
 
-  .title {
+  /* .title {
     font-size: 24px;
     font-weight: bold;
     color: #0d0d0d;
@@ -66,6 +66,9 @@ const ContentWrapper = styled.div`
   }
   .ant-select-selection-search {
     margin-top: 4px;
+  } */
+  .ant-row .ant-form-item .ant-form-item-has-success {
+    margin-left: auto;
   }
 `;
 
