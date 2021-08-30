@@ -1,17 +1,23 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import {
+  faFileExcel,
+  faPen,
+  faPlus,
+  faPrint,
+  faTrash,
+  faFilePdf,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import { Button, Col, Input, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PAGESIZE } from '../../../constants/Constant';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
-import { convertLazyParamsToObj, errorCatch } from '../../../tools/Tools';
-import ContentWrapper from './components/trainingProgram.style';
-import TrainingProgramModal from './components/trainingProgramModal';
+import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
+import ContentWrapper from '../../training/tabs/components/plan.styled';
+import { PAGESIZE } from '../../../constants/Constant';
 
 const { Content } = Layout;
 
@@ -19,20 +25,20 @@ let editRow;
 let isEditMode;
 let loadLazyTimeout = null;
 
-const TrainingProgram = props => {
+const Activity = props => {
   const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [trainingID, setTrainingID] = useState([]);
-  const [orgID, setOrgID] = useState([]);
-  const toolsStore = useContext(ToolsContext);
   const [totalRecords, setTotalRecords] = useState(0);
   const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
   });
   const dt = useRef(null);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [trainingID, setTrainingID] = useState([]);
+  const [orgID, setOrgID] = useState([]);
+  const toolsStore = useContext(ToolsContext);
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
@@ -43,7 +49,7 @@ const TrainingProgram = props => {
       const obj = convertLazyParamsToObj(lazyParams);
       getService(`training/get/${props.id}`, obj)
         .then(data => {
-          const dataList = data.trainingPrograms || [];
+          const dataList = data.trainingTeams || [];
           setOrgID(data.organization.id);
           setTrainingID(data.id);
           dataList.forEach((item, index) => {
@@ -53,7 +59,6 @@ const TrainingProgram = props => {
           setList(dataList);
           toolsStore.setIsShowLoader(false);
         })
-        .finally(toolsStore.setIsShowLoader(false))
         .catch(error => {
           message.error(error.toString());
           toolsStore.setIsShowLoader(false);
@@ -64,6 +69,26 @@ const TrainingProgram = props => {
   useEffect(() => {
     onInit();
   }, [lazyParams]);
+
+  const dataTableFuncMap = {
+    list: setList,
+  };
+
+  const onEditorValueChange = (productKey, editData, value) => {
+    const updatedProducts = [...editData.value];
+    updatedProducts[editData.rowIndex][editData.field] = value;
+    dataTableFuncMap[`${productKey}`](updatedProducts);
+  };
+
+  const inputTextEditor = (productKey, editData, field) => (
+    <Input
+      type="text"
+      value={editData.rowData[field]}
+      onChange={e => onEditorValueChange(productKey, editData, e.target.value)}
+    />
+  );
+  const missionEditor = (productKey, editData) =>
+    inputTextEditor(productKey, editData, 'mission');
 
   const add = () => {
     setIsModalVisible(true);
@@ -91,7 +116,7 @@ const TrainingProgram = props => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`trainingProgram/delete/${row.id}`)
+    putService(`trainingTeam/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -152,34 +177,22 @@ const TrainingProgram = props => {
 
   const indexBodyTemplate = row => (
     <>
-      <span className="p-column-title">№</span>
+      {/* <span className="p-column-title">№</span> */}
       {row.index}
     </>
   );
 
-  const operationBodyTemplate = row => (
+  const missionBodyTemplate = row => (
     <>
-      <span className="p-column-title">Үйл ажиллагаа</span>
-      {row.operation}
+      {/* <span className="p-column-title">Сургалтанд гүйцэтгэх үүрэг</span> */}
+      {row.mission}
     </>
   );
 
-  const programDateBodyTemplate = row => (
+  const nameTrainerBodyTemplate = row => (
     <>
-      <span className="p-column-title">Хэрэгжих хугацаа</span>
-      {row.programDate}
-    </>
-  );
-  const programHoursBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Хэрэгжих цаг</span>
-      {row.programHours}
-    </>
-  );
-  const responsiblepersonameBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Хариуцах эзэн</span>
-      {row.responsiblePersonName}
+      {/* <span className="p-column-title">Багшийн нэрс</span> */}
+      {row.user && row.user.fullName}
     </>
   );
 
@@ -243,7 +256,11 @@ const TrainingProgram = props => {
         <div className="datatable-responsive-demo">
           <DataTable
             ref={dt}
+            editMode="cell"
             lazy
+            value={list}
+            paginator
+            emptyMessage="Өгөгдөл олдсонгүй..."
             first={lazyParams.first}
             rows={PAGESIZE}
             totalRecords={totalRecords}
@@ -253,12 +270,9 @@ const TrainingProgram = props => {
             sortOrder={lazyParams.sortOrder}
             onFilter={onFilter}
             filters={lazyParams.filters}
-            value={list}
-            tableStyle={{ minWidth: 1000 }}
-            emptyMessage="Өгөгдөл олдсонгүй..."
-            paginator
             className="p-datatable-responsive-demo"
             selection={selectedRows}
+            tableStyle={{ minWidth: 1000 }}
             // onRowClick={edit}
             onSelectionChange={e => {
               setSelectedRows(e.value);
@@ -272,56 +286,40 @@ const TrainingProgram = props => {
               style={{ width: 40 }}
             />
             <Column
-              field="operation"
-              header="Үйл ажиллагаа"
-              body={operationBodyTemplate}
+              header="Сургалтанд гүйцэтгэх үүрэг"
+              body={missionBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
-              bodyStyle={{ textAlign: 'left' }}
-            />
-            <Column
-              field="programDate"
-              header="Хэрэгжих хугацаа"
-              body={programDateBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
+              field="mission"
+              editor={editData => missionEditor('list', editData)}
               bodyStyle={{ textAlign: 'center' }}
+              filterMatchMode="contains"
             />
             <Column
-              field="programHours"
-              header="Хэрэгжих цаг"
-              body={programHoursBodyTemplate}
+              header="Багшийн нэрс"
+              field="user.fullName"
+              body={nameTrainerBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
-              bodyStyle={{ textAlign: 'center' }}
-            />
-            <Column
-              field="responsiblePersonName"
-              header="Хариуцах эзэн"
-              filter
-              filterPlaceholder="Хайх"
-              sortable
-              body={responsiblepersonameBodyTemplate}
               bodyStyle={{ textAlign: 'center' }}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
-          {isModalVisible && (
-            <TrainingProgramModal
-              Trainingprogramcontroller={editRow}
+          {/* {isModalVisible && (
+            <PlanModal
+              Plancontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
               trainingID={trainingID}
               orgID={orgID}
             />
-          )}
+          )} */}
         </div>
       </div>
     </ContentWrapper>
   );
 };
-export default TrainingProgram;
+export default Activity;

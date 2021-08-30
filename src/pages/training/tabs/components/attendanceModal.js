@@ -198,10 +198,7 @@ export default function TrainingProgramModal(props) {
                   <Input maxLength={10} />
                 </Form.Item>
                 <Form.Item name="phone" label="Холбогдох утас:">
-                  <InputNumber
-                    parser={value => value.substring(0, 12)}
-                    type="number"
-                  />
+                  <Input parser={value => value.substring(0, 12)} />
                 </Form.Item>
               </Col>
               <Col xs={24} md={24} lg={12}>

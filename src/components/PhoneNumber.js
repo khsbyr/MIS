@@ -13,7 +13,7 @@ export default function PhoneNumber({
       label={label}
       labelAlign="left"
       rules={[
-        { required: true, message: '' },
+        { required: false, message: '' },
         { pattern: PATTERN_PHONE, message: 'Утасны дугаар буруу байна' },
       ]}
     >

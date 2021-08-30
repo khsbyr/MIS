@@ -12,10 +12,10 @@ export default function UserModal(props) {
   const toolsStore = useToolsStore();
   const { Usercontroller, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
-  const [stateSum, setStateSum] = useState([]);
-  const [stateBag, setStateBag] = useState([]);
-  const [stateTrue, setStateTrue] = useState([]);
-  const [stateRole, setStateRole] = useState([]);
+  const [stateSum, setStateSum] = useState();
+  const [stateBag, setStateBag] = useState();
+  const [stateTrue, setStateTrue] = useState();
+  const [stateRole, setStateRole] = useState();
 
   useEffect(() => {
     getService('role/get').then(result => {

@@ -206,7 +206,7 @@ export default function CvModal(props) {
             address: {
               addressDetail: values.AddressDetail,
               country: {
-                id: values.CountryID,
+                id: 107,
               },
               aimag: {
                 id: values.AimagID,
@@ -316,6 +316,7 @@ export default function CvModal(props) {
                   <AutoCompleteSelect
                     className="FormItem"
                     placeholder="Улс сонгох"
+                    defaultValue={107}
                     valueField="id"
                     data={toolsStore.countryList}
                   />

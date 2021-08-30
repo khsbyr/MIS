@@ -19,6 +19,7 @@ import { getService, postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 import ContentWrapper from '../components/ModalComponent/produictiveProjectModal.style';
+import { useToolsStore } from '../../../context/Tools';
 
 const { TextArea } = Input;
 const { TabPane } = Tabs;
@@ -40,6 +41,7 @@ const Uploadprops = {
 };
 
 export default function productiveProjectModal(props) {
+  const toolsStore = useToolsStore();
   const { ProductiveController, isModalVisible, isEditMode, type } = props;
   const [form] = Form.useForm();
   const [stateAimag, setStateAimag] = useState([]);
@@ -237,7 +239,7 @@ export default function productiveProjectModal(props) {
                     <Form.Item name="OrgID" label="Байгууллага сонгох:">
                       <AutoCompleteSelect
                         valueField="id"
-                        data={stateOrg}
+                        data={toolsStore.orgList}
                         onChange={value => selectOrg(value)}
                       />
                     </Form.Item>
@@ -285,14 +287,14 @@ export default function productiveProjectModal(props) {
                     >
                       {ProjectOrgList === null ? (
                         <MulticompleteSelect
-                          data={stateOrg}
+                          data={toolsStore.partnerList}
                           valueField="id"
                           size="medium"
                           onChange={value => selectProjectOrg(value)}
                         />
                       ) : (
                         <MulticompleteSelect
-                          data={stateOrg}
+                          data={toolsStore.partnerList}
                           defaultValue={ProjectOrgList}
                           valueField="id"
                           size="medium"

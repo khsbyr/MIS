@@ -15,7 +15,7 @@ export default function FormItemEmail(props) {
           message: 'И-мэйл буруу байна!',
         },
         {
-          required: true,
+          required: false,
           message: 'Энэ хэсгийг заавал бөглөнө үү!',
         },
         ...rules,
