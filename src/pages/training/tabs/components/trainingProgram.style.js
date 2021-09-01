@@ -67,6 +67,20 @@ const ContentWrapper = styled.div`
   .ant-select-selection-search {
     margin-top: 4px;
   }
+  .datepicker {
+    width: 100%;
+    border-radius: 3px;
+    border-color: #e4e4e4;
+    height: 40px;
+    border: 1px solid #e4e4e4;
+    padding: 4px 11px;
+  }
+  .datepciker:focus-visible {
+    border-color: blue;
+  }
+  .ant-picker-ok {
+    visibility: hidden;
+  }
 `;
 
 export default ContentWrapper;

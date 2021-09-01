@@ -13,7 +13,6 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { List } from 'antd/lib/form/Form';
 import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
@@ -37,6 +36,7 @@ const ConsultingOrg = () => {
   const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
+    size: PAGESIZE || 20,
   });
   const [totalRecords, setTotalRecords] = useState(0);
 

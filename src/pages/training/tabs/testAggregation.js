@@ -40,6 +40,7 @@ const TestAggregation = props => {
   const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
+    size: PAGESIZE || 20,
   });
   const dt = useRef(null);
 

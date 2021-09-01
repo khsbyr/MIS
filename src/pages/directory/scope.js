@@ -36,6 +36,7 @@ const Scope = () => {
   const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
+    size: PAGESIZE || 20,
   });
   const [totalRecords, setTotalRecords] = useState(0);
 

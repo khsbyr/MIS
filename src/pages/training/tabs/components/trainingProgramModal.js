@@ -152,6 +152,8 @@ export default function TrainingProgramModal(props) {
                         defaultValue={
                           isEditMode
                             ? moment(Trainingprogramcontroller.startDate)
+                                .zone(0)
+                                .hours(-9)
                             : null
                         }
                       />
@@ -169,6 +171,8 @@ export default function TrainingProgramModal(props) {
                         defaultValue={
                           isEditMode
                             ? moment(Trainingprogramcontroller.endDate)
+                                .zone(0)
+                                .hours(-6)
                             : null
                         }
                       />
