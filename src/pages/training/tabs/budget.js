@@ -14,6 +14,7 @@ import { DataTable } from 'primereact/datatable';
 import { ColumnGroup } from 'primereact/columngroup';
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ContactSupport } from '@material-ui/icons';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
@@ -22,6 +23,7 @@ import FuelModal from './components/FuelModal';
 import RoadModal from './components/RoadModal';
 import StationaryModal from './components/StationaryModal';
 import { PAGESIZE } from '../../../constants/Constant';
+import { useTrainingStore } from '../../../context/TrainingContext';
 
 const { Content } = Layout;
 
@@ -33,6 +35,7 @@ let loadLazyTimeout = null;
 
 const Budget = props => {
   const { t } = useTranslation();
+  const { TrainingList } = useTrainingStore();
   const [list, setList] = useState([]);
   const [list1, setList1] = useState([]);
   const [list2, setList2] = useState([]);
@@ -43,6 +46,7 @@ const Budget = props => {
   const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
+    size: PAGESIZE || 20,
   });
   const dt = useRef(null);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -62,7 +66,6 @@ const Budget = props => {
       getService(`training/get/${props.id}`, obj)
         .then(data => {
           const dataList = data.trainingBudget || [];
-          setBudgetID(data.trainingBudget.id);
           setTotalRecords(data.totalElements);
           setList([dataList]);
           setSelectedRows([]);
@@ -74,8 +77,13 @@ const Budget = props => {
           toolsStore.setIsShowLoader(false);
         });
     }, 500);
+
+    setBudgetID(TrainingList.trainingBudget.id);
     const obj = convertLazyParamsToObj(lazyParams);
-    getService(`stationeryExpenses/getListBy/${props.id}`, obj).then(data => {
+    getService(
+      `stationeryExpenses/getListByTrainingBudgetId/${TrainingList.trainingBudget.id}`,
+      obj
+    ).then(data => {
       const dataList = data || [];
       dataList.forEach((item, index) => {
         item.index = lazyParams.page * PAGESIZE + index + 1;
@@ -84,7 +92,10 @@ const Budget = props => {
       setList1(dataList);
       setSelectedRows([]);
     });
-    getService(`hotelTravelExpenses/getListBy/${props.id}`, obj).then(data => {
+    getService(
+      `hotelTravelExpenses/getListByTrainingBudgetId/${TrainingList.trainingBudget.id}`,
+      obj
+    ).then(data => {
       const dataList = data || [];
       dataList.forEach((item, index) => {
         item.index = lazyParams.page * PAGESIZE + index + 1;
@@ -93,7 +104,10 @@ const Budget = props => {
       setList2(dataList);
       setSelectedRows([]);
     });
-    getService(`fuelExpenses/getListBy/${props.id}`, obj).then(data => {
+    getService(
+      `fuelExpenses/getListByTrainingBudgetId/${TrainingList.trainingBudget.id}`,
+      obj
+    ).then(data => {
       const dataList = data || [];
       dataList.forEach((item, index) => {
         item.index = lazyParams.page * PAGESIZE + index + 1;

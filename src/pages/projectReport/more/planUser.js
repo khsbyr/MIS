@@ -1,14 +1,10 @@
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import { Col, Layout, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { PAGESIZE } from '../../../constants/Constant';
 import { ToolsContext } from '../../../context/Tools';
-import { deleteService, getService } from '../../../service/service';
+import { getService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import ContentWrapper from '../../training/tabs/components/organization.style';
 import ActivityModal from '../components/activityModal';
@@ -19,8 +15,7 @@ let editRow;
 let isEditMode;
 const loadLazyTimeout = null;
 
-const Activity = props => {
-  const { t } = useTranslation();
+const PlanUser = props => {
   const dt = useRef(null);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -35,7 +30,7 @@ const Activity = props => {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService(`/planActivity/getByPlan/${props.id}`)
+    getService(`/planUser/getByPlan/${props.id}`)
       .then(result => {
         const listResult = result;
         listResult.forEach((item, index) => {
@@ -54,71 +49,6 @@ const Activity = props => {
     onInit();
   }, [lazyParams]);
 
-  const add = () => {
-    setIsModalVisible(true);
-    isEditMode = false;
-  };
-
-  const edit = row => {
-    editRow = row;
-    isEditMode = true;
-    setIsModalVisible(true);
-  };
-
-  const handleDeleted = row => {
-    if (row.length === 0) {
-      message.warning('Устгах өгөгдлөө сонгоно уу');
-      return;
-    }
-
-    deleteService(`planActivity/delete/${row.id}`)
-      .then(() => {
-        message.success('Амжилттай устлаа');
-        onInit();
-      })
-      .catch(error => {
-        errorCatch(error);
-      });
-  };
-
-  function confirm(row) {
-    Modal.confirm({
-      title: 'Та устгахдаа итгэлтэй байна уу ?',
-      icon: <ExclamationCircleOutlined />,
-      okButtonProps: {},
-      okText: 'Устгах',
-      cancelText: 'Буцах',
-      onOk() {
-        handleDeleted(row);
-        onInit();
-      },
-      onCancel() {},
-    });
-  }
-
-  const pop = row => {
-    if (row.length === 0) {
-      message.warning('Устгах өгөгдлөө сонгоно уу');
-    } else {
-      confirm(row);
-    }
-  };
-
-  const action = row => (
-    <>
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
-      />
-    </>
-  );
-
   const closeModal = (isSuccess = false) => {
     setIsModalVisible(false);
     if (isSuccess) onInit();
@@ -131,10 +61,38 @@ const Activity = props => {
     </>
   );
 
+  const LastnameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Овог</span>
+      {row.user.lastname}
+    </>
+  );
+
   const nameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Үйл ажиллагаа</span>
-      {row.operation}
+      <span className="p-column-title">Нэр</span>
+      {row.user.firstname}
+    </>
+  );
+
+  const registerBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Регистр</span>
+      {row.user.register}
+    </>
+  );
+
+  const phoneBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Утас</span>
+      {row.user.phoneNumber}
+    </>
+  );
+
+  const genderBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Утас</span>
+      {row.user.gender.gender}
     </>
   );
 
@@ -145,20 +103,7 @@ const Activity = props => {
           <Content>
             <Row>
               <Col xs={18} md={12} lg={24}>
-                <Row justify="end" gutter={[16, 16]}>
-                  <Col>
-                    <Tooltip title={t('add')} arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faPlus} />}
-                        onClick={add}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                </Row>
+                <Row justify="end" gutter={[16, 16]} />
               </Col>
             </Row>
           </Content>
@@ -182,11 +127,30 @@ const Activity = props => {
               style={{ width: 40 }}
             />
             <Column
-              field="operation"
-              body={nameBodyTemplate}
-              header="Үйл ажиллагаа"
+              field="user.lastname"
+              body={LastnameBodyTemplate}
+              header="Овог"
             />
-            <Column headerStyle={{ width: '6rem' }} body={action} />
+            <Column
+              field="user.firstname"
+              body={nameBodyTemplate}
+              header="Нэр"
+            />
+            <Column
+              field="user.firstname"
+              body={registerBodyTemplate}
+              header="Регистр"
+            />
+            <Column
+              field="user.firstname"
+              body={phoneBodyTemplate}
+              header="Утас"
+            />
+            <Column
+              field="user.firstname"
+              body={genderBodyTemplate}
+              header="Хүйс"
+            />
           </DataTable>
           {isModalVisible && (
             <ActivityModal
@@ -203,4 +167,4 @@ const Activity = props => {
   );
 };
 
-export default Activity;
+export default PlanUser;

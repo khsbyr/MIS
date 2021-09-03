@@ -46,6 +46,7 @@ const TrainingList = () => {
   const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
+    size: PAGESIZE || 20,
   });
   const toolsStore = useToolsStore();
   const [orgID] = useState([]);
@@ -77,7 +78,7 @@ const TrainingList = () => {
           message.error(error.toString());
           toolsStore.setIsShowLoader(false);
         });
-    }, 500);
+    }, 1000);
   };
 
   useEffect(() => {
@@ -215,14 +216,14 @@ const TrainingList = () => {
   const totalBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Төсөв</span>
-      {Formatcurrency(row.trainingBudget.totalBudget)}
+      {Formatcurrency(row.trainingBudget?.totalBudget)}
     </>
   );
 
   const performanceBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Гүйцэтгэлийн төсөв</span>
-      {Formatcurrency(row.trainingBudget.performanceBudget)}
+      {Formatcurrency(row.trainingBudget?.performanceBudget)}
     </>
   );
 

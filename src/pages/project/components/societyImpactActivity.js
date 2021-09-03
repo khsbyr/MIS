@@ -9,11 +9,13 @@ import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import SocietyImpactActivityModal from './ModalComponent/societyImpactActivityModal';
+import { useProjectStore } from '../../../context/ProjectContext';
 
 let isEditMode;
 let editRow;
-function societyImpactActivity(props) {
+function societyImpactActivity() {
   const loadLazyTimeout = null;
+  const { ProjectList } = useProjectStore();
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [summaryID, setSummaryID] = useState([]);
@@ -27,14 +29,16 @@ function societyImpactActivity(props) {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService(`/project/get/${props.projectId}`)
+    getService(
+      `/summaryBallotForm/getSeImpactsBySbfId/${ProjectList.summaryBallotForm.id}`
+    )
       .then(result => {
-        const listResult = result.summaryBallotForm.sbf_seimpacts;
+        const listResult = result;
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
-        setSummaryID(result.summaryBallotForm.id);
+        setSummaryID(ProjectList.summaryBallotForm.id);
       })
       .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
@@ -68,7 +72,7 @@ function societyImpactActivity(props) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`seImpactActivities/delete/${row.seImpactActivities.id}`)
+    putService(`seImpactActivities/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -132,12 +136,9 @@ function societyImpactActivity(props) {
           dataKey="id"
         >
           <Column field="index" header="№" style={{ width: '50px' }} />
+          <Column field="keyActivities" header="Үндсэн үйл ажиллагаанууд " />
           <Column
-            field="seImpactActivities.keyActivities"
-            header="Үндсэн үйл ажиллагаанууд "
-          />
-          <Column
-            field="seImpactActivities.impactActivities"
+            field="impactActivities"
             header="Байгаль орчин, нийгмийн болзошгүй нөлөөлөл/эрсдэл"
           />
           <Column headerStyle={{ width: '7rem' }} body={action} />

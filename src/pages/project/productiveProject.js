@@ -47,7 +47,6 @@ const productiveProject = props => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const toolsStore = useToolsStore();
   const [selectedRows, setSelectedRows] = useState([]);
-  const [stateOrga, setStateOrga] = useState([]);
   const [status, setStatus] = useState();
   const [projectID, setProjectID] = useState();
   const history = useHistory();
@@ -82,16 +81,11 @@ const productiveProject = props => {
           errorCatch(error);
           toolsStore.setIsShowLoader(false);
         });
-    }, 500);
+    }, 1000);
   };
 
   useEffect(() => {
     onInit();
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrga(result.content || []);
-      }
-    });
     getService('projectStatus/get').then(result => {
       if (result) {
         setStatus(result || []);
@@ -250,6 +244,14 @@ const productiveProject = props => {
     </>
   );
 
+  const typeBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Төрөл</span>
+      {row.innovationProjectType
+        ? row.innovationProjectType.name
+        : 'Тодорхойгүй'}
+    </>
+  );
   const getColor = id => {
     switch (id) {
       case 1:
@@ -465,6 +467,8 @@ const productiveProject = props => {
               sortable
               body={dateSentBodyTemplate}
             />
+            <Column header="Төрөл" field="" sortable body={typeBodyTemplate} />
+
             <Column
               field="projectStatus.name"
               header="Статус"

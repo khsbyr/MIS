@@ -23,11 +23,11 @@ export default function projectInnovationModal(props) {
       }
     });
     if (isEditMode) {
-      setScopeID(EditRow.proposedInnovations.scope.id);
+      setScopeID(EditRow.scope.id);
       form.setFieldsValue({
         ...EditRow,
-        innovativeActivities: EditRow.proposedInnovations.innovativeActivities,
-        scopeName: EditRow.proposedInnovations.scope.name,
+        innovativeActivities: EditRow.innovativeActivities,
+        scopeName: EditRow.scope.name,
       });
     }
   }, []);
@@ -42,10 +42,7 @@ export default function projectInnovationModal(props) {
       .then(values => {
         values.scope = { id: scopeID };
         if (isEditMode) {
-          putService(
-            `proposedInnovations/update/${EditRow.proposedInnovations.id}`,
-            values
-          )
+          putService(`proposedInnovations/update/${EditRow.id}`, values)
             .then(() => {
               message.success('Амжилттай хадгаллаа');
               props.close(true);

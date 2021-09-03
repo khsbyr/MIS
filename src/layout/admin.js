@@ -54,7 +54,7 @@ function Admin() {
       if (!toolsStore.orgList) {
         getService('organization/getAll').then(resultOrg => {
           if (resultOrg) {
-            toolsStore.setOrgList(resultOrg || []);
+            toolsStore.setOrgList(resultOrg.content || []);
           }
         });
       }
@@ -112,7 +112,8 @@ function Admin() {
             left: 0,
           }}
         >
-          {localStorage.getItem('orgName') === '' ? (
+          {localStorage.getItem('orgName') === '' &&
+          toolsStore.user.roleId !== 1 ? (
             <OrganizationModal
               isModalVisible={isModalVisible}
               close={closeModal}

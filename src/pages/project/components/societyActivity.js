@@ -9,11 +9,13 @@ import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import SocietyActivityModal from './ModalComponent/societyActivityModal';
+import { useProjectStore } from '../../../context/ProjectContext';
 
 let isEditMode;
 let editRow;
-function societyActivity(props) {
+function societyActivity() {
   const loadLazyTimeout = null;
+  const { ProjectList } = useProjectStore();
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [summaryID, setSummaryID] = useState([]);
@@ -27,14 +29,16 @@ function societyActivity(props) {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService(`/project/get/${props.projectId}`)
+    getService(
+      `/summaryBallotForm/getSocialEnviromentsBySbfId/${ProjectList.summaryBallotForm.id}`
+    )
       .then(result => {
-        const listResult = result.summaryBallotForm.sbf_socialenviroments;
+        const listResult = result;
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
-        setSummaryID(result.summaryBallotForm.id);
+        setSummaryID(ProjectList.summaryBallotForm.id);
       })
       .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
@@ -67,9 +71,7 @@ function societyActivity(props) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(
-      `socialEnviromentActivities/delete/${row.socialEnviromentActivities.id}`
-    )
+    putService(`socialEnviromentActivities/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -134,12 +136,9 @@ function societyActivity(props) {
           dataKey="id"
         >
           <Column field="index" header="№" style={{ width: '50px' }} />
+          <Column field="socialActivities" header="Үндсэн үйл ажиллагаанууд " />
           <Column
-            field="socialEnviromentActivities.socialActivities"
-            header="Үндсэн үйл ажиллагаанууд "
-          />
-          <Column
-            field="socialEnviromentActivities.governmentPolicy"
+            field="governmentPolicy"
             header="МУ-ын Засгийн газар болон МАА ЭЗЭН төслийн бодлогыг дагаж мөрдөх"
           />
           <Column headerStyle={{ width: '7rem' }} body={action} />

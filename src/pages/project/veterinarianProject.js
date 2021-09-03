@@ -213,6 +213,13 @@ const veterinarianProject = () => {
     </>
   );
 
+  const genderBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Хүйс</span>
+      {row.gender.gender}
+    </>
+  );
+
   const getColor = id => {
     switch (id) {
       case 1:
@@ -387,6 +394,15 @@ const veterinarianProject = () => {
               filter
               filterPlaceholder="Хайх"
               filterMatchMode="equals"
+            />
+            <Column
+              header="Хүйс"
+              field="gender.gender"
+              body={genderBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               header="Төлөв"

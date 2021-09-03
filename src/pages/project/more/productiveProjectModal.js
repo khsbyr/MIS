@@ -47,22 +47,21 @@ export default function productiveProjectModal(props) {
   const [stateAimag, setStateAimag] = useState([]);
   const [criteriaList, setCriteriaList] = useState([]);
   const [criteriaListMulti, setCriteriaListMulti] = useState([]);
-  const [stateOrg, setStateOrg] = useState([]);
   const [, setSelectedOrg] = useState();
   const [selectedProjectOrg, setSelectedProjectOrg] = useState([]);
   const [valueAddress, setValueAddress] = useState(undefined);
+  const [criteriaIds, setCriteriaIds] = useState([]);
+  const [projectOrgs, setProjectOrgs] = useState([]);
+  const [innovationProjectType, setInnovationProjectType] = useState();
+  const [innovationProjectTypeId, setInnovationProjectTypeId] = useState();
 
-  const ProjectOrgList =
-    ProductiveController &&
-    ProductiveController.projectOrganizations.map(item => item.organization.id);
+  // const ProjectOrgList =
+  //   ProductiveController &&
+  //   ProductiveController.projectOrganizations.map(item => item.organization.id);
 
   const ProjectChildrenAddress =
     ProductiveController &&
     ProductiveController.address.childrenAddress.map(item => item.soum.id);
-
-  const ProjectCriteriaList = ProductiveController?.projectCriterias?.map(
-    item => item.criteriasId
-  );
 
   const onChangeAddress = value => {
     setValueAddress(value);
@@ -109,11 +108,29 @@ export default function productiveProjectModal(props) {
         setCriteriaList(result || []);
       }
     });
-    getService('organization/get').then(result => {
+    getService('innovationProjectType/get').then(result => {
       if (result) {
-        setStateOrg(result.content || []);
+        setInnovationProjectType(result || []);
       }
     });
+    if (isEditMode) {
+      getService(
+        `projectCriteria/getCriteriaListByProjectId/${ProductiveController?.id}`
+      ).then(result => {
+        if (result) {
+          setCriteriaIds(result.map(z => criteriaIds.push(z.id)));
+          setCriteriaIds([...criteriaIds]);
+        }
+      });
+      getService(
+        `projectOrganization/getOrganizationListByProjectId/${ProductiveController?.id}`
+      ).then(result => {
+        if (result) {
+          setProjectOrgs(result.map(z => projectOrgs.push(z.id)));
+          setProjectOrgs([...projectOrgs]);
+        }
+      });
+    }
     getService('aimag/get').then(result => {
       if (result) {
         setStateAimag(result || []);
@@ -121,9 +138,14 @@ export default function productiveProjectModal(props) {
     });
 
     if (isEditMode) {
-      setSelectedProjectOrg(ProjectOrgList);
+      setSelectedProjectOrg(projectOrgs);
       setValueAddress(ProjectChildrenAddress);
-      setCriteriaListMulti(ProjectCriteriaList);
+      setCriteriaListMulti(criteriaIds);
+      setInnovationProjectTypeId(
+        ProductiveController.innovationProjectType
+          ? ProductiveController.innovationProjectType.id
+          : null
+      );
       form.setFieldsValue({
         ...ProductiveController,
         AimagID: ProductiveController.address?.aimag?.id,
@@ -135,6 +157,10 @@ export default function productiveProjectModal(props) {
 
   const selectProjectOrg = value => {
     setSelectedProjectOrg(value);
+  };
+
+  const selectType = value => {
+    setInnovationProjectTypeId(value);
   };
 
   const save = () => {
@@ -150,6 +176,8 @@ export default function productiveProjectModal(props) {
           partnerActivity: values.partnerActivity,
           organization: { id: values.OrgID },
           projectType: { id: type },
+          innovationProjectType:
+            type === 2 ? { id: innovationProjectTypeId } : null,
         };
         values.organizationIds = selectedProjectOrg;
         values.criteriaIds = criteriaListMulti;
@@ -210,23 +238,14 @@ export default function productiveProjectModal(props) {
                     <Form.Item label="Төсөл хэрэгжүүлэх хугацаа:" name="period">
                       <InputNumber />
                     </Form.Item>
-                    <Form.Item label="Шалгуур үзүүлэлт:" valuePropName="option">
-                      {ProjectCriteriaList === null ? (
-                        <MulticompleteSelect
-                          data={criteriaList}
-                          valuefield="id"
-                          size="medium"
-                          onChange={value => selectCriteriaMulti(value)}
-                        />
-                      ) : (
-                        <MulticompleteSelect
-                          data={criteriaList}
-                          defaultValue={ProjectCriteriaList}
-                          valuefield="id"
-                          size="medium"
-                          onChange={value => selectCriteriaMulti(value)}
-                        />
-                      )}
+                    <Form.Item label="Шалгуур үзүүлэлт:">
+                      <MulticompleteSelect
+                        data={criteriaList}
+                        defaultValue={criteriaIds}
+                        valueField="id"
+                        size="medium"
+                        onChange={value => selectCriteriaMulti(value)}
+                      />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={12}>
@@ -279,28 +298,38 @@ export default function productiveProjectModal(props) {
                     </Form.Item>
                   </Col>
                 </Row>
+                {type === 2 ? (
+                  <Row>
+                    <Col xs={24} md={24} lg={24}>
+                      <Form.Item label="Төрөл:" valuePropName="option">
+                        <AutoCompleteSelect
+                          data={innovationProjectType}
+                          defaultValue={
+                            ProductiveController?.innovationProjectType?.id
+                          }
+                          valueField="id"
+                          size="medium"
+                          onChange={value => selectType(value)}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                ) : (
+                  ''
+                )}
                 <Row>
                   <Col xs={24} md={24} lg={24}>
                     <Form.Item
                       label="Түншлэгч байгууллага:"
                       valuePropName="option"
                     >
-                      {ProjectOrgList === null ? (
-                        <MulticompleteSelect
-                          data={toolsStore.partnerList}
-                          valueField="id"
-                          size="medium"
-                          onChange={value => selectProjectOrg(value)}
-                        />
-                      ) : (
-                        <MulticompleteSelect
-                          data={toolsStore.partnerList}
-                          defaultValue={ProjectOrgList}
-                          valueField="id"
-                          size="medium"
-                          onChange={value => selectProjectOrg(value)}
-                        />
-                      )}
+                      <MulticompleteSelect
+                        data={toolsStore.partnerList}
+                        defaultValue={projectOrgs}
+                        valueField="id"
+                        size="medium"
+                        onChange={value => selectProjectOrg(value)}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
