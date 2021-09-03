@@ -52,6 +52,8 @@ export default function productiveProjectModal(props) {
   const [valueAddress, setValueAddress] = useState(undefined);
   const [criteriaIds, setCriteriaIds] = useState([]);
   const [projectOrgs, setProjectOrgs] = useState([]);
+  const [innovationProjectType, setInnovationProjectType] = useState();
+  const [innovationProjectTypeId, setInnovationProjectTypeId] = useState();
 
   // const ProjectOrgList =
   //   ProductiveController &&
@@ -106,6 +108,11 @@ export default function productiveProjectModal(props) {
         setCriteriaList(result || []);
       }
     });
+    getService('innovationProjectType/get').then(result => {
+      if (result) {
+        setInnovationProjectType(result || []);
+      }
+    });
     if (isEditMode) {
       getService(
         `projectCriteria/getCriteriaListByProjectId/${ProductiveController?.id}`
@@ -134,6 +141,7 @@ export default function productiveProjectModal(props) {
       setSelectedProjectOrg(projectOrgs);
       setValueAddress(ProjectChildrenAddress);
       setCriteriaListMulti(criteriaIds);
+      setInnovationProjectTypeId(ProductiveController.innovationProjectType.id);
       form.setFieldsValue({
         ...ProductiveController,
         AimagID: ProductiveController.address?.aimag?.id,
@@ -145,6 +153,10 @@ export default function productiveProjectModal(props) {
 
   const selectProjectOrg = value => {
     setSelectedProjectOrg(value);
+  };
+
+  const selectType = value => {
+    setInnovationProjectTypeId(value);
   };
 
   const save = () => {
@@ -160,6 +172,8 @@ export default function productiveProjectModal(props) {
           partnerActivity: values.partnerActivity,
           organization: { id: values.OrgID },
           projectType: { id: type },
+          innovationProjectType:
+            type === 2 ? { id: innovationProjectTypeId } : null,
         };
         values.organizationIds = selectedProjectOrg;
         values.criteriaIds = criteriaListMulti;
@@ -280,6 +294,25 @@ export default function productiveProjectModal(props) {
                     </Form.Item>
                   </Col>
                 </Row>
+                {type === 2 ? (
+                  <Row>
+                    <Col xs={24} md={24} lg={24}>
+                      <Form.Item label="Төрөл:" valuePropName="option">
+                        <AutoCompleteSelect
+                          data={innovationProjectType}
+                          defaultValue={
+                            ProductiveController?.innovationProjectType?.id
+                          }
+                          valueField="id"
+                          size="medium"
+                          onChange={value => selectType(value)}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                ) : (
+                  ''
+                )}
                 <Row>
                   <Col xs={24} md={24} lg={24}>
                     <Form.Item
