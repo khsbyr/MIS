@@ -36,11 +36,7 @@ const ConsultingOrg = () => {
   const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
-<<<<<<< HEAD
-    size: 25,
-=======
     size: PAGESIZE || 20,
->>>>>>> 4c634790fc4895635e5b55cc672b5523e3ac7182
   });
   const [totalRecords, setTotalRecords] = useState(0);
 
