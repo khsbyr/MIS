@@ -24,6 +24,13 @@ const ContentWrapper = styled.div`
     padding-top: 4px;
   }
 
+  .planName
+    .ant-select-single:not(.ant-select-customize-input)
+    .ant-select-selector {
+    height: 40px;
+    padding-top: 8px;
+  }
+
   .button {
     background-color: #103154;
     float: right;
@@ -41,7 +48,7 @@ const ContentWrapper = styled.div`
     display: none;
   }
   .ant-select-selection-search {
-    margin-top: 4px;
+    margin-top: 8px;
   }
   .ant-picker {
     width: 100%;

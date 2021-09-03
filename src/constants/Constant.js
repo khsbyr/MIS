@@ -75,6 +75,17 @@ export const shapeData = [
   },
 ];
 
+export const PlanType = [
+  {
+    id: 0,
+    name: 'Төсөл хэрэгжүүлэгч нэгж',
+  },
+  {
+    id: 1,
+    name: 'Залуу малын эмч хөтөлбөр',
+  },
+];
+
 export default {
   criteriaFrequencyData,
 };

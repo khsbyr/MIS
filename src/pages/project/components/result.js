@@ -9,11 +9,13 @@ import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import ResultModal from './ModalComponent/resultModal';
+import { useProjectStore } from '../../../context/ProjectContext';
 
 let isEditMode;
 let editRow;
-function result(props) {
+function result() {
   const loadLazyTimeout = null;
+  const { ProjectList } = useProjectStore();
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [summaryID, setSummaryID] = useState([]);
@@ -27,14 +29,16 @@ function result(props) {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService(`/project/get/${props.projectId}`)
+    getService(
+      `summaryBallotForm/getProjectResultBySbfId/${ProjectList.summaryBallotForm.id}`
+    )
       .then(resultt => {
-        const listResult = resultt.summaryBallotForm.sbf_projectresults;
+        const listResult = resultt;
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
-        setSummaryID(resultt.summaryBallotForm.id);
+        setSummaryID(ProjectList.summaryBallotForm.id);
       })
       .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
@@ -68,7 +72,7 @@ function result(props) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`projectResult/delete/${row.projectResult.id}`)
+    putService(`projectResult/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -132,13 +136,10 @@ function result(props) {
           dataKey="id"
         >
           <Column field="index" header="№" style={{ width: '50px' }} />
-          <Column
-            field="projectResult.areasOfActivity"
-            header="Үйл ажиллагааны чиглэл  "
-          />
-          <Column field="projectResult.result" header="Үр дүн " />
-          <Column field="projectResult.yield" header="Гарц " />
-          <Column field="projectResult.effect" header="Нөлөө " />
+          <Column field="areasOfActivity" header="Үйл ажиллагааны чиглэл  " />
+          <Column field="result" header="Үр дүн " />
+          <Column field="yield" header="Гарц " />
+          <Column field="effect" header="Нөлөө " />
           <Column headerStyle={{ width: '7rem' }} body={action} />
         </DataTable>
       </div>

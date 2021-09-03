@@ -15,9 +15,8 @@ export default function activityModal(props) {
     if (isEditMode) {
       form.setFieldsValue({
         ...ActivityController,
-        keyActivities:
-          ActivityController.keyActivitiesStakeholders.keyActivities,
-        stakeholders: ActivityController.keyActivitiesStakeholders.stakeholders,
+        keyActivities: ActivityController.keyActivities,
+        stakeholders: ActivityController.stakeholders,
       });
     }
   }, []);
@@ -28,7 +27,7 @@ export default function activityModal(props) {
       .then(values => {
         if (isEditMode) {
           putService(
-            `keyActivitiesStakeholders/update/${ActivityController.keyActivitiesStakeholders.id}`,
+            `keyActivitiesStakeholders/update/${ActivityController.id}`,
             values
           )
             .then(() => {

@@ -9,11 +9,13 @@ import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import ProjectInnovationModal from './ModalComponent/projectInnovationModal';
+import { useProjectStore } from '../../../context/ProjectContext';
 
 let isEditMode;
 let editRow;
-function projectInnovation(props) {
+function projectInnovation() {
   const loadLazyTimeout = null;
+  const { ProjectList } = useProjectStore();
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [summaryID, setSummaryID] = useState([]);
@@ -27,14 +29,16 @@ function projectInnovation(props) {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService(`/project/get/${props.projectId}`)
+    getService(
+      `/summaryBallotForm/getProposedInnovationsBySbfId/${ProjectList.summaryBallotForm.id}`
+    )
       .then(result => {
-        const listResult = result.summaryBallotForm.sbf_proposeds;
+        const listResult = result;
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
-        setSummaryID(result.summaryBallotForm.id);
+        setSummaryID(ProjectList.summaryBallotForm.id);
       })
       .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
@@ -68,7 +72,7 @@ function projectInnovation(props) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`proposedInnovations/delete/${row.proposedInnovations.id}`)
+    putService(`proposedInnovations/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -132,12 +136,9 @@ function projectInnovation(props) {
           dataKey="id"
         >
           <Column field="index" header="№" style={{ width: '50px' }} />
+          <Column field="scope.name" header="Хамрах хүрээ" />
           <Column
-            field="proposedInnovations.scope.name"
-            header="Хамрах хүрээ"
-          />
-          <Column
-            field="proposedInnovations.innovativeActivities"
+            field="innovativeActivities"
             header="Инноваци, шинэлэг үйл ажиллагаанууд"
           />
           <Column headerStyle={{ width: '7rem' }} body={action} />

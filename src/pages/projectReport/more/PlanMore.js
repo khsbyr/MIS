@@ -4,6 +4,8 @@ import { useParams } from 'react-router-dom';
 import ContentWrapper from '../../training/more/TrainingInfo.style';
 import MainInfo from './mainInfo';
 import Activity from './activity';
+import PlanUser from './planUser';
+import PlanReport from './planReport';
 
 const { TabPane } = Tabs;
 const tabPosition = 'top';
@@ -14,16 +16,16 @@ export default function PlanMore() {
     <ContentWrapper>
       <Tabs tabPosition={tabPosition}>
         <TabPane tab="Үндсэн мэдээлэл" key="1">
-          <MainInfo />
+          <MainInfo id={id} />
         </TabPane>
         <TabPane tab="Үйл ажиллагаа" key="2">
-          <Activity />
+          <Activity id={id} />
         </TabPane>
         <TabPane tab="Гүйцэтгэгчид" key="3">
-          Content 4
+          <PlanUser id={id} />
         </TabPane>
         <TabPane tab="Тайлан" key="4">
-          Content 4
+          <PlanReport id={id} />
         </TabPane>
       </Tabs>
     </ContentWrapper>
