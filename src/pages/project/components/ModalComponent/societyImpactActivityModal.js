@@ -15,9 +15,8 @@ export default function societyImpactActivityModal(props) {
     if (isEditMode) {
       form.setFieldsValue({
         ...seImpactController,
-        keyActivities: seImpactController.seImpactActivities.keyActivities,
-        impactActivities:
-          seImpactController.seImpactActivities.impactActivities,
+        keyActivities: seImpactController.keyActivities,
+        impactActivities: seImpactController.impactActivities,
       });
     }
   }, []);
@@ -28,7 +27,7 @@ export default function societyImpactActivityModal(props) {
       .then(values => {
         if (isEditMode) {
           putService(
-            `seImpactActivities/update/${seImpactController.seImpactActivities.id}`,
+            `seImpactActivities/update/${seImpactController.id}`,
             values
           )
             .then(() => {

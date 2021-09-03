@@ -47,23 +47,19 @@ export default function productiveProjectModal(props) {
   const [stateAimag, setStateAimag] = useState([]);
   const [criteriaList, setCriteriaList] = useState([]);
   const [criteriaListMulti, setCriteriaListMulti] = useState([]);
-  const [stateOrg, setStateOrg] = useState([]);
   const [, setSelectedOrg] = useState();
   const [selectedProjectOrg, setSelectedProjectOrg] = useState([]);
   const [valueAddress, setValueAddress] = useState(undefined);
   const [criteriaIds, setCriteriaIds] = useState([]);
+  const [projectOrgs, setProjectOrgs] = useState([]);
 
-  const ProjectOrgList =
-    ProductiveController &&
-    ProductiveController.projectOrganizations.map(item => item.organization.id);
+  // const ProjectOrgList =
+  //   ProductiveController &&
+  //   ProductiveController.projectOrganizations.map(item => item.organization.id);
 
   const ProjectChildrenAddress =
     ProductiveController &&
     ProductiveController.address.childrenAddress.map(item => item.soum.id);
-
-  const ProjectCriteriaList = ProductiveController?.projectCriterias?.map(
-    item => item.criteriasId
-  );
 
   const onChangeAddress = value => {
     setValueAddress(value);
@@ -115,18 +111,19 @@ export default function productiveProjectModal(props) {
         `projectCriteria/getCriteriaListByProjectId/${ProductiveController?.id}`
       ).then(result => {
         if (result) {
-          result.forEach(criteria => {
-            criteriaIds.push(criteria.code);
-          });
+          setCriteriaIds(result.map(z => criteriaIds.push(z.id)));
           setCriteriaIds([...criteriaIds]);
         }
       });
+      getService(
+        `projectOrganization/getOrganizationListByProjectId/${ProductiveController?.id}`
+      ).then(result => {
+        if (result) {
+          setProjectOrgs(result.map(z => projectOrgs.push(z.id)));
+          setProjectOrgs([...projectOrgs]);
+        }
+      });
     }
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrg(result.content || []);
-      }
-    });
     getService('aimag/get').then(result => {
       if (result) {
         setStateAimag(result || []);
@@ -134,9 +131,9 @@ export default function productiveProjectModal(props) {
     });
 
     if (isEditMode) {
-      setSelectedProjectOrg(ProjectOrgList);
+      setSelectedProjectOrg(projectOrgs);
       setValueAddress(ProjectChildrenAddress);
-      setCriteriaListMulti(ProjectCriteriaList);
+      setCriteriaListMulti(criteriaIds);
       form.setFieldsValue({
         ...ProductiveController,
         AimagID: ProductiveController.address?.aimag?.id,
@@ -223,23 +220,14 @@ export default function productiveProjectModal(props) {
                     <Form.Item label="Төсөл хэрэгжүүлэх хугацаа:" name="period">
                       <InputNumber />
                     </Form.Item>
-                    <Form.Item label="Шалгуур үзүүлэлт:" valuePropName="option">
-                      {ProjectCriteriaList === null ? (
-                        <MulticompleteSelect
-                          data={criteriaList}
-                          valuefield="id"
-                          size="medium"
-                          onChange={value => selectCriteriaMulti(value)}
-                        />
-                      ) : (
-                        <MulticompleteSelect
-                          data={criteriaList}
-                          defaultValue={ProjectCriteriaList}
-                          valuefield="id"
-                          size="medium"
-                          onChange={value => selectCriteriaMulti(value)}
-                        />
-                      )}
+                    <Form.Item label="Шалгуур үзүүлэлт:">
+                      <MulticompleteSelect
+                        data={criteriaList}
+                        defaultValue={criteriaIds}
+                        valueField="id"
+                        size="medium"
+                        onChange={value => selectCriteriaMulti(value)}
+                      />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={12}>
@@ -298,22 +286,13 @@ export default function productiveProjectModal(props) {
                       label="Түншлэгч байгууллага:"
                       valuePropName="option"
                     >
-                      {ProjectOrgList === null ? (
-                        <MulticompleteSelect
-                          data={toolsStore.partnerList}
-                          valueField="id"
-                          size="medium"
-                          onChange={value => selectProjectOrg(value)}
-                        />
-                      ) : (
-                        <MulticompleteSelect
-                          data={toolsStore.partnerList}
-                          defaultValue={ProjectOrgList}
-                          valueField="id"
-                          size="medium"
-                          onChange={value => selectProjectOrg(value)}
-                        />
-                      )}
+                      <MulticompleteSelect
+                        data={toolsStore.partnerList}
+                        defaultValue={projectOrgs}
+                        valueField="id"
+                        size="medium"
+                        onChange={value => selectProjectOrg(value)}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>

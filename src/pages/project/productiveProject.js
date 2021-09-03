@@ -41,14 +41,12 @@ const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-let listCriteria;
 const productiveProject = props => {
   const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const toolsStore = useToolsStore();
   const [selectedRows, setSelectedRows] = useState([]);
-  const [stateOrga, setStateOrga] = useState([]);
   const [status, setStatus] = useState();
   const [projectID, setProjectID] = useState();
   const history = useHistory();
@@ -88,11 +86,6 @@ const productiveProject = props => {
 
   useEffect(() => {
     onInit();
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrga(result.content || []);
-      }
-    });
     getService('projectStatus/get').then(result => {
       if (result) {
         setStatus(result || []);
@@ -148,13 +141,6 @@ const productiveProject = props => {
   };
 
   const edit = (event, row) => {
-    // getService(`projectCriteria/getCriteriaListByProjectId/${row.id}`).then(
-    //   result => {
-    //     if (result) {
-    //       listCriteria = result.map(z => z.id);
-    //     }
-    //   }
-    // );
     event.preventDefault();
     event.stopPropagation();
     editRow = row;

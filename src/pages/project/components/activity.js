@@ -9,11 +9,13 @@ import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import ActivityModal from './ModalComponent/activityModal';
+import { useProjectStore } from '../../../context/ProjectContext';
 
 let isEditMode;
 let editRow;
-function activity(props) {
+function activity() {
   const loadLazyTimeout = null;
+  const { ProjectList } = useProjectStore();
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [summaryID, setSummaryID] = useState([]);
@@ -27,14 +29,16 @@ function activity(props) {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService(`/project/get/${props.projectId}`)
+    getService(
+      `/summaryBallotForm/getKeyActivitiesStakeholdersBySbfId/${ProjectList.summaryBallotForm.id}`
+    )
       .then(result => {
-        const listResult = result.summaryBallotForm.sbf_keys;
+        const listResult = result;
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
-        setSummaryID(result.summaryBallotForm.id);
+        setSummaryID(ProjectList.summaryBallotForm.id);
       })
       .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
@@ -68,9 +72,7 @@ function activity(props) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(
-      `keyActivitiesStakeholders/delete/${row.keyActivitiesStakeholders.id}`
-    )
+    putService(`keyActivitiesStakeholders/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -134,12 +136,9 @@ function activity(props) {
           dataKey="id"
         >
           <Column field="index" header="№" style={{ width: '50px' }} />
+          <Column field="keyActivities" header="Үндсэн үйл ажиллагаанууд" />
           <Column
-            field="keyActivitiesStakeholders.keyActivities"
-            header="Үндсэн үйл ажиллагаанууд"
-          />
-          <Column
-            field="keyActivitiesStakeholders.stakeholders"
+            field="stakeholders"
             header="Хариуцагч нэр (Тэргүүлэгч/ хамтрагч түншлэгчид) "
           />
           <Column headerStyle={{ width: '7rem' }} body={action} />

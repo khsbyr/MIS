@@ -13,10 +13,9 @@ export default function financeModal(props) {
     if (isEditMode) {
       form.setFieldsValue({
         ...EditRow,
-        largeAmountOfCapital:
-          EditRow.financingEstimatesRates.largeAmountOfCapital,
-        capacity: EditRow.financingEstimatesRates.capacity,
-        evaluation: EditRow.financingEstimatesRates.evaluation,
+        largeAmountOfCapital: EditRow.largeAmountOfCapital,
+        capacity: EditRow.capacity,
+        evaluation: EditRow.evaluation,
       });
     }
   }, []);
@@ -26,10 +25,7 @@ export default function financeModal(props) {
       .validateFields()
       .then(values => {
         if (isEditMode) {
-          putService(
-            `financingEstimatesRates/update/${EditRow.financingEstimatesRates.id}`,
-            values
-          )
+          putService(`financingEstimatesRates/update/${EditRow.id}`, values)
             .then(() => {
               message.success('Амжилттай хадгаллаа');
               props.close(true);

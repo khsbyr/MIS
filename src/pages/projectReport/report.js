@@ -16,14 +16,9 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import AutoCompleteSelect from '../../components/Autocomplete';
 import { PAGESIZE } from '../../constants/Constant';
-import { useCriteriaStore } from '../../context/CriteriaContext';
 import { ToolsContext } from '../../context/Tools';
-import { deleteService, getService, putService } from '../../service/service';
-import {
-  convertLazyParamsToObj,
-  errorCatch,
-  formatIndicator,
-} from '../../tools/Tools';
+import { deleteService, getService } from '../../service/service';
+import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
 import ReportModal from './components/reportModal';
 
@@ -36,8 +31,6 @@ const Report = () => {
   const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { criteriaReferenceList, setCriteriaReferenceList } =
-    useCriteriaStore();
   const [selectedRows, setSelectedRows] = useState([]);
   const toolsStore = useContext(ToolsContext);
   const history = useHistory();
@@ -142,11 +135,6 @@ const Report = () => {
 
   useEffect(() => {
     onInit();
-    getService('/criteriaReference/get').then(result => {
-      if (result) {
-        setCriteriaReferenceList(result.content || []);
-      }
-    });
     getService('/plan/get').then(result => {
       if (result) {
         setPlanList(result.content || []);
