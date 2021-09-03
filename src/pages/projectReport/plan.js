@@ -9,29 +9,34 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import moment from 'moment';
+import { addLocale } from 'primereact/api';
+import { Calendar } from 'primereact/calendar';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
+import { Dropdown } from 'primereact/dropdown';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import AutoCompleteSelect from '../../components/Autocomplete';
-import { PAGESIZE } from '../../constants/Constant';
+import { PAGESIZE, PlanType } from '../../constants/Constant';
 import { useCriteriaStore } from '../../context/CriteriaContext';
 import { ToolsContext } from '../../context/Tools';
-import { getService, putService } from '../../service/service';
+import { getService, putService, deleteService } from '../../service/service';
 import {
   convertLazyParamsToObj,
   errorCatch,
-  formatIndicator,
+  filterDate,
 } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
 import PlanModal from './components/planModal';
+import RenderDateFilter from '../../components/renderDateFilter';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-
+let listCriteria;
 const Plan = () => {
   const { t } = useTranslation();
   const [list, setList] = useState([]);
@@ -47,6 +52,7 @@ const Plan = () => {
   });
   const [totalRecords, setTotalRecords] = useState(0);
   const dt = useRef(null);
+  const [dateFilter, setDateFilter] = useState(null);
 
   let loadLazyTimeout = null;
 
@@ -58,23 +64,16 @@ const Plan = () => {
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
       const url = value
-        ? `/criteria/getListByCriteriaReferenceId/${value}`
-        : '/criteria/get';
+        ? `plan/get?search=criteriaReference.id:${value}`
+        : `plan/get`;
       getService(`${url}`, obj)
         .then(result => {
-          if (value) {
-            const listResult = result || [];
-            setList(listResult);
-            listResult.forEach((item, index) => {
-              item.index = lazyParams.page * PAGESIZE + index + 1;
-            });
-          } else {
-            const listResult = result.content || [];
-            setList(listResult);
-            listResult.forEach((item, index) => {
-              item.index = lazyParams.page * PAGESIZE + index + 1;
-            });
-          }
+          const listResult = result.content || [];
+          setList(listResult);
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+
           setTotalRecords(result.totalElements);
           setSelectedRows([]);
         })
@@ -107,7 +106,7 @@ const Plan = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`/criteria/delete/${row.id}`)
+    deleteService(`/plan/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -160,6 +159,32 @@ const Plan = () => {
     onInit(value);
   };
 
+  const selectType = value => {
+    toolsStore.setIsShowLoader(true);
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService(`plan/get?search=typeId:${value}`, obj)
+        .then(result => {
+          const listResult = result.content || [];
+          setList(listResult);
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+
+          setTotalRecords(result.totalElements);
+          setSelectedRows([]);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
+        });
+    }, 500);
+  };
+
   const action = row => (
     <>
       <Button
@@ -184,22 +209,29 @@ const Plan = () => {
 
   const nameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Шалгуур үзүүлэлтийн нэр</span>
+      <span className="p-column-title">Төлөвлөгөөний нэр</span>
       {row.name}
     </>
   );
 
   const indicatorProcessBodyTemplate = row => (
     <>
-      <span className="p-column-title">Хүрэх үр дүн</span>
-      {row.resultTobeAchieved + formatIndicator(row.indicator)}
+      <span className="p-column-title">Бүрэлдэхүүн хэсэг</span>
+      {row.criteriaReference.name}
     </>
   );
 
-  const upIndicatorBodyTemplate = row => (
+  const startDateBodyTemplate = row => (
     <>
-      <span className="p-column-title">Үр дүнгийн биелэлт</span>
-      {row.processResult + formatIndicator(row.indicator)}
+      <span className="p-column-title">Эхлэх огноо</span>
+      {moment(row && row.startDate).format('YYYY-M-D')}
+    </>
+  );
+
+  const endDateBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Дуусах огноо</span>
+      {moment(row && row.endDate).format('YYYY-M-D')}
     </>
   );
 
@@ -218,6 +250,121 @@ const Plan = () => {
     setLazyParams(params);
   };
 
+  // const monthNavigatorTemplate = e => (
+  //   <Dropdown
+  //     value={e.value}
+  //     options={e.options}
+  //     onChange={event => e.onChange(event.originalEvent, event.value)}
+  //     style={{ lineHeight: 1 }}
+  //   />
+  // );
+
+  // const yearNavigatorTemplate = e => (
+  //   <Dropdown
+  //     value={e.value}
+  //     options={e.options}
+  //     onChange={event => e.onChange(event.originalEvent, event.value)}
+  //     className="p-ml-2"
+  //     style={{ lineHeight: 1, marginLeft: '10px' }}
+  //   />
+  // );
+
+  // const formatDate = date => {
+  //   let month = date.getMonth() + 1;
+  //   let day = date.getDate();
+
+  //   if (month < 10) {
+  //     month = `0${month}`;
+  //   }
+
+  //   if (day < 10) {
+  //     day = `0${day}`;
+  //   }
+
+  //   return `${date.getFullYear()}-${month}-${day}`;
+  // };
+
+  // const onDateFilterChange = event => {
+  //   if (event.value !== null) {
+  //     dt.current.filter(formatDate(event.value), 'startDate', 'equals');
+  //   } else {
+  //     dt.current.filter(null, 'startDate', 'equals');
+  //   }
+
+  //   setDateFilter(event.value);
+  // };
+
+  // addLocale('mn', {
+  //   firstDayOfWeek: 1,
+  //   dayNames: ['Ням', 'Даваа', 'Мягмар', 'Лхагва', 'Пүрэв', 'Баасан', 'Бямба'],
+  //   dayNamesShort: ['Ня', 'Да', 'Мя', 'Лха', 'Пү', 'Ба', 'Бя'],
+  //   dayNamesMin: ['Ня', 'Да', 'Мя', 'Лха', 'Пү', 'Ба', 'Бя'],
+  //   monthNames: [
+  //     '1-р сар',
+  //     '2-р сар',
+  //     '3-р сар',
+  //     '4-р сар',
+  //     '5-р сар',
+  //     '6-р сар',
+  //     '7-р сар',
+  //     '8-р сар',
+  //     '9-р сар',
+  //     '10-р сар',
+  //     '11-р сар',
+  //     '12-р сар',
+  //   ],
+  //   monthNamesShort: [
+  //     '1-р сар',
+  //     '2-р сар',
+  //     '3-р сар',
+  //     '4-р сар',
+  //     '5-р сар',
+  //     '6-р сар',
+  //     '7-р сар',
+  //     '8-р сар',
+  //     '9-р сар',
+  //     '10-р сар',
+  //     '11-р сар',
+  //     '12-р сар',
+  //   ],
+  //   today: 'Өнөөдөр',
+  //   clear: 'Устгах',
+  // });
+
+  // const renderDateFilter = () => (
+  //   <Calendar
+  //     value={dateFilter}
+  //     onChange={onDateFilterChange}
+  //     placeholder="Хайх"
+  //     dateFormat="yy-mm-dd"
+  //     className="p-column-filter"
+  //     monthNavigator
+  //     yearNavigator
+  //     yearRange="2010:2030"
+  //     yearNavigatorTemplate={yearNavigatorTemplate}
+  //     monthNavigatorTemplate={monthNavigatorTemplate}
+  //     locale="mn"
+  //   />
+  // );
+
+  // const dateFilterElement = renderDateFilter();
+
+  // const filterDate = (value, filter) => {
+  //   if (
+  //     filter === undefined ||
+  //     filter === null ||
+  //     (typeof filter === 'string' && filter.trim() === '')
+  //   ) {
+  //     return true;
+  //   }
+
+  //   if (value === undefined || value === null) {
+  //     return false;
+  //   }
+
+  //   return value === formatDate(filter);
+  // };
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -228,7 +375,15 @@ const Plan = () => {
             </Col>
             <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>
-                <Col xs={12} md={12} lg={16}>
+                <Col xs={12} md={12} lg={5}>
+                  <AutoCompleteSelect
+                    valueField="id"
+                    data={PlanType}
+                    placeholder="Төрөл сонгох"
+                    onChange={value => selectType(value)}
+                  />
+                </Col>
+                <Col xs={12} md={12} lg={11}>
                   <AutoCompleteSelect
                     valueField="id"
                     data={criteriaReferenceList}
@@ -316,7 +471,6 @@ const Plan = () => {
             />
             <Column
               field="name"
-              headerStyle={{ width: '30rem' }}
               header="Төлөвлөгөөний нэр"
               body={nameBodyTemplate}
               filter
@@ -325,31 +479,32 @@ const Plan = () => {
               filterMatchMode="contains"
             />
             <Column
-              field="resultTobeAchieved"
+              field="criteriaReference.name"
               header="Бүрэлдэхүүн хэсэг"
               body={indicatorProcessBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
-              filterMatchMode="equals"
+              filterMatchMode="contains"
             />
             <Column
-              field="processResult"
+              field="startDate"
               header="Эхлэх огноо"
-              body={upIndicatorBodyTemplate}
+              body={startDateBodyTemplate}
               sortable
               filter
-              filterPlaceholder="Хайх"
-              filterMatchMode="equals"
+              filterMatchMode="custom"
+              filterFunction={filterDate}
+              filterElement={<RenderDateFilter field="startDate" />}
             />
             <Column
-              field="processResult"
+              field="endDate"
               header="Дуусах огноо"
-              body={upIndicatorBodyTemplate}
+              body={endDateBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
-              filterMatchMode="equals"
+              filterMatchMode="contains"
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
@@ -359,6 +514,7 @@ const Plan = () => {
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+              listCriteria={listCriteria}
             />
           )}
         </div>

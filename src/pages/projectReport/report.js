@@ -18,14 +18,14 @@ import AutoCompleteSelect from '../../components/Autocomplete';
 import { PAGESIZE } from '../../constants/Constant';
 import { useCriteriaStore } from '../../context/CriteriaContext';
 import { ToolsContext } from '../../context/Tools';
-import { getService, putService } from '../../service/service';
+import { deleteService, getService, putService } from '../../service/service';
 import {
   convertLazyParamsToObj,
   errorCatch,
   formatIndicator,
 } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
-import PlanModal from './components/planModal';
+import ReportModal from './components/reportModal';
 
 const { Content } = Layout;
 
@@ -47,6 +47,7 @@ const Report = () => {
   });
   const [totalRecords, setTotalRecords] = useState(0);
   const dt = useRef(null);
+  const [planList, setPlanList] = useState();
 
   let loadLazyTimeout = null;
 
@@ -57,24 +58,15 @@ const Report = () => {
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      const url = value
-        ? `/criteria/getListByCriteriaReferenceId/${value}`
-        : '/criteria/get';
+      const url = value ? `/planReport/getByPlan/${value}` : `planReport/get`;
       getService(`${url}`, obj)
         .then(result => {
-          if (value) {
-            const listResult = result || [];
-            setList(listResult);
-            listResult.forEach((item, index) => {
-              item.index = lazyParams.page * PAGESIZE + index + 1;
-            });
-          } else {
-            const listResult = result.content || [];
-            setList(listResult);
-            listResult.forEach((item, index) => {
-              item.index = lazyParams.page * PAGESIZE + index + 1;
-            });
-          }
+          const listResult = result.content || [];
+          setList(listResult);
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+
           setTotalRecords(result.totalElements);
           setSelectedRows([]);
         })
@@ -85,6 +77,7 @@ const Report = () => {
         });
     }, 500);
   };
+
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
@@ -107,7 +100,7 @@ const Report = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`/criteria/delete/${row.id}`)
+    deleteService(`/planReport/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -154,9 +147,14 @@ const Report = () => {
         setCriteriaReferenceList(result.content || []);
       }
     });
+    getService('/plan/get').then(result => {
+      if (result) {
+        setPlanList(result.content || []);
+      }
+    });
   }, [lazyParams]);
 
-  const selectComposition = value => {
+  const selectPlan = value => {
     onInit(value);
   };
 
@@ -184,22 +182,29 @@ const Report = () => {
 
   const nameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Шалгуур үзүүлэлтийн нэр</span>
-      {row.name}
+      <span className="p-column-title">Төлөвлөгөөний нэр</span>
+      {row.plan.name}
     </>
   );
 
   const indicatorProcessBodyTemplate = row => (
     <>
-      <span className="p-column-title">Хүрэх үр дүн</span>
-      {row.resultTobeAchieved + formatIndicator(row.indicator)}
+      <span className="p-column-title">Гүйцэтгэл</span>
+      {row.performance}
     </>
   );
 
   const upIndicatorBodyTemplate = row => (
     <>
-      <span className="p-column-title">Үр дүнгийн биелэлт</span>
-      {row.processResult + formatIndicator(row.indicator)}
+      <span className="p-column-title">Үр дүн</span>
+      {row.result}
+    </>
+  );
+
+  const processResultBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Биелэлтийн хувь</span>
+      {row.processResult}
     </>
   );
 
@@ -231,9 +236,9 @@ const Report = () => {
                 <Col xs={12} md={12} lg={16}>
                   <AutoCompleteSelect
                     valueField="id"
-                    data={criteriaReferenceList}
-                    placeholder={t('Select Indicator')}
-                    onChange={value => selectComposition(value)}
+                    data={planList}
+                    placeholder="Төлөвлөгөө сонгох"
+                    onChange={value => selectPlan(value)}
                   />
                 </Col>
                 <Col xs={8} md={3} lg={2}>
@@ -316,7 +321,6 @@ const Report = () => {
             />
             <Column
               field="name"
-              headerStyle={{ width: '30rem' }}
               header="Төлөвлөгөөний нэр"
               body={nameBodyTemplate}
               filter
@@ -325,8 +329,8 @@ const Report = () => {
               filterMatchMode="contains"
             />
             <Column
-              field="resultTobeAchieved"
-              header="Бүрэлдэхүүн хэсэг"
+              field="performance"
+              header="Гүйцэтгэл"
               body={indicatorProcessBodyTemplate}
               sortable
               filter
@@ -334,8 +338,8 @@ const Report = () => {
               filterMatchMode="equals"
             />
             <Column
-              field="processResult"
-              header="Эхлэх огноо"
+              field="result"
+              header="Үр дүн"
               body={upIndicatorBodyTemplate}
               sortable
               filter
@@ -344,8 +348,8 @@ const Report = () => {
             />
             <Column
               field="processResult"
-              header="Дуусах огноо"
-              body={upIndicatorBodyTemplate}
+              header="Биелэлтийн хувь"
+              body={processResultBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
@@ -354,7 +358,7 @@ const Report = () => {
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <PlanModal
+            <ReportModal
               EditRow={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}

@@ -41,6 +41,7 @@ const { Content } = Layout;
 
 let editRow;
 let isEditMode;
+let listCriteria;
 const productiveProject = props => {
   const { t } = useTranslation();
   const [list, setList] = useState([]);
@@ -147,6 +148,13 @@ const productiveProject = props => {
   };
 
   const edit = (event, row) => {
+    // getService(`projectCriteria/getCriteriaListByProjectId/${row.id}`).then(
+    //   result => {
+    //     if (result) {
+    //       listCriteria = result.map(z => z.id);
+    //     }
+    //   }
+    // );
     event.preventDefault();
     event.stopPropagation();
     editRow = row;

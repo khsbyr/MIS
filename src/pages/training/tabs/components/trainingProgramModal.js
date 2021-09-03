@@ -151,7 +151,9 @@ export default function TrainingProgramModal(props) {
                         onChange={onStartDateChange}
                         defaultValue={
                           isEditMode
-                            ? moment(Trainingprogramcontroller.startDate)
+                            ? moment(Trainingprogramcontroller.startDate).zone(
+                                0
+                              )
                             : null
                         }
                       />
@@ -168,7 +170,7 @@ export default function TrainingProgramModal(props) {
                         onChange={onEndDateChange}
                         defaultValue={
                           isEditMode
-                            ? moment(Trainingprogramcontroller.endDate)
+                            ? moment(Trainingprogramcontroller.endDate).zone(0)
                             : null
                         }
                       />
