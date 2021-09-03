@@ -2,7 +2,6 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
-  faPlus,
   faPrint,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
@@ -11,6 +10,7 @@ import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
+import { useProjectStore } from '../../context/ProjectContext';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
@@ -21,8 +21,9 @@ const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const ProjectOrg = props => {
+const ProjectOrg = () => {
   const loadLazyTimeout = null;
+  const { ProjectList } = useProjectStore();
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -35,9 +36,11 @@ const ProjectOrg = props => {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService(`/project/get/${props.projectId}`)
+    getService(
+      `projectOrganization/getOrganizationListByProjectId/${ProjectList.id}`
+    )
       .then(result => {
-        const listResult = result.projectOrganizations;
+        const listResult = result;
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
@@ -53,13 +56,8 @@ const ProjectOrg = props => {
     onInit();
   }, [lazyParams]);
 
-  const add = () => {
-    setIsModalVisible(true);
-    isEditMode = false;
-  };
-
   const edit = row => {
-    editRow = row.organization;
+    editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
   };
@@ -132,35 +130,35 @@ const ProjectOrg = props => {
   const nameBodyTemplate = row => (
     <>
       <span className="p-column-title">Байгууллагын нэр</span>
-      {row.organization?.name}
+      {row.name}
     </>
   );
 
   const registerNumberBodyTemplate = row => (
     <>
       <span className="p-column-title">Регистрийн дугаар</span>
-      {row.organization?.registerNumber}
+      {row.registerNumber}
     </>
   );
 
   const bankNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Банкны нэр</span>
-      {row.organization.bank?.name}
+      {row.bank?.name}
     </>
   );
 
   const accountNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Дансны нэр</span>
-      {row.organization?.accountName}
+      {row.accountName}
     </>
   );
 
   const accountNumberBodyTemplate = row => (
     <>
       <span className="p-column-title">Дансны дугаар</span>
-      {row.organization?.accountNumber}
+      {row.accountNumber}
     </>
   );
 

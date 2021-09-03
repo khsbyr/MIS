@@ -9,11 +9,13 @@ import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import FinanceModal from './ModalComponent/financeModal';
+import { useProjectStore } from '../../../context/ProjectContext';
 
 let isEditMode;
 let editRow;
-function finance(props) {
+function finance() {
   const loadLazyTimeout = null;
+  const { ProjectList } = useProjectStore();
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [summaryID, setSummaryID] = useState([]);
@@ -27,14 +29,16 @@ function finance(props) {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService(`/project/get/${props.projectId}`)
+    getService(
+      `summaryBallotForm/getFinancingBySbfId/${ProjectList.summaryBallotForm.id}`
+    )
       .then(result => {
-        const listResult = result.summaryBallotForm.sbf_financings;
+        const listResult = result;
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
-        setSummaryID(result.summaryBallotForm.id);
+        setSummaryID(ProjectList.summaryBallotForm.id);
       })
       .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
@@ -68,9 +72,7 @@ function finance(props) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(
-      `financingEstimatesRates/delete/${row.financingEstimatesRates.id}`
-    )
+    putService(`financingEstimatesRates/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -136,17 +138,11 @@ function finance(props) {
         >
           <Column field="index" header="№" style={{ width: '50px' }} />
           <Column
-            field="financingEstimatesRates.largeAmountOfCapital"
+            field="largeAmountOfCapital"
             header="Төсөл хэрэгжүүлэхэд шаардлагатай том хэмжээний хөрөнгө, тоног төхөөрөмж "
           />
-          <Column
-            field="financingEstimatesRates.capacity"
-            header="Хүчин чадал"
-          />
-          <Column
-            field="financingEstimatesRates.evaluation"
-            header="Үнэлгээ (мөнгөн дүнгээр)"
-          />
+          <Column field="capacity" header="Хүчин чадал" />
+          <Column field="evaluation" header="Үнэлгээ (мөнгөн дүнгээр)" />
           <Column headerStyle={{ width: '7rem' }} body={action} />
         </DataTable>
       </div>

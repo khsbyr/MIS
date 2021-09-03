@@ -18,10 +18,10 @@ export default function societyActivityModal(props) {
         ...SocietyActivityController,
         socialActivities:
           SocietyActivityController &&
-          SocietyActivityController.socialEnviromentActivities.socialActivities,
+          SocietyActivityController.socialActivities,
         governmentPolicy:
           SocietyActivityController &&
-          SocietyActivityController.socialEnviromentActivities.governmentPolicy,
+          SocietyActivityController.governmentPolicy,
       });
     }
   }, []);
@@ -32,7 +32,7 @@ export default function societyActivityModal(props) {
       .then(values => {
         if (isEditMode) {
           putService(
-            `socialEnviromentActivities/update/${SocietyActivityController.socialEnviromentActivities.id}`,
+            `socialEnviromentActivities/update/${SocietyActivityController.id}`,
             values
           )
             .then(() => {

@@ -3,7 +3,7 @@ import { React, useState } from 'react';
 
 export default function MulticompleteSelect(props) {
   const { Option } = Select;
-  const { data, value, viewField, valueField } = props;
+  const { data, value, valueField, type } = props;
   const [size] = useState([]);
 
   const placeholder = props.placeholder || 'Сонгох';
@@ -23,8 +23,8 @@ export default function MulticompleteSelect(props) {
       {data &&
         data.map((z, index) => (
           <Option key={index} value={valueField ? z[valueField] : z.id}>
-            {viewField ? z[viewField] : z.name}
-            {viewField ? z[viewField] : z.fullName}
+            {z.code ? `${z.code}.${z.name}` : z.name}
+            {type === 1 ? z.firstname : z.fullName}
           </Option>
         ))}
     </Select>

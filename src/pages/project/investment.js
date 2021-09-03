@@ -16,13 +16,15 @@ import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../training/tabs/components/organization.style';
 import InvestmentModal from './components/ModalComponent/investmentModal';
+import { useProjectStore } from '../../context/ProjectContext';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const investment = props => {
+const investment = () => {
   const loadLazyTimeout = null;
+  const { ProjectList } = useProjectStore();
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -36,14 +38,16 @@ const investment = props => {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService(`/project/get/${props.projectId}`)
+    getService(
+      `summaryBallotForm/getProjectInvestmentBySbfId/${ProjectList.summaryBallotForm.id}`
+    )
       .then(result => {
-        const listResult = result.summaryBallotForm.sbf_projectInvestments;
+        const listResult = result;
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
-        setSummaryID(result.summaryBallotForm.id);
+        setSummaryID(ProjectList.summaryBallotForm.id);
       })
       .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
@@ -76,7 +80,7 @@ const investment = props => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`projectInvestment/delete/${row.projectInvestment.id}`)
+    putService(`projectInvestment/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -85,8 +89,6 @@ const investment = props => {
         errorCatch(error);
       });
   };
-
-  console.log(list);
 
   function confirm(row) {
     Modal.confirm({
@@ -141,22 +143,21 @@ const investment = props => {
   const operationExpense = row => (
     <>
       <span className="p-column-title">Үйл ажиллагаа буюу зардал</span>
-      {row.projectInvestment.operationExpense}
+      {row.operationExpense}
     </>
   );
 
   const total = row => (
     <>
       <span className="p-column-title">Нийт дүн</span>
-      {Formatcurrency(row.projectInvestment.longTotal)}
+      {Formatcurrency(row.longTotal)}
     </>
   );
 
   const costOfCompany = row => (
     <>
       <span className="p-column-title">Компаниас гаргах зардал хуваалт</span>
-      {Formatcurrency(row.projectInvestment.longCostOfCompany)} (
-      {row.projectInvestment.percentOfCompany} %)
+      {Formatcurrency(row.longCostOfCompany)} ({row.percentOfCompany} %)
     </>
   );
 
@@ -165,8 +166,8 @@ const investment = props => {
       <span className="p-column-title">
         МАА-н ЭЗЭН төслийн хөрөнгө оруулалт
       </span>
-      {Formatcurrency(row.projectInvestment.longProjectInvestment)} (
-      {row.projectInvestment.percentOfProjectInvestment} %)
+      {Formatcurrency(row.longProjectInvestment)} (
+      {row.percentOfProjectInvestment} %)
     </>
   );
 
@@ -175,7 +176,7 @@ const investment = props => {
       <span className="p-column-title">
         Санхүүжилтийн эх үүсвэр болон нэмэлт тайлбар
       </span>
-      {row.projectInvestment.description}
+      {row.description}
     </>
   );
 

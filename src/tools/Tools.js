@@ -224,3 +224,36 @@ export const sortArray = (list, sortField) => {
   if (!list) return [];
   return list.sort((a, b) => (a[sortField] > b[sortField] ? 1 : -1));
 };
+
+/** Search Date */
+
+const formatDate = date => {
+  let month = date.getMonth() + 1;
+  let day = date.getDate();
+
+  if (month < 10) {
+    month = `0${month}`;
+  }
+
+  if (day < 10) {
+    day = `0${day}`;
+  }
+
+  return `${date.getFullYear()}-${month}-${day}`;
+};
+
+export const filterDate = (value, filter) => {
+  if (
+    filter === undefined ||
+    filter === null ||
+    (typeof filter === 'string' && filter.trim() === '')
+  ) {
+    return true;
+  }
+
+  if (value === undefined || value === null) {
+    return false;
+  }
+
+  return value === formatDate(filter);
+};

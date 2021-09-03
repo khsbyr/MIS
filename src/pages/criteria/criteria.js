@@ -44,6 +44,7 @@ const Criteria = () => {
   const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
+    size: PAGESIZE || 20,
   });
   const [totalRecords, setTotalRecords] = useState(0);
   const dt = useRef(null);
@@ -85,6 +86,7 @@ const Criteria = () => {
         });
     }, 500);
   };
+
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
@@ -178,7 +180,7 @@ const Criteria = () => {
   const indexBodyTemplate = row => (
     <>
       <span className="p-column-title">№</span>
-      {row.index}
+      {row.code}
     </>
   );
 
@@ -309,10 +311,11 @@ const Criteria = () => {
             filters={lazyParams.filters}
           >
             <Column
-              field="index"
+              field="code"
               header="№"
               headerStyle={{ width: '4rem' }}
               body={indexBodyTemplate}
+              sortable
             />
             <Column
               field="name"

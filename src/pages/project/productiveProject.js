@@ -47,7 +47,6 @@ const productiveProject = props => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const toolsStore = useToolsStore();
   const [selectedRows, setSelectedRows] = useState([]);
-  const [stateOrga, setStateOrga] = useState([]);
   const [status, setStatus] = useState();
   const [projectID, setProjectID] = useState();
   const history = useHistory();
@@ -87,11 +86,6 @@ const productiveProject = props => {
 
   useEffect(() => {
     onInit();
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrga(result.content || []);
-      }
-    });
     getService('projectStatus/get').then(result => {
       if (result) {
         setStatus(result || []);

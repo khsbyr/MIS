@@ -26,6 +26,7 @@ import { errorCatch } from '../../../../tools/Tools';
 import { useToolsStore } from '../../../../context/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './organization.style';
+import PhoneNumber from '../../../../components/PhoneNumber';
 
 const { Dragger } = Upload;
 
@@ -458,9 +459,7 @@ export default function OrganizationModal(props) {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Утас:" name="phone">
-                      <Input parser={value => value.substring(8, 12)} />
-                    </Form.Item>
+                    <PhoneNumber label="Утас:" name="phone" />
                   </Col>
                   <Col xs={24} md={24} lg={12}>
                     <Form.Item label="Е-майл хаяг:" name="email">
@@ -540,20 +539,7 @@ export default function OrganizationModal(props) {
                 </Row>
                 <Row>
                   <Col xs={24} md={24} lg={20}>
-                    <Form.Item
-                      label="Утасны дугаар:"
-                      name="RespoUserPhone"
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
-                      <InputNumber
-                        parser={value => value.substring(0, 12)}
-                        type="number"
-                      />
-                    </Form.Item>
+                    <PhoneNumber label="Утасны дугаар:" name="RespoUserPhone" />
                   </Col>
                 </Row>
                 <Row>
