@@ -169,7 +169,11 @@ const IndicatorsReport = () => {
   const addressBodyTemplate = row => (
     <>
       <span className="p-column-title">Хаяг</span>
-      {row.address.aimag.name}, {row.address.soum.name}
+      {row.address?.childrenAddress.map(z => (
+        <p>
+          {z.aimag.name}, {z.soum.name}
+        </p>
+      ))}
     </>
   );
   const dateBodyTemplate = row => (
@@ -182,11 +186,6 @@ const IndicatorsReport = () => {
     <>
       <span className="p-column-title">Үр дүн</span>
       {row.processResult}
-    </>
-  );
-  const fileBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Файл</span>
     </>
   );
 
@@ -301,7 +300,7 @@ const IndicatorsReport = () => {
             />
             <Column
               header="Огноо"
-              field="date"
+              field="dateFormat"
               body={dateBodyTemplate}
               sortable
               filter
@@ -312,15 +311,6 @@ const IndicatorsReport = () => {
               header="Үр дүн"
               field="processResult"
               body={processResultBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-              bodyStyle={{ textAlign: 'center' }}
-            />
-            <Column
-              header="Файл"
-              field=""
-              body={fileBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
