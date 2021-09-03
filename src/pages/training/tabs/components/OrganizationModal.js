@@ -384,7 +384,20 @@ export default function OrganizationModal(props) {
                       />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={24}>
+                  <Col xs={24} md={24} lg={12}>
+                    <Form.Item
+                      label="Захиралын регистр:"
+                      name="directorRegister"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={24} lg={12}>
                     <Form.Item
                       label="Эрх:"
                       name="roleId"
