@@ -84,10 +84,6 @@ const Report = () => {
     setIsModalVisible(true);
   };
 
-  const more = row => {
-    history.push(`/planDetail/${row.data.id}`);
-  };
-
   const handleDeleted = row => {
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
@@ -284,7 +280,6 @@ const Report = () => {
             paginator
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            onRowClick={more}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
