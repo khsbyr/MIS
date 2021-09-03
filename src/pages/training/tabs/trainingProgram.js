@@ -42,11 +42,11 @@ const TrainingProgram = props => {
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService(`training/get/${props.id}`, obj)
+      getService(`trainingProgram/get/${props.id}`, obj)
         .then(data => {
-          const dataList = data.trainingPrograms || [];
-          setOrgID(data.organization.id);
-          setTrainingID(data.id);
+          const dataList = data.content || [];
+          // setOrgID(dataList[0].training.organization.id);
+          setTrainingID(props.id);
           dataList.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });

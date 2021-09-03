@@ -216,14 +216,14 @@ const TrainingList = () => {
   const totalBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Төсөв</span>
-      {Formatcurrency(row.trainingBudget.totalBudget)}
+      {Formatcurrency(row.trainingBudget?.totalBudget)}
     </>
   );
 
   const performanceBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Гүйцэтгэлийн төсөв</span>
-      {Formatcurrency(row.trainingBudget.performanceBudget)}
+      {Formatcurrency(row.trainingBudget?.performanceBudget)}
     </>
   );
 

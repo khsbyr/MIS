@@ -36,7 +36,7 @@ const ConsultingOrg = () => {
   const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
-    size: PAGESIZE || 20,
+    size: 25,
   });
   const [totalRecords, setTotalRecords] = useState(0);
 
@@ -47,14 +47,14 @@ const ConsultingOrg = () => {
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService(`organization/get`, obj)
+      getService('organization/get', obj)
         .then(data => {
           const dataList = data.content || [];
           dataList.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });
-          setList(dataList);
           setTotalRecords(data.totalElements);
+          setList(dataList);
           toolsStore.setIsShowLoader(false);
         })
         .catch(error => {

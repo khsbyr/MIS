@@ -42,11 +42,10 @@ const Plan = props => {
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService(`training/get/${props.id}`, obj)
+      getService(`trainingTeam/getList/${props.id}`, obj)
         .then(data => {
-          const dataList = data.trainingTeams || [];
-          setOrgID(data.organization.id);
-          setTrainingID(data.id);
+          const dataList = data.content || [];
+          setTrainingID(props.id);
           dataList.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });
@@ -60,6 +59,10 @@ const Plan = props => {
           toolsStore.setIsShowLoader(false);
         });
     }, 500);
+    const obj = convertLazyParamsToObj(lazyParams);
+    getService(`training/get/${props.id}`, obj).then(data => {
+      setOrgID(data.organization.id);
+    });
   };
 
   useEffect(() => {

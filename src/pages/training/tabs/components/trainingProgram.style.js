@@ -79,7 +79,10 @@ const ContentWrapper = styled.div`
     border-color: blue;
   }
   .ant-picker-ok {
-    visibility: hidden;
+    display: none;
+  }
+  .ant-picker-footer {
+    display: none;
   }
 `;
 
