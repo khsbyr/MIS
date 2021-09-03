@@ -148,6 +148,7 @@ export default function TrainingProgramModal(props) {
                         style={{ width: '100%', height: '40px' }}
                         placeholder="Эхэлсэн огноо:"
                         className="FormItem"
+                        onOk={{ style: { display: 'none' } }}
                         onChange={onStartDateChange}
                         defaultValue={
                           isEditMode
@@ -161,6 +162,7 @@ export default function TrainingProgramModal(props) {
 
                     <Form.Item label="Дууссан огноо:">
                       <DatePicker
+                        allowClear
                         format="YYYY-MM-DD HH:mm"
                         showTime
                         prefix={<FontAwesomeIcon icon={faCalendarAlt} />}

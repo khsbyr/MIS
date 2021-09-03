@@ -34,6 +34,7 @@ const IndicatorsReport = () => {
   const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
+    size: PAGESIZE || 20,
   });
   const dt = useRef(null);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -188,6 +189,12 @@ const IndicatorsReport = () => {
       {row.processResult}
     </>
   );
+  const explanationBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Тайлбар</span>
+      {row.explanation}
+    </>
+  );
 
   return (
     <ContentWrapper>
@@ -315,6 +322,14 @@ const IndicatorsReport = () => {
               filter
               filterPlaceholder="Хайх"
               bodyStyle={{ textAlign: 'center' }}
+            />
+            <Column
+              header="Тайлбар"
+              field="explanation"
+              body={explanationBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

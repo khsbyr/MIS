@@ -10,6 +10,7 @@ import {
   Row,
   TreeSelect,
 } from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
@@ -149,7 +150,7 @@ export default function IndicatorsReportModal(props) {
         title="Шалгуур үзүүлэлтийн үр дүн бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
-        width={600}
+        width={800}
         alignItems="center"
         visible={isModalVisible}
         onOk={save}
@@ -248,6 +249,17 @@ export default function IndicatorsReportModal(props) {
                       isEditMode ? moment(IndicatorsReportcontroller.date) : ''
                     }
                   />
+                </Form.Item>
+                <Form.Item
+                  label="Тайлбар:"
+                  name="explanation"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <TextArea style={{ width: '100%', height: '80px' }} />
                 </Form.Item>
               </Col>
             </Row>

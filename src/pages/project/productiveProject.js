@@ -244,6 +244,14 @@ const productiveProject = props => {
     </>
   );
 
+  const typeBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Төрөл</span>
+      {row.innovationProjectType
+        ? row.innovationProjectType.name
+        : 'Тодорхойгүй'}
+    </>
+  );
   const getColor = id => {
     switch (id) {
       case 1:
@@ -459,6 +467,8 @@ const productiveProject = props => {
               sortable
               body={dateSentBodyTemplate}
             />
+            <Column header="Төрөл" field="" sortable body={typeBodyTemplate} />
+
             <Column
               field="projectStatus.name"
               header="Статус"

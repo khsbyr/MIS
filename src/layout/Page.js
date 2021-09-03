@@ -49,10 +49,10 @@ const Scope = loadable({
   loading: Loader,
 });
 
-// const Address = loadable({
-//   loader: () => import('../pages/directory/address'),
-//   loading: Loader,
-// });
+const Projecttype = loadable({
+  loader: () => import('../pages/directory/projecttype'),
+  loading: Loader,
+});
 
 const Customerside = loadable({
   loader: () => import('../pages/directory/customerside'),
@@ -133,8 +133,8 @@ const Page = ({ route }) => {
       /** Лавлах */
       case 'scope'.toLowerCase():
         return <Scope />;
-      // case 'address'.toLowerCase():
-      //   return <Address />;
+      case 'projecttype'.toLowerCase():
+        return <Projecttype />;
       case 'Party in charge'.toLowerCase():
         return <Customerside />;
       case 'Types of indicators'.toLowerCase():

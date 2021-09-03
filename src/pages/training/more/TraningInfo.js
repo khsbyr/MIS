@@ -24,7 +24,6 @@ export default function TraningInfo() {
   const { id } = useParams();
   const { setIsShowLoader } = useToolsStore();
   const { TrainingList, setTrainingList } = useTrainingStore();
-
   useEffect(() => {
     setIsShowLoader(true);
     getService(`/training/get/${id}`)
