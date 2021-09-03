@@ -1,22 +1,19 @@
-import { Edit } from '@material-ui/icons';
 import { Col, DatePicker, Form, Input, message, Modal, Row } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import MulticompleteSelect from '../../../components/MulticompleteSelect';
+import { PlanType } from '../../../constants/Constant';
 import { useCriteriaStore } from '../../../context/CriteriaContext';
 import { getService, postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 // eslint-disable-next-line import/no-named-as-default
 import ContentWrapper from './plan.style';
-import { PlanType } from '../../../constants/Constant';
-import { useToolsStore } from '../../../context/Tools';
 
 export default function PlanModal(props) {
   const { EditRow, isModalVisible, isEditMode } = props;
-  const toolsStore = useToolsStore();
   const [form] = Form.useForm();
   const { criteriaReferenceList } = useCriteriaStore();
   const [userList, setUserList] = useState();
@@ -42,16 +39,15 @@ export default function PlanModal(props) {
     });
 
     if (isEditMode) {
-      setPlanType(EditRow.typeId);
       getService(`planUser/getByPlan/${EditRow.id}`).then(result => {
         if (result) {
-          // setProjectUsers(result.map(z => z.user.id));
           result.forEach(z => {
             ProjectUsers.push(z.user.id);
           });
           setProjectUsers([...ProjectUsers]);
         }
       });
+      setPlanType(EditRow.typeId);
       setCriteriaReferenceId(EditRow.criteriaReference.id);
       form.setFieldsValue({
         ...EditRow,

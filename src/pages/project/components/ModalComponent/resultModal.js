@@ -15,10 +15,10 @@ export default function resultModal(props) {
     if (isEditMode) {
       form.setFieldsValue({
         ...EditRow,
-        areasOfActivity: EditRow.projectResult.areasOfActivity,
-        result: EditRow.projectResult.result,
-        yield: EditRow.projectResult.yield,
-        effect: EditRow.projectResult.effect,
+        areasOfActivity: EditRow.areasOfActivity,
+        result: EditRow.result,
+        yield: EditRow.yield,
+        effect: EditRow.effect,
       });
     }
   }, []);
@@ -28,7 +28,7 @@ export default function resultModal(props) {
       .validateFields()
       .then(values => {
         if (isEditMode) {
-          putService(`projectResult/update/${EditRow.projectResult.id}`, values)
+          putService(`projectResult/update/${EditRow.id}`, values)
             .then(() => {
               message.success('Амжилттай хадгаллаа');
               props.close(true);

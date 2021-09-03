@@ -1,4 +1,4 @@
-import { Col, Form, Input, InputNumber, message, Modal, Row } from 'antd';
+import { Col, Form, Input, message, Modal, Row } from 'antd';
 import React, { useEffect } from 'react';
 import CurrencyInput from 'react-currency-input';
 import { postService, putService } from '../../../../service/service';
@@ -9,31 +9,16 @@ import ContentWrapper from './Modal.style';
 export default function investmentModal(props) {
   const { EditRow, isModalVisible, isEditMode, summaryID } = props;
   const [form] = Form.useForm();
-  // const [total, setTotal] = useState(0);
-  // const [invest, setInvest] = useState(0);
-  // const [company, setCompany] = useState(0);
-
-  // const totalValue = value => {
-  //   setTotal(value);
-  // };
-
-  // const investValue = value => {
-  //   setInvest(value);
-  // };
-
-  // const companyValue = value => {
-  //   setCompany(value);
-  // };
 
   useEffect(() => {
     if (isEditMode) {
       form.setFieldsValue({
         ...EditRow,
-        operationExpense: EditRow.projectInvestment.operationExpense,
-        total: EditRow.projectInvestment.total,
-        costOfCompany: EditRow.projectInvestment.costOfCompany,
-        projectInvestment: EditRow.projectInvestment.projectInvestment,
-        description: EditRow.projectInvestment.description,
+        operationExpense: EditRow.operationExpense,
+        total: EditRow.total,
+        costOfCompany: EditRow.costOfCompany,
+        projectInvestment: EditRow.projectInvestment,
+        description: EditRow.description,
       });
     }
   }, []);
@@ -43,10 +28,7 @@ export default function investmentModal(props) {
       .validateFields()
       .then(values => {
         if (isEditMode) {
-          putService(
-            `projectInvestment/update/${EditRow.projectInvestment.id}`,
-            values
-          )
+          putService(`projectInvestment/update/${EditRow.id}`, values)
             .then(() => {
               message.success('Амжилттай хадгаллаа');
               props.close(true);
@@ -107,7 +89,6 @@ export default function investmentModal(props) {
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Form.Item label="Нийт  дүн:" name="total">
-                  {/* <InputNumber type="number" style={{ width: '100%' }} /> */}
                   <CurrencyInput precision="0" suffix=" ₮" />
                 </Form.Item>
                 <Form.Item

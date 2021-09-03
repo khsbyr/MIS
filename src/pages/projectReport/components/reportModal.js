@@ -1,19 +1,7 @@
-import {
-  Col,
-  DatePicker,
-  Form,
-  Input,
-  message,
-  Modal,
-  Row,
-  Select,
-} from 'antd';
+import { Col, Form, message, Modal, Row, Select } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
-import MulticompleteSelect from '../../../components/MulticompleteSelect';
-import { useCriteriaStore } from '../../../context/CriteriaContext';
 import { getService, postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
@@ -27,7 +15,7 @@ export default function ReportModal(props) {
   const [form] = Form.useForm();
   const [planList, setPlanList] = useState();
   const [selectedPlan, setSelectedPlan] = useState([]);
-  const [processValue, setProcessValue] = useState();
+  const [, setProcessValue] = useState();
 
   useEffect(() => {
     getService('plan/get').then(result => {

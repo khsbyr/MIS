@@ -10,19 +10,17 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import moment from 'moment';
-import { addLocale } from 'primereact/api';
-import { Calendar } from 'primereact/calendar';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { Dropdown } from 'primereact/dropdown';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import AutoCompleteSelect from '../../components/Autocomplete';
+import RenderDateFilter from '../../components/renderDateFilter';
 import { PAGESIZE, PlanType } from '../../constants/Constant';
 import { useCriteriaStore } from '../../context/CriteriaContext';
 import { ToolsContext } from '../../context/Tools';
-import { getService, putService, deleteService } from '../../service/service';
+import { deleteService, getService } from '../../service/service';
 import {
   convertLazyParamsToObj,
   errorCatch,
@@ -30,7 +28,6 @@ import {
 } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
 import PlanModal from './components/planModal';
-import RenderDateFilter from '../../components/renderDateFilter';
 
 const { Content } = Layout;
 
@@ -52,7 +49,6 @@ const Plan = () => {
   });
   const [totalRecords, setTotalRecords] = useState(0);
   const dt = useRef(null);
-  const [dateFilter, setDateFilter] = useState(null);
 
   let loadLazyTimeout = null;
 
