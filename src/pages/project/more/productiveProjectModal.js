@@ -51,6 +51,7 @@ export default function productiveProjectModal(props) {
   const [, setSelectedOrg] = useState();
   const [selectedProjectOrg, setSelectedProjectOrg] = useState([]);
   const [valueAddress, setValueAddress] = useState(undefined);
+  const [criteriaIds, setCriteriaIds] = useState([]);
 
   const ProjectOrgList =
     ProductiveController &&
@@ -109,6 +110,18 @@ export default function productiveProjectModal(props) {
         setCriteriaList(result || []);
       }
     });
+    if (isEditMode) {
+      getService(
+        `projectCriteria/getCriteriaListByProjectId/${ProductiveController?.id}`
+      ).then(result => {
+        if (result) {
+          result.forEach(criteria => {
+            criteriaIds.push(criteria.code);
+          });
+          setCriteriaIds([...criteriaIds]);
+        }
+      });
+    }
     getService('organization/get').then(result => {
       if (result) {
         setStateOrg(result.content || []);

@@ -1,93 +1,53 @@
 import { Descriptions } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
+import moment from 'moment';
 import { useProjectStore } from '../../../context/ProjectContext';
 import ContentWrapper from '../../project/more/briefDraft.style';
+import { useToolsStore } from '../../../context/Tools';
+import { getService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
 
-function mainInfo() {
-  const { ProjectList } = useProjectStore();
+function mainInfo(props) {
+  const { PlanList, setPlanList } = useProjectStore();
+  const { setIsShowLoader } = useToolsStore();
+
+  useEffect(() => {
+    setIsShowLoader(true);
+    getService(`/plan/get/${props.id}`)
+      .then(result => {
+        setPlanList(result);
+      })
+      .finally(setIsShowLoader(false))
+      .catch(error => {
+        errorCatch(error);
+        setIsShowLoader(false);
+      });
+  }, []);
 
   return (
     <div>
       <ContentWrapper>
-        <p style={{ fontSize: '18px' }}>Төслийн мэдээлэл</p>
         <Descriptions bordered column={1}>
           <Descriptions.Item
-            label="Төслийн нэр"
+            label="Төлөвлөгөөний нэр"
             contentStyle={{ width: '65%' }}
           >
-            {ProjectList.projectName}
+            {PlanList?.name}
           </Descriptions.Item>
-          <Descriptions.Item label="Төсөл хэрэгжих байршил:">
-            {ProjectList.address?.childrenAddress.map(z => (
-              <p>
-                {z.aimag.name}, {z.soum.name}
-              </p>
-            ))}
+          <Descriptions.Item label="Бүрэлдэхүүн хэсэг">
+            {PlanList?.criteriaReference?.name}
           </Descriptions.Item>
-          <Descriptions.Item label="Төсөл хэрэгжүүлэх хугацаа">
-            {ProjectList.period}
+          <Descriptions.Item label="Эхлэх огноо">
+            {moment(PlanList?.startDate).format('YYYY-M-D')}
           </Descriptions.Item>
-        </Descriptions>
-
-        <p style={{ fontSize: '18px', marginTop: '50px' }}>
-          Байгууллагын мэдээлэл
-        </p>
-        <Descriptions bordered column={1}>
-          <Descriptions.Item
-            label="Байгууллагын нэр"
-            contentStyle={{ width: '65%' }}
-          >
-            {ProjectList.organization && ProjectList.organization.name}
+          <Descriptions.Item label="Дуусах огноо">
+            {moment(PlanList?.endDate).format('YYYY-M-D')}
           </Descriptions.Item>
-          <Descriptions.Item label="Байгууллагын pегистрийн дугаар:">
-            {ProjectList.organization &&
-              ProjectList.organization.registerNumber}
+          <Descriptions.Item label="Төслийн хөгжлийн зорилт, дунд хугацааны шалгуур үзүүлэлтэд хамаарах үр дүн">
+            {PlanList?.target}
           </Descriptions.Item>
-          <Descriptions.Item label="Байгууллагын улсын бүртгэлийн гэрчилгээний дугаар">
-            {ProjectList.organization &&
-              ProjectList.organization.certificateNumber}
-          </Descriptions.Item>
-          <Descriptions.Item label="Байгуулагдсан он">
-            {ProjectList.organization && ProjectList.organization.foundedYear}
-          </Descriptions.Item>
-          <Descriptions.Item label="Эрх бүхий этгээд / Холбогдох ажилтан нэр">
-            {ProjectList.organization &&
-              ProjectList.organization.responsibleUser.firstname}
-          </Descriptions.Item>
-          <Descriptions.Item label="Хаяг (Төв  оффис болон зорилтот сумд дахь салбарын хаяг)">
-            {ProjectList.organization &&
-              ProjectList.organization.address.country.name}
-            ,{' '}
-            {ProjectList.organization &&
-              ProjectList.organization.address.aimag.name}
-            ,{' '}
-            {ProjectList.organization &&
-              ProjectList.organization.address.soum.name}
-            ,{' '}
-            {ProjectList.organization &&
-              ProjectList.organization.address.bag.name}
-          </Descriptions.Item>
-          <Descriptions.Item label="Утасны дугаар">
-            {ProjectList.organization && ProjectList.organization.phone}
-          </Descriptions.Item>
-          <Descriptions.Item label="Цахим шуудангийн хаяг">
-            {ProjectList.organization && ProjectList.organization.email}
-          </Descriptions.Item>
-        </Descriptions>
-
-        <p style={{ fontSize: '18px', marginTop: '50px' }}>Бусад мэдээлэл</p>
-        <Descriptions bordered column={1}>
-          <Descriptions.Item
-            label="Өргөдөл гаргагчийн туршлага болон үйл ажиллагааны чиглэл"
-            contentStyle={{ width: '65%' }}
-          >
-            {ProjectList && ProjectList.expierenceActivity}
-          </Descriptions.Item>
-          <Descriptions.Item label="Өргөдөл гаргагчийн санал болгож буй үйл ажиллагааны чиглэл">
-            {ProjectList && ProjectList.proposedActivity}
-          </Descriptions.Item>
-          <Descriptions.Item label="Хамтран ажиллах түншлэгч байгууллагатай бол үйл ажиллагааны төрөл болон бусад дэлгэрэнгүй мэдээлэл">
-            {ProjectList && ProjectList.partnerActivity}
+          <Descriptions.Item label="Тайлбар">
+            {PlanList?.description}
           </Descriptions.Item>
         </Descriptions>
       </ContentWrapper>
