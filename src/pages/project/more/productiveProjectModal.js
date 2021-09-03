@@ -141,7 +141,11 @@ export default function productiveProjectModal(props) {
       setSelectedProjectOrg(projectOrgs);
       setValueAddress(ProjectChildrenAddress);
       setCriteriaListMulti(criteriaIds);
-      setInnovationProjectTypeId(ProductiveController.innovationProjectType.id);
+      setInnovationProjectTypeId(
+        ProductiveController.innovationProjectType
+          ? ProductiveController.innovationProjectType.id
+          : null
+      );
       form.setFieldsValue({
         ...ProductiveController,
         AimagID: ProductiveController.address?.aimag?.id,
