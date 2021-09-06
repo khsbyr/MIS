@@ -21,6 +21,7 @@ import {
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './trainingProgram.style';
+import { DATEFORMAT } from '../../../../constants/Constant';
 
 const { Option } = Select;
 const layout = {
@@ -152,9 +153,9 @@ export default function TrainingProgramModal(props) {
                         onChange={onStartDateChange}
                         defaultValue={
                           isEditMode
-                            ? moment(Trainingprogramcontroller.startDate).zone(
-                                0
-                              )
+                            ? moment(
+                                Trainingprogramcontroller.startDate
+                              ).format(DATEFORMAT)
                             : null
                         }
                       />
@@ -172,7 +173,7 @@ export default function TrainingProgramModal(props) {
                         onChange={onEndDateChange}
                         defaultValue={
                           isEditMode
-                            ? moment(Trainingprogramcontroller.endDate).zone(0)
+                            ? moment(Trainingprogramcontroller.endDate)
                             : null
                         }
                       />
