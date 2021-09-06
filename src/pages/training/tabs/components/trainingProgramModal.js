@@ -49,11 +49,13 @@ export default function TrainingProgramModal(props) {
   }
 
   useEffect(() => {
-    getService(`trainingTeam/getList/${trainingID}`).then(result => {
-      if (result) {
-        setStateTrainers(result.content || []);
+    getService(`trainingTeam/getListWithoutOverlap/${trainingID}`).then(
+      result => {
+        if (result) {
+          setStateTrainers(result.content || []);
+        }
       }
-    });
+    );
     if (isEditMode) {
       setStartDate(Trainingprogramcontroller.startDate);
       setEndDate(Trainingprogramcontroller.endDate);
