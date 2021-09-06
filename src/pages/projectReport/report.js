@@ -171,6 +171,13 @@ const Report = () => {
     </>
   );
 
+  const firstnameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Төлөвлөгөөний нэр</span>
+      {row.user.firstname}
+    </>
+  );
+
   const indicatorProcessBodyTemplate = row => (
     <>
       <span className="p-column-title">Гүйцэтгэл</span>
@@ -306,6 +313,15 @@ const Report = () => {
               field="name"
               header="Төлөвлөгөөний нэр"
               body={nameBodyTemplate}
+              filter
+              sortable
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
+            />
+            <Column
+              field="firstname"
+              header="Гүйцэтгэгч"
+              body={firstnameBodyTemplate}
               filter
               sortable
               filterPlaceholder="Хайх"

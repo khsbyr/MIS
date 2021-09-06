@@ -55,13 +55,6 @@ export default function TrainingModal(props) {
   }
 
   useEffect(() => {
-    getService(`training/getCriteriaList/${trainingID}`).then(result => {
-      if (result) {
-        setSelectedCriteria(result?.map(z => selectedCriteria.push(z.id)));
-        setSelectedCriteria([...selectedCriteria]);
-      }
-    });
-
     getService('criteria/getListByForWhatId/1').then(result => {
       if (result) {
         setStateCriteria(result || []);
@@ -73,15 +66,21 @@ export default function TrainingModal(props) {
       }
     });
     if (isEditMode) {
+      getService(`training/getCriteriaList/${trainingID}`).then(result => {
+        if (result) {
+          setSelectedCriteria(result?.map(z => selectedCriteria.push(z.id)));
+          setSelectedCriteria([...selectedCriteria]);
+        }
+      });
       setStartDate(Trainingcontroller.trainingStartDate);
       setEndDate(Trainingcontroller.trainingEndDate);
       setValueAddress(ProjectChildrenAddress);
       form.setFieldsValue({
         ...Trainingcontroller,
         // CriteriaID: selectedCriteria,
-        // orgID: Trainingcontroller.organization
-        //   ? Trainingcontroller.organization.id
-        //   : '',
+        orgID: Trainingcontroller.organization
+          ? Trainingcontroller.organization.id
+          : '',
         AimagID: Trainingcontroller.address?.aimag?.id,
         SoumID: Trainingcontroller.address?.soum?.id,
         totalBudget: Trainingcontroller.trainingBudget
