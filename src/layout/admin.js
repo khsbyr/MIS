@@ -91,8 +91,6 @@ function Admin() {
     }
   }, []);
 
-  console.log(toolsStore.user);
-
   return (
     <Router history={history}>
       <Layout>

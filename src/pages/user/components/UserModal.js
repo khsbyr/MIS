@@ -17,8 +17,6 @@ export default function UserModal(props) {
   const [stateTrue, setStateTrue] = useState();
   const [stateRole, setStateRole] = useState();
 
-  console.log(Usercontroller);
-
   useEffect(() => {
     getService('role/get').then(result => {
       if (result) {
