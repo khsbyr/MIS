@@ -13,6 +13,7 @@ function Guidelines() {
   const [form] = Form.useForm();
 
   useEffect(() => {
+    console.log(TrainingList.training_guidelines);
     form.setFieldsValue({
       ...(TrainingList && TrainingList.training_guidelines),
       subject: TrainingList?.training_guidelines?.subject,
