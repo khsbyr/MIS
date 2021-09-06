@@ -54,7 +54,7 @@ function Admin() {
       if (!toolsStore.orgList) {
         getService('organization/getAll').then(resultOrg => {
           if (resultOrg) {
-            toolsStore.setOrgList(resultOrg.content || []);
+            toolsStore.setOrgList(resultOrg || []);
           }
         });
       }

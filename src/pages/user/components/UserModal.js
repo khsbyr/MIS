@@ -228,6 +228,12 @@ export default function UserModal(props) {
                 name="AimagID"
                 layout="vertical"
                 label="Аймаг, Нийслэл:"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Энэ хэсгийг заавал бөглөнө үү!',
+                  },
+                ]}
               >
                 <AutoCompleteSelect
                   valueField="id"
@@ -238,7 +244,17 @@ export default function UserModal(props) {
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
-              <Form.Item name="SoumID" layout="vertical" label="Сум, Дүүрэг:">
+              <Form.Item
+                name="SoumID"
+                layout="vertical"
+                label="Сум, Дүүрэг:"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Энэ хэсгийг заавал бөглөнө үү!',
+                  },
+                ]}
+              >
                 <AutoCompleteSelect
                   valueField="id"
                   data={stateSum}
@@ -248,7 +264,17 @@ export default function UserModal(props) {
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
-              <Form.Item name="BagID" layout="vertical" label="Баг, Хороо:">
+              <Form.Item
+                name="BagID"
+                layout="vertical"
+                label="Баг, Хороо:"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Энэ хэсгийг заавал бөглөнө үү!',
+                  },
+                ]}
+              >
                 <AutoCompleteSelect
                   valueField="id"
                   data={stateBag}
