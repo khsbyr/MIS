@@ -91,8 +91,6 @@ function Admin() {
     }
   }, []);
 
-  console.log(toolsStore.user);
-
   return (
     <Router history={history}>
       <Layout>
@@ -115,7 +113,7 @@ function Admin() {
           }}
         >
           {localStorage.getItem('orgName') === '' &&
-          toolsStore.user.roleId !== 1 ? (
+          toolsStore.user?.roleId !== 1 ? (
             <OrganizationModal
               isModalVisible={isModalVisible}
               close={closeModal}
