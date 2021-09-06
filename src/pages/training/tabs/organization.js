@@ -223,7 +223,7 @@ const Organization = props => {
                       </Button>
                     </Tooltip>
                   </Col> */}
-                  <Col>
+                  {/* <Col>
                     <Tooltip title={t('add')} arrowPointAtCenter>
                       <Button
                         type="text"
@@ -234,7 +234,7 @@ const Organization = props => {
                         {' '}
                       </Button>
                     </Tooltip>
-                  </Col>
+                  </Col> */}
                 </Row>
               </Col>
             </Row>

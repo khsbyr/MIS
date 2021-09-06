@@ -384,7 +384,6 @@ const TrainingList = () => {
               <Column
                 field="trainingBudget.totalBudget"
                 header="Төсөв /₮/"
-                headerStyle={{ width: '10rem' }}
                 filter
                 filterPlaceholder="Хайх"
                 sortable
@@ -396,7 +395,6 @@ const TrainingList = () => {
                 field="trainingBudget.performanceBudget"
                 header="Төсвийн гүйцэтгэл /₮/"
                 filterPlaceholder="Хайх"
-                headerStyle={{ width: '12rem' }}
                 filter
                 sortable
                 body={performanceBudgetBodyTemplate}
@@ -407,7 +405,6 @@ const TrainingList = () => {
                 field="trainingStartDate"
                 header="Эхэлсэн огноо"
                 sortable
-                headerStyle={{ width: '10rem' }}
                 body={startDateBodyTemplate}
                 bodyStyle={{ textAlign: 'center' }}
               />
@@ -415,7 +412,6 @@ const TrainingList = () => {
                 field="trainingEndDate"
                 header="Дууссан огноо"
                 sortable
-                headerStyle={{ width: '10rem' }}
                 body={endDateBodyTemplate}
                 bodyStyle={{ textAlign: 'center' }}
               />
@@ -423,7 +419,6 @@ const TrainingList = () => {
                 field="totalParticipants"
                 header="Оролцогчдын тоо"
                 filterPlaceholder="Хайх"
-                headerStyle={{ width: '10rem' }}
                 filter
                 sortable
                 body={participantBodyTemplate}
