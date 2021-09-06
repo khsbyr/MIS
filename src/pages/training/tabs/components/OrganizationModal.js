@@ -305,7 +305,7 @@ export default function OrganizationModal(props) {
                           borderRadius: '3px',
                         }}
                         defaultValue={
-                          isEditMode
+                          isEditMode && Orgcontroller?.foundedYear
                             ? moment(Orgcontroller?.foundedYear, dateFormat)
                             : null
                         }
