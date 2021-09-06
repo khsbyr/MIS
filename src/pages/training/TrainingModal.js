@@ -75,6 +75,7 @@ export default function TrainingModal(props) {
       setStartDate(Trainingcontroller.trainingStartDate);
       setEndDate(Trainingcontroller.trainingEndDate);
       setValueAddress(ProjectChildrenAddress);
+      setSelectedCriteria(selectedCriteria);
       form.setFieldsValue({
         ...Trainingcontroller,
         // CriteriaID: selectedCriteria,
@@ -144,7 +145,7 @@ export default function TrainingModal(props) {
         if (isEditMode) {
           const saveData = {
             training: values,
-            criteriaIds: values.CriteriaID,
+            criteriaIds: selectedCriteria,
             totalBudget: values.totalBudget,
             soumList: valueAddress,
           };
@@ -159,7 +160,7 @@ export default function TrainingModal(props) {
         } else {
           const saveData = {
             training: values,
-            criteriaIds: values.CriteriaID,
+            criteriaIds: selectedCriteria,
             totalBudget: values.totalBudget,
             soumList: valueAddress,
           };
