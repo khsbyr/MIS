@@ -113,7 +113,7 @@ function Admin() {
           }}
         >
           {localStorage.getItem('orgName') === '' &&
-          toolsStore.user.roleId !== 1 ? (
+          toolsStore.user?.roleId !== 1 ? (
             <OrganizationModal
               isModalVisible={isModalVisible}
               close={closeModal}

@@ -284,7 +284,7 @@ const signUpRequest = () => {
             />
             <Column
               field="user.role.name"
-              header="Дүр"
+              header="Эрх"
               sortable
               filter
               filterPlaceholder="Хайх"
