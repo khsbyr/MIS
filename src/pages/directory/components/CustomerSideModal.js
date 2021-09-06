@@ -1,4 +1,4 @@
-import { Form, Input, Modal } from 'antd';
+import { Form, Input, Modal, message } from 'antd';
 import React, { useEffect } from 'react';
 // import AutoCompleteSelect from '../../../components/Autocomplete';
 import { postService, putService } from '../../../service/service';
@@ -33,6 +33,7 @@ export default function CustomerSideModal(props) {
         if (isEditMode) {
           putService(`customerSide/update/${Customersidecontroller.id}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -41,6 +42,7 @@ export default function CustomerSideModal(props) {
         } else {
           postService('customerSide/post', values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {

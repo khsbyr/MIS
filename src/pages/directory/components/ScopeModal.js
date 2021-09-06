@@ -1,4 +1,4 @@
-import { Form, Input, Modal } from 'antd';
+import { Form, Input, Modal, message } from 'antd';
 import React, { useEffect } from 'react';
 import { postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
@@ -26,6 +26,7 @@ export default function ScopeModal(props) {
         if (isEditMode) {
           putService(`scope/update/${Scopecontroller.id}`, values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -34,6 +35,7 @@ export default function ScopeModal(props) {
         } else {
           postService('scope/post', values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {

@@ -1,4 +1,4 @@
-import { Form, Input, Modal } from 'antd';
+import { Form, Input, Modal, message } from 'antd';
 import React, { useEffect } from 'react';
 // import AutoCompleteSelect from '../../../components/Autocomplete';
 import { postService, putService } from '../../../service/service';
@@ -36,6 +36,7 @@ export default function ProjecttypeModal(props) {
             values
           )
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
@@ -44,6 +45,7 @@ export default function ProjecttypeModal(props) {
         } else {
           postService('innovationProjectType/post', values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
