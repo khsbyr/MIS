@@ -69,28 +69,28 @@ const signUpRequest = () => {
   const firstnameBodyTemplate = row => (
     <>
       <span className="p-column-title">Нэр</span>
-      {row.user.firstname}
+      {row.user.firstname ? row.user?.firstname : 'Тодорхойгүй'}
     </>
   );
 
   const lastnameBodyTemplate = row => (
     <>
       <span className="p-column-title">Овог</span>
-      {row.user.lastname}
+      {row.user.lastname ? row.user?.lastname : 'Тодорхойгүй'}
     </>
   );
 
   const registerBodyTemplate = row => (
     <>
       <span className="p-column-title">Регистрийн дугаар</span>
-      {row.user.register}
+      {row.user.register ? row.user?.register : 'Тодорхойгүй'}
     </>
   );
 
   const emailBodyTemplate = row => (
     <>
       <span className="p-column-title">Й-мэйл</span>
-      {row.user.email}
+      {row.user.email ? row.user?.email : 'Тодорхойгүй'}
     </>
   );
 
