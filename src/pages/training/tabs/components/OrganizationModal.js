@@ -45,7 +45,7 @@ export default function OrganizationModal(props) {
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const [responsibleUserID, setResponsibleUserID] = useState(null);
-  const [role, setRole] = useState([]);
+  // const [role, setRole] = useState([]);
   const [, setRoleID] = useState([]);
   const [foundedDate, setFoundedDate] = useState([]);
 
@@ -60,11 +60,11 @@ export default function OrganizationModal(props) {
       }
     });
 
-    getService('role/getAdmin').then(result => {
-      if (result) {
-        setRole(result || []);
-      }
-    });
+    // getService('role/getAdmin').then(result => {
+    //   if (result) {
+    //     setRole(result || []);
+    //   }
+    // });
 
     getService('currency/get').then(result => {
       if (result) {
@@ -130,9 +130,9 @@ export default function OrganizationModal(props) {
     }
   }, []);
 
-  const selectRole = value => {
-    setRoleID(value);
-  };
+  // const selectRole = value => {
+  //   setRoleID(value);
+  // };
 
   const getSum = aimagId => {
     getService(`soum/getList/${aimagId}`, {}).then(result => {
@@ -164,7 +164,7 @@ export default function OrganizationModal(props) {
       .then(values => {
         values.foundedYear = foundedDate;
         values.bank = { id: values.bankID };
-        values.currency = { id: values.Currency };
+        values.currency = { id: 17 };
         values.address = {
           addressDetail: values.AddressDetail,
           country: {
@@ -380,6 +380,7 @@ export default function OrganizationModal(props) {
                     >
                       <AutoCompleteSelect
                         valueField="id"
+                        defaultValue={[17]}
                         data={stateCurrency}
                       />
                     </Form.Item>
@@ -395,23 +396,6 @@ export default function OrganizationModal(props) {
                       ]}
                     >
                       <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} md={24} lg={12}>
-                    <Form.Item
-                      label="Эрх:"
-                      name="roleId"
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
-                      <AutoCompleteSelect
-                        valueField="id"
-                        data={role}
-                        onChange={value => selectRole(value)}
-                      />
                     </Form.Item>
                   </Col>
                 </Row>
