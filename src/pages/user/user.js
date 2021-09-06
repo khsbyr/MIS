@@ -24,6 +24,7 @@ const { Content } = Layout;
 
 let isEditMode;
 let loadLazyTimeout = null;
+let editRow;
 
 const User = () => {
   const { t } = useTranslation();
@@ -37,7 +38,6 @@ const User = () => {
     size: PAGESIZE || 20,
   });
   const dt = useRef(null);
-  const [selectedRow, setSelectedRow] = useState({});
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
@@ -72,10 +72,12 @@ const User = () => {
     isEditMode = false;
   };
 
-  const edit = row => {
+  const edit = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
+    editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
-    setSelectedRow(row.data);
   };
 
   const onPage = event => {
@@ -138,7 +140,7 @@ const User = () => {
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
+        onClick={event => edit(event, row)}
       />
       <Button
         type="text"
@@ -163,27 +165,34 @@ const User = () => {
   const firstnameBodyTemplate = row => (
     <>
       <span className="p-column-title">Нэр</span>
-      {row.firstname}
+      {row?.firstname ? row?.firstname : 'Тодорхойгүй'}
     </>
   );
 
   const lastnameBodyTemplate = row => (
     <>
       <span className="p-column-title">Овог</span>
-      {row.lastname}
+      {row?.lastname ? row?.lastname : 'Тодорхойгүй'}
     </>
   );
 
   const registerBodyTemplate = row => (
     <>
       <span className="p-column-title">Регистрийн дугаар</span>
-      {row.register}
+      {row?.register ? row?.register : 'Тодорхойгүй'}
     </>
   );
   const emailBodyTemplate = row => (
     <>
       <span className="p-column-title">Й-мэйл</span>
-      {row.email}
+      {row?.email ? row?.email : 'Тодорхойгүй'}
+    </>
+  );
+
+  const roleBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Й-мэйл</span>
+      {row.role ? row.role.name : 'Тодорхойгүй'}
     </>
   );
 
@@ -262,7 +271,7 @@ const User = () => {
             filters={lazyParams.filters}
             emptyMessage="Өгөгдөл олдсонгүй..."
             tableStyle={{ minWidth: 1000 }}
-            onRowClick={edit}
+            // onRowClick={edit}
             className="p-datatable-responsive-demo"
           >
             <Column
@@ -310,6 +319,7 @@ const User = () => {
             <Column
               field="role.name"
               header="Эрх"
+              body={roleBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
@@ -319,7 +329,7 @@ const User = () => {
           </DataTable>
           {isModalVisible && (
             <UserModal
-              Usercontroller={selectedRow}
+              Usercontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
