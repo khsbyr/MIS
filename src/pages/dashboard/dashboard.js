@@ -1,12 +1,18 @@
+import { message } from 'antd';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import React from 'react';
 import mapDataMongolia from './mapDataMongolia';
-import ContentWrapper from './more/map.style';
+import CountryInfo from './more/countryInfo';
+import DashboardDetail from './more/dashboardDetail';
 
 require('highcharts/modules/map')(Highcharts);
 
 function dashboard() {
+  function popup(e) {
+    e.point.zoomTo();
+  }
+
   const data = [
     ['mn-da', 0],
     ['mn-ub', 1],
@@ -35,10 +41,10 @@ function dashboard() {
   const mapOptions = {
     colorAxis: {
       min: 0,
-      max: 8,
+      max: 31,
     },
     title: {
-      text: 'MIS',
+      text: '',
     },
     legend: { enabled: false },
     credits: {
@@ -46,22 +52,37 @@ function dashboard() {
     },
     chart: {
       align: 'left',
+      backgroundColor: '#283047',
+      map: mapDataMongolia,
+    },
+    plotOptions: {
+      map: {
+        tooltip: {
+          headerFormat: '',
+          pointFormat: '<b>{point.name}</b>',
+        },
+      },
     },
     mapNavigation: {
       enabled: true,
       buttonOptions: {
-        verticalAlign: 'bottom',
+        theme: {
+          r: 8,
+        },
+        verticalAlign: 'top',
       },
     },
     series: [
       {
         events: {
           click(e) {
-            e.point.zoomTo();
+            popup(e);
           },
         },
+        threshold: 0,
         cursor: 'pointer',
-        mapData: mapDataMongolia,
+        borderWidth: 0.2,
+        borderColor: '#283047',
         data,
         name: 'dasdasd',
         states: {
@@ -70,6 +91,13 @@ function dashboard() {
           },
         },
         dataLabels: {
+          style: {
+            textOutline: 0,
+            color: 'white',
+            textShadow: false,
+            fontSize: '14px',
+            fontWeight: '300',
+          },
           enabled: true,
           format: '{point.name}',
         },
@@ -84,9 +112,10 @@ function dashboard() {
         constructorType="mapChart"
         highcharts={Highcharts}
         containerProps={{
-          style: { height: '650px' },
+          style: { height: '100vh' },
         }}
       />
+      <DashboardDetail />;
     </div>
   );
 }
