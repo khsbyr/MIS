@@ -78,7 +78,7 @@ const TrainingList = () => {
           message.error(error.toString());
           toolsStore.setIsShowLoader(false);
         });
-    }, 500);
+    }, 1000);
   };
 
   useEffect(() => {
