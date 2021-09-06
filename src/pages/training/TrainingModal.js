@@ -38,12 +38,9 @@ export default function TrainingModal(props) {
   const [startDate, setStartDate] = useState([]);
   const [endDate, setEndDate] = useState([]);
   const [stateCriteria, setStateCriteria] = useState([]);
-  const [selectedCriteria, setSelectedCriteria] = useState();
+  const [selectedCriteria, setSelectedCriteria] = useState([]);
   const [valueAddress, setValueAddress] = useState(undefined);
   const [stateAimag, setStateAimag] = useState([]);
-  const selectedCriterias = Trainingcontroller?.trainingCriteria.map(
-    z => z.criteriasId
-  );
 
   const ProjectChildrenAddress =
     Trainingcontroller &&
@@ -58,42 +55,13 @@ export default function TrainingModal(props) {
   }
 
   useEffect(() => {
-    if (trainingID) {
-      getService(`training/getCriteriaList/${trainingID}`).then(result => {
-        if (result) {
-          const list = result || [];
-          setSelectedCriteria(list);
-          if (isEditMode) {
-            setStartDate(Trainingcontroller.trainingStartDate);
-            setEndDate(Trainingcontroller.trainingEndDate);
-            setValueAddress(ProjectChildrenAddress);
-            form.setFieldsValue({
-              ...Trainingcontroller,
-              CriteriaID: list.map(item => item.id),
-              orgID: Trainingcontroller.organization
-                ? Trainingcontroller.organization.id
-                : '',
-              AimagID: Trainingcontroller.address?.aimag?.id,
-              SoumID: Trainingcontroller.address?.soum?.id,
-              totalBudget: Trainingcontroller.trainingBudget
-                ? Trainingcontroller.trainingBudget.totalBudget
-                : '',
-              performanceBudget: Trainingcontroller.trainingBudget
-                ? Trainingcontroller.trainingBudget.performanceBudget
-                : '',
-              trainingStartDate: Trainingcontroller
-                ? Trainingcontroller.trainingStartDate
-                : '',
-              trainingEndDate: Trainingcontroller
-                ? Trainingcontroller.trainingEndDate
-                : '',
-            });
-          }
-        }
-      });
-    } else {
-      setSelectedCriteria([]);
-    }
+    getService(`training/getCriteriaList/${trainingID}`).then(result => {
+      if (result) {
+        setSelectedCriteria(result?.map(z => selectedCriteria.push(z.id)));
+        setSelectedCriteria([...selectedCriteria]);
+      }
+    });
+
     getService('criteria/getListByForWhatId/1').then(result => {
       if (result) {
         setStateCriteria(result || []);
@@ -104,6 +72,32 @@ export default function TrainingModal(props) {
         setStateAimag(result || []);
       }
     });
+    if (isEditMode) {
+      setStartDate(Trainingcontroller.trainingStartDate);
+      setEndDate(Trainingcontroller.trainingEndDate);
+      setValueAddress(ProjectChildrenAddress);
+      form.setFieldsValue({
+        ...Trainingcontroller,
+        // CriteriaID: selectedCriteria,
+        // orgID: Trainingcontroller.organization
+        //   ? Trainingcontroller.organization.id
+        //   : '',
+        AimagID: Trainingcontroller.address?.aimag?.id,
+        SoumID: Trainingcontroller.address?.soum?.id,
+        totalBudget: Trainingcontroller.trainingBudget
+          ? Trainingcontroller.trainingBudget.totalBudget
+          : '',
+        performanceBudget: Trainingcontroller.trainingBudget
+          ? Trainingcontroller.trainingBudget.performanceBudget
+          : '',
+        trainingStartDate: Trainingcontroller
+          ? Trainingcontroller.trainingStartDate
+          : '',
+        trainingEndDate: Trainingcontroller
+          ? Trainingcontroller.trainingEndDate
+          : '',
+      });
+    }
   }, [Trainingcontroller, form, isEditMode]);
 
   const onChangeAddress = value => {
@@ -216,10 +210,10 @@ export default function TrainingModal(props) {
                       name="CriteriaID"
                       valuePropName="option"
                     >
-                      {selectedCriterias ? (
+                      {isEditMode ? (
                         <MulticompleteSelect
                           data={stateCriteria}
-                          defaultValue={selectedCriterias}
+                          defaultValue={selectedCriteria}
                           valueField="id"
                           size="medium"
                           onChange={value => SelectCriteria(value)}

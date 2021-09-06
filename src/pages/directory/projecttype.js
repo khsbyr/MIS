@@ -14,27 +14,30 @@ import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../context/Tools';
-import { getService, putService } from '../../service/service';
+import { deleteService, getService } from '../../service/service';
 import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
-import ConsultingPersonModal from './components/ConsultingPersonModal';
+// import OrgaStyle from '../training/tabs/components/orga.style';
+// import AutoCompleteSelect from '../../components/Autocomplete';
 import { PAGESIZE } from '../../constants/Constant';
+import ProjecttypeModal from './components/ProjectTypeModal';
 
+// function onChange(date, dateString) {
+//   console.log(date, dateString);
+// }
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-let trainerID;
 let loadLazyTimeout = null;
 
-const ConsultingPerson = () => {
+const Projecttype = () => {
   const { t } = useTranslation();
-  const dt = useRef(null);
-  const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [OrgID] = useState([]);
+  const toolsStore = useContext(ToolsContext);
+  const dt = useRef(null);
   const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
@@ -49,7 +52,7 @@ const ConsultingPerson = () => {
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService(`user/getAllPersonUserList`, obj)
+      getService('innovationProjectType/get', obj)
         .then(data => {
           const dataList = data || [];
           dataList.forEach((item, index) => {
@@ -59,7 +62,6 @@ const ConsultingPerson = () => {
           setList(dataList);
           toolsStore.setIsShowLoader(false);
         })
-        .finally(toolsStore.setIsShowLoader(false))
         .catch(error => {
           message.error(error.toString());
           toolsStore.setIsShowLoader(false);
@@ -75,6 +77,12 @@ const ConsultingPerson = () => {
     editRow = null;
     setIsModalVisible(true);
     isEditMode = false;
+  };
+
+  const edit = row => {
+    editRow = row;
+    isEditMode = true;
+    setIsModalVisible(true);
   };
 
   const onPage = event => {
@@ -98,7 +106,8 @@ const ConsultingPerson = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`person/delete/${row.person.id}`)
+
+    deleteService(`projectType/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -117,7 +126,7 @@ const ConsultingPerson = () => {
       cancelText: 'Буцах',
       onOk() {
         handleDeleted(row);
-        // onInit();
+        onInit();
       },
       onCancel() {},
     });
@@ -129,13 +138,6 @@ const ConsultingPerson = () => {
     } else {
       confirm(row);
     }
-  };
-
-  const edit = row => {
-    trainerID = row.person.id;
-    editRow = row;
-    isEditMode = true;
-    setIsModalVisible(true);
   };
 
   const action = row => (
@@ -165,40 +167,20 @@ const ConsultingPerson = () => {
     </>
   );
 
-  const FirstNameBodyTemplate = row => (
+  const activityBodyTemplate = row => (
     <>
-      <span className="p-column-title">Нэр</span>
-      {row.firstname}
+      <span className="p-column-title">Инновацийн төсөлийн төрөлийн нэр</span>
+      {row.name}
     </>
   );
 
-  const LastNameBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Овог</span>
-      {row.lastname}
-    </>
-  );
-
-  const phoneBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Утас</span>
-      {row.phoneNumber}
-    </>
-  );
-
-  const registerBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Регистер</span>
-      {row.register}
-    </>
-  );
   return (
     <ContentWrapper>
       <div className="button-demo">
         <Content>
           <Row>
             <Col xs={24} md={12} lg={14}>
-              <p className="title">Зөвлөх хувь хүн</p>
+              <p className="title">{t('projecttype')}</p>
             </Col>
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
@@ -250,7 +232,6 @@ const ConsultingPerson = () => {
             </Col>
           </Row>
         </Content>
-
         <div className="datatable-responsive-demo">
           <DataTable
             ref={dt}
@@ -282,47 +263,22 @@ const ConsultingPerson = () => {
               style={{ width: 40 }}
             />
             <Column
-              field="firstname"
-              header="Овог"
-              body={FirstNameBodyTemplate}
+              field="name"
+              header="Инновацийн төсөлийн төрөлийн нэр"
               sortable
               filter
               filterPlaceholder="Хайх"
+              body={activityBodyTemplate}
             />
-            <Column
-              field="lastname"
-              header="Нэр"
-              body={LastNameBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              field="phoneNumber"
-              header="Утас"
-              body={phoneBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              field="register"
-              header="Регистер"
-              body={registerBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column headerStyle={{ width: '7rem' }} body={action} />
+            <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <ConsultingPersonModal
-              Trainerscontroller={editRow}
+            <ProjecttypeModal
+              Projecttypecontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              orgId={OrgID}
-              trainerID={trainerID}
+              // trainingID={trainingID}
             />
           )}
         </div>
@@ -331,4 +287,4 @@ const ConsultingPerson = () => {
   );
 };
 
-export default ConsultingPerson;
+export default Projecttype;

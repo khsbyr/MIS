@@ -1,4 +1,4 @@
-import { Col, Form, Input, InputNumber, message, Modal, Row } from 'antd';
+import { Col, Form, Input, message, Modal, Row } from 'antd';
 import React, { useEffect } from 'react';
 import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
@@ -20,7 +20,7 @@ export default function TestModal(props) {
     form
       .validateFields()
       .then(values => {
-        values.training = { id: trainingID };
+        values.trainingId = trainingID;
         if (isEditMode) {
           putService(`test/update/${TestController.id}`, values)
             .then(() => {

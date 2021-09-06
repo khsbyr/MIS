@@ -13,7 +13,6 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { List } from 'antd/lib/form/Form';
 import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
@@ -48,14 +47,14 @@ const ConsultingOrg = () => {
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService(`organization/get`, obj)
+      getService('organization/get', obj)
         .then(data => {
           const dataList = data.content || [];
           dataList.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });
-          setList(dataList);
           setTotalRecords(data.totalElements);
+          setList(dataList);
           toolsStore.setIsShowLoader(false);
         })
         .catch(error => {

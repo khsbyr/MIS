@@ -81,7 +81,7 @@ const productiveProject = props => {
           errorCatch(error);
           toolsStore.setIsShowLoader(false);
         });
-    }, 500);
+    }, 1000);
   };
 
   useEffect(() => {

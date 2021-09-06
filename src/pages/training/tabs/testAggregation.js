@@ -40,6 +40,7 @@ const TestAggregation = props => {
   const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
+    size: PAGESIZE || 20,
   });
   const dt = useRef(null);
 
@@ -50,10 +51,10 @@ const TestAggregation = props => {
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService(`training/get/${props.id}`, obj)
+      getService(`test/getList/${props.id}`, obj)
         .then(data => {
-          const dataList = data.tests || [];
-          setTrainingID(data.id);
+          const dataList = data.content || [];
+          setTrainingID(props.id);
           dataList.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });
