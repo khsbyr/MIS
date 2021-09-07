@@ -1,4 +1,4 @@
-import { Form, Input, Modal } from 'antd';
+import { Form, Input, Modal, message } from 'antd';
 import React, { useEffect } from 'react';
 // import AutoCompleteSelect from '../../../components/Autocomplete';
 import { postService, putService } from '../../../service/service';
@@ -31,16 +31,21 @@ export default function ProjecttypeModal(props) {
       .then(values => {
         values.isTrue = true;
         if (isEditMode) {
-          putService(`projectType/update/${Projecttypecontroller.id}`, values)
+          putService(
+            `innovationProjectType/update/${Projecttypecontroller.id}`,
+            values
+          )
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {
               errorCatch(error);
             });
         } else {
-          postService('projectType/post', values)
+          postService('innovationProjectType/post', values)
             .then(() => {
+              message.success('Амжилттай хадгаллаа');
               props.close(true);
             })
             .catch(error => {

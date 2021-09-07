@@ -1,4 +1,4 @@
-import { Col, Form, Input, InputNumber, message, Modal, Row } from 'antd';
+import { Col, Form, Input, message, Modal, Row } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
@@ -11,6 +11,7 @@ import { errorCatch } from '../../../../tools/Tools';
 import { useToolsStore } from '../../../../context/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './attendance.style';
+import PhoneNumber from '../../../../components/PhoneNumber';
 
 export default function TrainingProgramModal(props) {
   const { Attendancecontroller, isModalVisible, isEditMode, trainingID } =
@@ -197,9 +198,7 @@ export default function TrainingProgramModal(props) {
                 >
                   <Input maxLength={10} />
                 </Form.Item>
-                <Form.Item name="phone" label="Холбогдох утас:">
-                  <Input parser={value => value.substring(0, 12)} />
-                </Form.Item>
+                <PhoneNumber label="Холбогдох утас:" name="phone" />
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Form.Item name="email" label="Email хаяг:">

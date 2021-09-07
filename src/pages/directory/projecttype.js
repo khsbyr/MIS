@@ -107,7 +107,7 @@ const Projecttype = () => {
       return;
     }
 
-    deleteService(`projectType/delete/${row.id}`)
+    deleteService(`innovationProjectType/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
