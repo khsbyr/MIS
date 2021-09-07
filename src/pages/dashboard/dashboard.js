@@ -1,9 +1,7 @@
-import { message } from 'antd';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import React from 'react';
 import mapDataMongolia from './mapDataMongolia';
-import CountryInfo from './more/countryInfo';
 import DashboardDetail from './more/dashboardDetail';
 
 require('highcharts/modules/map')(Highcharts);
@@ -39,9 +37,14 @@ function dashboard() {
   ];
 
   const mapOptions = {
+    chart: {
+      align: 'left',
+      backgroundColor: '#283047',
+      map: mapDataMongolia,
+    },
     colorAxis: {
       min: 0,
-      max: 31,
+      max: 21,
     },
     title: {
       text: '',
@@ -50,11 +53,7 @@ function dashboard() {
     credits: {
       enabled: false,
     },
-    chart: {
-      align: 'left',
-      backgroundColor: '#283047',
-      map: mapDataMongolia,
-    },
+
     plotOptions: {
       map: {
         tooltip: {
@@ -79,6 +78,7 @@ function dashboard() {
             popup(e);
           },
         },
+        color: 'green',
         threshold: 0,
         cursor: 'pointer',
         borderWidth: 0.2,
@@ -91,6 +91,7 @@ function dashboard() {
           },
         },
         dataLabels: {
+          useHTML: true,
           style: {
             textOutline: 0,
             color: 'white',
@@ -115,7 +116,7 @@ function dashboard() {
           style: { height: '100vh' },
         }}
       />
-      <DashboardDetail />;
+      <DashboardDetail />
     </div>
   );
 }
