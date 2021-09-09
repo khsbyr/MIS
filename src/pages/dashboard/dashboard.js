@@ -1,12 +1,14 @@
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import mapDataMongolia from './mapDataMongolia';
 import DashboardDetail from './more/dashboardDetail';
 
 require('highcharts/modules/map')(Highcharts);
 
 function dashboard() {
+  const chartComponent = useRef(null);
+
   function popup(e) {
     e.point.zoomTo();
   }
@@ -41,14 +43,25 @@ function dashboard() {
       align: 'left',
       backgroundColor: '#283047',
       map: mapDataMongolia,
+      resetZoomButton: {
+        position: {
+          align: 'left', // by default
+          // verticalAlign: 'top', // by default
+          x: 100,
+          y: 100,
+        },
+      },
     },
+
     colorAxis: {
       min: 0,
       max: 21,
     },
+
     title: {
       text: '',
     },
+
     legend: { enabled: false },
     credits: {
       enabled: false,
@@ -62,8 +75,17 @@ function dashboard() {
         },
       },
     },
+
     mapNavigation: {
       enabled: true,
+      resetZoomButton: {
+        position: {
+          align: 'left', // by default
+          // verticalAlign: 'top', // by default
+          x: 100,
+          y: 100,
+        },
+      },
       buttonOptions: {
         theme: {
           r: 8,
@@ -71,6 +93,7 @@ function dashboard() {
         verticalAlign: 'top',
       },
     },
+
     series: [
       {
         events: {
@@ -78,7 +101,6 @@ function dashboard() {
             popup(e);
           },
         },
-        color: 'green',
         threshold: 0,
         cursor: 'pointer',
         borderWidth: 0.2,
@@ -86,6 +108,11 @@ function dashboard() {
         data,
         name: 'dasdasd',
         states: {
+          select: {
+            color: '#a4edba',
+            borderColor: 'black',
+            dashStyle: 'shortdot',
+          },
           hover: {
             color: '#BADA55',
           },

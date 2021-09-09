@@ -37,11 +37,13 @@ export default function CertificateModal(props) {
   };
 
   useEffect(() => {
-    getService(`soum/getList/${EditRow.address?.aimag?.id}`).then(result => {
-      if (result) {
-        setStateSum(result || []);
-      }
-    });
+    if (EditRow !== undefined) {
+      getService(`soum/getList/${EditRow.address?.aimag?.id}`).then(result => {
+        if (result) {
+          setStateSum(result || []);
+        }
+      });
+    }
     if (isEditMode) {
       form.setFieldsValue({
         ...EditRow,
@@ -118,13 +120,11 @@ export default function CertificateModal(props) {
             <Row gutter={30}>
               <Col xs={24} md={24} lg={8}>
                 <Col xs={24} md={24} lg={24}>
-                  <Form.Item label="Он, сар:" name="date">
+                  <Form.Item label="Он, сар:">
                     <DatePicker
                       placeholder="Огноо сонгох"
                       onChange={date}
-                      defaultValue={
-                        isEditMode ? moment(EditRow.date).zone(0) : ''
-                      }
+                      defaultValue={isEditMode ? moment(EditRow.date) : ''}
                     />
                   </Form.Item>
                 </Col>
@@ -139,15 +139,13 @@ export default function CertificateModal(props) {
                   </Form.Item>
                 </Col>
               </Col>
-              <Col Col xs={24} md={24} lg={8}>
+              <Col xs={24} md={24} lg={8}>
                 <Col xs={24} md={24} lg={24}>
-                  <Form.Item label="Он, сар:" name="validDate">
+                  <Form.Item label="Хүчинтэй хугацаа:">
                     <DatePicker
                       placeholder="Огноо сонгох"
                       onChange={validDate}
-                      defaultValue={
-                        isEditMode ? moment(EditRow.validDate).zone(0) : ''
-                      }
+                      defaultValue={isEditMode ? moment(EditRow.validDate) : ''}
                     />
                   </Form.Item>
                 </Col>
@@ -162,7 +160,7 @@ export default function CertificateModal(props) {
                   </Form.Item>
                 </Col>
               </Col>
-              <Col Col xs={24} md={24} lg={8}>
+              <Col xs={24} md={24} lg={8}>
                 <Col xs={24} md={24} lg={24}>
                   <Form.Item label="Улс:" name="CountryID">
                     <AutoCompleteSelect

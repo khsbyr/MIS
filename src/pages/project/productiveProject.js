@@ -289,7 +289,7 @@ const productiveProject = props => {
         }
         onChange={onChangeStatus}
         onClick={event => selectedStatus(event, row)}
-        style={{ width: '70%' }}
+        style={{ width: '100%' }}
       >
         {status?.map(z => (
           <Option key={z.id}>

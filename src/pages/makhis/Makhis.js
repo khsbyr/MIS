@@ -52,11 +52,10 @@ const Makhis = () => {
       getService(`makhisVeterinary/get`, obj)
         .then(result => {
           const listResult = result.content;
-          setList(listResult);
           listResult.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });
-
+          setList(listResult);
           setTotalRecords(result.totalElements);
         })
         .finally(toolsStore.setIsShowLoader(false))

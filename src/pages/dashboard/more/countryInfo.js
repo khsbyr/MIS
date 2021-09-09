@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
-import { Modal, Button } from 'antd';
+import { Modal } from 'antd';
+import React from 'react';
 
-function countryInfo() {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+function countryInfo(props) {
+  const { isModalVisible } = props;
 
   return (
-    <Modal title="Basic Modal" visible={isModalVisible}>
+    <Modal
+      title="Байгууллага бүртгэх"
+      okText="Хадгалах"
+      cancelText="Буцах"
+      width={1100}
+      alignItems="center"
+      visible={isModalVisible}
+      onCancel={() => props.close()}
+    >
       <p>Some contents...</p>
       <p>Some contents...</p>
       <p>Some contents...</p>

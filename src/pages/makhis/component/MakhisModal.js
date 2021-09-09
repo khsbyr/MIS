@@ -39,16 +39,18 @@ export default function MakhisModal(props) {
   };
 
   useEffect(() => {
-    getService(`soum/getList/${EditRow.address?.aimag?.id}`).then(result => {
-      if (result) {
-        setStateSum(result || []);
-      }
-    });
-    getService(`bag/getList/${EditRow.address?.soum?.id}`).then(result => {
-      if (result) {
-        setStateBag(result || []);
-      }
-    });
+    if (EditRow !== undefined) {
+      getService(`soum/getList/${EditRow.address?.aimag?.id}`).then(result => {
+        if (result) {
+          setStateSum(result || []);
+        }
+      });
+      getService(`bag/getList/${EditRow.address?.soum?.id}`).then(result => {
+        if (result) {
+          setStateBag(result || []);
+        }
+      });
+    }
     if (isEditMode) {
       form.setFieldsValue({
         ...EditRow,
