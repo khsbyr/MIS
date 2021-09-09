@@ -1,8 +1,14 @@
-import { Col, Form, message, Modal, Row, Select } from 'antd';
+import { Col, Form, message, Modal, Row, Select, Upload, Button } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import React, { useEffect, useState } from 'react';
+import { UploadOutlined } from '@ant-design/icons';
 import AutoCompleteSelect from '../../../components/Autocomplete';
-import { getService, postService, putService } from '../../../service/service';
+import {
+  getService,
+  postService,
+  putService,
+  writeFileServer,
+} from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 // eslint-disable-next-line import/no-named-as-default
@@ -10,11 +16,18 @@ import ContentWrapper from './plan.style';
 
 const { Option } = Select;
 
+const dummyRequest = ({ onSuccess }) => {
+  setTimeout(() => {
+    onSuccess('ok');
+  }, 0);
+};
+
 export default function ReportModal(props) {
   const { EditRow, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
   const [planList, setPlanList] = useState();
   const [selectedPlan, setSelectedPlan] = useState([]);
+  const [fileList, setFileList] = useState();
   const [, setProcessValue] = useState();
 
   useEffect(() => {
@@ -24,6 +37,12 @@ export default function ReportModal(props) {
       }
     });
     if (isEditMode) {
+      setFileList({
+        uid: 247,
+        name: 'Tech_Specs_How_to_write.pdf',
+        status: 'done',
+        url: 'http://localhost:8000/file/download/247',
+      });
       setSelectedPlan(EditRow.plan.id);
       form.setFieldsValue({
         ...EditRow,
@@ -39,11 +58,21 @@ export default function ReportModal(props) {
     setProcessValue(value);
   }
 
+  function handleUpload(info) {
+    setFileList(info.file.originFileObj);
+  }
+
   const save = () => {
     form
       .validateFields()
       .then(values => {
-        values.plan = { id: selectedPlan };
+        values.planReport = {
+          name: values.name,
+          performance: values.performance,
+          result: values.result,
+          processResult: values.processResult,
+          plan: { id: selectedPlan },
+        };
         if (isEditMode) {
           putService(`planReport/update/${EditRow.id}`, values)
             .then(() => {
@@ -54,10 +83,17 @@ export default function ReportModal(props) {
               errorCatch(error);
             });
         } else {
-          postService('planReport/post', values)
-            .then(() => {
-              message.success('Амжилттай хадгаллаа');
-              props.close(true);
+          writeFileServer(`file/upload`, fileList)
+            .then(response => {
+              values.fileId = response.data.id;
+              postService('planReport/post', values)
+                .then(() => {
+                  message.success('Амжилттай хадгаллаа');
+                  props.close(true);
+                })
+                .catch(error => {
+                  errorCatch(error);
+                });
             })
             .catch(error => {
               errorCatch(error);
@@ -141,6 +177,16 @@ export default function ReportModal(props) {
                     <Option value={10}>10</Option>
                   </Select>
                 </Form.Item>
+              </Col>
+              <Col xs={24} md={24} lg={24}>
+                <Upload
+                  accept="image/*,.pdf"
+                  maxCount={1}
+                  customRequest={dummyRequest}
+                  onChange={handleUpload}
+                >
+                  <Button icon={<UploadOutlined />}>Upload</Button>
+                </Upload>
               </Col>
             </Row>
           </Form>

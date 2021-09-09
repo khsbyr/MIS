@@ -75,13 +75,28 @@ export async function getGenerateUuid() {
   return await axios.get('gap-file-service/files/generateUuid', config());
 }
 
-export function writeFileServer(selectedFile, generateUuid) {
+// export function writeFileServer(serviceName, selectedFile) {
+//   const data = new FormData();
+//   data.append('file', selectedFile);
+//   axios
+//     .post(`serviceName`, data, config())
+//     .catch(error => {
+//       errorCatch(error);
+//       throw error;
+//     });
+// }
+
+export async function writeFileServer(serviceName, file) {
   const data = new FormData();
-  data.append('file', selectedFile);
-  axios
-    .post(`gap-file-service/files?parentUuid=${generateUuid}`, data, config())
+  data.append('file', file);
+  const response = await axios
+    .post(serviceName, data, config())
     .catch(error => {
       errorCatch(error);
       throw error;
     });
+  if (response.status !== 200) {
+    message.warning('АМЖИЛТГҮЙ:', response.statusText);
+  }
+  return response;
 }
