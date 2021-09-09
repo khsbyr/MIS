@@ -21,6 +21,7 @@ import ProjectContextProvider from '../context/ProjectContext';
 import PlanMore from '../pages/projectReport/more/PlanMore';
 import OrganizationModal from '../pages/training/tabs/components/OrganizationModal';
 import TrainingContextProvider from '../context/TrainingContext';
+import MakhisMore from '../pages/makhis/more/MakhisMore';
 
 const { Sider, Content } = Layout;
 
@@ -192,6 +193,9 @@ function Admin() {
                     </Route>
                     <Route path="/planDetail/:id">
                       <PlanMore />
+                    </Route>
+                    <Route path="/makhisDetail/:id">
+                      <MakhisMore />
                     </Route>
                   </Switch>
                 </TrainingContextProvider>

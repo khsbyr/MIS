@@ -15,30 +15,21 @@ import { DataTable } from 'primereact/datatable';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../context/Tools';
-import { useCriteriaStore } from '../../context/CriteriaContext';
 import { getService, putService } from '../../service/service';
-import {
-  errorCatch,
-  formatIndicator,
-  convertLazyParamsToObj,
-} from '../../tools/Tools';
-import AutoCompleteSelect from '../../components/Autocomplete';
-import CriteriaModal from './components/CriteriaModal';
-import ContentWrapper from './criteria.style';
+import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
+import ContentWrapper from '../criteria/criteria.style';
 import { PAGESIZE } from '../../constants/Constant';
+import MakhisModal from './component/MakhisModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
 
-const Criteria = () => {
+const Makhis = () => {
   const { t } = useTranslation();
-  const [list, setList] = useState([]);
+  const [list, setList] = useState();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { criteriaReferenceList, setCriteriaReferenceList } =
-    useCriteriaStore();
-  const [selectedRows, setSelectedRows] = useState([]);
   const toolsStore = useContext(ToolsContext);
   const history = useHistory();
   const [lazyParams, setLazyParams] = useState({
@@ -51,33 +42,21 @@ const Criteria = () => {
 
   let loadLazyTimeout = null;
 
-  const onInit = value => {
+  const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      const url = value
-        ? `/criteria/getListByCriteriaReferenceId/${value}`
-        : '/criteria/get';
-      getService(`${url}`, obj)
+      getService(`makhisVeterinary/get`, obj)
         .then(result => {
-          if (value) {
-            const listResult = result || [];
-            setList(listResult);
-            listResult.forEach((item, index) => {
-              item.index = lazyParams.page * PAGESIZE + index + 1;
-            });
-          } else {
-            const listResult = result.content || [];
-            setList(listResult);
-            listResult.forEach((item, index) => {
-              item.index = lazyParams.page * PAGESIZE + index + 1;
-            });
-          }
+          const listResult = result.content;
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setList(listResult);
           setTotalRecords(result.totalElements);
-          setSelectedRows([]);
         })
         .finally(toolsStore.setIsShowLoader(false))
         .catch(error => {
@@ -101,7 +80,7 @@ const Criteria = () => {
   };
 
   const more = row => {
-    history.push(`/criteriaDetail/${row.data.id}`);
+    history.push(`/makhisDetail/${row.data.id}`);
   };
 
   const handleDeleted = row => {
@@ -109,7 +88,7 @@ const Criteria = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`/criteria/delete/${row.id}`)
+    putService(`/makhisVeterinary/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -151,16 +130,7 @@ const Criteria = () => {
 
   useEffect(() => {
     onInit();
-    getService('/criteriaReference/get').then(result => {
-      if (result) {
-        setCriteriaReferenceList(result.content || []);
-      }
-    });
   }, [lazyParams]);
-
-  const selectComposition = value => {
-    onInit(value);
-  };
 
   const action = row => (
     <>
@@ -180,28 +150,35 @@ const Criteria = () => {
   const indexBodyTemplate = row => (
     <>
       <span className="p-column-title">№</span>
-      {row.code}
+      {row.index}
     </>
   );
 
   const nameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Шалгуур үзүүлэлтийн нэр</span>
-      {row.name}
+      <span className="p-column-title">Мал эмнэлгийн нэр</span>
+      {row.veterinaryName}
     </>
   );
 
-  const indicatorProcessBodyTemplate = row => (
+  const registerBodyTemplate = row => (
     <>
-      <span className="p-column-title">Хүрэх үр дүн</span>
-      {row.resultTobeAchieved + formatIndicator(row.indicator)}
+      <span className="p-column-title">Регистр</span>
+      {row.register}
     </>
   );
 
-  const upIndicatorBodyTemplate = row => (
+  const aimagBodyTemplate = row => (
     <>
-      <span className="p-column-title">Үр дүнгийн биелэлт</span>
-      {row.processResult + formatIndicator(row.indicator)}
+      <span className="p-column-title">Хамрагдах аймаг</span>
+      {row.address.aimag ? row.address.aimag.name : 'Тодорхойгүй'}
+    </>
+  );
+
+  const sumBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Хамрагдах сум</span>
+      {row.address.soum ? row.address.soum.name : 'Тодорхойгүй'}
     </>
   );
 
@@ -226,18 +203,10 @@ const Criteria = () => {
         <Content>
           <Row>
             <Col xs={24} md={24} lg={10}>
-              <p className="title">{t('Indicator')}</p>
+              <p className="title">Мал эмнэлэг</p>
             </Col>
             <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>
-                <Col xs={12} md={12} lg={16}>
-                  <AutoCompleteSelect
-                    valueField="id"
-                    data={criteriaReferenceList}
-                    placeholder={t('Select Indicator')}
-                    onChange={value => selectComposition(value)}
-                  />
-                </Col>
                 <Col xs={8} md={3} lg={2}>
                   <Tooltip title={t('print')} arrowPointAtCenter>
                     <Button
@@ -292,11 +261,7 @@ const Criteria = () => {
             removableSort
             paginator
             className="p-datatable-responsive-demo"
-            selection={selectedRows}
             onRowClick={more}
-            onSelectionChange={e => {
-              setSelectedRows(e.value);
-            }}
             dataKey="id"
             ref={dt}
             lazy
@@ -311,15 +276,15 @@ const Criteria = () => {
             filters={lazyParams.filters}
           >
             <Column
-              field="code"
+              field="index"
               header="№"
               headerStyle={{ width: '4rem' }}
               body={indexBodyTemplate}
               sortable
             />
             <Column
-              field="name"
-              header={t('Indicator name')}
+              field="veterinaryName"
+              header="Мал эмнэлгийн нэр"
               body={nameBodyTemplate}
               filter
               sortable
@@ -327,28 +292,37 @@ const Criteria = () => {
               filterMatchMode="contains"
             />
             <Column
-              field="resultTobeAchieved"
-              header={t('Achieved result')}
-              body={indicatorProcessBodyTemplate}
+              field="register"
+              header="Регистр"
+              body={registerBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
-              filterMatchMode="equals"
+              filterMatchMode="contains"
             />
             <Column
-              field="processResult"
-              header={t('Execution of results')}
-              body={upIndicatorBodyTemplate}
+              field="address.aimag.name"
+              header="Хамрагдах аймаг"
+              body={aimagBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
-              filterMatchMode="equals"
+              filterMatchMode="contains"
+            />
+            <Column
+              field="address.soum.name"
+              header="Хамрагдах сум"
+              body={sumBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <CriteriaModal
-              Criteriacontroller={editRow}
+            <MakhisModal
+              EditRow={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
@@ -360,4 +334,4 @@ const Criteria = () => {
   );
 };
 
-export default Criteria;
+export default Makhis;
