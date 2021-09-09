@@ -8,6 +8,7 @@ import {
   postService,
   putService,
   writeFileServer,
+  updateFileServer,
 } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
@@ -27,8 +28,20 @@ export default function ReportModal(props) {
   const [form] = Form.useForm();
   const [planList, setPlanList] = useState();
   const [selectedPlan, setSelectedPlan] = useState([]);
-  const [fileList, setFileList] = useState();
-  const [, setProcessValue] = useState();
+  const [fileList, setFileList] = useState([]);
+  const [processValue, setProcessValue] = useState();
+
+  const defaultFileList =
+    EditRow.file && isEditMode
+      ? [
+          {
+            uid: '-1',
+            name: EditRow.file.fileName,
+            status: 'done',
+            url: EditRow.file.path,
+          },
+        ]
+      : [];
 
   useEffect(() => {
     getService('plan/get').then(result => {
@@ -37,12 +50,6 @@ export default function ReportModal(props) {
       }
     });
     if (isEditMode) {
-      setFileList({
-        uid: 247,
-        name: 'Tech_Specs_How_to_write.pdf',
-        status: 'done',
-        url: 'http://localhost:8000/file/download/247',
-      });
       setSelectedPlan(EditRow.plan.id);
       form.setFieldsValue({
         ...EditRow,
@@ -59,7 +66,8 @@ export default function ReportModal(props) {
   }
 
   function handleUpload(info) {
-    setFileList(info.file.originFileObj);
+    // console.log(info.file.originFileObj);
+    setFileList([info.file.originFileObj]);
   }
 
   const save = () => {
@@ -74,16 +82,37 @@ export default function ReportModal(props) {
           plan: { id: selectedPlan },
         };
         if (isEditMode) {
-          putService(`planReport/update/${EditRow.id}`, values)
-            .then(() => {
-              message.success('Амжилттай хадгаллаа');
-              props.close(true);
-            })
-            .catch(error => {
-              errorCatch(error);
-            });
+          if (fileList[0]) {
+            const serverApi = EditRow.file
+              ? updateFileServer(`file/update/${EditRow.file.id}`, fileList[0])
+              : writeFileServer(`file/upload`, fileList[0]);
+            serverApi
+              .then(response => {
+                values.fileId = response.data.id;
+                putService(`planReport/update/${EditRow.id}`, values)
+                  .then(() => {
+                    message.success('Амжилттай хадгаллаа');
+                    props.close(true);
+                  })
+                  .catch(error => {
+                    errorCatch(error);
+                  });
+              })
+              .catch(error => {
+                errorCatch(error);
+              });
+          } else {
+            putService(`planReport/update/${EditRow.id}`, values)
+              .then(() => {
+                message.success('Амжилттай хадгаллаа');
+                props.close(true);
+              })
+              .catch(error => {
+                errorCatch(error);
+              });
+          }
         } else {
-          writeFileServer(`file/upload`, fileList)
+          writeFileServer(`file/upload`, fileList[0])
             .then(response => {
               values.fileId = response.data.id;
               postService('planReport/post', values)
@@ -182,6 +211,7 @@ export default function ReportModal(props) {
                 <Upload
                   accept="image/*,.pdf"
                   maxCount={1}
+                  defaultFileList={[...defaultFileList]}
                   customRequest={dummyRequest}
                   onChange={handleUpload}
                 >
