@@ -9,6 +9,7 @@ import BriefDraft from '../briefdraft';
 import Investment from '../investment';
 import MainInfo from '../mainInfo';
 import ProjectOrg from '../projectOrganizations';
+import FileUpload from '../fileUpload';
 import ContentWrapper from './projectInfo.style';
 
 const { TabPane } = Tabs;
@@ -50,7 +51,9 @@ export default function projectInfo() {
             <TabPane tab="Түншлэгч байгууллага" key="5">
               <ProjectOrg projectId={id} />
             </TabPane>
-            <TabPane tab="Хавсралт файл" key="6" />
+            <TabPane tab="Хавсралт файл" key="6">
+              <FileUpload projectId={id} />
+            </TabPane>
           </Tabs>
         </TabPane>
         {ProjectList?.projectStatus?.id === 1 ? (

@@ -1,7 +1,8 @@
-import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined } from '@ant-design/icons';
 import { faCalendarAlt, faPhone } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  Button,
   Col,
   DatePicker,
   Form,
@@ -11,20 +12,30 @@ import {
   Modal,
   Row,
   Upload,
-  Button,
 } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import { useToolsStore } from '../../../context/Tools';
-import { getService, postService, putService } from '../../../service/service';
+import {
+  getService,
+  postService,
+  putService,
+  updateFileServer,
+  writeFileServer,
+} from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 import ContentWrapper from '../../training/tabs/components/cv.styled';
 import VeterinarianEducation from './veterinarianEducation';
 import VeterinarianExperience from './veterinarianExperience';
 
-const { Dragger } = Upload;
+const dummyRequest = ({ onSuccess }) => {
+  setTimeout(() => {
+    onSuccess('ok');
+  }, 0);
+};
+
 const layout = {
   labelCol: {
     span: 20,
@@ -43,6 +54,24 @@ export default function veterinarianProjectModal(props) {
   const loadLazyTimeout = null;
   const [userID, setUserID] = useState();
   const [BirthDatee] = useState();
+  const [fileList, setFileList] = useState([]);
+
+  const defaultFileList =
+    EditRow?.youngDoctor?.file && isEditMode
+      ? [
+          {
+            uid: '-1',
+            name: EditRow?.youngDoctor?.file?.fileName,
+            status: 'done',
+            url: EditRow?.youngDoctor?.file?.path,
+          },
+        ]
+      : [];
+
+  function handleUpload(info) {
+    setFileList([info.file.originFileObj]);
+  }
+
   const onInit = () => {
     toolsStore.setIsShowLoader(false);
     if (loadLazyTimeout) {
@@ -128,11 +157,77 @@ export default function veterinarianProjectModal(props) {
               id: values.BagID,
             },
           };
-          values.youngDoctor = { purpose: values.purpose };
-          putService(`user/update/${EditRow.id}`, values)
-            .then(() => {
-              message.success('Амжилттай хадгаллаа');
-              props.close(true);
+          if (fileList[0]) {
+            const serverApi = EditRow.youngDoctor.file
+              ? updateFileServer(
+                  `file/update/${EditRow.youngDoctor.file.id}`,
+                  fileList[0]
+                )
+              : writeFileServer(`file/upload`, fileList[0]);
+            serverApi
+              .then(response => {
+                values.youngDoctor = {
+                  purpose: values.purpose,
+                  file: { id: response.data.id },
+                };
+                putService(`user/update/${EditRow.id}`, values)
+                  .then(() => {
+                    message.success('Амжилттай хадгаллаа');
+                    props.close(true);
+                  })
+                  .catch(error => {
+                    errorCatch(error);
+                  });
+              })
+              .catch(error => {
+                errorCatch(error);
+              });
+          } else {
+            putService(`user/update/${EditRow.id}`, values)
+              .then(() => {
+                message.success('Амжилттай хадгаллаа');
+                props.close(true);
+              })
+              .catch(error => {
+                errorCatch(error);
+              });
+          }
+        } else if (fileList[0]) {
+          writeFileServer(`file/upload`, fileList[0])
+            .then(response => {
+              values.file = { id: response.data.id };
+              values.user = {
+                firstname: values.firstname,
+                lastname: values.lastname,
+                register: values.registerNumber,
+                phoneNumber: values.phoneNumber,
+                email: values.email,
+                roleId: 15,
+                address: {
+                  addressDetail: values.AddressDetail,
+                  country: {
+                    id: 107,
+                  },
+                  aimag: {
+                    id: values.AimagID,
+                  },
+                  soum: {
+                    id: values.SoumID,
+                  },
+                  bag: {
+                    id: values.BagID,
+                  },
+                },
+              };
+              values.youngDoctor = { purpose: values.purpose };
+              postService(`youngDoctor/post`, values)
+                .then(() => {
+                  message.success('Амжилттай хадгаллаа');
+                  props.close(true);
+                })
+                .catch(error => {
+                  errorCatch(error);
+                });
             })
             .catch(error => {
               errorCatch(error);
@@ -176,6 +271,7 @@ export default function veterinarianProjectModal(props) {
         errorCatch(info);
       });
   };
+
   return (
     <div>
       <Modal
@@ -199,7 +295,7 @@ export default function veterinarianProjectModal(props) {
           >
             <h2 className="title">1. Хувь хүний мэдээлэл</h2>
             <Row gutter={[30, 30]}>
-              <Col xs={24} md={24} lg={4}>
+              {/* <Col xs={24} md={24} lg={4}>
                 <Dragger {...props} style={{}}>
                   <p className="ant-upload-drag-icon">
                     <InboxOutlined />
@@ -207,8 +303,8 @@ export default function veterinarianProjectModal(props) {
                   <p className="ant-upload-hint">Зураг оруулах</p>
                 </Dragger>
               </Col>
-              <Col xs={24} md={24} lg={2} />
-              <Col xs={24} md={24} lg={9}>
+              <Col xs={24} md={24} lg={2} /> */}
+              <Col xs={24} md={24} lg={12}>
                 <Form.Item
                   name="registerNumber"
                   rules={[
@@ -240,7 +336,7 @@ export default function veterinarianProjectModal(props) {
                 </Form.Item>
               </Col>
 
-              <Col xs={24} md={24} lg={9}>
+              <Col xs={24} md={24} lg={12}>
                 <Form.Item name="CountryID">
                   <AutoCompleteSelect
                     className="FormItem"
@@ -335,8 +431,14 @@ export default function veterinarianProjectModal(props) {
                 </Col>
                 <h2 className="title">5. Тайлан</h2>
                 <Col xs={24} md={24} lg={24}>
-                  <Upload>
-                    <Button icon={<UploadOutlined />}>Тайлан хавсаргах</Button>
+                  <Upload
+                    accept="image/*,.pdf"
+                    maxCount={1}
+                    defaultFileList={[...defaultFileList]}
+                    customRequest={dummyRequest}
+                    onChange={handleUpload}
+                  >
+                    <Button icon={<UploadOutlined />}>Файл хавсаргах</Button>
                   </Upload>
                 </Col>
               </Row>

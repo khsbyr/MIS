@@ -28,7 +28,7 @@ export default function FeedbackModal(props) {
   const [stateUser, setStateUser] = useState([]);
   const [stateUserID, setStateUserID] = useState([]);
   const [stateCriteria, setStateCriteria] = useState([]);
-  const [stateCriteriaID, setStateCriteriaID] = useState([]);
+  const [, setStateCriteriaID] = useState([]);
   const [stateOrg, setStateOrg] = useState([]);
   const [stateOrgID, setStateOrgID] = useState([]);
   const [stateShapeID, setStateShapeID] = useState([]);

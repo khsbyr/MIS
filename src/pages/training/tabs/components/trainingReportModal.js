@@ -2,11 +2,22 @@ import { UploadOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, message, Modal, Row, Upload } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useToolsStore } from '../../../../context/Tools';
-import { postService, putService } from '../../../../service/service';
+import {
+  postService,
+  putService,
+  writeFileServer,
+  updateFileServer,
+} from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import { useTrainingStore } from '../../../../context/TrainingContext';
 import ContentWrapper from './trainingReport.style';
+
+const dummyRequest = ({ onSuccess }) => {
+  setTimeout(() => {
+    onSuccess('ok');
+  }, 0);
+};
 
 export default function TrainingReportModal(props) {
   const { TrainingReportController, isModalVisible, isEditMode, trainingIDD } =
@@ -22,6 +33,23 @@ export default function TrainingReportModal(props) {
   const [performedProcess3ID] = useState();
   const [performedProcess4ID] = useState();
   const { TrainingList } = useTrainingStore();
+  const [fileList, setFileList] = useState([]);
+
+  function handleUpload(info) {
+    setFileList([info.file.originFileObj]);
+  }
+
+  const defaultFileList =
+    TrainingReportController?.trainingReport?.file && isEditMode
+      ? [
+          {
+            uid: '-1',
+            name: TrainingReportController?.trainingReport?.file?.fileName,
+            status: 'done',
+            url: TrainingReportController?.trainingReport?.file?.path,
+          },
+        ]
+      : [];
 
   useEffect(() => {
     if (isEditMode) {
@@ -99,13 +127,56 @@ export default function TrainingReportModal(props) {
           inputText: values.PerformedProcess4,
         };
         if (isEditMode) {
-          putService(
-            `trainingReport/update/${TrainingReportController.trainingReport.id}`,
-            values
-          )
-            .then(() => {
-              message.success('Амжилттай хадгаллаа');
-              props.close(true);
+          if (fileList[0]) {
+            const serverApi = TrainingReportController.trainingReport.file
+              ? updateFileServer(
+                  `file/update/${TrainingReportController.trainingReport.file.id}`,
+                  fileList[0]
+                )
+              : writeFileServer(`file/upload`, fileList[0]);
+            serverApi
+              .then(response => {
+                values.file = { id: response.data.id };
+                putService(
+                  `trainingReport/update/${TrainingReportController.trainingReport.id}`,
+                  values
+                )
+                  .then(() => {
+                    message.success('Амжилттай хадгаллаа');
+                    props.close(true);
+                  })
+                  .catch(error => {
+                    errorCatch(error);
+                  });
+              })
+              .catch(error => {
+                errorCatch(error);
+              });
+          } else {
+            putService(
+              `trainingReport/update/${TrainingReportController.trainingReport.id}`,
+              values
+            )
+              .then(() => {
+                message.success('Амжилттай хадгаллаа');
+                props.close(true);
+              })
+              .catch(error => {
+                errorCatch(error);
+              });
+          }
+        } else if (fileList[0]) {
+          writeFileServer(`file/upload`, fileList[0])
+            .then(response => {
+              values.file = { id: response.data.id };
+              postService(`trainingReport/post/${trainingIDD}`, values)
+                .then(() => {
+                  message.success('Амжилттай хадгаллаа');
+                  props.close(true);
+                })
+                .catch(error => {
+                  errorCatch(error);
+                });
             })
             .catch(error => {
               errorCatch(error);
@@ -125,6 +196,7 @@ export default function TrainingReportModal(props) {
         errorCatch(info);
       });
   };
+
   return (
     <div>
       <Modal
@@ -305,13 +377,14 @@ export default function TrainingReportModal(props) {
                 </Form.Item>
                 <h1 className="title">6. Зураг, хавсралт файл</h1>
                 <Form.Item>
-                  <Upload {...props}>
-                    <Button
-                      icon={<UploadOutlined />}
-                      style={{ height: '40px' }}
-                    >
-                      Зураг, хавсралт файл
-                    </Button>
+                  <Upload
+                    accept="image/*,.pdf"
+                    maxCount={1}
+                    defaultFileList={[...defaultFileList]}
+                    customRequest={dummyRequest}
+                    onChange={handleUpload}
+                  >
+                    <Button icon={<UploadOutlined />}>Файл хавсаргах</Button>
                   </Upload>
                 </Form.Item>
               </Col>

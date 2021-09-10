@@ -1,14 +1,12 @@
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import mapDataMongolia from './mapDataMongolia';
 import DashboardDetail from './more/dashboardDetail';
 
 require('highcharts/modules/map')(Highcharts);
 
 function dashboard() {
-  const chartComponent = useRef(null);
-
   function popup(e) {
     e.point.zoomTo();
   }

@@ -1,6 +1,7 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
+  faFilePdf,
   faPen,
   faPlus,
   faPrint,
@@ -11,18 +12,19 @@ import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
+import moment from 'moment';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../training/tabs/components/organization.style';
-import InvestmentModal from './components/ModalComponent/investmentModal';
+import FileUploadModal from './components/ModalComponent/fileUploadModal';
 import { useProjectStore } from '../../context/ProjectContext';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const investment = () => {
+const fileUpload = () => {
   const loadLazyTimeout = null;
   const { ProjectList } = useProjectStore();
   const toolsStore = useContext(ToolsContext);
@@ -39,7 +41,7 @@ const investment = () => {
     }
     toolsStore.setIsShowLoader(true);
     getService(
-      `summaryBallotForm/getProjectInvestmentBySbfId/${ProjectList.summaryBallotForm.id}`
+      `summaryBallotForm/getBudgetCostEstimatesBySbfId/${ProjectList.summaryBallotForm.id}`
     )
       .then(result => {
         const listResult = result;
@@ -55,21 +57,19 @@ const investment = () => {
         toolsStore.setIsShowLoader(false);
       });
   };
+
   useEffect(() => {
     onInit();
   }, [lazyParams]);
-
-  function Formatcurrency(value) {
-    const values = value || 0;
-    return `${values?.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}₮`;
-  }
 
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
   };
 
-  const edit = row => {
+  const edit = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
@@ -80,7 +80,7 @@ const investment = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`projectInvestment/delete/${row.id}`)
+    putService(`budgetCostEstimates/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -105,7 +105,9 @@ const investment = () => {
     });
   }
 
-  const pop = row => {
+  const pop = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
@@ -113,17 +115,30 @@ const investment = () => {
     }
   };
 
+  function openTab(row) {
+    window.open(`${row.file.path}`);
+  }
+
+  function openTab1(row) {
+    window.open(`${row.data.file.path}`);
+  }
+
   const action = row => (
     <>
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
+        onClick={event => edit(event, row)}
       />
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
+        onClick={event => pop(event, row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faFilePdf} />}
+        onClick={() => openTab(row)}
       />
     </>
   );
@@ -140,43 +155,24 @@ const investment = () => {
     </>
   );
 
-  const operationExpense = row => (
+  const fileName = row => (
     <>
-      <span className="p-column-title">Үйл ажиллагаа буюу зардал</span>
-      {row.operationExpense}
-    </>
-  );
-
-  const total = row => (
-    <>
-      <span className="p-column-title">Нийт дүн</span>
-      {Formatcurrency(row.longTotal)}
-    </>
-  );
-
-  const costOfCompany = row => (
-    <>
-      <span className="p-column-title">Компаниас гаргах зардал хуваалт</span>
-      {Formatcurrency(row.longCostOfCompany)} ({row.percentOfCompany} %)
-    </>
-  );
-
-  const projectInvestment = row => (
-    <>
-      <span className="p-column-title">
-        МАА-н ЭЗЭН төслийн хөрөнгө оруулалт
-      </span>
-      {Formatcurrency(row.longProjectInvestment)} (
-      {row.percentOfProjectInvestment} %)
+      <span className="p-column-title">Файлын нэр</span>
+      {row.file.fileName}
     </>
   );
 
   const description = row => (
     <>
-      <span className="p-column-title">
-        Санхүүжилтийн эх үүсвэр болон нэмэлт тайлбар
-      </span>
+      <span className="p-column-title">Тайлбар</span>
       {row.description}
+    </>
+  );
+
+  const date = row => (
+    <>
+      <span className="p-column-title">Огноо</span>
+      <>{moment(row && row.createdDate).format('YYYY-M-D')}</>
     </>
   );
 
@@ -235,29 +231,16 @@ const investment = () => {
             rows={10}
             className="p-datatable-responsive-demo"
             dataKey="id"
+            onRowClick={openTab1}
           >
             <Column header="№" body={indexBodyTemplate} style={{ width: 40 }} />
-            <Column
-              header="Үйл ажиллагаа буюу зардал"
-              body={operationExpense}
-            />
-            <Column header="Нийт дүн" body={total} />
-            <Column
-              header="Компаниас гаргах зардал хуваалт"
-              body={costOfCompany}
-            />
-            <Column
-              header="МАА-н ЭЗЭН төслийн хөрөнгө оруулалт"
-              body={projectInvestment}
-            />
-            <Column
-              header="Санхүүжилтийн эх үүсвэр болон нэмэлт тайлбар"
-              body={description}
-            />
-            <Column headerStyle={{ width: '7rem' }} body={action} />
+            <Column header="Файлын нэр" body={fileName} />
+            <Column header="Тайлбар" body={description} />
+            <Column header="Огноо" body={date} />
+            <Column headerStyle={{ width: '8rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <InvestmentModal
+            <FileUploadModal
               EditRow={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
@@ -271,4 +254,4 @@ const investment = () => {
   );
 };
 
-export default investment;
+export default fileUpload;

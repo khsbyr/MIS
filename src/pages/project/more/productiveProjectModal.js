@@ -1,44 +1,26 @@
-import { UploadOutlined } from '@ant-design/icons';
 import {
-  Button,
   Col,
   Form,
   Input,
+  InputNumber,
   message,
   Modal,
   Row,
   Tabs,
-  Upload,
-  InputNumber,
   TreeSelect,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import MulticompleteSelect from '../../../components/MulticompleteSelect';
+import { useToolsStore } from '../../../context/Tools';
 import { getService, postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 import ContentWrapper from '../components/ModalComponent/produictiveProjectModal.style';
-import { useToolsStore } from '../../../context/Tools';
 
 const { TextArea } = Input;
 const { TabPane } = Tabs;
 const { TreeNode } = TreeSelect;
-
-const Uploadprops = {
-  name: 'file',
-  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-  headers: {
-    authorization: 'authorization-text',
-  },
-  onChange(info) {
-    if (info.file.status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-};
 
 export default function productiveProjectModal(props) {
   const toolsStore = useToolsStore();
@@ -54,10 +36,6 @@ export default function productiveProjectModal(props) {
   const [projectOrgs, setProjectOrgs] = useState([]);
   const [innovationProjectType, setInnovationProjectType] = useState();
   const [innovationProjectTypeId, setInnovationProjectTypeId] = useState();
-
-  // const ProjectOrgList =
-  //   ProductiveController &&
-  //   ProductiveController.projectOrganizations.map(item => item.organization.id);
 
   const ProjectChildrenAddress =
     ProductiveController &&
@@ -308,7 +286,6 @@ export default function productiveProjectModal(props) {
                             ProductiveController?.innovationProjectType?.id
                           }
                           valueField="id"
-                          size="medium"
                           onChange={value => selectType(value)}
                         />
                       </Form.Item>
@@ -354,61 +331,6 @@ export default function productiveProjectModal(props) {
                       label="Хамтран ажиллах түншлэгч байгууллагатай бол үйл ажиллагааны төрөл болон бусад дэлгэрэнгүй мэдээлэл:"
                     >
                       <TextArea autoSize={{ minRows: 3, maxRows: 6 }} />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </TabPane>
-              <TabPane tab="Хавсралт файл" key="3">
-                <Row>
-                  <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Албан тоот:" name="mission">
-                      <Upload {...Uploadprops}>
-                        <Button icon={<UploadOutlined />}>
-                          Файл хавсаргах
-                        </Button>
-                      </Upload>
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} md={24} lg={12}>
-                    <Form.Item
-                      label="Улсын бүртгэлийн гэрчилгээ:"
-                      name="mission"
-                    >
-                      <Upload {...Uploadprops}>
-                        <Button icon={<UploadOutlined />}>
-                          Файл хавсаргах
-                        </Button>
-                      </Upload>
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Төсөл /монгол:" name="mission">
-                      <Upload {...Uploadprops}>
-                        <Button icon={<UploadOutlined />}>
-                          Файл хавсаргах
-                        </Button>
-                      </Upload>
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} md={24} lg={12}>
-                    <Form.Item label="Төсөл /Англи:" name="mission">
-                      <Upload {...Uploadprops}>
-                        <Button icon={<UploadOutlined />}>
-                          Файл хавсаргах
-                        </Button>
-                      </Upload>
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} md={24} lg={12}>
-                    <Form.Item
-                      label="Санхүүгийн тайлан /Аудитын тайлан:"
-                      name="mission"
-                    >
-                      <Upload {...Uploadprops}>
-                        <Button icon={<UploadOutlined />}>
-                          Файл хавсаргах
-                        </Button>
-                      </Upload>
                     </Form.Item>
                   </Col>
                 </Row>
