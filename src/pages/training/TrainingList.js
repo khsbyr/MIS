@@ -355,7 +355,6 @@ const TrainingList = () => {
               sortOrder={lazyParams.sortOrder}
               onFilter={onFilter}
               filters={lazyParams.filters}
-              tableStyle={{ minWidth: 1000 }}
               lazy
               paginator
               className="p-datatable-responsive-demo"
@@ -388,7 +387,6 @@ const TrainingList = () => {
                 filterPlaceholder="Хайх"
                 sortable
                 body={totalBudgetBodyTemplate}
-                bodyStyle={{ textAlign: 'center' }}
                 filterMatchMode="equals"
               />
               <Column
@@ -398,7 +396,6 @@ const TrainingList = () => {
                 filter
                 sortable
                 body={performanceBudgetBodyTemplate}
-                bodyStyle={{ textAlign: 'center' }}
                 filterMatchMode="equals"
               />
               <Column
@@ -406,14 +403,12 @@ const TrainingList = () => {
                 header="Эхэлсэн огноо"
                 sortable
                 body={startDateBodyTemplate}
-                bodyStyle={{ textAlign: 'center' }}
               />
               <Column
                 field="trainingEndDate"
                 header="Дууссан огноо"
                 sortable
                 body={endDateBodyTemplate}
-                bodyStyle={{ textAlign: 'center' }}
               />
               <Column
                 field="totalParticipants"
@@ -422,7 +417,6 @@ const TrainingList = () => {
                 filter
                 sortable
                 body={participantBodyTemplate}
-                bodyStyle={{ textAlign: 'center' }}
                 filterMatchMode="equals"
               />
               <Column headerStyle={{ width: '6rem' }} body={action} />

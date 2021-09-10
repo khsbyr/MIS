@@ -176,6 +176,12 @@ export default function UserModal(props) {
                 name="orgId"
                 layout="vertical"
                 label="Харьяа байгууллагын нэр:"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Энэ хэсгийг заавал бөглөнө үү!',
+                  },
+                ]}
               >
                 <AutoCompleteSelect
                   valueField="id"
@@ -203,6 +209,12 @@ export default function UserModal(props) {
                 name="roleId"
                 layout="vertical"
                 label="Эрх:"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Энэ хэсгийг заавал бөглөнө үү!',
+                  },
+                ]}
               >
                 <AutoCompleteSelect
                   valueField="id"
@@ -285,7 +297,16 @@ export default function UserModal(props) {
           </Row>
           <Row gutter={18}>
             <Col xs={24} md={24} lg={12}>
-              <Form.Item label="Хаяг:" name="AddressDetail">
+              <Form.Item
+                label="Хаяг:"
+                name="AddressDetail"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Энэ хэсгийг заавал бөглөнө үү!',
+                  },
+                ]}
+              >
                 <Input.TextArea
                   placeholder="Хаяг"
                   style={{

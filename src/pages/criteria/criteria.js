@@ -319,7 +319,6 @@ const Criteria = () => {
             />
             <Column
               field="name"
-              headerStyle={{ width: '30rem' }}
               header={t('Indicator name')}
               body={nameBodyTemplate}
               filter

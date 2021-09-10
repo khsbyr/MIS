@@ -7198,6 +7198,16 @@
   "resolved" "https://registry.npmjs.org/hex-color-regex/-/hex-color-regex-1.1.0.tgz"
   "version" "1.1.0"
 
+"highcharts-react-official@^3.0.0":
+  "integrity" "sha512-VefJgDY2hkT9gfppsQGrRF2g5u8d9dtfHGcx2/xqiP+PkZXCqalw9xOeKVCRvJKTOh0coiDFwvVjOvB7KaGl4A=="
+  "resolved" "https://registry.npmjs.org/highcharts-react-official/-/highcharts-react-official-3.0.0.tgz"
+  "version" "3.0.0"
+
+"highcharts@^9.2.2", "highcharts@>=6.0.0":
+  "integrity" "sha512-OMEdFCaG626ES1JEcKAvJTpxAOMuchy0XuAplmnOs0Yu7NMd2RMfTLFQ2fCJOxo3ubSdm/RVQwKAWC+5HYThnw=="
+  "resolved" "https://registry.npmjs.org/highcharts/-/highcharts-9.2.2.tgz"
+  "version" "9.2.2"
+
 "highlight-words-core@^1.2.0":
   "integrity" "sha512-BXUKIkUuh6cmmxzi5OIbUJxrG8OAk2MqoL1DtO3Wo9D2faJg2ph5ntyuQeLqaHJmzER6H5tllCDA9ZnNe9BVGg=="
   "resolved" "https://registry.npmjs.org/highlight-words-core/-/highlight-words-core-1.2.2.tgz"

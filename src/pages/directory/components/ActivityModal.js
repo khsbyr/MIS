@@ -38,14 +38,6 @@ export default function ActivityModal(props) {
     }
   }, []);
 
-  //   const selectAtivityType = value => {
-  //     console.log(value);
-  //   };
-
-  //   const selectProjectType = value => {
-  //     console.log(value);
-  //   };
-
   const save = () => {
     form
       .validateFields()
@@ -124,7 +116,6 @@ export default function ActivityModal(props) {
                 valueField="id"
                 placeholder="Үйл ажиллагааны төрөл сонгох"
                 data={stateActivityType}
-                // onChange={value => selectAtivityType(value)}
               />
             </Form.Item>
             <Form.Item
@@ -140,7 +131,6 @@ export default function ActivityModal(props) {
                 valueField="id"
                 placeholder="Төсөлийн төрөл сонгох"
                 data={stateProjectType}
-                // onChange={value => selectProjectType(value)}
               />
             </Form.Item>
           </Form>

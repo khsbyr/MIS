@@ -207,11 +207,7 @@ const ProjectOrg = () => {
             dataKey="id"
           >
             <Column header="№" body={indexBodyTemplate} style={{ width: 40 }} />
-            <Column
-              header="Байгууллагын нэр"
-              body={nameBodyTemplate}
-              sortable
-            />
+            <Column header="Байгууллагын нэр" body={nameBodyTemplate} />
             <Column
               header="Регистрийн дугаар"
               body={registerNumberBodyTemplate}

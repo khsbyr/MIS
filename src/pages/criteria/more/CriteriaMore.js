@@ -1,7 +1,7 @@
 import { Tabs } from 'antd';
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import ContentWrapper from '../criteria.style';
+import ContentWrapper from '../../project/more/projectInfo.style';
 import CriteriaDetail from './tabs/CriteriaDetail';
 import CriteriaTrainning from './tabs/CriteriaTrainning';
 import CriteriaProject from './tabs/CriteriaProject';
@@ -23,10 +23,7 @@ export default function CriteriaMore() {
         <TabPane tab="Төсөл" key="3">
           <CriteriaProject id={id} />
         </TabPane>
-        <TabPane tab="MAKHIS" key="4">
-          Content 4
-        </TabPane>
-        <TabPane tab="Тэжээл" key="5">
+        <TabPane tab="Тэжээл" key="4">
           Content 5
         </TabPane>
       </Tabs>

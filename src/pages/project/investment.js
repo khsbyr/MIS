@@ -240,7 +240,6 @@ const investment = () => {
             <Column
               header="Үйл ажиллагаа буюу зардал"
               body={operationExpense}
-              sortable
             />
             <Column header="Нийт дүн" body={total} />
             <Column

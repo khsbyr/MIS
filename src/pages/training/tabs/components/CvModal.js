@@ -1,4 +1,4 @@
-import { InboxOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import { faCalendarAlt, faPhone } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -22,15 +22,20 @@ import {
   getService,
   postService,
   putService,
+  updateFileServer,
+  writeFileServer,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './cv.styled';
 import CvShowModal from './CvShowModal';
 
-// import { colourOptions } from '../data';
+const dummyRequest = ({ onSuccess }) => {
+  setTimeout(() => {
+    onSuccess('ok');
+  }, 0);
+};
 
-const { Dragger } = Upload;
 const { Option } = Select;
 const layout = {
   labelCol: {
@@ -53,6 +58,39 @@ export default function CvModal(props) {
   const [BirthDatee, setBirthDatee] = useState();
   const [, setIsOnchange] = useState(false);
   const [options, setOptions] = useState([]);
+  const [fileList, setFileList] = useState([]);
+  const [imageUrl, setImageUrl] = useState();
+
+  function getBase64(img, callback) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+  }
+
+  const defaultFileList =
+    Trainerscontroller?.trainers?.file && isEditMode
+      ? [
+          {
+            uid: '-1',
+            name: Trainerscontroller?.trainers?.file?.fileName,
+            status: 'done',
+            url: Trainerscontroller?.trainers?.file?.path,
+          },
+        ]
+      : [];
+
+  function handleUpload(info) {
+    setFileList([info.file.originFileObj]);
+    getBase64(info.file.originFileObj, imageUrll => setImageUrl(imageUrll));
+  }
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Зураг оруулах</div>
+    </div>
+  );
+
   const onInit = () => {
     toolsStore.setIsShowLoader(false);
     if (loadLazyTimeout) {
@@ -85,6 +123,7 @@ export default function CvModal(props) {
     }
 
     if (isEditMode) {
+      setImageUrl(Trainerscontroller?.trainers?.file?.path);
       setUserID(Trainerscontroller.id);
       form.setFieldsValue({
         ...Trainerscontroller,
@@ -94,7 +133,6 @@ export default function CvModal(props) {
         phoneNumber: Trainerscontroller.phoneNumber,
         email: Trainerscontroller.email,
         OrganizationName: Trainerscontroller.orgName,
-        // birthDateNew: Trainerscontroller.birthDate,
         AddressDetail: Trainerscontroller.address
           ? Trainerscontroller.address.addressDetail
           : '',
@@ -169,7 +207,6 @@ export default function CvModal(props) {
       .then(values => {
         values.organizationId = orgId;
         if (isEditMode) {
-          values.trainers = { purpose: values.purpose, skill: values.skill };
           values.id = userID;
           values.address = {
             addressDetail: values.AddressDetail,
@@ -186,10 +223,82 @@ export default function CvModal(props) {
               id: values.BagID,
             },
           };
-          putService(`user/update/${Trainerscontroller.id}`, values)
-            .then(() => {
-              message.success('Амжилттай хадгаллаа');
-              props.close(true);
+          if (fileList[0]) {
+            const serverApi = Trainerscontroller.trainers.file
+              ? updateFileServer(
+                  `file/update/${Trainerscontroller.trainers.file.id}`,
+                  fileList[0]
+                )
+              : writeFileServer(`file/upload`, fileList[0]);
+            serverApi
+              .then(response => {
+                values.trainers = {
+                  purpose: values.purpose,
+                  skill: values.skill,
+                  file: { id: response.data.id },
+                };
+
+                putService(`user/update/${Trainerscontroller.id}`, values)
+                  .then(() => {
+                    message.success('Амжилттай хадгаллаа');
+                    props.close(true);
+                  })
+                  .catch(error => {
+                    errorCatch(error);
+                  });
+              })
+              .catch(error => {
+                errorCatch(error);
+              });
+          } else {
+            putService(`user/update/${Trainerscontroller.id}`, values)
+              .then(() => {
+                message.success('Амжилттай хадгаллаа');
+                props.close(true);
+              })
+              .catch(error => {
+                errorCatch(error);
+              });
+          }
+        } else if (fileList[0]) {
+          writeFileServer(`file/upload`, fileList[0])
+            .then(response => {
+              values.trainers = {
+                purpose: values.purpose,
+                skill: values.skill,
+              };
+              values.file = { id: response.data.id };
+              values.user = {
+                id: userID,
+                firstname: values.firstname,
+                lastname: values.lastname,
+                register: values.registerNumber,
+                phoneNumber: values.phoneNumber,
+                email: values.email,
+                address: {
+                  addressDetail: values.AddressDetail,
+                  country: {
+                    id: 107,
+                  },
+                  aimag: {
+                    id: values.AimagID,
+                  },
+                  soum: {
+                    id: values.SoumID,
+                  },
+                  bag: {
+                    id: values.BagID,
+                  },
+                },
+              };
+              postService(`trainers/post`, values)
+                .then(() => {
+                  message.success('Амжилттай хадгаллаа');
+                  props.close(true);
+                })
+                .catch(error => {
+                  errorCatch(error);
+                });
             })
             .catch(error => {
               errorCatch(error);
@@ -233,6 +342,7 @@ export default function CvModal(props) {
         errorCatch(info);
       });
   };
+
   return (
     <div>
       <Modal
@@ -257,12 +367,23 @@ export default function CvModal(props) {
             <h2 className="title">1. Хувь хүний мэдээлэл</h2>
             <Row gutter={[30, 30]}>
               <Col xs={24} md={24} lg={4}>
-                <Dragger {...props} style={{}}>
-                  <p className="ant-upload-drag-icon">
-                    <InboxOutlined />
-                  </p>
-                  <p className="ant-upload-hint">Зураг оруулах</p>
-                </Dragger>
+                <Upload
+                  name="avatar"
+                  listType="picture-card"
+                  className="avatar-uploader"
+                  showUploadList={false}
+                  accept="image/*,.pdf"
+                  maxCount={1}
+                  defaultFileList={[...defaultFileList]}
+                  customRequest={dummyRequest}
+                  onChange={handleUpload}
+                >
+                  {imageUrl ? (
+                    <img src={imageUrl} alt="Зураг" style={{ width: '100%' }} />
+                  ) : (
+                    uploadButton
+                  )}
+                </Upload>
               </Col>
               <Col xs={24} md={24} lg={2} />
               <Col xs={24} md={24} lg={9}>
@@ -357,7 +478,7 @@ export default function CvModal(props) {
                       defaultValue={
                         isEditMode
                           ? Trainerscontroller &&
-                            moment(Trainerscontroller.birthDate)
+                            moment(Trainerscontroller.birthDate).zone(0)
                           : BirthDatee
                       }
                     />

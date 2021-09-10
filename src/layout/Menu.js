@@ -11,12 +11,13 @@ const rootSubmenuKeys = [
   'Indicator1',
   'Training2',
   'Project3',
-  'Project implementing unit4',
-  'Directory registration5',
-  'Other6',
-  'Consulting service7',
-  'Dashboard8',
-  'settings9',
+  'Makhis4',
+  'Project implementing unit5',
+  'Directory registration6',
+  'Other7',
+  'Consulting service8',
+  'Dashboard9',
+  'settings10',
 ];
 
 export default function AppMenu({ menus, collapsed }) {

@@ -74,7 +74,7 @@ const ContentWrapper = styled.div`
     margin-right: 25px;
   }
   .ant-select-selection-search {
-    margin-top: 4px;
+    margin-top: 8px;
   }
   #nest-messages_total {
     height: 40px;

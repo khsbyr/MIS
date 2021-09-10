@@ -21,7 +21,7 @@ const ContentWrapper = styled.div`
 
   .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
     height: 40px;
-    padding-top: 4px;
+    padding-top: 8px;
   }
 
   .planName

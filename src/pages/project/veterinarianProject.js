@@ -2,6 +2,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faFilePdf,
+  faHistory,
   faPen,
   faPlus,
   faPrint,
@@ -18,6 +19,8 @@ import {
   Select,
   Tag,
   Tooltip,
+  Input,
+  Table,
 } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -25,13 +28,14 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PAGESIZE } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
-import { getService, putService } from '../../service/service';
+import { getService, putService, postService } from '../../service/service';
 import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import ContentWrapper from './more/veterinarian.style';
 import VeterinarianProjectModal from './more/veterinarianProjectModal';
 
 const { Content } = Layout;
 const { Option } = Select;
+const { TextArea } = Input;
 
 let editRow;
 let isEditMode;
@@ -50,8 +54,26 @@ const veterinarianProject = () => {
   });
   const [totalRecords, setTotalRecords] = useState(0);
   const dt = useRef(null);
+  const [historyData, setHistoryData] = useState();
 
   let loadLazyTimeout = null;
+
+  const columns = [
+    {
+      title: 'Буцаасан ажилтан',
+      dataIndex: ['user', 'firstname'],
+      key: ['user', 'firstname'],
+    },
+    {
+      title: 'Шалтгаан',
+      dataIndex: 'definition',
+      key: 'definition',
+    },
+  ];
+
+  const saveHistory = e => {
+    setHistoryData(e.target.value);
+  };
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
@@ -117,16 +139,28 @@ const veterinarianProject = () => {
       cancelText: 'Буцах',
       onOk() {
         handleDeleted(row);
-        // onInit();
       },
       onCancel() {},
     });
   }
 
-  const onChangeStatus = value => {
+  const declineConfirm = value => {
+    const data = {
+      youngDoctorStatus: { id: parseInt(value, 10) },
+      youngDoctor: { id: doctorID },
+      definition: historyData,
+    };
+    postService(`youngDoctorStatusHistory/post`, data)
+      .then(() => {
+        message.success('Амжилттай хадгаллаа');
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+
     const datas = {
-      statusId: value,
       youngDoctorId: doctorID,
+      statusId: value,
     };
     putService(`youngDoctorStatus/updateDoctorStatus`, datas)
       .then(() => {
@@ -135,6 +169,35 @@ const veterinarianProject = () => {
       .catch(error => {
         errorCatch(error);
       });
+  };
+
+  const onChangeStatus = value => {
+    if (value === '3') {
+      Modal.confirm({
+        title: 'Буцаасан шалтгаанаа оруулна уу!',
+        width: 600,
+        content: <TextArea rows={5} onChange={saveHistory} />,
+        icon: <ExclamationCircleOutlined />,
+        okText: 'Хадгалах',
+        cancelText: 'Буцах',
+        onOk() {
+          declineConfirm(value);
+        },
+        onCancel() {},
+      });
+    } else {
+      const datas = {
+        statusId: value,
+        youngDoctorId: doctorID,
+      };
+      putService(`youngDoctorStatus/updateDoctorStatus`, datas)
+        .then(() => {
+          message.success('Амжилттай хадгаллаа');
+        })
+        .catch(error => {
+          errorCatch(error);
+        });
+    }
   };
 
   const selectedStatus = (event, row) => {
@@ -158,6 +221,34 @@ const veterinarianProject = () => {
     setIsModalVisible(true);
   };
 
+  const info = row => {
+    getService(`youngDoctorStatusHistory/get/${row.youngDoctor.id}`).then(
+      result => {
+        if (result) {
+          Modal.info({
+            title: 'Төлөвийн түүх',
+            width: 900,
+            okText: 'Буцах',
+            content: (
+              <Table
+                columns={columns}
+                dataSource={result}
+                size="small"
+                style={{ marginTop: '30px' }}
+                pagination={false}
+              />
+            ),
+            onOk() {},
+          });
+        }
+      }
+    );
+  };
+
+  function openTab(row) {
+    window.open(`${row.youngDoctor.file.path}`);
+  }
+
   const action = row => (
     <>
       <Button
@@ -170,6 +261,24 @@ const veterinarianProject = () => {
         icon={<FontAwesomeIcon icon={faTrash} />}
         onClick={() => pop(row)}
       />
+      <Tooltip title="Төлөвийн түүх харах">
+        <Button
+          type="text"
+          icon={<FontAwesomeIcon icon={faHistory} />}
+          onClick={() => info(row)}
+        />
+      </Tooltip>
+      {row.youngDoctor.file ? (
+        <Tooltip title="Файл харах">
+          <Button
+            type="text"
+            icon={<FontAwesomeIcon icon={faFilePdf} />}
+            onClick={() => openTab(row)}
+          />
+        </Tooltip>
+      ) : (
+        ''
+      )}
     </>
   );
 
@@ -245,7 +354,7 @@ const veterinarianProject = () => {
         }
         onChange={onChangeStatus}
         onClick={event => selectedStatus(event, row)}
-        style={{ width: '60%', background: 'unset' }}
+        style={{ width: '100%', background: 'unset' }}
       >
         {status?.map(z => (
           <Option key={z.id}>
@@ -409,7 +518,7 @@ const veterinarianProject = () => {
               body={statusBodyTemplate}
               filterPlaceholder="Хайх"
             />
-            <Column headerStyle={{ width: '7rem' }} body={action} />
+            <Column headerStyle={{ width: '10rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <VeterinarianProjectModal
