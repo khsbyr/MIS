@@ -62,6 +62,10 @@ const ContentWrapper = styled.div`
   .ant-select-selection-search {
     margin-top: 4px;
   }
+  .ant-upload.ant-upload-select-picture-card {
+    width: 200px !important;
+    height: 240px !important;
+  }
 `;
 
 export default ContentWrapper;

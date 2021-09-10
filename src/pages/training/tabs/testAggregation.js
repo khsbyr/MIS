@@ -268,7 +268,6 @@ const TestAggregation = props => {
               onFilter={onFilter}
               filters={lazyParams.filters}
               value={list}
-              tableStyle={{ minWidth: 1000 }}
               onRowClick={showParticipants}
               removableSort
               paginator
@@ -292,12 +291,10 @@ const TestAggregation = props => {
                 sortable
                 filter
                 filterPlaceholder="Хайх"
-                bodyStyle={{ textAlign: 'left' }}
               />
               <Column
                 header="Авбал зохих"
                 body={ShouldTakenBodyTemplate}
-                bodyStyle={{ textAlign: 'center' }}
                 sortable
                 filter
                 filterPlaceholder="Хайх"
@@ -308,7 +305,6 @@ const TestAggregation = props => {
                 sortable
                 filter
                 filterPlaceholder="Хайх"
-                bodyStyle={{ textAlign: 'center' }}
               />
               <Column headerStyle={{ width: '7rem' }} body={action} />
             </DataTable>

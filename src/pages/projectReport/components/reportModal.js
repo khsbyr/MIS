@@ -12,8 +12,7 @@ import {
 } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
-// eslint-disable-next-line import/no-named-as-default
-import ContentWrapper from './plan.style';
+import ContentWrapper from './report.style';
 
 const { Option } = Select;
 
@@ -29,16 +28,16 @@ export default function ReportModal(props) {
   const [planList, setPlanList] = useState();
   const [selectedPlan, setSelectedPlan] = useState([]);
   const [fileList, setFileList] = useState([]);
-  const [processValue, setProcessValue] = useState();
+  const [, setProcessValue] = useState();
 
   const defaultFileList =
-    EditRow.file && isEditMode
+    EditRow?.file && isEditMode
       ? [
           {
             uid: '-1',
-            name: EditRow.file.fileName,
+            name: EditRow?.file?.fileName,
             status: 'done',
-            url: EditRow.file.path,
+            url: EditRow?.file?.path,
           },
         ]
       : [];
@@ -66,7 +65,6 @@ export default function ReportModal(props) {
   }
 
   function handleUpload(info) {
-    // console.log(info.file.originFileObj);
     setFileList([info.file.originFileObj]);
   }
 
@@ -111,7 +109,7 @@ export default function ReportModal(props) {
                 errorCatch(error);
               });
           }
-        } else {
+        } else if (fileList[0]) {
           writeFileServer(`file/upload`, fileList[0])
             .then(response => {
               values.fileId = response.data.id;
@@ -123,6 +121,15 @@ export default function ReportModal(props) {
                 .catch(error => {
                   errorCatch(error);
                 });
+            })
+            .catch(error => {
+              errorCatch(error);
+            });
+        } else {
+          postService('planReport/post', values)
+            .then(() => {
+              message.success('Амжилттай хадгаллаа');
+              props.close(true);
             })
             .catch(error => {
               errorCatch(error);
@@ -189,7 +196,7 @@ export default function ReportModal(props) {
               <Col xs={24} md={24} lg={24}>
                 <Form.Item label="Үр дүн:" name="processResult">
                   <Select
-                    defaultValue="0"
+                    defaultValue="Сонгох"
                     style={{ width: 120 }}
                     onChange={handleChange}
                   >
@@ -215,7 +222,7 @@ export default function ReportModal(props) {
                   customRequest={dummyRequest}
                   onChange={handleUpload}
                 >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
+                  <Button icon={<UploadOutlined />}>Файл хавсаргах</Button>
                 </Upload>
               </Col>
             </Row>

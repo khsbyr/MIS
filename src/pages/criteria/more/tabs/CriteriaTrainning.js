@@ -121,35 +121,30 @@ const CriteriaTrainning = props => {
             />
             <Column
               header="Төсөв"
-              headerStyle={{ width: '10rem' }}
               filter
               body={totalBudgetBodyTemplate}
               filterPlaceholder="Хайх"
             />
             <Column
               header="Гүйцэтгэлийн төсөв"
-              headerStyle={{ width: '10rem' }}
               filter
               body={performanceBudgetBodyTemplate}
               filterPlaceholder="Хайх"
             />
             <Column
               header="Эхэлсэн огноо"
-              headerStyle={{ width: '10rem' }}
               filterPlaceholder="Хайх"
               filter
               body={startDateBodyTemplate}
             />
             <Column
               header="Дууссан огноо"
-              headerStyle={{ width: '10rem' }}
               filterPlaceholder="Хайх"
               filter
               body={endDateBodyTemplate}
             />
             <Column
               header="Оролцогчдын тоо"
-              headerStyle={{ width: '10rem' }}
               filter
               body={participantBodyTemplate}
               filterPlaceholder="Хайх"

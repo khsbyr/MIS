@@ -23,7 +23,7 @@ export default function TraningInfo() {
   const { t } = useTranslation();
   const { id } = useParams();
   const { setIsShowLoader } = useToolsStore();
-  const { TrainingList, setTrainingList } = useTrainingStore();
+  const { setTrainingList } = useTrainingStore();
   useEffect(() => {
     setIsShowLoader(true);
     getService(`/training/get/${id}`)

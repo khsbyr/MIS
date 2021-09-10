@@ -245,6 +245,10 @@ const veterinarianProject = () => {
     );
   };
 
+  function openTab(row) {
+    window.open(`${row.youngDoctor.file.path}`);
+  }
+
   const action = row => (
     <>
       <Button
@@ -264,6 +268,17 @@ const veterinarianProject = () => {
           onClick={() => info(row)}
         />
       </Tooltip>
+      {row.youngDoctor.file ? (
+        <Tooltip title="Файл харах">
+          <Button
+            type="text"
+            icon={<FontAwesomeIcon icon={faFilePdf} />}
+            onClick={() => openTab(row)}
+          />
+        </Tooltip>
+      ) : (
+        ''
+      )}
     </>
   );
 
@@ -503,7 +518,7 @@ const veterinarianProject = () => {
               body={statusBodyTemplate}
               filterPlaceholder="Хайх"
             />
-            <Column headerStyle={{ width: '8rem' }} body={action} />
+            <Column headerStyle={{ width: '10rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <VeterinarianProjectModal

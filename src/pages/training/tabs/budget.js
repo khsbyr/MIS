@@ -14,7 +14,6 @@ import { DataTable } from 'primereact/datatable';
 import { ColumnGroup } from 'primereact/columngroup';
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ContactSupport } from '@material-ui/icons';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
@@ -381,9 +380,6 @@ const Budget = props => {
 
   function Formatcurrency(value) {
     return `${value}₮`;
-    // console.log(value);
-    // const values = value || 0;
-    // return `${values.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}₮`;
   }
 
   const nf = new Intl.NumberFormat();
@@ -400,35 +396,15 @@ const Budget = props => {
   const totalBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Нийт төсөв /₮/</span>
-      {/* {Formatcurrency(row.totalBudget)} */}
       {Formatcurrency(nf.format(row.totalBudget))}
     </>
   );
   const performanceBudgetBodyTemplate = row => (
     <>
       <span className="p-column-title">Гүйцэтгэлийн төсөв /₮/</span>
-      {/* {Formatcurrency(row.performanceBudget)} */}
       {Formatcurrency(nf.format(row.performanceBudget))}
     </>
   );
-  // const stationeryTotalBodyTemplate = row => (
-  //   <>
-  //     <span className="p-column-title">Бичгийн хэрэгсэл нийт /₮/</span>
-  //     {Formatcurrency(row.stationeryTotal)}
-  //   </>
-  // );
-  // const hotelTotalBodyTemplate = row => (
-  //   <>
-  //     <span className="p-column-title">Зам хоног, буудлын зардал нийт /₮/</span>
-  //     {Formatcurrency(row.hotelTotal)}
-  //   </>
-  // );
-  // const fuelTotalBodyTemplate = row => (
-  //   <>
-  //     <span className="p-column-title">Шатахууны зардал нийт /₮/</span>
-  //     {Formatcurrency(row.fuelTotal)}
-  //   </>
-  // );
 
   // stationeryExpenses
   const indexBodyTemplate = row => (
@@ -449,7 +425,6 @@ const Budget = props => {
     <>
       <span className="p-column-title">Нэгж үнэ /₮/</span>
       {row.unitPrice}
-      {/* {Formatcurrency(nf.format(row.unitPrice))} */}
     </>
   );
 
@@ -470,7 +445,6 @@ const Budget = props => {
   const totalNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Дүн /₮/</span>
-      {/* {row.total} */}
       {Formatcurrency(nf.format(row.total))}
     </>
   );
@@ -487,7 +461,6 @@ const Budget = props => {
     <>
       <span className="p-column-title">Хоногт /₮/</span>
       {row.costPerDay}
-      {/* {Formatcurrency(nf.format(row.costPerDay))} */}
     </>
   );
 
@@ -508,7 +481,6 @@ const Budget = props => {
   const totalBodyTemplate = row => (
     <>
       <span className="p-column-title">Нийт /₮/</span>
-      {/* {Formatcurrency(row.total)} */}
       {Formatcurrency(nf.format(row.total))}
     </>
   );
@@ -545,14 +517,12 @@ const Budget = props => {
     <>
       <span className="p-column-title">Шатахууны үнэ /₮/ A92</span>
       {row.fuelCost}
-      {/* {Formatcurrency(nf.format(row.fuelCost))} */}
     </>
   );
 
   const totalfuelBodyTemplate = row => (
     <>
       <span className="p-column-title">Нийт /₮/</span>
-      {/* {Formatcurrency(row.total)} */}
       {Formatcurrency(nf.format(row.total))}
     </>
   );
@@ -578,13 +548,6 @@ const Budget = props => {
     }
     return <div> {Formatcurrency(nf.format(total))}</div>;
   };
-
-  // const Alltotal = (total, HotelTotal, FuelTotal, StationaryTotal) => {
-  //   const total = 0;
-  //   total === FuelTotal.value + HotelTotal + StationaryTotal;
-  //   console.log(total);
-  //   return <div>{Formatcurrency(total)}</div>;
-  // };
 
   const footerGroup = (
     <ColumnGroup>
@@ -680,30 +643,16 @@ const Budget = props => {
             emptyMessage="Өгөгдөл олдсонгүй..."
             className="p-datatable-responsive-demo"
           >
-            <Column
-              header="Бичгийн хэрэгсэл нийт /₮/"
-              body={StationaryTotal}
-              bodyStyle={{ textAlign: 'center' }}
-            />
+            <Column header="Бичгийн хэрэгсэл нийт /₮/" body={StationaryTotal} />
             <Column
               header="Зам хоног, буудлын зардал нийт /₮/"
               body={HotelTotal}
-              bodyStyle={{ textAlign: 'center' }}
             />
-            <Column
-              header="Шатахууны зардал нийт /₮/"
-              body={FuelTotal}
-              bodyStyle={{ textAlign: 'center' }}
-            />
-            <Column
-              header="Нийт төсөв /₮/"
-              body={totalBudgetBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
-            />
+            <Column header="Шатахууны зардал нийт /₮/" body={FuelTotal} />
+            <Column header="Нийт төсөв /₮/" body={totalBudgetBodyTemplate} />
             <Column
               header="Төсвийн гүйцэтгэл /₮/"
               body={performanceBudgetBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
             />
             {/* <Column
               header="Үйлдэл"
@@ -757,7 +706,6 @@ const Budget = props => {
             onFilter={onFilter1}
             filters={lazyParams.filters}
             footerColumnGroup={footerGroup}
-            tableStyle={{ minWidth: 1000 }}
             emptyMessage="Өгөгдөл олдсонгүй..."
             value={list1}
             removableSort
@@ -788,7 +736,6 @@ const Budget = props => {
               field="unitPrice"
               header="Нэгж үнэ /₮/"
               body={unitPriceNameBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
               sortable
               filter
               filterPlaceholder="Хайх"
@@ -797,7 +744,6 @@ const Budget = props => {
               field="quantity"
               header="Тоо ширхэг"
               body={quantityNameBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
               sortable
               filter
               filterPlaceholder="Хайх"
@@ -806,7 +752,6 @@ const Budget = props => {
               field="numberOfPeople"
               header="Хүний тоо"
               body={numberOfPeopleNameBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
               sortable
               filter
               filterPlaceholder="Хайх"
@@ -815,7 +760,6 @@ const Budget = props => {
               field="total"
               header="Дүн /₮/"
               body={totalNameBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
               sortable
               filter
               filterPlaceholder="Хайх"
@@ -878,7 +822,6 @@ const Budget = props => {
             sortOrder={lazyParams.sortOrder}
             onFilter={onFilter2}
             filters={lazyParams.filters}
-            tableStyle={{ minWidth: 1000 }}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             onSelectionChange={e => {
@@ -897,7 +840,6 @@ const Budget = props => {
               field="numberOfPeople"
               header="МЗҮБ хүний тоо"
               body={numberOfPeopleBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
               sortable
               filter
               filterPlaceholder="Хайх"
@@ -905,7 +847,6 @@ const Budget = props => {
             <Column
               field="costPerDay"
               header="Хоногт /₮/"
-              bodyStyle={{ textAlign: 'center' }}
               body={costPerDayBodyTemplate}
               sortable
               filter
@@ -914,14 +855,12 @@ const Budget = props => {
             <Column
               header="Төлбөрийн төрөл"
               body={costTypeBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
               filter
               filterPlaceholder="Хайх"
             />
             <Column
               field="days"
               header="Хоног"
-              bodyStyle={{ textAlign: 'center' }}
               body={daysBodyTemplate}
               sortable
               filter
@@ -930,7 +869,6 @@ const Budget = props => {
             <Column
               field="total"
               header="Нийт /₮/"
-              bodyStyle={{ textAlign: 'center' }}
               body={totalBodyTemplate}
               sortable
               filter
@@ -994,7 +932,6 @@ const Budget = props => {
             sortOrder={lazyParams.sortOrder}
             onFilter={onFilter}
             filters={lazyParams.filters}
-            tableStyle={{ minWidth: 1000 }}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
             onSelectionChange={e => {
@@ -1018,7 +955,6 @@ const Budget = props => {
             />
             <Column
               field="roadLength"
-              bodyStyle={{ textAlign: 'center' }}
               header="Замын урт /км/"
               body={roadLengthBodyTemplate}
               sortable
@@ -1027,7 +963,6 @@ const Budget = props => {
             />
             <Column
               field="regionalSupplement"
-              bodyStyle={{ textAlign: 'center' }}
               header="Бүсийн нэмэгдэл /%/"
               body={regionalSupplementBodyTemplate}
               sortable
@@ -1037,7 +972,6 @@ const Budget = props => {
             <Column
               field="fuelConsumption"
               header="Зарцуулах шатахуун /л/"
-              bodyStyle={{ textAlign: 'center' }}
               body={fuelConsumptionBodyTemplate}
               sortable
               filter
@@ -1045,7 +979,6 @@ const Budget = props => {
             />
             <Column
               field="fuelCost"
-              bodyStyle={{ textAlign: 'center' }}
               header="Шатахууны үнэ /₮/ A92"
               body={fuelCostBodyTemplate}
               sortable
@@ -1055,7 +988,6 @@ const Budget = props => {
             <Column
               field="total"
               header="Нийт /₮/"
-              bodyStyle={{ textAlign: 'center' }}
               body={totalfuelBodyTemplate}
               sortable
               filter

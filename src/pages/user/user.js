@@ -270,8 +270,6 @@ const User = () => {
             onFilter={onFilter}
             filters={lazyParams.filters}
             emptyMessage="Өгөгдөл олдсонгүй..."
-            tableStyle={{ minWidth: 1000 }}
-            // onRowClick={edit}
             className="p-datatable-responsive-demo"
           >
             <Column

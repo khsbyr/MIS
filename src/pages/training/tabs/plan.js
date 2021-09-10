@@ -176,21 +176,21 @@ const Plan = props => {
 
   const indexBodyTemplate = row => (
     <>
-      {/* <span className="p-column-title">№</span> */}
+      <span className="p-column-title">№</span>
       {row.index}
     </>
   );
 
   const missionBodyTemplate = row => (
     <>
-      {/* <span className="p-column-title">Сургалтанд гүйцэтгэх үүрэг</span> */}
+      <span className="p-column-title">Сургалтанд гүйцэтгэх үүрэг</span>
       {row.mission}
     </>
   );
 
   const nameTrainerBodyTemplate = row => (
     <>
-      {/* <span className="p-column-title">Багшийн нэрс</span> */}
+      <span className="p-column-title">Багшийн нэрс</span>
       {row.user && row.user.fullName}
     </>
   );
@@ -203,38 +203,6 @@ const Plan = props => {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Row justify="end" gutter={[16, 16]}>
-                  {/* <Col>
-                    <Tooltip title={t('print')} arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        icon={<FontAwesomeIcon icon={faPrint} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title={t('export')} arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faFileExcel} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title={t('pdf')} arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faFilePdf} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col> */}
                   <Col>
                     <Tooltip title={t('add')} arrowPointAtCenter>
                       <Button
@@ -242,9 +210,7 @@ const Plan = props => {
                         className="export"
                         icon={<FontAwesomeIcon icon={faPlus} />}
                         onClick={add}
-                      >
-                        {' '}
-                      </Button>
+                      />
                     </Tooltip>
                   </Col>
                 </Row>
@@ -271,7 +237,6 @@ const Plan = props => {
             filters={lazyParams.filters}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            tableStyle={{ minWidth: 1000 }}
             // onRowClick={edit}
             onSelectionChange={e => {
               setSelectedRows(e.value);
@@ -291,8 +256,7 @@ const Plan = props => {
               filter
               filterPlaceholder="Хайх"
               field="mission"
-              editor={editData => missionEditor('list', editData)}
-              bodyStyle={{ textAlign: 'center' }}
+              // editor={editData => missionEditor('list', editData)}
               filterMatchMode="contains"
             />
             <Column
@@ -302,7 +266,6 @@ const Plan = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
-              bodyStyle={{ textAlign: 'center' }}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

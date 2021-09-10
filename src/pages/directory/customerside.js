@@ -17,14 +17,9 @@ import { ToolsContext } from '../../context/Tools';
 import { deleteService, getService } from '../../service/service';
 import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
-// import OrgaStyle from '../training/tabs/components/orga.style';
-// import AutoCompleteSelect from '../../components/Autocomplete';
 import CustomerSideModal from './components/CustomerSideModal';
 import { PAGESIZE } from '../../constants/Constant';
 
-// function onChange(date, dateString) {
-//   console.log(date, dateString);
-// }
 const { Content } = Layout;
 
 let editRow;
@@ -278,7 +273,6 @@ const Customerside = () => {
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              // trainingID={trainingID}
             />
           )}
         </div>

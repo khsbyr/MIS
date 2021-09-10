@@ -34,7 +34,7 @@ function Admin() {
   const isLoggged = localStorage.getItem('token');
   const history = useHistory();
   const [isModalVisible, setIsModalVisible] = useState(true);
-  const closeModal = (isSuccess = false) => {
+  const closeModal = () => {
     setIsModalVisible(false);
   };
 

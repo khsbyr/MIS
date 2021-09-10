@@ -96,9 +96,10 @@ const ContentWrapper = styled.div`
   #nest-messages_fuelCost:hover {
     border-color: #1890ff;
   }
-  /* .ant-form-item-control-input-content {
-        border-bottom: 1px solid #103154;
-    } */
+  .ant-upload.ant-upload-select-picture-card {
+    width: 200px !important;
+    height: 240px !important;
+  }
 `;
 
 export default ContentWrapper;

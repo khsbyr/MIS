@@ -1,11 +1,10 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import { Button, Col, Layout, message, Modal, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../../context/Tools';
 import { useTrainingStore } from '../../../context/TrainingContext';
 import { getService, putService } from '../../../service/service';
@@ -20,7 +19,6 @@ let isEditMode;
 let loadLazyTimeout = null;
 
 const Organization = props => {
-  const { t } = useTranslation();
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -31,7 +29,7 @@ const Organization = props => {
   });
   const dt = useRef(null);
   const [selectedRows, setSelectedRows] = useState([]);
-  const { TrainingList, setTrainingList } = useTrainingStore();
+  const { setTrainingList } = useTrainingStore();
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
@@ -62,11 +60,6 @@ const Organization = props => {
   useEffect(() => {
     onInit();
   }, [lazyParams]);
-
-  const add = () => {
-    setIsModalVisible(true);
-    isEditMode = false;
-  };
 
   const edit = row => {
     editRow = row;
@@ -257,7 +250,6 @@ const Organization = props => {
             sortOrder={lazyParams.sortOrder}
             onFilter={onFilter}
             filters={lazyParams.filters}
-            tableStyle={{ minWidth: 1000 }}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
@@ -268,28 +260,14 @@ const Organization = props => {
               header="Байгууллагын нэр"
               body={nameBodyTemplate}
               sortable
-              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Регистрийн дугаар"
               body={registerNumberBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
             />
-            <Column
-              header="Банкны нэр"
-              body={bankNameBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
-            />
-            <Column
-              header="Дансны нэр"
-              body={accountNameBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
-            />
-            <Column
-              header="Дансны дугаар"
-              body={accountNumberBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
-            />
+            <Column header="Банкны нэр" body={bankNameBodyTemplate} />
+            <Column header="Дансны нэр" body={accountNameBodyTemplate} />
+            <Column header="Дансны дугаар" body={accountNumberBodyTemplate} />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (

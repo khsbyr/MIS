@@ -137,6 +137,10 @@ const TrainingReport = props => {
     }
   };
 
+  function openTab(row) {
+    window.open(`${row.trainingReport.file.path}`);
+  }
+
   const action = row => (
     <>
       <Button
@@ -149,6 +153,17 @@ const TrainingReport = props => {
         icon={<FontAwesomeIcon icon={faTrash} />}
         onClick={() => pop(row)}
       />
+      {row.trainingReport.file ? (
+        <Tooltip title="Файл харах">
+          <Button
+            type="text"
+            icon={<FontAwesomeIcon icon={faFilePdf} />}
+            onClick={() => openTab(row)}
+          />
+        </Tooltip>
+      ) : (
+        ''
+      )}
     </>
   );
   const closeModal = (isSuccess = false) => {
@@ -165,19 +180,19 @@ const TrainingReport = props => {
 
   const teacherBodyTemplate = row => (
     <>
-      <span className="p-column-title">Огноо</span>
-      {moment(row.trainingReport && row.trainingReport.createdDate).format(
-        'YYYY-M-D h цаг m минут'
-      )}
+      <span className="p-column-title">Үүссэн огноо</span>
+      {moment(row.trainingReport && row.trainingReport.createdDate)
+        .zone(0)
+        .format('YYYY-M-D')}
     </>
   );
 
   const updatedDateBodyTemplate = row => (
     <>
-      <span className="p-column-title">Огноо</span>
-      {moment(row.trainingReport && row.trainingReport.updatedDate).format(
-        'YYYY-M-D h цаг m минут'
-      )}
+      <span className="p-column-title">Зассан огноо</span>
+      {row.trainingReport.updatedDate
+        ? moment(row.trainingReport.updatedDate).zone(0).format('YYYY-M-D')
+        : 'Тодорхойгүй'}
     </>
   );
 
@@ -264,48 +279,33 @@ const TrainingReport = props => {
             sortOrder={lazyParams.sortOrder}
             onFilter={onFilter}
             filters={lazyParams.filters}
-            tableStyle={{ minWidth: 1000 }}
             lazy
-            // selectionMode="checkbox"
             selection={selectedRows}
-            // onRowClick={edit}
-            // editMode="row"
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
             dataKey="id"
           >
-            {/* <Column selectionMode="multiple" headerStyle={{ width: '3em', padding: "0px" }}  ></Column> */}
-            {/* <Column
-              field="index"
-              header="№"
-              body={indexBodyTemplate}
-              sortable
-            /> */}
             <Column
               field="trainerFor"
               header="Сургалтын нэр"
               body={trainingnameBodyTemplate}
-              bodyStyle={{ textAlign: 'left' }}
             />
             <Column
               header="Сургалт явуулсан байгууллага, хүний нэр"
               body={respoUserBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Үүссэн огноо"
               body={teacherBodyTemplate}
               style={{ width: 200 }}
-              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               header="Зассан огноо"
               body={updatedDateBodyTemplate}
               style={{ width: 200 }}
-              bodyStyle={{ textAlign: 'center' }}
             />
-            <Column headerStyle={{ width: '7rem' }} body={action} />
+            <Column headerStyle={{ width: '8rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <TrainingReportModal

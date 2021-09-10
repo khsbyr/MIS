@@ -1,34 +1,40 @@
-import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
+import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import moment from 'moment';
 import {
   Button,
   Checkbox,
   Col,
+  DatePicker,
   Form,
   Input,
+  InputNumber,
+  message,
   Modal,
   Row,
   Upload,
-  message,
-  InputNumber,
-  DatePicker,
 } from 'antd';
+import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
+import PhoneNumber from '../../../../components/PhoneNumber';
+import { useToolsStore } from '../../../../context/Tools';
 import {
   getService,
   postService,
   putService,
+  updateFileServer,
+  writeFileServer,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import { useToolsStore } from '../../../../context/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './organization.style';
-import PhoneNumber from '../../../../components/PhoneNumber';
 
-const { Dragger } = Upload;
+const dummyRequest = ({ onSuccess }) => {
+  setTimeout(() => {
+    onSuccess('ok');
+  }, 0);
+};
 
 export default function OrganizationModal(props) {
   const {
@@ -48,6 +54,31 @@ export default function OrganizationModal(props) {
   const [role, setRole] = useState([]);
   const [, setRoleID] = useState([]);
   const [foundedDate, setFoundedDate] = useState([]);
+  const [fileList, setFileList] = useState([]);
+  const [imageUrl, setImageUrl] = useState();
+
+  function getBase64(img, callback) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+  }
+
+  const defaultFileList =
+    Orgcontroller?.file && isEditMode
+      ? [
+          {
+            uid: '-1',
+            name: Orgcontroller?.file?.fileName,
+            status: 'done',
+            url: Orgcontroller?.file?.path,
+          },
+        ]
+      : [];
+
+  function handleUpload(info) {
+    setFileList([info.file.originFileObj]);
+    getBase64(info.file.originFileObj, imageUrll => setImageUrl(imageUrll));
+  }
 
   function onDateChange(date, value) {
     setFoundedDate(value);
@@ -90,6 +121,7 @@ export default function OrganizationModal(props) {
       });
     }
     if (isEditMode) {
+      setImageUrl(Orgcontroller?.file?.path);
       setFoundedDate(Orgcontroller?.foundedYear);
       setResponsibleUserID(
         Orgcontroller?.responsibleUser && Orgcontroller.responsibleUser.id
@@ -193,15 +225,60 @@ export default function OrganizationModal(props) {
           const url = orgId
             ? `organization/update/${orgId}`
             : `organization/update/${Orgcontroller.id}`;
-          putService(`${url}`, values)
-            .then(() => {
-              getService('organization/getAll').then(resultOrg => {
-                if (resultOrg) {
-                  toolsStore.setOrgList(resultOrg || []);
-                }
+          if (fileList[0]) {
+            const serverApi = Orgcontroller.file
+              ? updateFileServer(
+                  `file/update/${Orgcontroller.file.id}`,
+                  fileList[0]
+                )
+              : writeFileServer(`file/upload`, fileList[0]);
+            serverApi
+              .then(response => {
+                values.file = { id: response.data.id };
+                putService(`${url}`, values)
+                  .then(() => {
+                    getService('organization/getAll').then(resultOrg => {
+                      if (resultOrg) {
+                        toolsStore.setOrgList(resultOrg || []);
+                      }
+                    });
+                    message.success('Амжилттай хадгаллаа');
+                    props.close(true);
+                  })
+                  .catch(error => {
+                    errorCatch(error);
+                  });
+              })
+              .catch(error => {
+                errorCatch(error);
               });
-              message.success('Амжилттай хадгаллаа');
-              props.close(true);
+          } else {
+            putService(`${url}`, values)
+              .then(() => {
+                getService('organization/getAll').then(resultOrg => {
+                  if (resultOrg) {
+                    toolsStore.setOrgList(resultOrg || []);
+                  }
+                });
+                message.success('Амжилттай хадгаллаа');
+                props.close(true);
+              })
+              .catch(error => {
+                errorCatch(error);
+              });
+          }
+        } else if (fileList[0]) {
+          writeFileServer(`file/upload`, fileList[0])
+            .then(response => {
+              values.file = { id: response.data.id };
+              postService('organization/post', values)
+                .then(() => {
+                  message.success('Амжилттай хадгаллаа');
+                  props.close(true);
+                })
+                .catch(error => {
+                  errorCatch(error);
+                });
             })
             .catch(error => {
               errorCatch(error);
@@ -221,7 +298,15 @@ export default function OrganizationModal(props) {
         errorCatch(info);
       });
   };
+
   const dateFormat = 'YYYY-MM-DD';
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Зураг оруулах</div>
+    </div>
+  );
 
   return (
     <div>
@@ -248,13 +333,23 @@ export default function OrganizationModal(props) {
           >
             <Row gutter={[72]}>
               <Col xs={24} md={24} lg={6}>
-                <Dragger {...props}>
-                  <p className="ant-upload-drag-icon">
-                    <InboxOutlined />
-                  </p>
-
-                  <p className="ant-upload-hint">Зураг оруулах</p>
-                </Dragger>
+                <Upload
+                  name="avatar"
+                  listType="picture-card"
+                  className="avatar-uploader"
+                  showUploadList={false}
+                  accept="image/*,.pdf"
+                  maxCount={1}
+                  defaultFileList={[...defaultFileList]}
+                  customRequest={dummyRequest}
+                  onChange={handleUpload}
+                >
+                  {imageUrl ? (
+                    <img src={imageUrl} alt="Зураг" style={{ width: '100%' }} />
+                  ) : (
+                    uploadButton
+                  )}
+                </Upload>
               </Col>
               <Col xs={24} md={24} lg={10}>
                 <h2 className="title"> Байгууллагын мэдээлэл</h2>
