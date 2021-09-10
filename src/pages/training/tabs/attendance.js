@@ -281,7 +281,6 @@ const Attendance = props => {
             sortOrder={lazyParams.sortOrder}
             onFilter={onFilter}
             filters={lazyParams.filters}
-            tableStyle={{ minWidth: 1000 }}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}
@@ -300,7 +299,6 @@ const Attendance = props => {
               filter
               filterPlaceholder="Хайх"
               body={LastNameBodyTemplate}
-              bodyStyle={{ textAlign: 'left' }}
             />
             <Column
               field="firstname"
@@ -309,7 +307,6 @@ const Attendance = props => {
               filter
               filterPlaceholder="Хайх"
               body={FirstNameBodyTemplate}
-              bodyStyle={{ textAlign: 'left' }}
             />
             <Column
               field="jobDescription"
@@ -318,7 +315,6 @@ const Attendance = props => {
               filter
               filterPlaceholder="Хайх"
               body={jobDescBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               field=""
@@ -327,7 +323,6 @@ const Attendance = props => {
               filter
               filterPlaceholder="Хайх"
               body={contactBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               field=""
@@ -336,7 +331,6 @@ const Attendance = props => {
               filter
               filterPlaceholder="Хайх"
               body={registerNumberBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               field=""
@@ -345,7 +339,6 @@ const Attendance = props => {
               filter
               filterPlaceholder="Хайх"
               body={genderBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

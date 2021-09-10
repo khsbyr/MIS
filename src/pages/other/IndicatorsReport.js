@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
@@ -135,6 +136,10 @@ const IndicatorsReport = () => {
     }
   };
 
+  function openTab(row) {
+    window.open(`${row.file.path}`);
+  }
+
   const action = row => (
     <>
       <Button
@@ -146,7 +151,18 @@ const IndicatorsReport = () => {
         type="text"
         icon={<FontAwesomeIcon icon={faTrash} />}
         onClick={() => pop(row)}
-      />
+      />{' '}
+      {row.file ? (
+        <Tooltip title="Файл харах">
+          <Button
+            type="text"
+            icon={<FontAwesomeIcon icon={faFilePdf} />}
+            onClick={() => openTab(row)}
+          />
+        </Tooltip>
+      ) : (
+        ''
+      )}
     </>
   );
 
@@ -186,7 +202,7 @@ const IndicatorsReport = () => {
   const processResultBodyTemplate = row => (
     <>
       <span className="p-column-title">Үр дүн</span>
-      {row.processResult}
+      {row.number ? row.number : row.isYes === true ? 'Тийм' : 'Үгүй'}
     </>
   );
   const explanationBodyTemplate = row => (
@@ -316,7 +332,7 @@ const IndicatorsReport = () => {
             />
             <Column
               header="Үр дүн"
-              field="processResult"
+              field="number"
               body={processResultBodyTemplate}
               sortable
               filter
@@ -331,7 +347,7 @@ const IndicatorsReport = () => {
               filter
               filterPlaceholder="Хайх"
             />
-            <Column headerStyle={{ width: '7rem' }} body={action} />
+            <Column headerStyle={{ width: '9rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <IndicatorsReportModal

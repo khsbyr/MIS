@@ -25,7 +25,7 @@ const TrainingProgram = props => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
-  const [orgID, setOrgID] = useState([]);
+  const [orgID] = useState([]);
   const toolsStore = useContext(ToolsContext);
   const [totalRecords, setTotalRecords] = useState(0);
   const [lazyParams, setLazyParams] = useState({
@@ -45,7 +45,6 @@ const TrainingProgram = props => {
       getService(`trainingProgram/get/${props.id}`, obj)
         .then(data => {
           const dataList = data.content || [];
-          // setOrgID(dataList[0].training.organization.id);
           setTrainingID(props.id);
           dataList.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
@@ -192,38 +191,6 @@ const TrainingProgram = props => {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Row justify="end" gutter={[16, 16]}>
-                  {/* <Col>
-                    <Tooltip title={t('print')} arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        icon={<FontAwesomeIcon icon={faPrint} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title={t('export')} arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faFileExcel} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title={t('pdf')} arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faFilePdf} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col> */}
                   <Col>
                     <Tooltip title={t('add')} arrowPointAtCenter>
                       <Button
@@ -255,7 +222,6 @@ const TrainingProgram = props => {
             onFilter={onFilter}
             filters={lazyParams.filters}
             value={list}
-            tableStyle={{ minWidth: 1000 }}
             emptyMessage="Өгөгдөл олдсонгүй..."
             paginator
             className="p-datatable-responsive-demo"
@@ -279,7 +245,6 @@ const TrainingProgram = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
-              bodyStyle={{ textAlign: 'left' }}
             />
             <Column
               field="programDate"
@@ -288,7 +253,6 @@ const TrainingProgram = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
-              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               field="programHours"
@@ -297,7 +261,6 @@ const TrainingProgram = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
-              bodyStyle={{ textAlign: 'center' }}
             />
             <Column
               field="responsiblePersonName"
@@ -306,7 +269,6 @@ const TrainingProgram = props => {
               filterPlaceholder="Хайх"
               sortable
               body={responsiblepersonameBodyTemplate}
-              bodyStyle={{ textAlign: 'center' }}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

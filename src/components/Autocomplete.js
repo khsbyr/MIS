@@ -3,8 +3,17 @@ import { React } from 'react';
 
 export default function AutocompleteSelect(props) {
   const { Option } = Select;
-  const { data, value, disabled, viewField, valueField, size, defaultValue } =
-    props;
+  const {
+    data,
+    value,
+    disabled,
+    viewField,
+    valueField,
+    size,
+    defaultValue,
+    type,
+  } = props;
+
   const placeholder = props.placeholder || 'Сонгох';
 
   return (
@@ -23,7 +32,7 @@ export default function AutocompleteSelect(props) {
       {data &&
         data.map((z, index) => (
           <Option key={index} value={valueField ? z[valueField] : z.id}>
-            {viewField ? z[viewField] : z.name}
+            {type === 2 ? `${z.code}.${z.name}` : z.name}
             {viewField ? z[viewField] : z.fullName}
           </Option>
         ))}

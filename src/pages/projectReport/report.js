@@ -13,7 +13,6 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
 import AutoCompleteSelect from '../../components/Autocomplete';
 import { PAGESIZE } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
@@ -33,7 +32,6 @@ const Report = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const toolsStore = useContext(ToolsContext);
-  const history = useHistory();
   const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
@@ -124,6 +122,10 @@ const Report = () => {
     }
   };
 
+  function openTab(row) {
+    window.open(`${row.file.path}`);
+  }
+
   const closeModal = (isSuccess = false) => {
     setIsModalVisible(false);
     if (isSuccess) onInit();
@@ -154,6 +156,17 @@ const Report = () => {
         icon={<FontAwesomeIcon icon={faTrash} />}
         onClick={event => pop(event, row)}
       />
+      {row.file ? (
+        <Tooltip title="Файл харах">
+          <Button
+            type="text"
+            icon={<FontAwesomeIcon icon={faFilePdf} />}
+            onClick={() => openTab(row)}
+          />
+        </Tooltip>
+      ) : (
+        ''
+      )}
     </>
   );
 
@@ -354,7 +367,7 @@ const Report = () => {
               filterPlaceholder="Хайх"
               filterMatchMode="equals"
             />
-            <Column headerStyle={{ width: '7rem' }} body={action} />
+            <Column headerStyle={{ width: '8rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <ReportModal

@@ -1,4 +1,4 @@
-import { InboxOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import { faCalendarAlt, faPhone } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -16,13 +16,24 @@ import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import { useToolsStore } from '../../../context/Tools';
-import { getService, postService, putService } from '../../../service/service';
+import {
+  getService,
+  postService,
+  putService,
+  writeFileServer,
+  updateFileServer,
+} from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 import ContentWrapper from '../../training/tabs/components/cv.styled';
 import ConsultingShowModal from './ConsultingShowModal';
 
-const { Dragger } = Upload;
+const dummyRequest = ({ onSuccess }) => {
+  setTimeout(() => {
+    onSuccess('ok');
+  }, 0);
+};
+
 const layout = {
   labelCol: {
     span: 20,
@@ -42,6 +53,39 @@ export default function ConsultingPersonModal(props) {
   const [userID, setUserID] = useState();
   const [BirthDatee] = useState();
   const [personID] = useState();
+  const [fileList, setFileList] = useState([]);
+  const [imageUrl, setImageUrl] = useState();
+
+  function getBase64(img, callback) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+  }
+
+  const defaultFileList =
+    Trainerscontroller?.person?.file && isEditMode
+      ? [
+          {
+            uid: '-1',
+            name: Trainerscontroller?.person?.file?.fileName,
+            status: 'done',
+            url: Trainerscontroller?.person?.file?.path,
+          },
+        ]
+      : [];
+
+  function handleUpload(info) {
+    setFileList([info.file.originFileObj]);
+    getBase64(info.file.originFileObj, imageUrll => setImageUrl(imageUrll));
+  }
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Зураг оруулах</div>
+    </div>
+  );
+
   const onInit = () => {
     toolsStore.setIsShowLoader(false);
     if (loadLazyTimeout) {
@@ -69,6 +113,7 @@ export default function ConsultingPersonModal(props) {
     }
 
     if (isEditMode) {
+      setImageUrl(Trainerscontroller?.person?.file?.path);
       setUserID(Trainerscontroller.id);
       form.setFieldsValue({
         ...Trainerscontroller,
@@ -142,10 +187,76 @@ export default function ConsultingPersonModal(props) {
               id: values.BagID,
             },
           };
-          putService(`user/update/${Trainerscontroller.id}`, values)
-            .then(() => {
-              message.success('Амжилттай хадгаллаа');
-              props.close(true);
+          if (fileList[0]) {
+            const serverApi = Trainerscontroller.person.file
+              ? updateFileServer(
+                  `file/update/${Trainerscontroller.person.file.id}`,
+                  fileList[0]
+                )
+              : writeFileServer(`file/upload`, fileList[0]);
+            serverApi
+              .then(response => {
+                values.person = {
+                  file: { id: response.data.id },
+                };
+                putService(`user/update/${Trainerscontroller.id}`, values)
+                  .then(() => {
+                    message.success('Амжилттай хадгаллаа');
+                    props.close(true);
+                  })
+                  .catch(error => {
+                    errorCatch(error);
+                  });
+              })
+              .catch(error => {
+                errorCatch(error);
+              });
+          } else {
+            putService(`user/update/${Trainerscontroller.id}`, values)
+              .then(() => {
+                message.success('Амжилттай хадгаллаа');
+                props.close(true);
+              })
+              .catch(error => {
+                errorCatch(error);
+              });
+          }
+        } else if (fileList[0]) {
+          writeFileServer(`file/upload`, fileList[0])
+            .then(response => {
+              values.file = { id: response.data.id };
+              values.person = { id: personID };
+              values.user = {
+                id: userID,
+                firstname: values.firstname,
+                lastname: values.lastname,
+                register: values.registerNumber,
+                phoneNumber: values.phoneNumber,
+                email: values.email,
+                address: {
+                  addressDetail: values.AddressDetail,
+                  country: {
+                    id: 107,
+                  },
+                  aimag: {
+                    id: values.AimagID,
+                  },
+                  soum: {
+                    id: values.SoumID,
+                  },
+                  bag: {
+                    id: values.BagID,
+                  },
+                },
+              };
+              postService(`person/post`, values)
+                .then(() => {
+                  message.success('Амжилттай хадгаллаа');
+                  props.close(true);
+                })
+                .catch(error => {
+                  errorCatch(error);
+                });
             })
             .catch(error => {
               errorCatch(error);
@@ -189,6 +300,7 @@ export default function ConsultingPersonModal(props) {
         errorCatch(info);
       });
   };
+
   return (
     <div>
       <Modal
@@ -213,12 +325,23 @@ export default function ConsultingPersonModal(props) {
             <h2 className="title">1. Хувь хүний мэдээлэл</h2>
             <Row gutter={[30, 30]}>
               <Col xs={24} md={24} lg={4}>
-                <Dragger {...props} style={{}}>
-                  <p className="ant-upload-drag-icon">
-                    <InboxOutlined />
-                  </p>
-                  <p className="ant-upload-hint">Зураг оруулах</p>
-                </Dragger>
+                <Upload
+                  name="avatar"
+                  listType="picture-card"
+                  className="avatar-uploader"
+                  showUploadList={false}
+                  accept="image/*,.pdf"
+                  maxCount={1}
+                  defaultFileList={[...defaultFileList]}
+                  customRequest={dummyRequest}
+                  onChange={handleUpload}
+                >
+                  {imageUrl ? (
+                    <img src={imageUrl} alt="Зураг" style={{ width: '100%' }} />
+                  ) : (
+                    uploadButton
+                  )}
+                </Upload>
               </Col>
               <Col xs={24} md={24} lg={2} />
               <Col xs={24} md={24} lg={9}>
