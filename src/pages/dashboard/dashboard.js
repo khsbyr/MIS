@@ -1,52 +1,52 @@
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import React, { useState } from 'react';
-import ReactDOMServer, { renderToStaticMarkup } from 'react-dom/server';
 import mapDataMongolia from './mapDataMongolia';
 import DashboardDetail from './more/dashboardDetail';
 import { getService } from '../../service/service';
-import CountryInfo from './more/countryInfo';
 
 require('highcharts/modules/map')(Highcharts);
-
-let tooltipEnabled = true;
 
 function dashboard() {
   const [aimagList, setAimagList] = useState();
 
   function popup(e) {
     e.point.zoomTo();
+    getService(`aimag/get/${e.point.value}`).then(result => {
+      if (result) {
+        setAimagList(result || []);
+      }
+    });
   }
 
   const data = [
-    ['mn-da', 0],
+    ['mn-da', 9],
     ['mn-ub', 1],
-    ['mn-hg', 2],
-    ['mn-uv', 3],
-    ['mn-dg', 4],
-    ['mn-og', 5],
-    ['mn-hn', 6],
-    ['mn-bh', 7],
-    ['mn-ar', 8],
-    ['mn-dz', 9],
-    ['mn-ga', 10],
-    ['mn-hd', 11],
-    ['mn-bo', 12],
-    ['mn-bu', 13],
-    ['mn-er', 14],
-    ['mn-sl', 15],
-    ['mn-oh', 16],
+    ['mn-hg', 17],
+    ['mn-uv', 22],
+    ['mn-dg', 11],
+    ['mn-og', 10],
+    ['mn-hn', 4],
+    ['mn-bh', 15],
+    ['mn-ar', 16],
+    ['mn-dz', 18],
+    ['mn-ga', 19],
+    ['mn-hd', 21],
+    ['mn-bo', 20],
+    ['mn-bu', 14],
+    ['mn-er', 12],
+    ['mn-sl', 7],
+    ['mn-oh', 13],
     ['mn-du', 17],
-    ['mn-to', 18],
-    ['mn-gs', 19],
-    ['mn-dd', 20],
-    ['mn-sb', 21],
+    ['mn-to', 5],
+    ['mn-gs', 6],
+    ['mn-dd', 2],
+    ['mn-sb', 3],
   ];
 
   const list = aimagList && aimagList.soums.map(z => z.name);
-  const listt = aimagList?.soums?.map(({ name }) => `${name}`).join('|');
 
-  const [chartOptions, setChartOptions] = useState({
+  const mapOptions = {
     chart: {
       align: 'left',
       backgroundColor: '#283047',
@@ -102,65 +102,11 @@ function dashboard() {
       },
     },
 
-    tooltip: {
-      // headerFormat: `<span style="font-size:30px">{point.y:.1f}</span><table>`,
-      // pointFormat: '<tr><td style="color:"#fff";padding:0">{}</td></tr>',
-      // footerFormat: '</table>',
-      positioner() {
-        return { x: 80, y: 50 };
-      },
-      shared: true,
-      useHTML: true,
-      style: {
-        color: 'white',
-        fontSize: '30px',
-        fontWeight: 'bold',
-        // pointerEvents: 'auto',
-      },
-      borderColor: '#0C2074',
-      backgroundColor: '#0C2074',
-      // distance: 15,
-      enabled: false,
-      formatter() {
-        const comment = list;
-        return `-->${comment !== undefined ? comment : ''}`;
-      },
-      // formatter() {
-      //   return renderToStaticMarkup(
-      //     <span style={{ color: 'red' }}>asdasd</span>
-      //   );
-      // },
-    },
-
-    // tooltip: {
-    //   formatter() {
-    //     return ReactDOMServer.renderToString(<CountryInfo {...this} />);
-    //   },
-    // },
-
     series: [
       {
-        // events: {
-        //   click(e) {
-        //     popup(e);
-        //   },
-        // },
-        point: {
-          events: {
-            click: e => {
-              getService(`aimag/get/${e.point.value}`).then(result => {
-                if (result) {
-                  setAimagList(result || []);
-                }
-              });
-              setChartOptions({
-                tooltip: {
-                  enabled: tooltipEnabled,
-                },
-              });
-              tooltipEnabled = !tooltipEnabled;
-              e.point.zoomTo();
-            },
+        events: {
+          click(e) {
+            popup(e);
           },
         },
         threshold: 0,
@@ -193,19 +139,19 @@ function dashboard() {
         },
       },
     ],
-  });
+  };
 
   return (
     <div>
       <HighchartsReact
-        options={chartOptions}
+        options={mapOptions}
         constructorType="mapChart"
         highcharts={Highcharts}
         containerProps={{
           style: { height: '100vh' },
         }}
       />
-      <DashboardDetail />
+      <DashboardDetail list={list} />
     </div>
   );
 }

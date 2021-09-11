@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { getService } from '../../../service/service';
+import React, { useEffect } from 'react';
 
-function countryInfo(props) {
-  const [aimagList, setAimagList] = useState([]);
-
+function countryInfo() {
   useEffect(() => {
     // getService(`aimag/get/${props.point?.value}`).then(result => {
     //   if (result) {

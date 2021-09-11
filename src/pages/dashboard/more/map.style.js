@@ -2,7 +2,10 @@ import styled from 'styled-components';
 
 const ContentWrapper = styled.div`
   color: white;
-  margin-top: -30%;
+  width: 100%;
+  height: 100%;
+  background: #1b1b1b;
+  /* margin-top: -30%; */
   .title {
     width: 100%;
     height: 11%;
@@ -45,6 +48,26 @@ const ContentWrapper = styled.div`
   .body2 .total2 {
     font-size: 3vw;
     text-align: center;
+  }
+
+  .btn {
+    color: #999;
+    margin-top: 20px;
+    margin-left: 15px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px 20px;
+    font-size: 12px;
+    text-decoration: none;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .btn:hover {
+    border: none;
+    background: rgba(0, 0, 0, 0.4);
+    background: #fff;
+    padding: 20px 20px;
+    color: #1b1b1b;
   }
 `;
 
