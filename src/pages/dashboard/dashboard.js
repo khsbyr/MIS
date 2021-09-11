@@ -1,12 +1,19 @@
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import React from 'react';
+import React, { useState } from 'react';
+import ReactDOMServer, { renderToStaticMarkup } from 'react-dom/server';
 import mapDataMongolia from './mapDataMongolia';
 import DashboardDetail from './more/dashboardDetail';
+import { getService } from '../../service/service';
+import CountryInfo from './more/countryInfo';
 
 require('highcharts/modules/map')(Highcharts);
 
+let tooltipEnabled = true;
+
 function dashboard() {
+  const [aimagList, setAimagList] = useState();
+
   function popup(e) {
     e.point.zoomTo();
   }
@@ -36,7 +43,10 @@ function dashboard() {
     ['mn-sb', 21],
   ];
 
-  const mapOptions = {
+  const list = aimagList && aimagList.soums.map(z => z.name);
+  const listt = aimagList?.soums?.map(({ name }) => `${name}`).join('|');
+
+  const [chartOptions, setChartOptions] = useState({
     chart: {
       align: 'left',
       backgroundColor: '#283047',
@@ -92,11 +102,65 @@ function dashboard() {
       },
     },
 
+    tooltip: {
+      // headerFormat: `<span style="font-size:30px">{point.y:.1f}</span><table>`,
+      // pointFormat: '<tr><td style="color:"#fff";padding:0">{}</td></tr>',
+      // footerFormat: '</table>',
+      positioner() {
+        return { x: 80, y: 50 };
+      },
+      shared: true,
+      useHTML: true,
+      style: {
+        color: 'white',
+        fontSize: '30px',
+        fontWeight: 'bold',
+        // pointerEvents: 'auto',
+      },
+      borderColor: '#0C2074',
+      backgroundColor: '#0C2074',
+      // distance: 15,
+      enabled: false,
+      formatter() {
+        const comment = list;
+        return `-->${comment !== undefined ? comment : ''}`;
+      },
+      // formatter() {
+      //   return renderToStaticMarkup(
+      //     <span style={{ color: 'red' }}>asdasd</span>
+      //   );
+      // },
+    },
+
+    // tooltip: {
+    //   formatter() {
+    //     return ReactDOMServer.renderToString(<CountryInfo {...this} />);
+    //   },
+    // },
+
     series: [
       {
-        events: {
-          click(e) {
-            popup(e);
+        // events: {
+        //   click(e) {
+        //     popup(e);
+        //   },
+        // },
+        point: {
+          events: {
+            click: e => {
+              getService(`aimag/get/${e.point.value}`).then(result => {
+                if (result) {
+                  setAimagList(result || []);
+                }
+              });
+              setChartOptions({
+                tooltip: {
+                  enabled: tooltipEnabled,
+                },
+              });
+              tooltipEnabled = !tooltipEnabled;
+              e.point.zoomTo();
+            },
           },
         },
         threshold: 0,
@@ -129,12 +193,12 @@ function dashboard() {
         },
       },
     ],
-  };
+  });
 
   return (
     <div>
       <HighchartsReact
-        options={mapOptions}
+        options={chartOptions}
         constructorType="mapChart"
         highcharts={Highcharts}
         containerProps={{
