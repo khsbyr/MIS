@@ -10,6 +10,7 @@ import {
   TreeSelect,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
+import CurrencyInput from 'react-currency-input';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import MulticompleteSelect from '../../../components/MulticompleteSelect';
 import { useToolsStore } from '../../../context/Tools';
@@ -154,6 +155,7 @@ export default function productiveProjectModal(props) {
           partnerActivity: values.partnerActivity,
           organization: { id: values.OrgID },
           projectType: { id: type },
+          projectBudget: values.projectBudget,
           innovationProjectType:
             type === 2 ? { id: innovationProjectTypeId } : null,
         };
@@ -224,6 +226,9 @@ export default function productiveProjectModal(props) {
                         size="medium"
                         onChange={value => selectCriteriaMulti(value)}
                       />
+                    </Form.Item>
+                    <Form.Item label="Төсөв:" name="projectBudget">
+                      <CurrencyInput precision="0" suffix=" ₮" />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={12}>

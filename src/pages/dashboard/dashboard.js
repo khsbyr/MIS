@@ -1,40 +1,41 @@
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import React from 'react';
+import React, { useState } from 'react';
 import mapDataMongolia from './mapDataMongolia';
 import DashboardDetail from './more/dashboardDetail';
+import { getService } from '../../service/service';
 
 require('highcharts/modules/map')(Highcharts);
 
 function dashboard() {
-  function popup(e) {
-    e.point.zoomTo();
-  }
+  const [aimagList, setAimagList] = useState();
 
   const data = [
-    ['mn-da', 0],
+    ['mn-da', 9],
     ['mn-ub', 1],
-    ['mn-hg', 2],
-    ['mn-uv', 3],
-    ['mn-dg', 4],
-    ['mn-og', 5],
-    ['mn-hn', 6],
-    ['mn-bh', 7],
-    ['mn-ar', 8],
-    ['mn-dz', 9],
-    ['mn-ga', 10],
-    ['mn-hd', 11],
-    ['mn-bo', 12],
-    ['mn-bu', 13],
-    ['mn-er', 14],
-    ['mn-sl', 15],
-    ['mn-oh', 16],
+    ['mn-hg', 17],
+    ['mn-uv', 22],
+    ['mn-dg', 11],
+    ['mn-og', 10],
+    ['mn-hn', 4],
+    ['mn-bh', 15],
+    ['mn-ar', 16],
+    ['mn-dz', 18],
+    ['mn-ga', 19],
+    ['mn-hd', 21],
+    ['mn-bo', 20],
+    ['mn-bu', 14],
+    ['mn-er', 12],
+    ['mn-sl', 7],
+    ['mn-oh', 13],
     ['mn-du', 17],
-    ['mn-to', 18],
-    ['mn-gs', 19],
-    ['mn-dd', 20],
-    ['mn-sb', 21],
+    ['mn-to', 5],
+    ['mn-gs', 6],
+    ['mn-dd', 2],
+    ['mn-sb', 3],
   ];
+
+  const list = aimagList && aimagList.soums;
 
   const mapOptions = {
     chart: {
@@ -43,8 +44,7 @@ function dashboard() {
       map: mapDataMongolia,
       resetZoomButton: {
         position: {
-          align: 'left', // by default
-          // verticalAlign: 'top', // by default
+          align: 'left',
           x: 100,
           y: 100,
         },
@@ -76,14 +76,6 @@ function dashboard() {
 
     mapNavigation: {
       enabled: true,
-      resetZoomButton: {
-        position: {
-          align: 'left', // by default
-          // verticalAlign: 'top', // by default
-          x: 100,
-          y: 100,
-        },
-      },
       buttonOptions: {
         theme: {
           r: 8,
@@ -96,7 +88,12 @@ function dashboard() {
       {
         events: {
           click(e) {
-            popup(e);
+            e.point.zoomTo();
+            getService(`aimag/get/${e.point.value}`).then(result => {
+              if (result) {
+                setAimagList(result || []);
+              }
+            });
           },
         },
         threshold: 0,
@@ -106,11 +103,6 @@ function dashboard() {
         data,
         name: 'dasdasd',
         states: {
-          select: {
-            color: '#a4edba',
-            borderColor: 'black',
-            dashStyle: 'shortdot',
-          },
           hover: {
             color: '#BADA55',
           },
@@ -132,7 +124,7 @@ function dashboard() {
   };
 
   return (
-    <div>
+    <div style={{ backgroundColor: '#283047', height: '100%' }}>
       <HighchartsReact
         options={mapOptions}
         constructorType="mapChart"
@@ -141,7 +133,7 @@ function dashboard() {
           style: { height: '100vh' },
         }}
       />
-      <DashboardDetail />
+      <DashboardDetail list={list} />
     </div>
   );
 }

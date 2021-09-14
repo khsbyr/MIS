@@ -46,6 +46,25 @@ const ContentWrapper = styled.div`
     font-size: 3vw;
     text-align: center;
   }
+
+  .ant-select-selector {
+    background-color: inherit !important;
+    border: none !important;
+    font-size: 18px;
+    color: '#fff';
+  }
+
+  .ant-select-selection-placeholder {
+    color: white !important;
+  }
+
+  .ant-select-arrow {
+    color: white !important;
+  }
+
+  .ant-select-selection-item {
+    color: white !important;
+  }
 `;
 
 export default ContentWrapper;

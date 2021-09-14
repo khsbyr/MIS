@@ -50,7 +50,7 @@ export default function ActivityModal(props) {
   return (
     <div>
       <Modal
-        title="Үйл аижллагаа бүртгэх"
+        title="Үйл ажиллагааны дэс дараалал, задаргаа бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
         width={900}
@@ -68,7 +68,7 @@ export default function ActivityModal(props) {
             validateMessages={validateMessages}
           >
             <Form.Item
-              label="Үйл ажиллагаа:"
+              label="Үйл ажиллагааны дэс дараалал, задаргаа:"
               name="operation"
               rules={[
                 {

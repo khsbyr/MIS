@@ -126,7 +126,7 @@ function veterinarianEducation(props) {
   return (
     <div>
       <h2 className="title">
-        3. Боловсрол
+        4. Боловсрол
         <Tooltip title="Нэмэх" arrowPointAtCenter>
           <Button
             type="text"
