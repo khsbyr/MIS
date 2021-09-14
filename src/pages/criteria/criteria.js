@@ -9,25 +9,33 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import {
+  Button,
+  Col,
+  Layout,
+  message,
+  Modal,
+  Row,
+  Tooltip,
+  Select,
+} from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ToolsContext } from '../../context/Tools';
-import { useCriteriaStore } from '../../context/CriteriaContext';
 import { getService, putService } from '../../service/service';
 import {
   errorCatch,
   formatIndicator,
   convertLazyParamsToObj,
 } from '../../tools/Tools';
-import AutoCompleteSelect from '../../components/Autocomplete';
 import CriteriaModal from './components/CriteriaModal';
 import ContentWrapper from './criteria.style';
 import { PAGESIZE } from '../../constants/Constant';
 
 const { Content } = Layout;
+const { Option, OptGroup } = Select;
 
 let editRow;
 let isEditMode;
@@ -36,8 +44,6 @@ const Criteria = () => {
   const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { criteriaReferenceList, setCriteriaReferenceList } =
-    useCriteriaStore();
   const [selectedRows, setSelectedRows] = useState([]);
   const toolsStore = useContext(ToolsContext);
   const history = useHistory();
@@ -151,11 +157,6 @@ const Criteria = () => {
 
   useEffect(() => {
     onInit();
-    getService('/criteriaReference/get').then(result => {
-      if (result) {
-        setCriteriaReferenceList(result.content || []);
-      }
-    });
   }, [lazyParams]);
 
   const selectComposition = value => {
@@ -231,12 +232,38 @@ const Criteria = () => {
             <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col xs={12} md={12} lg={16}>
-                  <AutoCompleteSelect
+                  {/* <AutoCompleteSelect
                     valueField="id"
                     data={criteriaReferenceList}
                     placeholder={t('Select Indicator')}
                     onChange={value => selectComposition(value)}
-                  />
+                  /> */}
+                  <Select
+                    placeholder="Бүрэлдэхүүн сонгох"
+                    style={{ width: '100%' }}
+                    onChange={value => selectComposition(value)}
+                    size="small"
+                  >
+                    <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТӨВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                      <Option value={1}>Малын эрүүл мэндийн үйлчилгээ</Option>
+                      <Option value={2}>
+                        Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                        нэмэгдүүлэх
+                      </Option>
+                    </OptGroup>
+                    <OptGroup label="ДУНД ТӨВШНИЙ ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                      <Option value={3}>Малын эрүүл мэндийн үйлчилгээ</Option>
+                      <Option value={4}>
+                        Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                        нэмэгдүүлэх
+                      </Option>
+                      <Option value={5}>Төслийн хэрэгжилтийг дэмжлэг</Option>
+                      <Option value={6}>
+                        Болзошгүй онцгой байдлын хариу арга хэмжээний
+                        бүрэлдэхүүн хэсэг
+                      </Option>
+                    </OptGroup>
+                  </Select>
                 </Col>
                 <Col xs={8} md={3} lg={2}>
                   <Tooltip title={t('print')} arrowPointAtCenter>
@@ -344,7 +371,7 @@ const Criteria = () => {
               filterPlaceholder="Хайх"
               filterMatchMode="equals"
             />
-            <Column headerStyle={{ width: '7rem' }} body={action} />
+            {/* <Column headerStyle={{ width: '7rem' }} body={action} /> */}
           </DataTable>
           {isModalVisible && (
             <CriteriaModal

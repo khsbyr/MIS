@@ -90,6 +90,25 @@ const ContentWrapper = styled.div`
   .ant-select-selector {
     height: 40px;
   }
+  #nest-messages_projectBudget {
+    height: 40px;
+    border: 1px solid rgb(217, 217, 217);
+    padding: 4px 11px;
+  }
+  #nest-messages_projectBudget:focus-visible {
+    outline: none;
+  }
+  #nest-messages_projectBudget:focus {
+    border-color: #40a9ff;
+    box-shadow: 0 0 0 0.025rem #1890ff;
+  }
+
+  #nest-messages_projectBudget:hover {
+    border-color: #40a9ff;
+  }
+  #nest-messages_projectBudget:focus {
+    border-color: #1890ff;
+  }
 `;
 
 export default ContentWrapper;

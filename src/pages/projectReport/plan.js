@@ -8,7 +8,16 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import {
+  Button,
+  Col,
+  Layout,
+  message,
+  Modal,
+  Row,
+  Tooltip,
+  Select,
+} from 'antd';
 import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -18,7 +27,6 @@ import { useHistory } from 'react-router-dom';
 import AutoCompleteSelect from '../../components/Autocomplete';
 import RenderDateFilter from '../../components/renderDateFilter';
 import { PAGESIZE, PlanType } from '../../constants/Constant';
-import { useCriteriaStore } from '../../context/CriteriaContext';
 import { ToolsContext } from '../../context/Tools';
 import { deleteService, getService } from '../../service/service';
 import {
@@ -38,8 +46,6 @@ const Plan = () => {
   const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { criteriaReferenceList, setCriteriaReferenceList } =
-    useCriteriaStore();
   const [selectedRows, setSelectedRows] = useState([]);
   const toolsStore = useContext(ToolsContext);
   const history = useHistory();
@@ -49,6 +55,7 @@ const Plan = () => {
   });
   const [totalRecords, setTotalRecords] = useState(0);
   const dt = useRef(null);
+  const { Option, OptGroup } = Select;
 
   let loadLazyTimeout = null;
 
@@ -144,11 +151,6 @@ const Plan = () => {
 
   useEffect(() => {
     onInit();
-    getService('/criteriaReference/get').then(result => {
-      if (result) {
-        setCriteriaReferenceList(result.content || []);
-      }
-    });
   }, [lazyParams]);
 
   const selectComposition = value => {
@@ -205,7 +207,7 @@ const Plan = () => {
 
   const nameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Төлөвлөгөөний нэр</span>
+      <span className="p-column-title">Үйл ажиллагаа</span>
       {row.name}
     </>
   );
@@ -366,10 +368,10 @@ const Plan = () => {
       <div className="button-demo">
         <Content>
           <Row>
-            <Col xs={24} md={24} lg={10}>
+            <Col xs={24} md={24} lg={6}>
               <p className="title">{t('plan')}</p>
             </Col>
-            <Col xs={24} md={18} lg={14}>
+            <Col xs={24} md={18} lg={18}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col xs={12} md={12} lg={5}>
                   <AutoCompleteSelect
@@ -380,12 +382,32 @@ const Plan = () => {
                   />
                 </Col>
                 <Col xs={12} md={12} lg={11}>
-                  <AutoCompleteSelect
-                    valueField="id"
-                    data={criteriaReferenceList}
-                    placeholder={t('Select Indicator')}
+                  <Select
+                    placeholder="Шалгуур үзүүлэлтийн бүрэлдэхүүн сонгох"
+                    style={{ width: '100%' }}
                     onChange={value => selectComposition(value)}
-                  />
+                    size="small"
+                  >
+                    <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТӨВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                      <Option value={1}>Малын эрүүл мэндийн үйлчилгээ</Option>
+                      <Option value={2}>
+                        Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                        нэмэгдүүлэх
+                      </Option>
+                    </OptGroup>
+                    <OptGroup label="ДУНД ТӨВШНИЙ ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                      <Option value={3}>Малын эрүүл мэндийн үйлчилгээ</Option>
+                      <Option value={4}>
+                        Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                        нэмэгдүүлэх
+                      </Option>
+                      <Option value={5}>Төслийн хэрэгжилтийг дэмжлэг</Option>
+                      <Option value={6}>
+                        Болзошгүй онцгой байдлын хариу арга хэмжээний
+                        бүрэлдэхүүн хэсэг
+                      </Option>
+                    </OptGroup>
+                  </Select>
                 </Col>
                 <Col xs={8} md={3} lg={2}>
                   <Tooltip title={t('print')} arrowPointAtCenter>
@@ -467,7 +489,7 @@ const Plan = () => {
             />
             <Column
               field="name"
-              header="Төлөвлөгөөний нэр"
+              header="Үйл ажиллагаа"
               body={nameBodyTemplate}
               filter
               sortable

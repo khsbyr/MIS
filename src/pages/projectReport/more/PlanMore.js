@@ -18,7 +18,7 @@ export default function PlanMore() {
         <TabPane tab="Үндсэн мэдээлэл" key="1">
           <MainInfo id={id} />
         </TabPane>
-        <TabPane tab="Үйл ажиллагаа" key="2">
+        <TabPane tab="Үйл ажиллагааны дэс дараалал, задаргаа" key="2">
           <Activity id={id} />
         </TabPane>
         <TabPane tab="Гүйцэтгэгчид" key="3">

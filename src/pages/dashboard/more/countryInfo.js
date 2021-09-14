@@ -1,23 +1,19 @@
-import { Modal } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 
-function countryInfo(props) {
-  const { isModalVisible } = props;
+function countryInfo() {
+  useEffect(() => {
+    // getService(`aimag/get/${props.point?.value}`).then(result => {
+    //   if (result) {
+    //     const dataList = result;
+    //     setAimagList([dataList]);
+    //   }
+    // });
+  }, []);
 
   return (
-    <Modal
-      title="Байгууллага бүртгэх"
-      okText="Хадгалах"
-      cancelText="Буцах"
-      width={1100}
-      alignItems="center"
-      visible={isModalVisible}
-      onCancel={() => props.close()}
-    >
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-    </Modal>
+    <div>
+      <h1>asdasd</h1>
+    </div>
   );
 }
 

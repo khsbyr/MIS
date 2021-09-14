@@ -29,6 +29,7 @@ import {
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './organization.style';
+import { OrgType } from '../../../../constants/Constant';
 
 const dummyRequest = ({ onSuccess }) => {
   setTimeout(() => {
@@ -56,6 +57,7 @@ export default function OrganizationModal(props) {
   const [foundedDate, setFoundedDate] = useState([]);
   const [fileList, setFileList] = useState([]);
   const [imageUrl, setImageUrl] = useState();
+  const [orgTypeId, setOrgTypeId] = useState();
 
   function getBase64(img, callback) {
     const reader = new FileReader();
@@ -122,6 +124,7 @@ export default function OrganizationModal(props) {
     }
     if (isEditMode) {
       setImageUrl(Orgcontroller?.file?.path);
+      setOrgTypeId(Orgcontroller?.organizationType?.id);
       setFoundedDate(Orgcontroller?.foundedYear);
       setResponsibleUserID(
         Orgcontroller?.responsibleUser && Orgcontroller.responsibleUser.id
@@ -158,12 +161,17 @@ export default function OrganizationModal(props) {
         RespoUserEmail:
           Orgcontroller?.responsibleUser &&
           Orgcontroller?.responsibleUser.email,
+        OrgType: Orgcontroller?.organizationType?.id,
       });
     }
   }, []);
 
   const selectRole = value => {
     setRoleID(value);
+  };
+
+  const selectOrgType = value => {
+    setOrgTypeId(value);
   };
 
   const getSum = aimagId => {
@@ -195,6 +203,7 @@ export default function OrganizationModal(props) {
       .validateFields()
       .then(values => {
         values.foundedYear = foundedDate;
+        values.organizationType = { id: orgTypeId };
         values.bank = { id: values.bankID };
         values.currency = { id: values.Currency };
         values.address = {
@@ -506,6 +515,23 @@ export default function OrganizationModal(props) {
                         valueField="id"
                         data={role}
                         onChange={value => selectRole(value)}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={24} lg={12}>
+                    <Form.Item
+                      label="Төрөл:"
+                      name="OrgType"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <AutoCompleteSelect
+                        valueField="id"
+                        data={OrgType}
+                        onChange={value => selectOrgType(value)}
                       />
                     </Form.Item>
                   </Col>

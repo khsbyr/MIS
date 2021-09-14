@@ -1,10 +1,9 @@
 import { UploadOutlined } from '@ant-design/icons';
-import { faCalendarAlt, faPhone } from '@fortawesome/free-solid-svg-icons';
+import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
   Col,
-  DatePicker,
   Form,
   Input,
   InputNumber,
@@ -13,7 +12,6 @@ import {
   Row,
   Upload,
 } from 'antd';
-import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import { useToolsStore } from '../../../context/Tools';
@@ -53,8 +51,9 @@ export default function veterinarianProjectModal(props) {
   const [stateBag, setStateBag] = useState([]);
   const loadLazyTimeout = null;
   const [userID, setUserID] = useState();
-  const [BirthDatee] = useState();
   const [fileList, setFileList] = useState([]);
+  const [orgList, setOrgList] = useState();
+  const [selectedOrgId, setSelectedOrgId] = useState();
 
   const defaultFileList =
     EditRow?.youngDoctor?.file && isEditMode
@@ -80,6 +79,11 @@ export default function veterinarianProjectModal(props) {
   };
   useEffect(() => {
     onInit();
+    getService(`organization/getByType/2`).then(result => {
+      if (result) {
+        setOrgList(result.content || []);
+      }
+    });
     if (EditRow !== null) {
       getService(`soum/getList/${EditRow.address?.aimag.id}`).then(result => {
         if (result) {
@@ -94,6 +98,7 @@ export default function veterinarianProjectModal(props) {
     }
     if (isEditMode) {
       setUserID(EditRow.id);
+      setSelectedOrgId(EditRow.youngDoctor.organization.id);
       form.setFieldsValue({
         ...EditRow,
         lastname: EditRow.lastname,
@@ -108,6 +113,7 @@ export default function veterinarianProjectModal(props) {
         AimagID: EditRow.address ? EditRow.address.aimag.id : '',
         SoumID: EditRow.address ? EditRow.address.soum.id : '',
         BagID: EditRow.address ? EditRow.address.bag.id : '',
+        OrgID: EditRow?.youngDoctor?.organization?.id,
       });
     }
   }, []);
@@ -134,6 +140,10 @@ export default function veterinarianProjectModal(props) {
 
   const selectSum = value => {
     getBag(value);
+  };
+
+  const selectOrg = value => {
+    setSelectedOrgId(value);
   };
 
   const save = () => {
@@ -169,6 +179,7 @@ export default function veterinarianProjectModal(props) {
                 values.youngDoctor = {
                   purpose: values.purpose,
                   file: { id: response.data.id },
+                  organization: { id: selectedOrgId },
                 };
                 putService(`user/update/${EditRow.id}`, values)
                   .then(() => {
@@ -183,6 +194,10 @@ export default function veterinarianProjectModal(props) {
                 errorCatch(error);
               });
           } else {
+            values.youngDoctor = {
+              purpose: values.purpose,
+              organization: { id: selectedOrgId },
+            };
             putService(`user/update/${EditRow.id}`, values)
               .then(() => {
                 message.success('Амжилттай хадгаллаа');
@@ -195,7 +210,6 @@ export default function veterinarianProjectModal(props) {
         } else if (fileList[0]) {
           writeFileServer(`file/upload`, fileList[0])
             .then(response => {
-              values.file = { id: response.data.id };
               values.user = {
                 firstname: values.firstname,
                 lastname: values.lastname,
@@ -219,7 +233,11 @@ export default function veterinarianProjectModal(props) {
                   },
                 },
               };
-              values.youngDoctor = { purpose: values.purpose };
+              values.youngDoctor = {
+                purpose: values.purpose,
+                organization: { id: selectedOrgId },
+                file: { id: response.data.id },
+              };
               postService(`youngDoctor/post`, values)
                 .then(() => {
                   message.success('Амжилттай хадгаллаа');
@@ -256,7 +274,10 @@ export default function veterinarianProjectModal(props) {
               },
             },
           };
-          values.youngDoctor = { purpose: values.purpose };
+          values.youngDoctor = {
+            purpose: values.purpose,
+            organization: { id: selectedOrgId },
+          };
           postService(`youngDoctor/post`, values)
             .then(() => {
               message.success('Амжилттай хадгаллаа');
@@ -372,20 +393,14 @@ export default function veterinarianProjectModal(props) {
                     data={stateBag}
                   />
                 </Form.Item>
-                <Form.Item>
-                  {isEditMode && (
-                    <DatePicker
-                      disabled
-                      prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
-                      placeholder="Төрсөн он, сар, өдөр"
-                      className="FormItem"
-                      defaultValue={
-                        isEditMode
-                          ? EditRow && moment(EditRow.birthDate).zone(1)
-                          : BirthDatee
-                      }
-                    />
-                  )}
+                <Form.Item name="OrgID">
+                  <AutoCompleteSelect
+                    className="FormItem"
+                    placeholder="Байгууллага сонгох"
+                    valueField="id"
+                    data={orgList}
+                    onChange={value => selectOrg(value)}
+                  />
                 </Form.Item>
               </Col>
             </Row>
@@ -417,6 +432,20 @@ export default function veterinarianProjectModal(props) {
                 </Form.Item>
               </Col>
             </Row>
+            <h2 className="title">3. Тайлан</h2>
+            <Row>
+              <Col xs={24} md={24} lg={24}>
+                <Upload
+                  accept="image/*,.pdf"
+                  maxCount={1}
+                  defaultFileList={[...defaultFileList]}
+                  customRequest={dummyRequest}
+                  onChange={handleUpload}
+                >
+                  <Button icon={<UploadOutlined />}>Файл хавсаргах</Button>
+                </Upload>
+              </Col>
+            </Row>
             {isEditMode ? (
               <Row>
                 <Col xs={24} md={24} lg={24}>
@@ -428,18 +457,6 @@ export default function veterinarianProjectModal(props) {
                   <VeterinarianExperience
                     youngDoctorID={EditRow?.youngDoctor.id}
                   />
-                </Col>
-                <h2 className="title">5. Тайлан</h2>
-                <Col xs={24} md={24} lg={24}>
-                  <Upload
-                    accept="image/*,.pdf"
-                    maxCount={1}
-                    defaultFileList={[...defaultFileList]}
-                    customRequest={dummyRequest}
-                    onChange={handleUpload}
-                  >
-                    <Button icon={<UploadOutlined />}>Файл хавсаргах</Button>
-                  </Upload>
                 </Col>
               </Row>
             ) : (
