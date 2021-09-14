@@ -126,7 +126,7 @@ function veterinarianExperience(props) {
   return (
     <div>
       <h2 className="title">
-        4. Ажлын туршлага
+        5. Ажлын туршлага
         <Tooltip title="Нэмэх" arrowPointAtCenter>
           <Button
             type="text"

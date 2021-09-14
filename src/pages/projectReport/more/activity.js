@@ -133,7 +133,9 @@ const Activity = props => {
 
   const nameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Үйл ажиллагаа</span>
+      <span className="p-column-title">
+        Үйл ажиллагааны дэс дараалал, задаргаа{' '}
+      </span>
       {row.operation}
     </>
   );
@@ -184,7 +186,7 @@ const Activity = props => {
             <Column
               field="operation"
               body={nameBodyTemplate}
-              header="Үйл ажиллагаа"
+              header="Үйл ажиллагааны дэс дараалал, задаргаа"
             />
             <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>

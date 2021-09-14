@@ -10,15 +10,6 @@ require('highcharts/modules/map')(Highcharts);
 function dashboard() {
   const [aimagList, setAimagList] = useState();
 
-  function popup(e) {
-    e.point.zoomTo();
-    getService(`aimag/get/${e.point.value}`).then(result => {
-      if (result) {
-        setAimagList(result || []);
-      }
-    });
-  }
-
   const data = [
     ['mn-da', 9],
     ['mn-ub', 1],
@@ -44,7 +35,7 @@ function dashboard() {
     ['mn-sb', 3],
   ];
 
-  const list = aimagList && aimagList.soums.map(z => z.name);
+  const list = aimagList && aimagList.soums;
 
   const mapOptions = {
     chart: {
@@ -53,8 +44,7 @@ function dashboard() {
       map: mapDataMongolia,
       resetZoomButton: {
         position: {
-          align: 'left', // by default
-          // verticalAlign: 'top', // by default
+          align: 'left',
           x: 100,
           y: 100,
         },
@@ -86,14 +76,6 @@ function dashboard() {
 
     mapNavigation: {
       enabled: true,
-      resetZoomButton: {
-        position: {
-          align: 'left', // by default
-          // verticalAlign: 'top', // by default
-          x: 100,
-          y: 100,
-        },
-      },
       buttonOptions: {
         theme: {
           r: 8,
@@ -106,7 +88,12 @@ function dashboard() {
       {
         events: {
           click(e) {
-            popup(e);
+            e.point.zoomTo();
+            getService(`aimag/get/${e.point.value}`).then(result => {
+              if (result) {
+                setAimagList(result || []);
+              }
+            });
           },
         },
         threshold: 0,
@@ -116,11 +103,6 @@ function dashboard() {
         data,
         name: 'dasdasd',
         states: {
-          select: {
-            color: '#a4edba',
-            borderColor: 'black',
-            dashStyle: 'shortdot',
-          },
           hover: {
             color: '#BADA55',
           },
@@ -142,7 +124,7 @@ function dashboard() {
   };
 
   return (
-    <div>
+    <div style={{ backgroundColor: '#283047', height: '100%' }}>
       <HighchartsReact
         options={mapOptions}
         constructorType="mapChart"

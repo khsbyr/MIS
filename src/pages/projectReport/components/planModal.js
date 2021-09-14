@@ -171,7 +171,7 @@ export default function PlanModal(props) {
               </Col>
               <Col xs={24} md={24} lg={24}>
                 <Form.Item
-                  label="Төлөвлөгөөний нэр:"
+                  label="Үйл ажиллагаа:"
                   name="name"
                   rules={[
                     {

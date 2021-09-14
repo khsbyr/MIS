@@ -86,6 +86,16 @@ export const PlanType = [
   },
 ];
 
+export const OrgType = [
+  {
+    id: 1,
+    name: 'Энгийн байгууллага',
+  },
+  {
+    id: 2,
+    name: 'Ажил олгогч',
+  },
+];
 export default {
   criteriaFrequencyData,
 };
