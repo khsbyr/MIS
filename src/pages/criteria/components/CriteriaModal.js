@@ -10,7 +10,7 @@ import {
   message,
 } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { postService, putService } from '../../../service/service';
+import { postService, putService, getService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 import AutoCompleteSelect from '../../../components/Autocomplete';
@@ -20,10 +20,18 @@ import { useCriteriaStore } from '../../../context/CriteriaContext';
 export default function CriteriaModal(props) {
   const { t } = useTranslation();
   const { Criteriacontroller, isModalVisible, isEditMode } = props;
-  const { criteriaReferenceList } = useCriteriaStore();
+  const { criteriaReferenceList, setCriteriaReferenceList } =
+    useCriteriaStore();
   const [form] = Form.useForm();
   const [stateIndicator, setStateIndicator] = React.useState(1);
+
   useEffect(() => {
+    getService(`criteriaReference/get`).then(result => {
+      if (result) {
+        setCriteriaReferenceList(result.content || []);
+      }
+    });
+
     if (isEditMode) {
       form.setFieldsValue({
         ...Criteriacontroller,
