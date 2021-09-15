@@ -144,13 +144,13 @@ function dashboardDetail(props) {
                 // onChange={value => selectComposition(value)}
                 size="small"
               >
-                <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТӨВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТҮВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
                   <Option value={1}>Малын эрүүл мэндийн үйлчилгээ</Option>
                   <Option value={2}>
                     Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг нэмэгдүүлэх
                   </Option>
                 </OptGroup>
-                <OptGroup label="ДУНД ТӨВШНИЙ ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                <OptGroup label="ДУНД ТҮВШНИЙ ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
                   <Option value={3}>Малын эрүүл мэндийн үйлчилгээ</Option>
                   <Option value={4}>
                     Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг нэмэгдүүлэх

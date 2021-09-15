@@ -253,7 +253,7 @@ export default function ConsultingShowModal(props) {
   );
 
   const firedDate = row => (
-    <>{moment(row && row.hiredDate).format('YYYY-M-D')}</>
+    <>{moment(row && row.firedDate).format('YYYY-M-D')}</>
   );
 
   const publishedDate = row => (
