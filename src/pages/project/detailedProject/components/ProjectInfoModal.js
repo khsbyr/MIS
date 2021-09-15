@@ -5,7 +5,6 @@ import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from '../style/ProjectInfoModal.style';
-import AutoCompleteSelect from '../../../../components/Autocomplete';
 
 const { TextArea } = Input;
 
@@ -15,8 +14,6 @@ export default function ProjectInfoModal(props) {
   const [isDelayValue, setIsDelayValue] = useState();
   const [startDateValue, setStartDateValue] = useState();
   const [endDateValue, setEndDateValue] = useState();
-
-  console.log(EditRow);
 
   const isDelayFunc = e => {
     setIsDelayValue(e.target.value);
@@ -29,8 +26,6 @@ export default function ProjectInfoModal(props) {
   function endDate(date, value) {
     setEndDateValue(value);
   }
-
-  console.log(EditRow);
 
   useEffect(() => {
     if (isEditMode) {
