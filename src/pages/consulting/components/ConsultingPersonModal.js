@@ -224,8 +224,10 @@ export default function ConsultingPersonModal(props) {
         } else if (fileList[0]) {
           writeFileServer(`file/upload`, fileList[0])
             .then(response => {
-              values.file = { id: response.data.id };
-              values.person = { id: personID };
+              values.person = {
+                id: personID,
+                file: { id: response.data.id },
+              };
               values.user = {
                 id: userID,
                 firstname: values.firstname,

@@ -266,8 +266,8 @@ export default function CvModal(props) {
               values.trainers = {
                 purpose: values.purpose,
                 skill: values.skill,
+                file: { id: response.data.id },
               };
-              values.file = { id: response.data.id };
               values.user = {
                 id: userID,
                 firstname: values.firstname,
