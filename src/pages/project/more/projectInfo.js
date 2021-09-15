@@ -11,6 +11,7 @@ import MainInfo from '../mainInfo';
 import ProjectOrg from '../projectOrganizations';
 import FileUpload from '../fileUpload';
 import ContentWrapper from './projectInfo.style';
+import ProjectInfo from '../detailedProject/ProjectInfo';
 
 const { TabPane } = Tabs;
 const tabPosition = 'top';
@@ -58,10 +59,26 @@ export default function projectInfo() {
         </TabPane>
         {ProjectList?.projectStatus?.id === 1 ? (
           <TabPane tab="Дэлгэрэнгүй төсөл" key="7">
-            Дэлгэрэнгүй төсөл
+            <Tabs tabPosition={tabPosition}>
+              <TabPane tab="Үйл ажиллагаа" key="8">
+                <ProjectInfo />
+              </TabPane>
+              <TabPane
+                tab="Байгаль орчин нийгмийн менежментийн төлөвлөгөөний биелэлт"
+                key="9"
+              >
+                Хөгжүүлэлт хийгдэж байна...
+              </TabPane>
+              <TabPane tab="Байгууллагын санхүүгийн мэдээлэл" key="10">
+                Хөгжүүлэлт хийгдэж байна...
+              </TabPane>
+              <TabPane tab="Хөндлөнгийн хяналт-шинжилгээ, үнэлгээ" key="11">
+                Хөгжүүлэлт хийгдэж байна...
+              </TabPane>
+            </Tabs>
           </TabPane>
         ) : (
-          <TabPane tab="Дэлгэрэнгүй төсөл" key="8" disabled />
+          <TabPane tab="Дэлгэрэнгүй төсөл" key="12" disabled />
         )}
       </Tabs>
     </ContentWrapper>

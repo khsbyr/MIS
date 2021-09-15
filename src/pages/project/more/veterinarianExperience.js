@@ -33,7 +33,7 @@ function veterinarianExperience(props) {
 
   const firedDate = row => (
     <>
-      {moment(row && row.hiredDate)
+      {moment(row && row.firedDate)
         .zone(0)
         .format('YYYY-M-D')}
     </>
