@@ -235,12 +235,13 @@ export default function OrganizationModal(props) {
             ? `organization/update/${orgId}`
             : `organization/update/${Orgcontroller.id}`;
           if (fileList[0]) {
-            const serverApi = Orgcontroller.file
-              ? updateFileServer(
-                  `file/update/${Orgcontroller.file.id}`,
-                  fileList[0]
-                )
-              : writeFileServer(`file/upload`, fileList[0]);
+            const serverApi =
+              Orgcontroller && Orgcontroller.file
+                ? updateFileServer(
+                    `file/update/${Orgcontroller.file.id}`,
+                    fileList[0]
+                  )
+                : writeFileServer(`file/upload`, fileList[0]);
             serverApi
               .then(response => {
                 values.file = { id: response.data.id };
