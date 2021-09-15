@@ -15,7 +15,8 @@ import ContentWrapper from './plan.style';
 export default function PlanModal(props) {
   const { EditRow, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
-  const { criteriaReferenceList } = useCriteriaStore();
+  const { criteriaReferenceList, setCriteriaReferenceList } =
+    useCriteriaStore();
   const [userList, setUserList] = useState();
   const [youngDoctor, setYoungDoctor] = useState();
   const [criteriaReferenceId, setCriteriaReferenceId] = useState();
@@ -26,6 +27,12 @@ export default function PlanModal(props) {
   const [planType, setPlanType] = useState();
 
   useEffect(() => {
+    getService(`criteriaReference/get`).then(result => {
+      if (result) {
+        setCriteriaReferenceList(result.content || []);
+      }
+    });
+
     getService(`user/get?search=organization.id:2`).then(result => {
       if (result) {
         setUserList(result.content || []);
