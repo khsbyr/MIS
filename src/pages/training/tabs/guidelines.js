@@ -14,12 +14,12 @@ function Guidelines() {
 
   useEffect(() => {
     form.setFieldsValue({
-      ...(TrainingList && TrainingList.training_guidelines),
-      subject: TrainingList?.training_guidelines?.subject,
-      reason: TrainingList?.training_guidelines?.reason,
-      aim: TrainingList?.training_guidelines?.aim,
-      operation: TrainingList?.training_guidelines?.operation,
-      result: TrainingList?.training_guidelines?.result,
+      ...(TrainingList && TrainingList.trainingGuidelines),
+      subject: TrainingList?.trainingGuidelines?.subject,
+      reason: TrainingList?.trainingGuidelines?.reason,
+      aim: TrainingList?.trainingGuidelines?.aim,
+      operation: TrainingList?.trainingGuidelines?.operation,
+      result: TrainingList?.trainingGuidelines?.result,
     });
   }, []);
 
@@ -27,7 +27,7 @@ function Guidelines() {
     form.validateFields().then(values => {
       values.subject = value;
       putService(
-        `trainingGuidelines/update/${TrainingList.training_guidelines.id}`,
+        `trainingGuidelines/update/${TrainingList.trainingGuidelines.id}`,
         values
       )
         .then(() => {
@@ -43,7 +43,7 @@ function Guidelines() {
     form.validateFields().then(values => {
       values.reason = value;
       putService(
-        `trainingGuidelines/update/${TrainingList.training_guidelines.id}`,
+        `trainingGuidelines/update/${TrainingList.trainingGuidelines.id}`,
         values
       )
         .then(() => {
@@ -59,7 +59,7 @@ function Guidelines() {
     form.validateFields().then(values => {
       values.aim = value;
       putService(
-        `trainingGuidelines/update/${TrainingList.training_guidelines.id}`,
+        `trainingGuidelines/update/${TrainingList.trainingGuidelines.id}`,
         values
       )
         .then(() => {
@@ -75,7 +75,7 @@ function Guidelines() {
     form.validateFields().then(values => {
       values.operation = value;
       putService(
-        `trainingGuidelines/update/${TrainingList.training_guidelines.id}`,
+        `trainingGuidelines/update/${TrainingList.trainingGuidelines.id}`,
         values
       )
         .then(() => {
@@ -91,7 +91,7 @@ function Guidelines() {
     form.validateFields().then(values => {
       values.result = value;
       putService(
-        `trainingGuidelines/update/${TrainingList.training_guidelines.id}`,
+        `trainingGuidelines/update/${TrainingList.trainingGuidelines.id}`,
         values
       )
         .then(() => {

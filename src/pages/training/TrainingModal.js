@@ -78,7 +78,7 @@ export default function TrainingModal(props) {
       setSelectedCriteria(selectedCriteria);
       form.setFieldsValue({
         ...Trainingcontroller,
-        // CriteriaID: selectedCriteria,
+        // budget: `${Trainingcontroller.trainingBudget.totalBudget}00`,
         orgID: Trainingcontroller.organization
           ? Trainingcontroller.organization.id
           : '',
@@ -130,9 +130,11 @@ export default function TrainingModal(props) {
     }
     return results;
   };
+
   const SelectCriteria = value => {
     setSelectedCriteria(value);
   };
+
   const save = () => {
     form
       .validateFields()
@@ -146,7 +148,7 @@ export default function TrainingModal(props) {
           const saveData = {
             training: values,
             criteriaIds: selectedCriteria,
-            totalBudget: values.totalBudget,
+            totalBudget: `${values.totalBudget}00`,
             soumList: valueAddress,
           };
           putService(`training/update/${Trainingcontroller.id}`, saveData)
