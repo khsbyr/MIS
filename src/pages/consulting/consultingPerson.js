@@ -198,7 +198,7 @@ const ConsultingPerson = () => {
         <Content>
           <Row>
             <Col xs={24} md={12} lg={14}>
-              <p className="title">Зөвлөх хувь хүн</p>
+              <p className="title">Хувь хүн</p>
             </Col>
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>

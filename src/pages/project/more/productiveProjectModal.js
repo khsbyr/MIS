@@ -87,7 +87,7 @@ export default function productiveProjectModal(props) {
         setCriteriaList(result || []);
       }
     });
-    getService('innovationProjectType/get').then(result => {
+    getService(`subProjectType/getByProjectTypeId/${type}`).then(result => {
       if (result) {
         setInnovationProjectType(result || []);
       }
@@ -121,8 +121,8 @@ export default function productiveProjectModal(props) {
       setValueAddress(ProjectChildrenAddress);
       setCriteriaListMulti(criteriaIds);
       setInnovationProjectTypeId(
-        ProductiveController.innovationProjectType
-          ? ProductiveController.innovationProjectType.id
+        ProductiveController.subProjectType
+          ? ProductiveController.subProjectType.id
           : null
       );
       form.setFieldsValue({
@@ -156,8 +156,8 @@ export default function productiveProjectModal(props) {
           organization: { id: values.OrgID },
           projectType: { id: type },
           projectBudget: values.projectBudget,
-          innovationProjectType:
-            type === 2 ? { id: innovationProjectTypeId } : null,
+          subProjectType:
+            type === 1 || type === 2 ? { id: innovationProjectTypeId } : null,
         };
         values.organizationIds = selectedProjectOrg;
         values.criteriaIds = criteriaListMulti;
@@ -190,7 +190,7 @@ export default function productiveProjectModal(props) {
   return (
     <div>
       <Modal
-        title="Бүтээмжит төсөл бүртгэх"
+        title="Төсөл бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
         width={800}
@@ -281,14 +281,14 @@ export default function productiveProjectModal(props) {
                     </Form.Item>
                   </Col>
                 </Row>
-                {type === 2 ? (
+                {type === 1 || type === 2 ? (
                   <Row>
                     <Col xs={24} md={24} lg={24}>
                       <Form.Item label="Төрөл:" valuePropName="option">
                         <AutoCompleteSelect
                           data={innovationProjectType}
                           defaultValue={
-                            ProductiveController?.innovationProjectType?.id
+                            ProductiveController?.subProjectType?.id
                           }
                           valueField="id"
                           onChange={value => selectType(value)}

@@ -203,7 +203,7 @@ const Makhis = () => {
         <Content>
           <Row>
             <Col xs={24} md={24} lg={10}>
-              <p className="title">Мал эмнэлэг</p>
+              <p className="title">Мал эмнэлгийн нэгдсэн систем</p>
             </Col>
             <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>

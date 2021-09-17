@@ -12,11 +12,11 @@ const rootSubmenuKeys = [
   'Training2',
   'Project3',
   'Makhis4',
-  'Project implementing unit5',
-  'Directory registration6',
-  'Other7',
-  'Consulting service8',
-  'Dashboard9',
+  'Directory registration5',
+  'Other6',
+  'Consulting service7',
+  'Dashboard8',
+  'Project implementing unit9',
   'settings10',
 ];
 

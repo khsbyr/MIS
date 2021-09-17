@@ -6,6 +6,7 @@ import {
   faPrint,
   faTrash,
   faHistory,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -29,9 +30,9 @@ import { getService, putService } from '../../../service/service';
 import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
 import ContentWrapper from './style/ProjectInfo.style';
 import { useProjectStore } from '../../../context/ProjectContext';
-import ProjectInfoModal from './components/ProjectInfoModal';
 import { PAGESIZE } from '../../../constants/Constant';
 import DescriptionModal from './components/DescriptionModal';
+import ImplementationModal from './components/ImplementationModal';
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -61,7 +62,7 @@ const columns = [
 
 let editRow;
 let isEditMode;
-const ProjectInfo = () => {
+const Implementation = () => {
   const { ProjectList } = useProjectStore();
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
@@ -85,7 +86,10 @@ const ProjectInfo = () => {
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService(`operation/getListByProjectId/${ProjectList.id}`, obj)
+      getService(
+        `implementationOfSemp/getListByProjectId/${ProjectList.id}`,
+        obj
+      )
         .then(result => {
           const listResult = result || [];
           listResult.forEach((item, index) => {
@@ -144,7 +148,7 @@ const ProjectInfo = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`operation/delete/${row.id}`)
+    putService(`implementationOfSemp/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -180,28 +184,32 @@ const ProjectInfo = () => {
   };
 
   const info = row => {
-    getService(`projectStatusHistory/getByOperationId/${row.id}`).then(
-      result => {
-        if (result) {
-          Modal.info({
-            title: 'Төлөвийн түүх',
-            width: 1200,
-            okText: 'Буцах',
-            content: (
-              <Table
-                columns={columns}
-                dataSource={result}
-                size="small"
-                style={{ marginTop: '30px', width: 'auto' }}
-                pagination={false}
-              />
-            ),
-            onOk() {},
-          });
-        }
+    getService(
+      `projectStatusHistory/getByImplementationOfSempId/${row.id}`
+    ).then(result => {
+      if (result) {
+        Modal.info({
+          title: 'Төлөвийн түүх',
+          width: 1200,
+          okText: 'Буцах',
+          content: (
+            <Table
+              columns={columns}
+              dataSource={result}
+              size="small"
+              style={{ marginTop: '30px' }}
+              pagination={false}
+            />
+          ),
+          onOk() {},
+        });
       }
-    );
+    });
   };
+
+  function openTab(row) {
+    window.open(`${row.file.path}`);
+  }
 
   const action = row => (
     <>
@@ -222,6 +230,17 @@ const ProjectInfo = () => {
           onClick={() => info(row)}
         />
       </Tooltip>
+      {row.file ? (
+        <Tooltip title="Файл харах">
+          <Button
+            type="text"
+            icon={<FontAwesomeIcon icon={faFilePdf} />}
+            onClick={() => openTab(row)}
+          />
+        </Tooltip>
+      ) : (
+        ''
+      )}
     </>
   );
 
@@ -266,22 +285,15 @@ const ProjectInfo = () => {
 
   const job = row => (
     <>
-      <span className="p-column-title">Төлөвлөсөн ажил</span>
+      <span className="p-column-title">Төлөвлөсөн үйл ажиллагаа</span>
       {row.plannedWork}
     </>
   );
 
-  const process = row => (
+  const description = row => (
     <>
-      <span className="p-column-title">Гүйцэтгэлийн явц</span>
-      {row.performanceProcess}
-    </>
-  );
-
-  const delay = row => (
-    <>
-      <span className="p-column-title">Хоцрогдол</span>
-      {row.isDelay === false ? 'Хоцроогүй' : 'Хоцорсон'}
+      <span className="p-column-title">Тайлбар</span>
+      {row.description}
     </>
   );
 
@@ -406,19 +418,18 @@ const ProjectInfo = () => {
             <Column header="№" body={indexBodyTemplate} style={{ width: 40 }} />
             <Column header="Эхлэх хугацаа" body={startDate} />
             <Column header="Дуусах хугацаа" body={endDate} />
-            <Column header="Төлөвлөсөн ажил" body={job} />
-            <Column header="Гүйцэтгэлийн явц" body={process} />
-            <Column header="Хоцрогдол" body={delay} />
+            <Column header="Төлөвлөсөн үйл ажиллагаа" body={job} />
+            <Column header="Тайлбар" body={description} />
             <Column header="Хугацаа" body={period} />
             <Column
               field="projectStatus.name"
               header="Статус"
               body={statusBodyTemplate}
             />
-            <Column headerStyle={{ width: '8rem' }} body={action} />
+            <Column headerStyle={{ width: '10rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <ProjectInfoModal
+            <ImplementationModal
               EditRow={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
@@ -432,7 +443,7 @@ const ProjectInfo = () => {
               close={modalClose}
               operationID={operationID}
               statusID={statusId}
-              type={1}
+              type={2}
             />
           )}
         </div>
@@ -441,4 +452,4 @@ const ProjectInfo = () => {
   );
 };
 
-export default ProjectInfo;
+export default Implementation;
