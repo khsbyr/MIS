@@ -38,18 +38,12 @@ export default function PlanModal(props) {
     form
       .validateFields()
       .then(values => {
-        // if (values.UserID) {
-        //   values.user = { id: values.UserID };
-        // } else {
-        //   values.user = null;
-        // }
-        // if (values.TrainerID) {
-        //   values.trainers = { id: values.TrainerID };
-        // } else {
-        //   values.trainers = null;
-        // }
-        values.user = { id: trainerID };
-        values.training = { id: trainingID };
+        values.trainingTeam = {
+          user: { id: trainerID },
+          training: { id: trainingID },
+          mission: values.mission,
+        };
+
         if (isEditMode) {
           putService(`trainingTeam/update/${Plancontroller.id}`, values)
             .then(() => {
