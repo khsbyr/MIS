@@ -145,15 +145,19 @@ export default function ProjectInfoModal(props) {
 
             <Row gutter={30}>
               <Col xs={24} md={24} lg={12}>
-                <Form.Item label="Хоцрогдлын шалтгаан:" name="reasonOfDelay">
-                  <TextArea rows={5} />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={24} lg={12}>
                 <Form.Item label="Тайлбар:" name="description">
                   <TextArea rows={5} />
                 </Form.Item>
               </Col>
+              {isDelayValue === true ? (
+                <Col xs={24} md={24} lg={12}>
+                  <Form.Item label="Хоцрогдлын шалтгаан:" name="reasonOfDelay">
+                    <TextArea rows={5} />
+                  </Form.Item>
+                </Col>
+              ) : (
+                ''
+              )}
             </Row>
           </Form>
         </ContentWrapper>
