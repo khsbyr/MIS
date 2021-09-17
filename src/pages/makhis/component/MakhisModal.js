@@ -108,7 +108,7 @@ export default function MakhisModal(props) {
   return (
     <div>
       <Modal
-        title="Үйл аижллагаа бүртгэх"
+        title="Мал эмнэлгийн нэгдсэн систем бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
         width={900}

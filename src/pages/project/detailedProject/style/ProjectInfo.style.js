@@ -76,6 +76,12 @@ const ContentWrapper = styled.div`
     background-color: inherit !important;
     border: none;
   }
+
+  .p-datatable .p-datatable-tbody > tr > td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 `;
 
 export default ContentWrapper;
