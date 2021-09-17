@@ -86,7 +86,7 @@ const productiveProject = props => {
 
   useEffect(() => {
     onInit();
-    getService('projectStatus/get').then(result => {
+    getService('projectStatus/getByTypeId/1').then(result => {
       if (result) {
         setStatus(result || []);
       }
@@ -247,9 +247,7 @@ const productiveProject = props => {
   const typeBodyTemplate = row => (
     <>
       <span className="p-column-title">Төрөл</span>
-      {row.innovationProjectType
-        ? row.innovationProjectType.name
-        : 'Тодорхойгүй'}
+      {row.subProjectType ? row.subProjectType.name : 'Тодорхойгүй'}
     </>
   );
   const getColor = id => {
@@ -268,11 +266,11 @@ const productiveProject = props => {
   const getName = type => {
     switch (type) {
       case 1:
-        return 'Бүтээмжит төсөл';
+        return 'Бүтээмжит түншлэлийн хамтын шийдэл';
       case 2:
-        return 'МАА-н инновацийн төсөл';
+        return 'МАА-н инноваци шингээсэн үйлчилгээ үзүүлэх загвар';
       case 3:
-        return 'Тэжээлийн үйлдвэрийн төсөл';
+        return 'Тэжээл үйлдвэрлэлийн дэд төсөл';
       default:
         return '';
     }

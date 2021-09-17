@@ -47,7 +47,7 @@ const Projecttype = () => {
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService('innovationProjectType/get', obj)
+      getService('subProjectType/get', obj)
         .then(data => {
           const dataList = data || [];
           dataList.forEach((item, index) => {
@@ -102,7 +102,7 @@ const Projecttype = () => {
       return;
     }
 
-    deleteService(`innovationProjectType/delete/${row.id}`)
+    deleteService(`subProjectType/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();

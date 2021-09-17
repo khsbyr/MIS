@@ -32,7 +32,7 @@ export default function ProjecttypeModal(props) {
         values.isTrue = true;
         if (isEditMode) {
           putService(
-            `innovationProjectType/update/${Projecttypecontroller.id}`,
+            `subProjectType/update/${Projecttypecontroller.id}`,
             values
           )
             .then(() => {
@@ -43,7 +43,7 @@ export default function ProjecttypeModal(props) {
               errorCatch(error);
             });
         } else {
-          postService('innovationProjectType/post', values)
+          postService('subProjectType/post', values)
             .then(() => {
               message.success('Амжилттай хадгаллаа');
               props.close(true);

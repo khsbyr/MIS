@@ -306,7 +306,7 @@ export default function ConsultingPersonModal(props) {
   return (
     <div>
       <Modal
-        title="Зөвлөх хувь хүн бүртгэх"
+        title="Хувь хүн бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
         width={1200}

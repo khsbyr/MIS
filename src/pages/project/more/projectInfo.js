@@ -5,13 +5,15 @@ import { useProjectStore } from '../../../context/ProjectContext';
 import { useToolsStore } from '../../../context/Tools';
 import { getService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
-import BriefDraft from '../briefdraft';
+import BriefDraft from '../briefDraft';
 import Investment from '../investment';
 import MainInfo from '../mainInfo';
 import ProjectOrg from '../projectOrganizations';
 import FileUpload from '../fileUpload';
 import ContentWrapper from './projectInfo.style';
 import ProjectInfo from '../detailedProject/ProjectInfo';
+import Implementation from '../detailedProject/Implementation';
+import Monitoring from '../detailedProject/Monitoring';
 
 const { TabPane } = Tabs;
 const tabPosition = 'top';
@@ -67,13 +69,13 @@ export default function projectInfo() {
                 tab="Байгаль орчин нийгмийн менежментийн төлөвлөгөөний биелэлт"
                 key="9"
               >
-                Хөгжүүлэлт хийгдэж байна...
+                <Implementation />
               </TabPane>
               <TabPane tab="Байгууллагын санхүүгийн мэдээлэл" key="10">
                 Хөгжүүлэлт хийгдэж байна...
               </TabPane>
               <TabPane tab="Хөндлөнгийн хяналт-шинжилгээ, үнэлгээ" key="11">
-                Хөгжүүлэлт хийгдэж байна...
+                <Monitoring />
               </TabPane>
             </Tabs>
           </TabPane>

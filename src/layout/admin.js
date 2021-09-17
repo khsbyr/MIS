@@ -98,7 +98,7 @@ function Admin() {
         <Sider
           className="site-layout-background"
           breakpoint="lg"
-          width="300px"
+          width="320px"
           collapsedWidth="70"
           collapsible
           trigger={null}

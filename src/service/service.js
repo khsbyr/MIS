@@ -90,6 +90,23 @@ export async function writeFileServer(serviceName, file) {
   return response;
 }
 
+export async function writeMultipleFileServer(serviceName, files) {
+  const data = new FormData();
+  files.forEach(file => {
+    data.append('files', file.originFileObj);
+  });
+  const response = await axios
+    .post(serviceName, data, config())
+    .catch(error => {
+      errorCatch(error);
+      throw error;
+    });
+  if (response.status !== 200) {
+    message.warning('АМЖИЛТГҮЙ:', response.statusText);
+  }
+  return response;
+}
+
 export async function updateFileServer(serviceName, file) {
   const data = new FormData();
   data.append('file', file);

@@ -7,7 +7,7 @@ import validateMessages from '../../../../tools/validateMessage';
 const { TextArea } = Input;
 
 export default function DescriptionModal(props) {
-  const { isModalVisible, isEditMode, doctorID } = props;
+  const { isModalVisible, isEditMode, operationID, statusID, type } = props;
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -20,17 +20,19 @@ export default function DescriptionModal(props) {
       .validateFields()
       .then(values => {
         const data = {
-          youngDoctorStatus: { id: 3 },
-          youngDoctor: { id: doctorID },
+          projectStatus: { id: statusID },
           definition: values.description,
+          operation: type === 1 ? { id: operationID } : null,
+          implementationOfSemp: type === 2 ? { id: operationID } : null,
+          externalMonitoring: type === 3 ? { id: operationID } : null,
         };
-        postService('youngDoctorStatusHistory/post', data)
+        postService('projectStatusHistory/post', data)
           .then(() => {
             const datas = {
-              youngDoctorId: doctorID,
-              statusId: 3,
+              statusId: statusID,
+              operationId: operationID,
             };
-            putService(`youngDoctorStatus/updateDoctorStatus`, datas)
+            putService(`project/updateStatus`, datas)
               .then(() => {
                 message.success('Амжилттай хадгаллаа');
               })
@@ -50,7 +52,7 @@ export default function DescriptionModal(props) {
   return (
     <div>
       <Modal
-        title="Буцаасан шалтгаанаа оруулна уу!"
+        title="Шалтгаанаа оруулна уу!"
         okText="Хадгалах"
         cancelText="Буцах"
         width={600}

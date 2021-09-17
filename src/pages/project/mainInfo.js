@@ -37,41 +37,41 @@ function mainInfo() {
             label="Байгууллагын нэр"
             contentStyle={{ width: '65%' }}
           >
-            {ProjectList.organization && ProjectList.organization.name}
+            {ProjectList.organization && ProjectList.organization?.name}
           </Descriptions.Item>
           <Descriptions.Item label="Байгууллагын pегистрийн дугаар:">
             {ProjectList.organization &&
-              ProjectList.organization.registerNumber}
+              ProjectList.organization?.registerNumber}
           </Descriptions.Item>
           <Descriptions.Item label="Байгууллагын улсын бүртгэлийн гэрчилгээний дугаар">
             {ProjectList.organization &&
-              ProjectList.organization.certificateNumber}
+              ProjectList.organization?.certificateNumber}
           </Descriptions.Item>
           <Descriptions.Item label="Байгуулагдсан он">
-            {ProjectList.organization && ProjectList.organization.foundedYear}
+            {ProjectList.organization && ProjectList.organization?.foundedYear}
           </Descriptions.Item>
           <Descriptions.Item label="Эрх бүхий этгээд / Холбогдох ажилтан нэр">
             {ProjectList.organization &&
-              ProjectList.organization.responsibleUser.firstname}
+              ProjectList.organization?.responsibleUser?.firstname}
           </Descriptions.Item>
           <Descriptions.Item label="Хаяг (Төв  оффис болон зорилтот сумд дахь салбарын хаяг)">
             {ProjectList.organization &&
-              ProjectList.organization.address.country.name}
+              ProjectList.organization?.address?.country?.name}
             ,{' '}
             {ProjectList.organization &&
-              ProjectList.organization.address.aimag.name}
+              ProjectList.organization?.address?.aimag?.name}
             ,{' '}
             {ProjectList.organization &&
-              ProjectList.organization.address.soum.name}
+              ProjectList.organization?.address?.soum?.name}
             ,{' '}
             {ProjectList.organization &&
-              ProjectList.organization.address.bag.name}
+              ProjectList.organization?.address?.bag?.name}
           </Descriptions.Item>
           <Descriptions.Item label="Утасны дугаар">
-            {ProjectList.organization && ProjectList.organization.phone}
+            {ProjectList.organization && ProjectList.organization?.phone}
           </Descriptions.Item>
           <Descriptions.Item label="Цахим шуудангийн хаяг">
-            {ProjectList.organization && ProjectList.organization.email}
+            {ProjectList.organization && ProjectList.organization?.email}
           </Descriptions.Item>
         </Descriptions>
 
