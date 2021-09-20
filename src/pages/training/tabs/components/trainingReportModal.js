@@ -65,33 +65,33 @@ export default function TrainingReportModal(props) {
           TrainingList && TrainingList?.trainingBudget?.performanceBudget,
         ReportsAim:
           TrainingReportController.trainingReport &&
-          TrainingReportController.trainingReport.reportsAim.inputText,
+          TrainingReportController.trainingReport?.reportsAim?.inputText,
         ReportsSuccessOverview:
           TrainingReportController.trainingReport &&
-          TrainingReportController.trainingReport.reportsSuccessOverview
-            .inputText,
+          TrainingReportController.trainingReport?.reportsSuccessOverview
+            ?.inputText,
         ReportsResult:
           TrainingReportController.trainingReport &&
-          TrainingReportController.trainingReport.reportsResult.inputText,
+          TrainingReportController.trainingReport.reportsResult?.inputText,
         ReportsTips:
           TrainingReportController.trainingReport &&
-          TrainingReportController.trainingReport.reportsTips.inputText,
+          TrainingReportController.trainingReport.reportsTips?.inputText,
         PerformedProcess1:
           TrainingReportController.trainingReport &&
           TrainingReportController.trainingReport.reportsPerformedProcess1
-            .inputText,
+            ?.inputText,
         PerformedProcess2:
           TrainingReportController.trainingReport &&
           TrainingReportController.trainingReport.reportsPerformedProcess2
-            .inputText,
+            ?.inputText,
         PerformedProcess3:
           TrainingReportController.trainingReport &&
           TrainingReportController.trainingReport.reportsPerformedProcess3
-            .inputText,
+            ?.inputText,
         PerformedProcess4:
           TrainingReportController.trainingReport &&
           TrainingReportController.trainingReport.reportsPerformedProcess4
-            .inputText,
+            ?.inputText,
       });
     }
   }, []);
