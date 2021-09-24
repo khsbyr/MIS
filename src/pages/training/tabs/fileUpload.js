@@ -1,61 +1,53 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import {
+  faFilePdf,
+  faPen,
+  faPlus,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { PAGESIZE } from '../../constants/Constant';
-import { ToolsContext } from '../../context/Tools';
-import { getService, putService } from '../../service/service';
-import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
-import ContentWrapper from '../training/tabs/components/organization.style';
-import DoctorModal from './component/doctorModal';
+import React, { useContext, useEffect, useState } from 'react';
+import { ToolsContext } from '../../../context/Tools';
+import { getService, putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import FileUploadModal from './components/fileUploadModal';
+import ContentWrapper from './components/organization.style';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-
-const Doctor = props => {
-  const { t } = useTranslation();
-  const dt = useRef(null);
+const fileUpload = props => {
+  const loadLazyTimeout = null;
+  const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const toolsStore = useContext(ToolsContext);
+  const PAGESIZE = 20;
   const [lazyParams] = useState({
-    first: 0,
     page: 0,
-    size: PAGESIZE || 20,
   });
-
-  let loadLazyTimeout = null;
-
   const onInit = () => {
-    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    loadLazyTimeout = setTimeout(() => {
-      const obj = convertLazyParamsToObj(lazyParams);
-      getService(
-        `/makhisVeterinaryDoctor/getListByVeterinaryId/${props.id}`,
-        obj
-      )
-        .then(result => {
-          const listResult = result.content;
-          listResult.forEach((item, index) => {
-            item.index = lazyParams.page * PAGESIZE + index + 1;
-          });
-          setList(listResult);
-        })
-        .finally(toolsStore.setIsShowLoader(false))
-        .catch(error => {
-          errorCatch(error);
-          toolsStore.setIsShowLoader(false);
+    toolsStore.setIsShowLoader(true);
+    getService(`trainingFiles/getByTraining/${props.id}`)
+      .then(result => {
+        const listResult = result;
+        listResult.forEach((item, index) => {
+          item.index = lazyParams.page * PAGESIZE + index + 1;
         });
-    }, 500);
+        setList(listResult);
+      })
+      .finally(toolsStore.setIsShowLoader(false))
+      .catch(error => {
+        errorCatch(error);
+        toolsStore.setIsShowLoader(false);
+      });
   };
 
   useEffect(() => {
@@ -67,7 +59,9 @@ const Doctor = props => {
     isEditMode = false;
   };
 
-  const edit = row => {
+  const edit = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
@@ -78,8 +72,7 @@ const Doctor = props => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-
-    putService(`makhisVeterinaryDoctor/delete/${row.id}`)
+    putService(`trainingFiles/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -104,7 +97,9 @@ const Doctor = props => {
     });
   }
 
-  const pop = row => {
+  const pop = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
@@ -112,17 +107,30 @@ const Doctor = props => {
     }
   };
 
+  function openTab(row) {
+    window.open(`${row.file.path}`);
+  }
+
+  function openTab1(row) {
+    window.open(`${row.data.file.path}`);
+  }
+
   const action = row => (
     <>
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
+        onClick={event => edit(event, row)}
       />
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
+        onClick={event => pop(event, row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faFilePdf} />}
+        onClick={() => openTab(row)}
       />
     </>
   );
@@ -139,24 +147,24 @@ const Doctor = props => {
     </>
   );
 
-  const lastname = row => (
+  const fileName = row => (
     <>
-      <span className="p-column-title">Овог</span>
-      {row.lastname}
+      <span className="p-column-title">Файлын нэр</span>
+      {row.file.fileName}
     </>
   );
 
-  const firstname = row => (
+  const description = row => (
     <>
-      <span className="p-column-title">Нэр</span>
-      {row.firstname}
+      <span className="p-column-title">Тайлбар</span>
+      {row.description}
     </>
   );
 
-  const register = row => (
+  const date = row => (
     <>
-      <span className="p-column-title">Регистр</span>
-      {row.register}
+      <span className="p-column-title">Огноо</span>
+      <>{moment(row && row.createdDate).format('YYYY-M-D')}</>
     </>
   );
 
@@ -166,10 +174,10 @@ const Doctor = props => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={18} md={12} lg={24}>
+              <Col xs={24} md={24} lg={24}>
                 <Row justify="end" gutter={[16, 16]}>
                   <Col>
-                    <Tooltip title={t('add')} arrowPointAtCenter>
+                    <Tooltip title="Нэмэх" arrowPointAtCenter>
                       <Button
                         type="text"
                         className="export"
@@ -187,35 +195,28 @@ const Doctor = props => {
         </Layout>
         <div className="datatable-responsive-demo">
           <DataTable
-            ref={dt}
-            emptyMessage="Өгөгдөл олдсонгүй..."
             value={list}
-            first={lazyParams.first}
-            rows={PAGESIZE}
-            lazy
+            removableSort
             paginator
+            emptyMessage="Өгөгдөл олдсонгүй..."
+            rows={10}
             className="p-datatable-responsive-demo"
             dataKey="id"
+            onRowClick={openTab1}
           >
-            <Column
-              field="index"
-              header="№"
-              body={indexBodyTemplate}
-              style={{ width: 40 }}
-            />
-            <Column field="lastname" body={lastname} header="Овог" />
-            <Column field="firstname" body={firstname} header="Нэр" />
-            <Column field="register" body={register} header="Регистр" />
-
-            <Column headerStyle={{ width: '6rem' }} body={action} />
+            <Column header="№" body={indexBodyTemplate} style={{ width: 40 }} />
+            <Column header="Файлын нэр" body={fileName} />
+            <Column header="Тайлбар" body={description} />
+            <Column header="Огноо" body={date} />
+            <Column headerStyle={{ width: '8rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <DoctorModal
+            <FileUploadModal
               EditRow={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              serviceID={props.id}
+              trainingID={props.id}
             />
           )}
         </div>
@@ -224,4 +225,4 @@ const Doctor = props => {
   );
 };
 
-export default Doctor;
+export default fileUpload;

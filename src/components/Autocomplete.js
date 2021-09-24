@@ -28,6 +28,7 @@ export default function AutocompleteSelect(props) {
       maxTagCount="responsive"
       size={size || 'small'}
       onChange={props.onChange}
+      allowClear
     >
       {data &&
         data.map((z, index) => (

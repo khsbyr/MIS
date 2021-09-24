@@ -1,30 +1,29 @@
 /* eslint-disable no-nested-ternary */
+import { UploadOutlined } from '@ant-design/icons';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { UploadOutlined } from '@ant-design/icons';
 import {
+  Button,
   Col,
   DatePicker,
   Form,
   Input,
   message,
   Modal,
+  Radio,
   Row,
   TreeSelect,
-  Radio,
   Upload,
-  Button,
 } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import AutoCompleteSelect from '../../../components/Autocomplete';
 import {
   getService,
   postService,
   putService,
-  writeFileServer,
   updateFileServer,
+  writeFileServer,
 } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
@@ -48,12 +47,11 @@ const layout = {
 const { TreeNode } = TreeSelect;
 
 export default function IndicatorsReportModal(props) {
-  const { IndicatorsReportcontroller, isModalVisible, isEditMode } = props;
+  const { IndicatorsReportcontroller, isModalVisible, isEditMode, criteriaID } =
+    props;
   const [form] = Form.useForm();
   const [valueAddress, setValueAddress] = useState(undefined);
   const [stateAimag, setStateAimag] = useState([]);
-  const [stateCriteria, setStateCriteria] = useState([]);
-  const [stateCriteriaID, setStateCriteriaID] = useState([]);
   const [Date, setDate] = useState([]);
   const [isYesValue, setIsYesValue] = useState();
   const [fileList, setFileList] = useState([]);
@@ -85,11 +83,6 @@ export default function IndicatorsReportModal(props) {
   }
 
   useEffect(() => {
-    getService('criteria/getListByForWhatId/4').then(result => {
-      if (result) {
-        setStateCriteria(result || []);
-      }
-    });
     getService('aimag/get').then(result => {
       if (result) {
         setStateAimag(result || []);
@@ -99,10 +92,6 @@ export default function IndicatorsReportModal(props) {
       setDate(IndicatorsReportcontroller.date);
       setValueAddress(ProjectChildrenAddress);
       setIsYesValue(IndicatorsReportcontroller.isYes);
-      setStateCriteriaID(
-        IndicatorsReportcontroller.criteria &&
-          IndicatorsReportcontroller.criteria.id
-      );
       form.setFieldsValue({
         ...IndicatorsReportcontroller,
         stateCriteriaID: IndicatorsReportcontroller.criteria
@@ -144,17 +133,13 @@ export default function IndicatorsReportModal(props) {
     return results;
   };
 
-  const selectCriteria = value => {
-    setStateCriteriaID(value);
-  };
-
   const save = () => {
     form
       .validateFields()
       .then(values => {
         values.date = Date;
         values.soumIds = valueAddress;
-        values.criteriaId = stateCriteriaID;
+        values.criteriaId = criteriaID;
         values.isYes = isYesValue;
         values.number =
           isYesValue === true || isYesValue === false ? null : values.number;
@@ -256,7 +241,7 @@ export default function IndicatorsReportModal(props) {
           >
             <Row gutter={[30, 30]}>
               <Col xs={24} md={24} lg={24}>
-                <Form.Item
+                {/* <Form.Item
                   name="stateCriteriaID"
                   label="Шалгуур үзүүлэлтийн нэр:"
                   rules={[
@@ -279,7 +264,7 @@ export default function IndicatorsReportModal(props) {
                     onChange={value => selectCriteria(value)}
                     type={2}
                   />
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item label="Хаяг:">
                   {ProjectChildrenAddress === null ? (
                     <TreeSelect
@@ -311,7 +296,7 @@ export default function IndicatorsReportModal(props) {
                     </TreeSelect>
                   )}
                 </Form.Item>
-                {stateCriteriaID === 27 || stateCriteriaID === 30 ? (
+                {criteriaID === 27 || criteriaID === 30 ? (
                   <Form.Item
                     label="Үр дүн:"
                     name="isYes"
@@ -321,7 +306,7 @@ export default function IndicatorsReportModal(props) {
                       },
                     ]}
                   >
-                    {stateCriteriaID === 27 || stateCriteriaID === 30 ? (
+                    {criteriaID === 27 || criteriaID === 30 ? (
                       <Radio.Group onChange={isYes} value={isYesValue}>
                         <Radio value>Тийм</Radio>
                         <Radio value={false}>Үгүй</Radio>
@@ -340,7 +325,7 @@ export default function IndicatorsReportModal(props) {
                       },
                     ]}
                   >
-                    {stateCriteriaID === 27 || stateCriteriaID === 30 ? (
+                    {criteriaID === 27 || criteriaID === 30 ? (
                       <Radio.Group onChange={isYes} value={isYesValue}>
                         <Radio value defaultChecked>
                           Тийм

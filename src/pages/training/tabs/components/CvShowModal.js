@@ -79,7 +79,9 @@ export default function CvShowModal(props) {
       clearTimeout(loadLazyTimeout);
     }
     if (Trainerscontroller !== null) {
-      getService(`education/getByTrainerId/${Trainerscontroller.trainers.id}`)
+      getService(
+        `education/getByTrainerId/${Trainerscontroller.user.trainers.id}`
+      )
         .then(result => {
           const listeducation = result || [];
           listeducation.forEach((item, index) => {
@@ -102,7 +104,9 @@ export default function CvShowModal(props) {
       clearTimeout(loadLazyTimeout);
     }
     if (Trainerscontroller !== null) {
-      getService(`expierence/getByTrainerId/${Trainerscontroller.trainers.id}`)
+      getService(
+        `expierence/getByTrainerId/${Trainerscontroller.user.trainers.id}`
+      )
         .then(result => {
           const listexperience = result || [];
           listexperience.forEach((item, index) => {
@@ -126,7 +130,7 @@ export default function CvShowModal(props) {
     }
     if (Trainerscontroller !== null) {
       getService(
-        `expierenceForAdvice/getByTrainerId/${Trainerscontroller.trainers.id}`
+        `expierenceForAdvice/getByTrainerId/${Trainerscontroller.user.trainers.id}`
       )
         .then(result => {
           const listexperienceAdvice = result || [];
@@ -151,7 +155,7 @@ export default function CvShowModal(props) {
     }
     if (Trainerscontroller !== null) {
       getService(
-        `expierenceForTeach/getByTrainerId/${Trainerscontroller.trainers.id}`
+        `expierenceForTeach/getByTrainerId/${Trainerscontroller.user.trainers.id}`
       )
         .then(result => {
           const listexperienceTeacher = result || [];
@@ -176,7 +180,7 @@ export default function CvShowModal(props) {
     }
     if (Trainerscontroller !== null) {
       getService(
-        `publishedWork/getByTrainerId/${Trainerscontroller.trainers.id}`
+        `publishedWork/getByTrainerId/${Trainerscontroller.user.trainers.id}`
       )
         .then(result => {
           const listpublishedWork = result || [];
@@ -201,7 +205,7 @@ export default function CvShowModal(props) {
     }
     if (Trainerscontroller !== null) {
       getService(
-        `propertyLicense/getByTrainerId/${Trainerscontroller.trainers.id}`
+        `propertyLicense/getByTrainerId/${Trainerscontroller.user.trainers.id}`
       )
         .then(result => {
           const listlicense = result || [];
@@ -225,7 +229,9 @@ export default function CvShowModal(props) {
       clearTimeout(loadLazyTimeout);
     }
     if (Trainerscontroller !== null) {
-      getService(`membership/getByTrainerId/${Trainerscontroller.trainers.id}`)
+      getService(
+        `membership/getByTrainerId/${Trainerscontroller.user.trainers.id}`
+      )
         .then(result => {
           const listmembership = result || [];
           listmembership.forEach((item, index) => {
@@ -277,32 +283,32 @@ export default function CvShowModal(props) {
     onInitMembership();
 
     if (isEditMode) {
-      setBirthDate(Trainerscontroller.birthDate);
-      setUserID(Trainerscontroller.id);
+      setBirthDate(Trainerscontroller.user.birthDate);
+      setUserID(Trainerscontroller.user.id);
       form.setFieldsValue({
-        ...Trainerscontroller,
-        lastName: Trainerscontroller.lastname,
-        firstName: Trainerscontroller.firstname,
-        registerNumber: Trainerscontroller.register,
-        phoneNumber: Trainerscontroller.phoneNumber,
-        email: Trainerscontroller.email,
-        AddressDetail: Trainerscontroller.address
-          ? Trainerscontroller.address.addressDetail
+        ...Trainerscontroller.user,
+        lastName: Trainerscontroller.user.lastname,
+        firstName: Trainerscontroller.user.firstname,
+        registerNumber: Trainerscontroller.user.register,
+        phoneNumber: Trainerscontroller.user.phoneNumber,
+        email: Trainerscontroller.user.email,
+        AddressDetail: Trainerscontroller.user.address
+          ? Trainerscontroller.user.address.addressDetail
           : '',
-        CountryID: Trainerscontroller.address
-          ? Trainerscontroller.address.country.id
+        CountryID: Trainerscontroller.user.address
+          ? Trainerscontroller.user.address.country.id
           : '',
-        AimagID: Trainerscontroller.address
-          ? Trainerscontroller.address.aimag.id
+        AimagID: Trainerscontroller.user.address
+          ? Trainerscontroller.user.address.aimag.id
           : '',
-        SoumID: Trainerscontroller.address
-          ? Trainerscontroller.address.soum.id
+        SoumID: Trainerscontroller.user.address
+          ? Trainerscontroller.user.address.soum.id
           : '',
-        BagID: Trainerscontroller.address
-          ? Trainerscontroller.address.bag.id
+        BagID: Trainerscontroller.user.address
+          ? Trainerscontroller.user.address.bag.id
           : '',
-        purpose: Trainerscontroller.trainers.purpose,
-        skill: Trainerscontroller.trainers.skill,
+        purpose: Trainerscontroller.user.trainers.purpose,
+        skill: Trainerscontroller.user.trainers.skill,
       });
     }
   }, [lazyParams]);

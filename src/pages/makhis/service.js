@@ -27,6 +27,7 @@ const Service = props => {
   const [lazyParams] = useState({
     first: 0,
     page: 0,
+    size: PAGESIZE || 20,
   });
 
   let loadLazyTimeout = null;

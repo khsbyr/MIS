@@ -108,6 +108,12 @@ const Makhis = loadable({
   loader: () => import('../pages/makhis/Makhis'),
   loading: Loader,
 });
+
+const TrainingParticipants = loadable({
+  loader: () => import('../pages/directory/trainingParticipants'),
+  loading: Loader,
+});
+
 const Page = ({ route }) => {
   const PageContent = () => {
     switch (route.code.toLowerCase()) {
@@ -187,6 +193,9 @@ const Page = ({ route }) => {
 
       case 'Makhis'.toLowerCase():
         return <Makhis />;
+
+      case 'Training Participants'.toLowerCase():
+        return <TrainingParticipants />;
 
       default:
         return null;

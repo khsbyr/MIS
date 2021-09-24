@@ -1,35 +1,18 @@
-import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import {
-  faFileExcel,
-  faFilePdf,
-  faPen,
-  faPlus,
-  faPrint,
-  faTrash,
-} from '@fortawesome/free-solid-svg-icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Button,
-  Col,
-  DatePicker,
-  Layout,
-  message,
-  Modal,
-  Row,
-  Tooltip,
-} from 'antd';
+import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import AutoCompleteSelect from '../../../components/Autocomplete';
 import { PAGESIZE } from '../../../constants/Constant';
 import { useToolsStore } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { convertLazyParamsToObj, errorCatch } from '../../../tools/Tools';
-import ContentWrapper from '../../criteria/criteria.style';
 import CvModal from './components/CvModal';
-import OrgaStyle from './components/orga.style';
+import ContentWrapper from './components/trainingProgram.style';
+import { useTrainingStore } from '../../../context/TrainingContext';
 
 const { Content } = Layout;
 
@@ -50,9 +33,7 @@ const CV = () => {
     size: PAGESIZE || 20,
   });
   const dt = useRef(null);
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [OrgID, setOrgID] = useState([]);
-  const [isOnChange, setIsOnChange] = useState(false);
+  const { TrainingList } = useTrainingStore();
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
@@ -61,9 +42,9 @@ const CV = () => {
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService('user/getAllTrainerUserList', obj)
+      getService(`trainingTeam/getList/${TrainingList.id}`, obj)
         .then(data => {
-          const dataList = data || [];
+          const dataList = data.content || [];
           dataList.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });
@@ -78,33 +59,15 @@ const CV = () => {
         });
     }, 500);
   };
+
   useEffect(() => {
     onInit();
   }, [lazyParams]);
 
-  const selectOrg = value => {
-    setIsOnChange(true);
-    getService(`user/getTrainerListByOrgId/${value}`, {}).then(data => {
-      if (data) {
-        const dataList = data || [];
-        dataList.forEach((item, index) => {
-          item.index = index + 1;
-        });
-        setList(dataList);
-        setOrgID(value);
-        setSelectedRows([]);
-      }
-    });
-  };
-
   const add = () => {
-    if (isOnChange === false) {
-      message.warning('Байгууллага сонгоно уу!');
-    } else {
-      editRow = null;
-      setIsModalVisible(true);
-      isEditMode = false;
-    }
+    editRow = null;
+    setIsModalVisible(true);
+    isEditMode = false;
   };
 
   const handleDeleted = row => {
@@ -112,7 +75,7 @@ const CV = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`trainers/delete/${row.trainers.id}`)
+    putService(`trainingTeam/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -138,9 +101,7 @@ const CV = () => {
   }
 
   const pop = row => {
-    if (isOnChange === false) {
-      message.warning('Байгууллага сонгоно уу!');
-    } else if (row.length === 0) {
+    if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
       confirm(row);
@@ -148,14 +109,10 @@ const CV = () => {
   };
 
   const edit = row => {
-    if (isOnChange === false) {
-      message.warning('Байгууллага сонгоно уу!');
-    } else {
-      trainerID = row.trainers.id;
-      editRow = row;
-      isEditMode = true;
-      setIsModalVisible(true);
-    }
+    trainerID = row.user.trainers.id;
+    editRow = row;
+    isEditMode = true;
+    setIsModalVisible(true);
   };
 
   const onPage = event => {
@@ -204,112 +161,63 @@ const CV = () => {
   const FirstNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Нэр</span>
-      {row.firstname}
+      {row.user.firstname}
     </>
   );
 
   const LastNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Овог</span>
-      {row.lastname}
+      {row.user.lastname}
     </>
   );
 
   const phoneBodyTemplate = row => (
     <>
       <span className="p-column-title">Утас</span>
-      {row.phoneNumber}
+      {row.user.phoneNumber}
     </>
   );
 
   const registerBodyTemplate = row => (
     <>
       <span className="p-column-title">Сургагч багшийн регистер</span>
-      {row.register}
+      {row.user.register}
     </>
   );
+
+  const mission = row => (
+    <>
+      <span className="p-column-title">Гүйцэтгэх үүрэг</span>
+      {row.mission}
+    </>
+  );
+
   return (
     <ContentWrapper>
       <div className="button-demo">
-        <Content>
-          <Row>
-            <Col xs={24} md={24} lg={10}>
-              <p className="title">Хүний нөөц</p>
-            </Col>
-            <Col xs={24} md={18} lg={14}>
-              <Row justify="end" gutter={[16, 16]}>
-                <Col xs={12} md={6} lg={9}>
-                  <OrgaStyle>
-                    <AutoCompleteSelect
-                      valueField="id"
-                      placeholder="Байгууллага сонгох"
-                      data={toolsStore.orgList}
-                      onChange={value => selectOrg(value)}
-                    />
-                  </OrgaStyle>
-                </Col>
-                <Col xs={12} md={5} lg={5}>
-                  <DatePicker
-                    bordered={false}
-                    suffixIcon={<DownOutlined />}
-                    placeholder="Жил сонгох"
-                    picker="year"
-                    className="DatePicker"
-                    style={{
-                      width: '120px',
-                      color: 'black',
-                      cursor: 'pointer',
-                    }}
-                  />
-                </Col>
-                <Col xs={8} md={2} lg={2}>
-                  <Tooltip title={t('print')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col xs={8} md={2} lg={2}>
-                  <Tooltip title={t('export')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col xs={8} md={2} lg={2}>
-                  <Tooltip title={t('pdf')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFilePdf} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col xs={8} md={2} lg={2}>
-                  <Tooltip title={t('add')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Content>
+        <Layout className="btn-layout">
+          <Content>
+            <Row>
+              <Col xs={24} md={24} lg={24}>
+                <Row justify="end" gutter={[16, 16]}>
+                  <Col>
+                    <Tooltip title={t('add')} arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={add}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Content>
+        </Layout>
         <div className="datatable-responsive-demo">
           <DataTable
             ref={dt}
@@ -327,12 +235,7 @@ const CV = () => {
             sortOrder={lazyParams.sortOrder}
             onFilter={onFilter}
             filters={lazyParams.filters}
-            tableStyle={{ minWidth: 1000 }}
             className="p-datatable-responsive-demo"
-            selection={selectedRows}
-            onSelectionChange={e => {
-              setSelectedRows(e.value);
-            }}
             dataKey="id"
           >
             <Column
@@ -343,35 +246,49 @@ const CV = () => {
             />
             <Column
               header="Овог"
-              field="firstname"
-              body={FirstNameBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-            />
-            <Column
-              header="Нэр"
-              field="lastname"
+              field="user.lastname"
               body={LastNameBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
+              header="Нэр"
+              field="user.firstname"
+              body={FirstNameBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
+            />
+
+            <Column
               header="Утас"
-              field="phoneNumber"
+              field="user.phoneNumber"
               body={phoneBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
-              field="register"
+              field="user.register"
               header="Сургагч багшийн регистер"
               body={registerBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
+            />
+            <Column
+              field="mission"
+              header="Гүйцэтгэх үүрэг"
+              body={mission}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
@@ -381,7 +298,7 @@ const CV = () => {
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              orgId={OrgID}
+              orgId={TrainingList?.organization?.id}
               trainerID={trainerID}
             />
           )}

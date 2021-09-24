@@ -3,9 +3,7 @@ import {
   faFileExcel,
   faPen,
   faPlus,
-  faPrint,
   faTrash,
-  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -55,6 +53,9 @@ const TrainingList = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const dt = useRef(null);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [participantsList, setParticipantsList] = useState();
+  const [participantsListM, setParticipantsListM] = useState();
+  const [participantsListF, setParticipantsListF] = useState();
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
@@ -83,19 +84,38 @@ const TrainingList = () => {
 
   useEffect(() => {
     onInit();
+    getService(`participants/get`).then(result => {
+      if (result) {
+        setParticipantsList(result || []);
+      }
+    });
+    getService(`participants/get?search=gender.id:2`).then(result => {
+      if (result) {
+        setParticipantsListM(result || []);
+      }
+    });
+    getService(`participants/get?search=gender.id:1`).then(result => {
+      if (result) {
+        setParticipantsListF(result || []);
+      }
+    });
   }, [lazyParams]);
 
   const getTraining = orgId => {
-    getService(`training/getList/${orgId}`, {}).then(result => {
-      if (result) {
-        const listResult = result.content || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList(listResult);
-        setSelectedRows([]);
-      }
-    });
+    if (orgId) {
+      getService(`training/getList/${orgId}`, {}).then(result => {
+        if (result) {
+          const listResult = result.content || [];
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setList(listResult);
+          setSelectedRows([]);
+        }
+      });
+    } else {
+      onInit();
+    }
   };
 
   const selectOrgs = value => {
@@ -194,11 +214,6 @@ const TrainingList = () => {
     if (isSuccess) onInit();
   };
 
-  function Formatcurrency(value) {
-    const values = value || 0;
-    return `${values.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}₮`;
-  }
-
   const indexBodyTemplate = row => (
     <>
       <span className="p-column-title">№</span>
@@ -213,17 +228,26 @@ const TrainingList = () => {
     </>
   );
 
-  const totalBudgetBodyTemplate = row => (
+  const aimagBody = row => (
+    // console.log(row.address.childrenAddress[0]?.aimag.name);
     <>
-      <span className="p-column-title">Төсөв</span>
-      {Formatcurrency(row.trainingBudget?.totalBudget)}
+      <span className="p-column-title">Аймаг</span>
+      {row.address.childrenAddress.map(z => (
+        <p>
+          {z.aimag.name} <br />
+        </p>
+      ))}
     </>
   );
 
-  const performanceBudgetBodyTemplate = row => (
+  const sumBody = row => (
     <>
-      <span className="p-column-title">Гүйцэтгэлийн төсөв</span>
-      {Formatcurrency(row.trainingBudget?.performanceBudget)}
+      <span className="p-column-title">Аймаг</span>
+      {row.address.childrenAddress.map(z => (
+        <p>
+          {z.soum.name} <br />
+        </p>
+      ))}
     </>
   );
 
@@ -252,6 +276,10 @@ const TrainingList = () => {
 
   const ShowTrainingInfo = row => history.push(`/trainingList/${row.data.id}`);
 
+  const exportCSV = () => {
+    dt.current.exportCSV();
+  };
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -259,11 +287,21 @@ const TrainingList = () => {
           <Row>
             <Col xs={24} md={24} lg={10}>
               <p className="title">Сургалтын жагсаалт</p>
+              <pre
+                style={{
+                  fontSize: '16px',
+                  color: 'grey',
+                }}
+              >
+                Нийт оролцогчид: {participantsList?.totalElements} Эрэгтэй:{' '}
+                {participantsListM?.totalElements} Эмэгтэй:{' '}
+                {participantsListF?.totalElements}{' '}
+              </pre>
             </Col>
             <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col xs={12} md={12} lg={8}>
-                  {toolsStore.user.roleId === 1 ? (
+                  {toolsStore?.user?.roleId === 1 ? (
                     <OrgaStyle>
                       <AutoCompleteSelect
                         valueField="id"
@@ -292,32 +330,12 @@ const TrainingList = () => {
                   />
                 </Col>
                 <Col xs={8} md={2} lg={2}>
-                  <Tooltip title={t('print')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col xs={8} md={2} lg={2}>
                   <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col xs={8} md={2} lg={2}>
-                  <Tooltip title={t('pdf')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFilePdf} />}
+                      onClick={exportCSV}
                     >
                       {' '}
                     </Button>
@@ -334,6 +352,7 @@ const TrainingList = () => {
                       {' '}
                     </Button>
                   </Tooltip>
+                  <Tooltip target=".export-buttons>button" position="bottom" />
                 </Col>
               </Row>
             </Col>
@@ -381,34 +400,40 @@ const TrainingList = () => {
                 filterMatchMode="contains"
               />
               <Column
-                field="trainingBudget.totalBudget"
-                header="Төсөв /₮/"
+                field="address.aimags"
+                header="Аймаг"
                 filter
-                filterPlaceholder="Хайх"
+                body={aimagBody}
                 sortable
-                body={totalBudgetBodyTemplate}
-                filterMatchMode="equals"
+                filterPlaceholder="Хайх"
+                filterMatchMode="contains"
               />
               <Column
-                field="trainingBudget.performanceBudget"
-                header="Төсвийн гүйцэтгэл /₮/"
-                filterPlaceholder="Хайх"
+                field="address.soums"
+                header="Сум"
                 filter
+                body={sumBody}
                 sortable
-                body={performanceBudgetBodyTemplate}
-                filterMatchMode="equals"
+                filterPlaceholder="Хайх"
+                filterMatchMode="contains"
               />
               <Column
-                field="trainingStartDate"
+                field="startDateFormat"
                 header="Эхэлсэн огноо"
+                filterMatchMode="startsWith"
                 sortable
+                filterPlaceholder="Хайх"
+                filter
                 body={startDateBodyTemplate}
               />
               <Column
-                field="trainingEndDate"
+                field="endDateFormat"
                 header="Дууссан огноо"
                 sortable
                 body={endDateBodyTemplate}
+                filterPlaceholder="Хайх"
+                filter
+                filterMatchMode="startsWith"
               />
               <Column
                 field="totalParticipants"
