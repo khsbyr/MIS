@@ -1,28 +1,21 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import {
-  faFileExcel,
-  faPen,
-  faPlus,
-  faPrint,
-  faTrash,
-  faFilePdf,
-} from '@fortawesome/free-solid-svg-icons';
+import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
 import { ColumnGroup } from 'primereact/columngroup';
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import { DataTable } from 'primereact/datatable';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PAGESIZE } from '../../../constants/Constant';
 import { ToolsContext } from '../../../context/Tools';
+import { useTrainingStore } from '../../../context/TrainingContext';
 import { getService, putService } from '../../../service/service';
-import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
+import { convertLazyParamsToObj, errorCatch } from '../../../tools/Tools';
 import ContentWrapper from './components/attendance.style';
 import FuelModal from './components/FuelModal';
 import RoadModal from './components/RoadModal';
 import StationaryModal from './components/StationaryModal';
-import { PAGESIZE } from '../../../constants/Constant';
-import { useTrainingStore } from '../../../context/TrainingContext';
 
 const { Content } = Layout;
 
@@ -597,44 +590,7 @@ const Budget = props => {
       <div className="button-demo">
         <Layout className="btn-layout">
           <Content>
-            <Row>
-              <Col xs={24} md={24} lg={24}>
-                <Row justify="end" gutter={[16, 16]}>
-                  <Col>
-                    <Tooltip title={t('print')} arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        icon={<FontAwesomeIcon icon={faPrint} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title={t('export')} arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faFileExcel} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title={t('pdf')} arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faFilePdf} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
+            <Row />
           </Content>
         </Layout>
         <div className="datatable-responsive-demo">

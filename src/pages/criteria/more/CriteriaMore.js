@@ -5,12 +5,14 @@ import ContentWrapper from '../../project/more/projectInfo.style';
 import CriteriaDetail from './tabs/CriteriaDetail';
 import CriteriaTrainning from './tabs/CriteriaTrainning';
 import CriteriaProject from './tabs/CriteriaProject';
+import IndicatorsReport from '../../other/IndicatorsReport';
 
 const { TabPane } = Tabs;
 const tabPosition = 'top';
 
 export default function CriteriaMore() {
   const { id } = useParams();
+
   return (
     <ContentWrapper>
       <Tabs tabPosition={tabPosition}>
@@ -26,6 +28,19 @@ export default function CriteriaMore() {
         <TabPane tab="Тэжээл" key="4">
           Content 5
         </TabPane>
+        {id === `10` ||
+        id === `27` ||
+        id === `28` ||
+        id === `11` ||
+        id === `29` ||
+        id === `30` ||
+        id === `33` ? (
+          <TabPane tab="Үр дүн" key="5">
+            <IndicatorsReport id={id} />
+          </TabPane>
+        ) : (
+          ''
+        )}
       </Tabs>
     </ContentWrapper>
   );

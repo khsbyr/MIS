@@ -243,6 +243,7 @@ const Criteria = () => {
                     style={{ width: '100%' }}
                     onChange={value => selectComposition(value)}
                     size="small"
+                    allowClear
                   >
                     <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТҮВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
                       <Option value={1}>Малын эрүүл мэндийн үйлчилгээ</Option>

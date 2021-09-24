@@ -1,7 +1,7 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Input, Layout, message, Modal, Row, Tooltip } from 'antd';
+import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -68,26 +68,6 @@ const Plan = props => {
   useEffect(() => {
     onInit();
   }, [lazyParams]);
-
-  const dataTableFuncMap = {
-    list: setList,
-  };
-
-  const onEditorValueChange = (productKey, editData, value) => {
-    const updatedProducts = [...editData.value];
-    updatedProducts[editData.rowIndex][editData.field] = value;
-    dataTableFuncMap[`${productKey}`](updatedProducts);
-  };
-
-  const inputTextEditor = (productKey, editData, field) => (
-    <Input
-      type="text"
-      value={editData.rowData[field]}
-      onChange={e => onEditorValueChange(productKey, editData, e.target.value)}
-    />
-  );
-  const missionEditor = (productKey, editData) =>
-    inputTextEditor(productKey, editData, 'mission');
 
   const add = () => {
     setIsModalVisible(true);
@@ -237,7 +217,6 @@ const Plan = props => {
             filters={lazyParams.filters}
             className="p-datatable-responsive-demo"
             selection={selectedRows}
-            // onRowClick={edit}
             onSelectionChange={e => {
               setSelectedRows(e.value);
             }}

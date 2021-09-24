@@ -15,6 +15,7 @@ const CriteriaProject = props => {
   const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
+    size: PAGESIZE || 20,
   });
   const [totalRecords, setTotalRecords] = useState(0);
   const dt = useRef(null);
@@ -139,6 +140,7 @@ const CriteriaProject = props => {
               body={NameBodyTemplate}
               sortable
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
               header="Хариуцсан хүн"

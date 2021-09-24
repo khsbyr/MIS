@@ -36,7 +36,9 @@ export default function MenuConfig(props) {
           if (!Response) return;
           Response.forEach(item => {
             item.key = item.menu?.id;
-            if (item.isAccess) checkedKeys.push(item.key);
+            if (item.isAccess && item.menu.menus.length === 0) {
+              checkedKeys.push(item.key);
+            }
           });
           setCheckedKeys([...checkedKeys]);
         })
@@ -51,6 +53,17 @@ export default function MenuConfig(props) {
   const save = () => {
     const saveData = [];
     allData.forEach(item => {
+      if (item.children.length > 0) {
+        item.children.forEach(z => {
+          const isAccess = !!checkedKeys.includes(z.id);
+          if (isAccess) checkedKeys.push(z.parentId);
+          saveData.push({
+            isAccess,
+            role: { id: role.id },
+            menu: { id: z.id },
+          });
+        });
+      }
       const isAccess = !!checkedKeys.includes(item.id);
       saveData.push({
         isAccess,

@@ -244,15 +244,7 @@ export default function TrainingModal(props) {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={8}>
-                    <Form.Item
-                      label="Төсөв:"
-                      name="totalBudget"
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
+                    <Form.Item label="Төсөв:" name="totalBudget">
                       <CurrencyInput precision="0" suffix=" ₮" />
                     </Form.Item>
                   </Col>

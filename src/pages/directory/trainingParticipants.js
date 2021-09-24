@@ -1,33 +1,41 @@
-/* eslint-disable no-use-before-define */
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { faPlus, faHistory, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faFileExcel, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import {
+  Button,
+  Col,
+  Layout,
+  message,
+  Modal,
+  Row,
+  Select,
+  Tooltip,
+} from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PAGESIZE } from '../../../constants/Constant';
-import { ToolsContext } from '../../../context/Tools';
-import { getService, putService } from '../../../service/service';
-import { convertLazyParamsToObj, errorCatch } from '../../../tools/Tools';
-import ContentWrapper from './components/attendance.style';
-import AttendanceCheckModal from './components/attendanceCheckModal';
+import { PAGESIZE } from '../../constants/Constant';
+import { ToolsContext } from '../../context/Tools';
+import { getService, putService } from '../../service/service';
+import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
+import ContentWrapper from '../criteria/criteria.style';
+import TrainingParticipantsModal from './components/trainingParticipantsModal';
 
 const { Content } = Layout;
+const { Option } = Select;
 
 let editRow;
 let isEditMode;
 let loadLazyTimeout = null;
 
-const Attendance = props => {
+const TrainingParticipants = props => {
   const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const toolsStore = useContext(ToolsContext);
   const [selectedRows, setSelectedRows] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
-  const [orgID] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [lazyParams, setLazyParams] = useState({
     first: 0,
@@ -35,15 +43,19 @@ const Attendance = props => {
     size: PAGESIZE || 20,
   });
   const dt = useRef(null);
+  const [TrainingList, setTrainingList] = useState();
 
-  const onInit = () => {
+  const onInit = value => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService(`trainingParticipants/get?search=training.id:${props.id}`, obj)
+      const url = value
+        ? `participants/get?search=trainingProgram.training.id:${value}`
+        : `participants/get`;
+      getService(url, obj)
         .then(data => {
           const dataList = data.content || [];
           setTrainingID(props.id);
@@ -63,12 +75,12 @@ const Attendance = props => {
 
   useEffect(() => {
     onInit();
+    getService(`training/get`).then(result => {
+      if (result) {
+        setTrainingList(result.content || []);
+      }
+    });
   }, [lazyParams]);
-
-  const add = () => {
-    setIsModalVisible(true);
-    isEditMode = false;
-  };
 
   const onPage = event => {
     const params = { ...lazyParams, ...event };
@@ -84,6 +96,12 @@ const Attendance = props => {
     const params = { ...lazyParams, ...event };
     params.first = 0;
     setLazyParams(params);
+  };
+
+  const edit = row => {
+    editRow = row;
+    isEditMode = true;
+    setIsModalVisible(true);
   };
 
   const handleDeleted = row => {
@@ -124,6 +142,26 @@ const Attendance = props => {
     }
   };
 
+  const action = row => (
+    <>
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={() => edit(row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={() => pop(row)}
+      />
+    </>
+  );
+
+  const closeModal = (isSuccess = false) => {
+    setIsModalVisible(false);
+    if (isSuccess) onInit();
+  };
+
   const indexBodyTemplate = row => (
     <>
       <span className="p-column-title">№</span>
@@ -134,129 +172,104 @@ const Attendance = props => {
   const FirstNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Нэр</span>
-      {row.participant?.user?.firstname}
+      {row.user.firstname}
+    </>
+  );
+
+  const LastNameBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Овог</span>
+      {row.user.lastname}
     </>
   );
 
   const registerNumberBodyTemplate = row => (
     <>
       <span className="p-column-title">Регистрийн дугаар</span>
-      {row.participant?.user?.register}
+      {row.user.register}
     </>
   );
 
-  const totalProgramNumber = row => (
+  const trainingProgram = row => (
     <>
-      <span className="p-column-title">Нийт хөтөлбөр</span>
-      {row.totalProgramNumber}
+      <span className="p-column-title">Хөтөлбөр</span>
+      {row.trainingProgram.operation}
     </>
   );
 
-  const participatedProgramNumber = row => (
+  const phone = row => (
     <>
-      <span className="p-column-title">Оролцсон хөтөлбөр</span>
-      {row.participatedProgramNumber}
+      <span className="p-column-title">Утас</span>
+      {row.user.phoneNumber}
     </>
   );
 
-  const percent = row => (
+  const jobDesc = row => (
     <>
-      <span className="p-column-title">Хувь</span>
-      {row.percent}%
+      <span className="p-column-title">Ажил эрхлэлт</span>
+      {row.jobDescription}
     </>
   );
 
-  const actions = row => (
+  const gender = row => (
     <>
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
-      />
+      <span className="p-column-title">Хүйс</span>
+      {row.gender.gender}
     </>
   );
 
-  const info = row => {
-    getService(
-      `participants/getByRegisterAndTrainingId?trainingId=${row.training.id}&register=${row.participant.user.register}`
-    ).then(result => {
-      if (result) {
-        Modal.info({
-          title: 'Оролцсон хөтөлбөр',
-          width: 1300,
-          okText: 'Буцах',
-          content: (
-            <DataTable
-              emptyMessage="Өгөгдөл олдсонгүй..."
-              value={result}
-              className="p-datatable-responsive-demo"
-              dataKey="id"
-              style={{ marginTop: '30px' }}
-            >
-              <Column field="user.firstname" header="Нэр" />
-              <Column field="user.register" header="Регистр" />
-              <Column field="trainingProgram.operation" header="Хөтөлбөр" />
-              <Column headerStyle={{ width: '4rem' }} body={actions} />
-            </DataTable>
-          ),
-          onOk() {},
-        });
-      }
-    });
-  };
-
-  const action = row => (
-    <>
-      {/* <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
-      /> */}
-      <Tooltip title="Хөтөлбөр харах">
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faHistory} />}
-          onClick={() => info(row)}
-        />
-      </Tooltip>
-    </>
-  );
-
-  const closeModal = (isSuccess = false) => {
-    setIsModalVisible(false);
-    if (isSuccess) onInit();
-  };
+  function selectTraining(value) {
+    if (value) {
+      onInit(value);
+    } else {
+      onInit();
+    }
+  }
 
   return (
     <ContentWrapper>
       <div className="button-demo">
-        <Layout className="btn-layout">
-          <Content>
-            <Row>
-              <Col xs={24} md={24} lg={24}>
-                <Row justify="end" gutter={[16, 16]}>
-                  <Col>
-                    <Tooltip title={t('add')} arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faPlus} />}
-                        onClick={add}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Content>
-        </Layout>
+        <Content>
+          <Row>
+            <Col xs={24} md={12} lg={14}>
+              <p className="title">Сургалтын оролцогчид</p>
+            </Col>
+            <Col xs={18} md={12} lg={10}>
+              <Row justify="end" gutter={[16, 16]}>
+                <Col xs={12} md={12} lg={12}>
+                  <Select
+                    showSearch
+                    style={{ width: '100%' }}
+                    onChange={value => selectTraining(value)}
+                    placeholder="Сургалт сонгох"
+                    size="small"
+                    allowClear
+                  >
+                    {TrainingList &&
+                      TrainingList.map((z, index) => (
+                        <Option key={index} value={z.id}>
+                          <Tooltip placement="topLeft" title={z.name}>
+                            {z.name}
+                          </Tooltip>
+                        </Option>
+                      ))}
+                  </Select>
+                </Col>
+                <Col>
+                  <Tooltip title={t('export')} arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faFileExcel} />}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Content>
         <div className="datatable-responsive-demo">
           <DataTable
             emptyMessage="Өгөгдөл олдсонгүй..."
@@ -288,7 +301,16 @@ const Attendance = props => {
               style={{ width: 40 }}
             />
             <Column
-              field="participant.user.firstname"
+              field="user.lastname"
+              header="Овог"
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              body={LastNameBodyTemplate}
+              filterMatchMode="contains"
+            />
+            <Column
+              field="user.firstname"
               header="Нэр"
               sortable
               filter
@@ -297,51 +319,59 @@ const Attendance = props => {
               filterMatchMode="contains"
             />
             <Column
-              field="participant.user.register"
+              field="user.register"
               header="Регистрийн дугаар"
               sortable
               filter
               filterPlaceholder="Хайх"
               body={registerNumberBodyTemplate}
+              filterMatchMode="startsWith"
+            />
+            <Column
+              field="user.phoneNumber"
+              header="Утас"
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              body={phone}
+              filterMatchMode="startsWith"
+            />
+            <Column
+              field="jobDescription"
+              header="Ажил эрхлэлт"
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              body={jobDesc}
               filterMatchMode="contains"
             />
             <Column
-              field="participant.totalProgramNumber"
-              header="Нийт хөтөлбөр"
+              field="gender.gender"
+              header="Хүйм"
               sortable
               filter
               filterPlaceholder="Хайх"
-              body={totalProgramNumber}
-              filterMatchMode="startsWith"
+              body={gender}
+              filterMatchMode="contains"
             />
             <Column
-              field="participant.participatedProgramNumber"
-              header="Оролцсон хөтөлбөр"
+              field="trainingProgram.operation"
+              header="Хөтөлбөр"
               sortable
               filter
               filterPlaceholder="Хайх"
-              body={participatedProgramNumber}
-              filterMatchMode="startsWith"
+              body={trainingProgram}
+              filterMatchMode="contains"
             />
-            <Column
-              field="percent"
-              header="Хувь"
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-              body={percent}
-              filterMatchMode="startsWith"
-            />
-            <Column headerStyle={{ width: '4rem' }} body={action} />
+            <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <AttendanceCheckModal
+            <TrainingParticipantsModal
               Attendancecontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
               trainingID={trainingID}
-              orgID={orgID}
             />
           )}
         </div>
@@ -350,4 +380,4 @@ const Attendance = props => {
   );
 };
 
-export default Attendance;
+export default TrainingParticipants;

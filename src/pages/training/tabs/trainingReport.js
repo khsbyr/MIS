@@ -1,25 +1,23 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
-  faFileExcel,
+  faFilePdf,
   faPen,
   faPlus,
-  faPrint,
   faTrash,
-  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PAGESIZE } from '../../../constants/Constant';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
-import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
+import { convertLazyParamsToObj, errorCatch } from '../../../tools/Tools';
 import ContentWrapper from './components/attendance.style';
 import TrainingReportModal from './components/trainingReportModal';
-import { PAGESIZE } from '../../../constants/Constant';
 
 const { Content } = Layout;
 
@@ -213,38 +211,6 @@ const TrainingReport = props => {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Row justify="end" gutter={[16, 16]}>
-                  <Col>
-                    <Tooltip title={t('print')} arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        icon={<FontAwesomeIcon icon={faPrint} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title={t('export')} arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faFileExcel} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title={t('pdf')} arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faFilePdf} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
                   <Col>
                     <Tooltip title={t('add')} arrowPointAtCenter>
                       <Button
