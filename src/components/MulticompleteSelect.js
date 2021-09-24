@@ -1,4 +1,4 @@
-import { Select } from 'antd';
+import { Select, Tooltip } from 'antd';
 import { React, useState } from 'react';
 
 export default function MulticompleteSelect(props) {
@@ -23,7 +23,9 @@ export default function MulticompleteSelect(props) {
       {data &&
         data.map((z, index) => (
           <Option key={index} value={valueField ? z[valueField] : z.id}>
-            {z.code ? `${z.code}.${z.name}` : z.name}
+            <Tooltip placement="topLeft" title={z.name}>
+              {z.code ? `${z.code}.${z.name}` : z.name}
+            </Tooltip>
             {type === 1 ? z.firstname : z.fullName}
           </Option>
         ))}

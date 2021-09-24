@@ -166,14 +166,14 @@ const TrainingProgram = props => {
 
   const programDateBodyTemplate = row => (
     <>
-      <span className="p-column-title">Хэрэгжих хугацаа</span>
-      {row.programDate}
+      <span className="p-column-title">Эхлэх огноо</span>
+      {row.startDate}
     </>
   );
   const programHoursBodyTemplate = row => (
     <>
-      <span className="p-column-title">Хэрэгжих цаг</span>
-      {row.programHours}
+      <span className="p-column-title">Дуусах огноо</span>
+      {row.endDate}
     </>
   );
   const responsiblepersonameBodyTemplate = row => (
@@ -245,22 +245,25 @@ const TrainingProgram = props => {
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column
-              field="programDate"
-              header="Хэрэгжих хугацаа"
+              field="startDateFormat"
+              header="Эхлэх огноо"
               body={programDateBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="startsWith"
             />
             <Column
-              field="programHours"
-              header="Хэрэгжих цаг"
+              field="endDateFormat"
+              header="Дуусах огноо"
               body={programHoursBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
+              filterMatchMode="startsWith"
             />
             <Column
               field="responsiblePersonName"
@@ -269,6 +272,7 @@ const TrainingProgram = props => {
               filterPlaceholder="Хайх"
               sortable
               body={responsiblepersonameBodyTemplate}
+              filterMatchMode="contains"
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

@@ -28,7 +28,9 @@ let editRow;
 let isEditMode;
 let loadLazyTimeout = null;
 
-const IndicatorsReport = () => {
+const IndicatorsReport = props => {
+  const criteriaID = Number(props.id);
+
   const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -49,7 +51,7 @@ const IndicatorsReport = () => {
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService('criteriaResults/get', obj)
+      getService(`criteriaResults/get?search=criteria.id:${props.id}`, obj)
         .then(data => {
           const dataList = data.content || [];
           dataList.forEach((item, index) => {
@@ -355,6 +357,7 @@ const IndicatorsReport = () => {
               isModalVisible={isModalVisible}
               isEditMode={isEditMode}
               close={closeModal}
+              criteriaID={criteriaID}
             />
           )}
         </div>

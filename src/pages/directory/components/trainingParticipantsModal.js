@@ -1,23 +1,18 @@
 import { Col, Form, Input, message, Modal, Row, Select } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import React, { useEffect, useState } from 'react';
-import AutoCompleteSelect from '../../../../components/Autocomplete';
-import {
-  getService,
-  postService,
-  putService,
-} from '../../../../service/service';
-import { errorCatch } from '../../../../tools/Tools';
-import { useToolsStore } from '../../../../context/Tools';
-import validateMessages from '../../../../tools/validateMessage';
-import ContentWrapper from './attendance.style';
-import PhoneNumber from '../../../../components/PhoneNumber';
+import AutoCompleteSelect from '../../../components/Autocomplete';
+import { getService, postService, putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import { useToolsStore } from '../../../context/Tools';
+import validateMessages from '../../../tools/validateMessage';
+import ContentWrapper from '../../training/tabs/components/attendance.style';
+import PhoneNumber from '../../../components/PhoneNumber';
 
 const { Option } = Select;
 
-export default function TrainingProgramModal(props) {
-  const { Attendancecontroller, isModalVisible, isEditMode, trainingID } =
-    props;
+export default function TrainingParticipantsModal(props) {
+  const { Attendancecontroller, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
   const toolsStore = useToolsStore();
   const [stateSum, setStateSum] = useState([]);
@@ -50,50 +45,53 @@ export default function TrainingProgramModal(props) {
   };
 
   useEffect(() => {
-    getService(`trainingProgram/get/${trainingID}`).then(result => {
+    getService(
+      `trainingProgram/get/${Attendancecontroller.trainingProgram.training.id}`
+    ).then(result => {
       if (result) {
         setProgramList(result.content);
       }
     });
-    // if (Attendancecontroller !== undefined) {
-    //   getService(
-    //     `soum/getList/${Attendancecontroller.user.address.aimag.id}`
-    //   ).then(result => {
-    //     if (result) {
-    //       setStateSum(result || []);
-    //     }
-    //   });
-    //   getService(
-    //     `bag/getList/${Attendancecontroller.user.address.soum.id}`
-    //   ).then(result => {
-    //     if (result) {
-    //       setStateBag(result || []);
-    //     }
-    //   });
-    // }
+    if (Attendancecontroller !== undefined) {
+      getService(
+        `soum/getList/${Attendancecontroller.user.address.aimag.id}`
+      ).then(result => {
+        if (result) {
+          setStateSum(result || []);
+        }
+      });
+      getService(
+        `bag/getList/${Attendancecontroller.user.address.soum.id}`
+      ).then(result => {
+        if (result) {
+          setStateBag(result || []);
+        }
+      });
+    }
     if (isEditMode) {
+      setProgramValue(Attendancecontroller.trainingProgram.id);
       form.setFieldsValue({
         ...Attendancecontroller,
-        // CountryID: Attendancecontroller.user.address
-        //   ? Attendancecontroller.user.address.country.id
-        //   : '',
-        // AimagID: Attendancecontroller.user.address
-        //   ? Attendancecontroller.user.address.aimag.id
-        //   : '',
-        // SoumID: Attendancecontroller.user.address
-        //   ? Attendancecontroller.user.address.soum.id
-        //   : '',
-        // BagID: Attendancecontroller.user.address
-        //   ? Attendancecontroller.user.address.bag.id
-        //   : '',
-        // addressDetail: Attendancecontroller.user.address.addressDetail,
-        // Gender: Attendancecontroller.gender.gender,
-        // GenderID: Attendancecontroller.gender.id,
-        // lastName: Attendancecontroller.user.lastname,
-        // firstName: Attendancecontroller.user.firstname,
-        // phone: Attendancecontroller.user.phoneNumber,
-        // email: Attendancecontroller.user.email,
-        register: Attendancecontroller,
+        CountryID: Attendancecontroller.user.address
+          ? Attendancecontroller.user.address.country.id
+          : '',
+        AimagID: Attendancecontroller.user.address
+          ? Attendancecontroller.user.address.aimag.id
+          : '',
+        SoumID: Attendancecontroller.user.address
+          ? Attendancecontroller.user.address.soum.id
+          : '',
+        BagID: Attendancecontroller.user.address
+          ? Attendancecontroller.user.address.bag.id
+          : '',
+        addressDetail: Attendancecontroller.user.address.addressDetail,
+        Gender: Attendancecontroller.gender.gender,
+        GenderID: Attendancecontroller.gender.id,
+        lastName: Attendancecontroller.user.lastname,
+        firstName: Attendancecontroller.user.firstname,
+        phone: Attendancecontroller.user.phoneNumber,
+        email: Attendancecontroller.user.email,
+        register: Attendancecontroller.user.register,
       });
     }
   }, []);
@@ -275,6 +273,7 @@ export default function TrainingProgramModal(props) {
                     showSearch
                     placeholder="Хөтөлбөр сонгох"
                     onChange={programID}
+                    defaultValue={Attendancecontroller.trainingProgram.id}
                     size="small"
                   >
                     {programList &&

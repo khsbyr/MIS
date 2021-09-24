@@ -149,7 +149,6 @@ export default function TrainingProgramModal(props) {
                         style={{ width: '100%', height: '40px' }}
                         placeholder="Эхэлсэн огноо:"
                         className="FormItem"
-                        onOk={{ style: { display: 'none' } }}
                         onChange={onStartDateChange}
                         defaultValue={
                           isEditMode
@@ -209,9 +208,11 @@ export default function TrainingProgramModal(props) {
                         placeholder="Хариуцах эзэн"
                         // onSelect={selectUser}
                         filterOption={(inputValue, option) =>
-                          option.children
-                            .toUpperCase()
-                            .indexOf(inputValue.toUpperCase()) !== -1
+                          option.children !== null
+                            ? option.children
+                                .toUpperCase()
+                                .indexOf(inputValue.toUpperCase()) !== -1
+                            : ''
                         }
                       >
                         {stateTrainers &&

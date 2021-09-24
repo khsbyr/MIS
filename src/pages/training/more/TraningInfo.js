@@ -6,7 +6,7 @@ import { getService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import ContentWrapper from './TrainingInfo.style';
 import Organization from '../tabs/organization';
-import TrainingTeam from '../tabs/plan';
+import CV from '../tabs/cv';
 import Attendance from '../tabs/attendance';
 import TrainingReport from '../tabs/trainingReport';
 import Guidelines from '../tabs/guidelines';
@@ -15,6 +15,7 @@ import Budget from '../tabs/budget';
 import TrainingTest from '../tabs/testAggregation';
 import { useTrainingStore } from '../../../context/TrainingContext';
 import { useToolsStore } from '../../../context/Tools';
+import FileUpload from '../tabs/fileUpload';
 
 const { TabPane } = Tabs;
 const tabPosition = 'top';
@@ -46,7 +47,7 @@ export default function TraningInfo() {
           <Guidelines id={id} />
         </TabPane>
         <TabPane tab={t('training_team')} key="3">
-          <TrainingTeam id={id} />
+          <CV />
         </TabPane>
         <TabPane tab={t('training_program')} key="4">
           <TrainingProgram id={id} />
@@ -62,6 +63,9 @@ export default function TraningInfo() {
         </TabPane>
         <TabPane tab={t('training_report')} key="7">
           <TrainingReport id={id} />
+        </TabPane>
+        <TabPane tab="Хавсралт файл" key="9">
+          <FileUpload id={id} />
         </TabPane>
       </Tabs>
     </ContentWrapper>
