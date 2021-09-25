@@ -144,10 +144,20 @@ export default function TrainingParticipantsModal(props) {
     setProgramValue(e);
   }
 
+  const handleSearch = value => {
+    getService(
+      `trainingProgram/get/${Attendancecontroller.trainingProgram.training.id}?search=operation:*${value}*`
+    ).then(result => {
+      if (result) {
+        setProgramList(result.content);
+      }
+    }, 500);
+  };
+
   return (
     <div>
       <Modal
-        title="Ирцийн бүртгэл"
+        title="Ирцийн бүртгэлa"
         okText="Хадгалах"
         cancelText="Буцах"
         width={900}
@@ -275,6 +285,10 @@ export default function TrainingParticipantsModal(props) {
                     onChange={programID}
                     defaultValue={Attendancecontroller.trainingProgram.id}
                     size="small"
+                    onSearch={handleSearch}
+                    filterOption={false}
+                    defaultActiveFirstOption={false}
+                    notFoundContent={null}
                   >
                     {programList &&
                       programList.map((z, index) => (

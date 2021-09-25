@@ -21,6 +21,11 @@ const ContentWrapper = styled.div`
     border: none;
     background-color: unset;
   }
+
+  .ant-select-single.ant-select-sm:not(.ant-select-customize-input):not(.ant-select-customize-input)
+    .ant-select-selection-search-input {
+    height: 33px !important;
+  }
 `;
 
 export default ContentWrapper;

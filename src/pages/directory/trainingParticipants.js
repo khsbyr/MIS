@@ -75,11 +75,11 @@ const TrainingParticipants = props => {
 
   useEffect(() => {
     onInit();
-    getService(`training/get`).then(result => {
-      if (result) {
-        setTrainingList(result.content || []);
-      }
-    });
+    // getService(`training/get`).then(result => {
+    //   if (result) {
+    //     setTrainingList(result.content || []);
+    //   }
+    // });
   }, [lazyParams]);
 
   const onPage = event => {
@@ -226,6 +226,22 @@ const TrainingParticipants = props => {
     }
   }
 
+  const handleSearch = value => {
+    getService(`training/get?search=name:*${value}*`).then(result => {
+      if (result) {
+        setTrainingList(result.content);
+      }
+    }, 500);
+  };
+
+  const options = TrainingList?.map(d => (
+    <Option key={d.id}>
+      <Tooltip placement="topLeft" title={d.name}>
+        {d.name}
+      </Tooltip>
+    </Option>
+  ));
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -241,18 +257,15 @@ const TrainingParticipants = props => {
                     showSearch
                     style={{ width: '100%' }}
                     onChange={value => selectTraining(value)}
-                    placeholder="Сургалт сонгох"
+                    placeholder="Сургалтын нэрээр хайх"
                     size="small"
                     allowClear
+                    onSearch={handleSearch}
+                    filterOption={false}
+                    defaultActiveFirstOption={false}
+                    notFoundContent={null}
                   >
-                    {TrainingList &&
-                      TrainingList.map((z, index) => (
-                        <Option key={index} value={z.id}>
-                          <Tooltip placement="topLeft" title={z.name}>
-                            {z.name}
-                          </Tooltip>
-                        </Option>
-                      ))}
+                    {options}
                   </Select>
                 </Col>
                 <Col>

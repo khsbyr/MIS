@@ -55,45 +55,9 @@ export default function TrainingProgramModal(props) {
         setProgramList(result.content);
       }
     });
-    // if (Attendancecontroller !== undefined) {
-    //   getService(
-    //     `soum/getList/${Attendancecontroller.user.address.aimag.id}`
-    //   ).then(result => {
-    //     if (result) {
-    //       setStateSum(result || []);
-    //     }
-    //   });
-    //   getService(
-    //     `bag/getList/${Attendancecontroller.user.address.soum.id}`
-    //   ).then(result => {
-    //     if (result) {
-    //       setStateBag(result || []);
-    //     }
-    //   });
-    // }
     if (isEditMode) {
       form.setFieldsValue({
         ...Attendancecontroller,
-        // CountryID: Attendancecontroller.user.address
-        //   ? Attendancecontroller.user.address.country.id
-        //   : '',
-        // AimagID: Attendancecontroller.user.address
-        //   ? Attendancecontroller.user.address.aimag.id
-        //   : '',
-        // SoumID: Attendancecontroller.user.address
-        //   ? Attendancecontroller.user.address.soum.id
-        //   : '',
-        // BagID: Attendancecontroller.user.address
-        //   ? Attendancecontroller.user.address.bag.id
-        //   : '',
-        // addressDetail: Attendancecontroller.user.address.addressDetail,
-        // Gender: Attendancecontroller.gender.gender,
-        // GenderID: Attendancecontroller.gender.id,
-        // lastName: Attendancecontroller.user.lastname,
-        // firstName: Attendancecontroller.user.firstname,
-        // phone: Attendancecontroller.user.phoneNumber,
-        // email: Attendancecontroller.user.email,
-        register: Attendancecontroller,
       });
     }
   }, []);
@@ -145,6 +109,16 @@ export default function TrainingProgramModal(props) {
   function programID(e) {
     setProgramValue(e);
   }
+
+  const handleSearch = value => {
+    getService(
+      `trainingProgram/get/${trainingID}?search=operation:*${value}*`
+    ).then(result => {
+      if (result) {
+        setProgramList(result.content);
+      }
+    }, 500);
+  };
 
   return (
     <div>
@@ -276,6 +250,10 @@ export default function TrainingProgramModal(props) {
                     placeholder="Хөтөлбөр сонгох"
                     onChange={programID}
                     size="small"
+                    onSearch={handleSearch}
+                    filterOption={false}
+                    defaultActiveFirstOption={false}
+                    notFoundContent={null}
                   >
                     {programList &&
                       programList.map((z, index) => (

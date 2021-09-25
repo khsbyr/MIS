@@ -229,7 +229,6 @@ const TrainingList = () => {
   );
 
   const aimagBody = row => (
-    // console.log(row.address.childrenAddress[0]?.aimag.name);
     <>
       <span className="p-column-title">Аймаг</span>
       {row.address.childrenAddress.map(z => (

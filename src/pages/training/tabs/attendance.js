@@ -207,16 +207,6 @@ const Attendance = props => {
 
   const action = row => (
     <>
-      {/* <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
-      /> */}
       <Tooltip title="Хөтөлбөр харах">
         <Button
           type="text"

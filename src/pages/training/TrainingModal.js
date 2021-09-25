@@ -10,15 +10,17 @@ import {
   Row,
   TreeSelect,
 } from 'antd';
+import locale from 'antd/es/date-picker/locale/mn_MN';
 import moment from 'moment';
+import 'moment/locale/mn';
 import React, { useEffect, useState } from 'react';
 import CurrencyInput from 'react-currency-input';
 import AutoCompleteSelect from '../../components/Autocomplete';
 import MulticompleteSelect from '../../components/MulticompleteSelect';
+import { useToolsStore } from '../../context/Tools';
 import { getService, postService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import validateMessages from '../../tools/validateMessage';
-import { useToolsStore } from '../../context/Tools';
 import ContentWrapper from './tabs/components/training.style';
 
 const layout = {
@@ -72,13 +74,13 @@ export default function TrainingModal(props) {
           setSelectedCriteria([...selectedCriteria]);
         }
       });
+
       setStartDate(Trainingcontroller.trainingStartDate);
       setEndDate(Trainingcontroller.trainingEndDate);
       setValueAddress(ProjectChildrenAddress);
       setSelectedCriteria(selectedCriteria);
       form.setFieldsValue({
         ...Trainingcontroller,
-        // budget: `${Trainingcontroller.trainingBudget.totalBudget}00`,
         orgID: Trainingcontroller.organization
           ? Trainingcontroller.organization.id
           : '',
@@ -240,7 +242,7 @@ export default function TrainingModal(props) {
                         },
                       ]}
                     >
-                      <Input />
+                      <Input placeholder="Сургалтын сэдэв" />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={8}>
@@ -249,13 +251,14 @@ export default function TrainingModal(props) {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={8}>
-                    <Form.Item label="Эхэлсэн огноо:">
+                    <Form.Item label="Эхлэх огноо:">
                       <DatePicker
                         prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
                         style={{ width: '100%' }}
-                        placeholder="Эхэлсэн огноо:"
+                        placeholder="Эхлэх огноо:"
                         className="FormItem"
                         onChange={onStartDateChange}
+                        locale={locale}
                         defaultValue={
                           Trainingcontroller &&
                           moment(Trainingcontroller.trainingStartDate).zone(0)
@@ -264,13 +267,14 @@ export default function TrainingModal(props) {
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={8}>
-                    <Form.Item label="Дууссан огноо:">
+                    <Form.Item label="Дуусах огноо:">
                       <DatePicker
                         prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
                         style={{ width: '100%' }}
-                        placeholder="Дууссан огноо:"
+                        placeholder="Дуусах огноо:"
                         className="FormItem"
                         onChange={onEndDateChange}
+                        locale={locale}
                         defaultValue={
                           Trainingcontroller &&
                           moment(Trainingcontroller.trainingEndDate).zone(0)

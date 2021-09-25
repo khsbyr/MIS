@@ -1,7 +1,17 @@
-import { Col, Form, message, Modal, Row, Select, Upload, Button } from 'antd';
+import {
+  Col,
+  Form,
+  message,
+  Modal,
+  Row,
+  Upload,
+  Button,
+  DatePicker,
+} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import React, { useEffect, useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
+import locale from 'antd/es/date-picker/locale/mn_MN';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import {
   getService,
@@ -13,8 +23,7 @@ import {
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 import ContentWrapper from './report.style';
-
-const { Option } = Select;
+import 'moment/locale/mn';
 
 const dummyRequest = ({ onSuccess }) => {
   setTimeout(() => {
@@ -28,7 +37,6 @@ export default function ReportModal(props) {
   const [planList, setPlanList] = useState();
   const [selectedPlan, setSelectedPlan] = useState([]);
   const [fileList, setFileList] = useState([]);
-  const [, setProcessValue] = useState();
 
   const defaultFileList =
     EditRow?.file && isEditMode
@@ -60,10 +68,6 @@ export default function ReportModal(props) {
     setSelectedPlan(value);
   }
 
-  function handleChange(value) {
-    setProcessValue(value);
-  }
-
   function handleUpload(info) {
     setFileList([info.file.originFileObj]);
   }
@@ -75,8 +79,6 @@ export default function ReportModal(props) {
         values.planReport = {
           name: values.name,
           performance: values.performance,
-          result: values.result,
-          processResult: values.processResult,
           plan: { id: selectedPlan },
         };
         if (isEditMode) {
@@ -140,6 +142,9 @@ export default function ReportModal(props) {
         errorCatch(info);
       });
   };
+
+  function dateChange(date, dateString) {}
+
   return (
     <div>
       <Modal
@@ -188,30 +193,14 @@ export default function ReportModal(props) {
                   <TextArea rows={5} />
                 </Form.Item>
               </Col>
-              <Col xs={24} md={24} lg={24}>
-                <Form.Item label="Үр дүн:" name="result">
-                  <TextArea rows={5} />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={24} lg={24}>
-                <Form.Item label="Үр дүн:" name="processResult">
-                  <Select
-                    defaultValue="Сонгох"
-                    style={{ width: 120 }}
-                    onChange={handleChange}
-                  >
-                    <Option value={0}>0</Option>
-                    <Option value={1}>1</Option>
-                    <Option value={2}>2</Option>
-                    <Option value={3}>3</Option>
-                    <Option value={4}>4</Option>
-                    <Option value={5}>5</Option>
-                    <Option value={61}>6</Option>
-                    <Option value={7}>7</Option>
-                    <Option value={8}>8</Option>
-                    <Option value={9}>9</Option>
-                    <Option value={10}>10</Option>
-                  </Select>
+              <Col xs={24} md={24} lg={6}>
+                <Form.Item label="Он, сар:" name="date">
+                  <DatePicker
+                    onChange={dateChange}
+                    picker="month"
+                    placeholder="Он, сар сонгох"
+                    locale={locale}
+                  />
                 </Form.Item>
               </Col>
               <Col xs={24} md={24} lg={24}>
