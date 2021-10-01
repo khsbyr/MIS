@@ -12,8 +12,6 @@ import AttendanceModal from './attendanceModal';
 
 const { Option } = Select;
 
-let editRow;
-
 export default function AttendanceCheckModal(props) {
   const { Attendancecontroller, isModalVisible, isEditMode, trainingID } =
     props;
@@ -21,7 +19,6 @@ export default function AttendanceCheckModal(props) {
   const [programList, setProgramList] = useState();
   const [visible, setVisible] = useState(false);
   const [programValue, setProgramValue] = useState();
-
   useEffect(() => {
     getService(`trainingProgram/get/${trainingID}`).then(result => {
       if (result) {
@@ -98,6 +95,16 @@ export default function AttendanceCheckModal(props) {
     setProgramValue(e);
   }
 
+  const handleSearch = value => {
+    getService(
+      `trainingProgram/get/${trainingID}?search=operation:*${value}*`
+    ).then(result => {
+      if (result) {
+        setProgramList(result.content);
+      }
+    }, 500);
+  };
+
   return (
     <div>
       <Modal
@@ -136,9 +143,13 @@ export default function AttendanceCheckModal(props) {
                 <Form.Item label="Хөтөлбөр:" name="trainingProgramm">
                   <Select
                     showSearch
-                    placeholder="Хөтөлбөр сонгох"
+                    placeholder="Хөтөлбөрийн нэрээр хайх"
                     onChange={programID}
                     size="small"
+                    onSearch={handleSearch}
+                    filterOption={false}
+                    defaultActiveFirstOption={false}
+                    notFoundContent={null}
                   >
                     {programList &&
                       programList.map((z, index) => (
@@ -153,7 +164,6 @@ export default function AttendanceCheckModal(props) {
           </Form>
           {visible && (
             <AttendanceModal
-              Attendancecontroller={editRow}
               isModalVisible={visible}
               close={closeModal}
               isEditMode={isEditMode}

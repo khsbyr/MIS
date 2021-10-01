@@ -43,7 +43,7 @@ const Attendance = props => {
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService(`trainingParticipants/get?search=training.id:${props.id}`, obj)
+      getService(`trainingParticipants/getList/${props.id}`, obj)
         .then(data => {
           const dataList = data.content || [];
           setTrainingID(props.id);
@@ -207,16 +207,6 @@ const Attendance = props => {
 
   const action = row => (
     <>
-      {/* <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
-      /> */}
       <Tooltip title="Хөтөлбөр харах">
         <Button
           type="text"
@@ -306,22 +296,22 @@ const Attendance = props => {
               filterMatchMode="contains"
             />
             <Column
-              field="participant.totalProgramNumber"
+              field="totalProgramNumber"
               header="Нийт хөтөлбөр"
               sortable
               filter
               filterPlaceholder="Хайх"
               body={totalProgramNumber}
-              filterMatchMode="startsWith"
+              filterMatchMode="equals"
             />
             <Column
-              field="participant.participatedProgramNumber"
+              field="participatedProgramNumber"
               header="Оролцсон хөтөлбөр"
               sortable
               filter
               filterPlaceholder="Хайх"
               body={participatedProgramNumber}
-              filterMatchMode="startsWith"
+              filterMatchMode="equals"
             />
             <Column
               field="percent"
@@ -330,7 +320,7 @@ const Attendance = props => {
               filter
               filterPlaceholder="Хайх"
               body={percent}
-              filterMatchMode="startsWith"
+              filterMatchMode="equals"
             />
             <Column headerStyle={{ width: '4rem' }} body={action} />
           </DataTable>

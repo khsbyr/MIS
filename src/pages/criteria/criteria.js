@@ -165,16 +165,24 @@ const Criteria = () => {
 
   const action = row => (
     <>
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={event => edit(event, row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={event => pop(event, row)}
-      />
+      {toolsStore.user.roleId === 1 ? (
+        <Button
+          type="text"
+          icon={<FontAwesomeIcon icon={faPen} />}
+          onClick={event => edit(event, row)}
+        />
+      ) : (
+        ''
+      )}
+      {toolsStore.user.roleId === 1 ? (
+        <Button
+          type="text"
+          icon={<FontAwesomeIcon icon={faTrash} />}
+          onClick={event => pop(event, row)}
+        />
+      ) : (
+        ''
+      )}
     </>
   );
 
@@ -293,23 +301,23 @@ const Criteria = () => {
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faFilePdf} />}
-                    >
-                      {' '}
-                    </Button>
+                    />
                   </Tooltip>
                 </Col>
-                <Col xs={8} md={3} lg={2}>
-                  <Tooltip title={t('add')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
+                {toolsStore.user?.roleId === 1 ? (
+                  <Col xs={8} md={3} lg={2}>
+                    <Tooltip title={t('add')} arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={add}
+                      />
+                    </Tooltip>
+                  </Col>
+                ) : (
+                  ''
+                )}
               </Row>
             </Col>
           </Row>
@@ -372,7 +380,7 @@ const Criteria = () => {
               filterPlaceholder="Хайх"
               filterMatchMode="equals"
             />
-            {/* <Column headerStyle={{ width: '7rem' }} body={action} /> */}
+            <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <CriteriaModal

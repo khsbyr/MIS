@@ -7,6 +7,7 @@ import validateMessages from '../../../tools/validateMessage';
 import { useToolsStore } from '../../../context/Tools';
 import FormItemEmail from '../../../components/FormItemEmail';
 import PhoneNumber from '../../../components/PhoneNumber';
+import { PATTERN_REGISTER } from '../../../constants/Pattern';
 
 export default function UserModal(props) {
   const toolsStore = useToolsStore();
@@ -18,32 +19,33 @@ export default function UserModal(props) {
   const [stateRole, setStateRole] = useState();
 
   useEffect(() => {
-    getService('role/get').then(result => {
+    getService('role/getRolesBelongsTo').then(result => {
       if (result) {
-        setStateRole(result.content || []);
+        setStateRole(result || []);
       }
     });
 
-    if (Usercontroller !== undefined) {
-      if (Usercontroller.address) {
-        getService(`soum/getList/${Usercontroller.address.aimag.id}`).then(
-          result => {
-            if (result) {
-              setStateSum(result || []);
-            }
-          }
-        );
-
-        getService(`bag/getList/${Usercontroller.address.soum.id}`).then(
-          result => {
-            if (result) {
-              setStateBag(result || []);
-            }
-          }
-        );
-      }
-    }
     if (isEditMode) {
+      if (Usercontroller !== undefined) {
+        if (Usercontroller.address?.aimag) {
+          getService(`soum/getList/${Usercontroller?.address?.aimag?.id}`).then(
+            result => {
+              if (result) {
+                setStateSum(result || []);
+              }
+            }
+          );
+        }
+        if (Usercontroller.address?.soum) {
+          getService(`bag/getList/${Usercontroller?.address?.soum?.id}`).then(
+            result => {
+              if (result) {
+                setStateBag(result || []);
+              }
+            }
+          );
+        }
+      }
       setStateTrue(Usercontroller && Usercontroller.isTrue);
       form.setFieldsValue({
         ...Usercontroller,
@@ -59,11 +61,13 @@ export default function UserModal(props) {
   }, [Usercontroller, form, isEditMode]);
 
   const getSum = aimagId => {
-    getService(`soum/getList/${aimagId}`, {}).then(result => {
-      if (result) {
-        setStateSum(result || []);
-      }
-    });
+    if (aimagId) {
+      getService(`soum/getList/${aimagId}`, {}).then(result => {
+        if (result) {
+          setStateSum(result || []);
+        }
+      });
+    }
   };
 
   const selectAimag = value => {
@@ -71,11 +75,13 @@ export default function UserModal(props) {
   };
 
   const getBag = sumID => {
-    getService(`bag/getList/${sumID}`, {}).then(result => {
-      if (result) {
-        setStateBag(result || []);
-      }
-    });
+    if (sumID) {
+      getService(`bag/getList/${sumID}`, {}).then(result => {
+        if (result) {
+          setStateBag(result || []);
+        }
+      });
+    }
   };
 
   const selectSum = value => {
@@ -97,15 +103,21 @@ export default function UserModal(props) {
           country: {
             id: 107,
           },
-          aimag: {
-            id: values.AimagID,
-          },
-          soum: {
-            id: values.SoumID,
-          },
-          bag: {
-            id: values.BagID,
-          },
+          aimag: values.AimagID
+            ? {
+                id: values.AimagID,
+              }
+            : null,
+          soum: values.SoumID
+            ? {
+                id: values.SoumID,
+              }
+            : null,
+          bag: values.BagID
+            ? {
+                id: values.BagID,
+              }
+            : null,
           addressDetail: values.AddressDetail,
         };
         values.organization = {
@@ -167,7 +179,17 @@ export default function UserModal(props) {
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
-              <Form.Item label="Регистрийн дугаар:" name="register">
+              <Form.Item
+                label="Регистрийн дугаар:"
+                name="register"
+                rules={[
+                  {
+                    required: true,
+                    pattern: PATTERN_REGISTER,
+                    message: 'Регистрийн дугаар буруу байна',
+                  },
+                ]}
+              >
                 <Input placeholder="Регистрийн дугаар..." />
               </Form.Item>
             </Col>
@@ -203,26 +225,50 @@ export default function UserModal(props) {
             <Col xs={24} md={24} lg={6}>
               <FormItemEmail />
             </Col>
-            <Col xs={24} md={24} lg={6}>
-              <Form.Item
-                size="large"
-                name="roleId"
-                layout="vertical"
-                label="Эрх:"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Энэ хэсгийг заавал бөглөнө үү!',
-                  },
-                ]}
-              >
-                <AutoCompleteSelect
-                  valueField="id"
-                  data={stateRole}
-                  size="medium"
-                />
-              </Form.Item>
-            </Col>
+            {isEditMode && Usercontroller?.role?.roleLevel?.id === 3 ? (
+              <Col xs={24} md={24} lg={6}>
+                <Form.Item
+                  size="large"
+                  name="roleId"
+                  layout="vertical"
+                  label="Эрх:"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Энэ хэсгийг заавал бөглөнө үү!',
+                    },
+                  ]}
+                >
+                  <AutoCompleteSelect
+                    disabled
+                    valueField="name"
+                    data={stateRole}
+                    size="medium"
+                  />
+                </Form.Item>
+              </Col>
+            ) : (
+              <Col xs={24} md={24} lg={6}>
+                <Form.Item
+                  size="large"
+                  name="roleId"
+                  layout="vertical"
+                  label="Эрх:"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Энэ хэсгийг заавал бөглөнө үү!',
+                    },
+                  ]}
+                >
+                  <AutoCompleteSelect
+                    valueField="id"
+                    data={stateRole}
+                    size="medium"
+                  />
+                </Form.Item>
+              </Col>
+            )}
           </Row>
           <Row gutter={24}>
             <Col xs={24} md={24} lg={6}>
@@ -240,12 +286,6 @@ export default function UserModal(props) {
                 name="AimagID"
                 layout="vertical"
                 label="Аймаг, Нийслэл:"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Энэ хэсгийг заавал бөглөнө үү!',
-                  },
-                ]}
               >
                 <AutoCompleteSelect
                   valueField="id"
@@ -256,17 +296,7 @@ export default function UserModal(props) {
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
-              <Form.Item
-                name="SoumID"
-                layout="vertical"
-                label="Сум, Дүүрэг:"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Энэ хэсгийг заавал бөглөнө үү!',
-                  },
-                ]}
-              >
+              <Form.Item name="SoumID" layout="vertical" label="Сум, Дүүрэг:">
                 <AutoCompleteSelect
                   valueField="id"
                   data={stateSum}
@@ -276,17 +306,7 @@ export default function UserModal(props) {
               </Form.Item>
             </Col>
             <Col xs={24} md={24} lg={6}>
-              <Form.Item
-                name="BagID"
-                layout="vertical"
-                label="Баг, Хороо:"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Энэ хэсгийг заавал бөглөнө үү!',
-                  },
-                ]}
-              >
+              <Form.Item name="BagID" layout="vertical" label="Баг, Хороо:">
                 <AutoCompleteSelect
                   valueField="id"
                   data={stateBag}
@@ -297,16 +317,7 @@ export default function UserModal(props) {
           </Row>
           <Row gutter={18}>
             <Col xs={24} md={24} lg={12}>
-              <Form.Item
-                label="Хаяг:"
-                name="AddressDetail"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Энэ хэсгийг заавал бөглөнө үү!',
-                  },
-                ]}
-              >
+              <Form.Item label="Хаяг:" name="AddressDetail">
                 <Input.TextArea
                   placeholder="Хаяг"
                   style={{

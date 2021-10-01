@@ -15,6 +15,7 @@ import {
   Modal,
   Row,
   Tooltip,
+  Select,
 } from 'antd';
 import moment from 'moment';
 import { Column } from 'primereact/column';
@@ -27,11 +28,10 @@ import { getService, putService } from '../../service/service';
 import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
 import ContentWrapper from './training.style';
 import TrainingModal from './TrainingModal';
-import OrgaStyle from './tabs/components/orga.style';
-import AutoCompleteSelect from '../../components/Autocomplete';
 import { PAGESIZE } from '../../constants/Constant';
 
 const { Content } = Layout;
+const { Option } = Select;
 
 let editRow;
 let isEditMode;
@@ -196,16 +196,24 @@ const TrainingList = () => {
 
   const action = row => (
     <>
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={event => edit(event, row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={event => pop(event, row)}
-      />
+      {toolsStore.user.roleId === 9 ? (
+        ''
+      ) : (
+        <Button
+          type="text"
+          icon={<FontAwesomeIcon icon={faPen} />}
+          onClick={event => edit(event, row)}
+        />
+      )}
+      {toolsStore.user.roleId === 9 ? (
+        ''
+      ) : (
+        <Button
+          type="text"
+          icon={<FontAwesomeIcon icon={faTrash} />}
+          onClick={event => pop(event, row)}
+        />
+      )}
     </>
   );
 
@@ -229,10 +237,9 @@ const TrainingList = () => {
   );
 
   const aimagBody = row => (
-    // console.log(row.address.childrenAddress[0]?.aimag.name);
     <>
       <span className="p-column-title">Аймаг</span>
-      {row.address.childrenAddress.map(z => (
+      {row.address?.childrenAddress.map(z => (
         <p>
           {z.aimag.name} <br />
         </p>
@@ -243,7 +250,7 @@ const TrainingList = () => {
   const sumBody = row => (
     <>
       <span className="p-column-title">Аймаг</span>
-      {row.address.childrenAddress.map(z => (
+      {row.address?.childrenAddress.map(z => (
         <p>
           {z.soum.name} <br />
         </p>
@@ -287,30 +294,49 @@ const TrainingList = () => {
           <Row>
             <Col xs={24} md={24} lg={10}>
               <p className="title">Сургалтын жагсаалт</p>
-              <pre
-                style={{
-                  fontSize: '16px',
-                  color: 'grey',
-                }}
-              >
-                Нийт оролцогчид: {participantsList?.totalElements} Эрэгтэй:{' '}
-                {participantsListM?.totalElements} Эмэгтэй:{' '}
-                {participantsListF?.totalElements}{' '}
-              </pre>
+              {toolsStore.user.roleId === 1 || toolsStore.user.roleId === 3 ? (
+                <pre
+                  style={{
+                    fontSize: '16px',
+                    color: 'grey',
+                  }}
+                >
+                  Нийт оролцогчид: {participantsList?.totalElements} Эрэгтэй:{' '}
+                  {participantsListM?.totalElements} Эмэгтэй:{' '}
+                  {participantsListF?.totalElements}{' '}
+                </pre>
+              ) : (
+                ''
+              )}
             </Col>
+
             <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col xs={12} md={12} lg={8}>
                   {toolsStore?.user?.roleId === 1 ? (
-                    <OrgaStyle>
-                      <AutoCompleteSelect
-                        valueField="id"
-                        initialValue="All"
-                        placeholder="Байгууллага сонгох"
-                        data={toolsStore.orgList}
-                        onChange={value => selectOrgs(value)}
-                      />
-                    </OrgaStyle>
+                    <Select
+                      showSearch
+                      allowClear
+                      placeholder="Байгууллагаар хайх"
+                      onChange={value => selectOrgs(value)}
+                      style={{ width: ' 100%' }}
+                      size="small"
+                      defaultActiveFirstOption={false}
+                      notFoundContent={null}
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      {toolsStore.orgList &&
+                        toolsStore.orgList.map((z, index) => (
+                          <Option key={index} value={z.id}>
+                            {z.name ? z.name : 'Тодорхойгүй'}
+                          </Option>
+                        ))}
+                    </Select>
                   ) : (
                     ''
                   )}
@@ -341,19 +367,24 @@ const TrainingList = () => {
                     </Button>
                   </Tooltip>
                 </Col>
-                <Col xs={8} md={2} lg={2}>
-                  <Tooltip title={t('add')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                  <Tooltip target=".export-buttons>button" position="bottom" />
-                </Col>
+                {toolsStore.user.roleId === 9 ? (
+                  ''
+                ) : (
+                  <Col xs={8} md={2} lg={2}>
+                    <Tooltip title={t('add')} arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={add}
+                      />
+                    </Tooltip>
+                    <Tooltip
+                      target=".export-buttons>button"
+                      position="bottom"
+                    />
+                  </Col>
+                )}
               </Row>
             </Col>
           </Row>

@@ -24,6 +24,7 @@ import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './cv.styled';
 import CvShowModal from './CvShowModal';
+import { PATTERN_REGISTER } from '../../../../constants/Pattern';
 
 const { Option } = Select;
 const layout = {
@@ -42,7 +43,6 @@ export default function CvModal(props) {
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const loadLazyTimeout = null;
-  // const [userID, setUserID] = useState();
   const [, setBirthDatee] = useState();
   const [, setIsOnchange] = useState(false);
   const [options, setOptions] = useState([]);
@@ -58,11 +58,6 @@ export default function CvModal(props) {
 
   useEffect(() => {
     onInit();
-    getService(`user/getAllTrainerUserList`).then(result => {
-      if (result) {
-        setOptions(result.content || []);
-      }
-    });
     if (Trainerscontroller !== null) {
       getService(
         `soum/getList/${Trainerscontroller.user.address.aimag.id}`
@@ -116,7 +111,20 @@ export default function CvModal(props) {
       if (result) {
         const selectedUser = result;
         setBirthDatee(selectedUser.birthDate);
-        // setUserID(selectedUser.id);
+        getService(`soum/getList/${selectedUser.address?.aimag?.id}`).then(
+          result1 => {
+            if (result1) {
+              setStateSum(result1 || []);
+            }
+          }
+        );
+        getService(`bag/getList/${selectedUser.address?.soum?.id}`).then(
+          result2 => {
+            if (result2) {
+              setStateBag(result2 || []);
+            }
+          }
+        );
         form.setFieldsValue({
           ...selectedUser,
           CountryID: selectedUser.address
@@ -214,6 +222,17 @@ export default function CvModal(props) {
       });
   };
 
+  const handleSearch = value => {
+    getService(`user/getAllTrainerUserList?search=register:${value}*`).then(
+      result => {
+        if (result) {
+          setOptions(result.content);
+        }
+      },
+      500
+    );
+  };
+
   return (
     <div>
       <Modal
@@ -243,17 +262,18 @@ export default function CvModal(props) {
                   rules={[
                     {
                       required: true,
+                      pattern: PATTERN_REGISTER,
+                      message: 'Регистрийн дугаар буруу байна',
                     },
                   ]}
                 >
                   <AutoComplete
                     placeholder="Регистрын дугаар"
                     onSelect={selectUser}
-                    filterOption={(inputValue, option) =>
-                      option.children
-                        .toUpperCase()
-                        .indexOf(inputValue.toUpperCase()) !== -1
-                    }
+                    onSearch={handleSearch}
+                    filterOption={false}
+                    defaultActiveFirstOption={false}
+                    notFoundContent={null}
                   >
                     {options.map(value => (
                       <Option key={value.id} value={value.register}>

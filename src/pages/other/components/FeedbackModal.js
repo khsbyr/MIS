@@ -3,12 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Col, DatePicker, Form, Input, message, Modal, Radio, Row } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import locale from 'antd/es/date-picker/locale/mn_MN';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import { postService, putService, getService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 import ContentWrapper from '../../training/tabs/components/cv.styled';
-import { shapeData } from '../../../constants/Constant';
+// import { shapeData } from '../../../constants/Constant';
+import 'moment/locale/mn';
 
 const layout = {
   labelCol: {
@@ -25,13 +27,8 @@ export default function FeedbackModal(props) {
   const [valueCheck, setValueCheck] = useState();
   const [stateFeedbackType, setStateFeedbackType] = useState([]);
   const [stateFeedbackID, setStateFeedbackID] = useState([]);
-  const [stateUser, setStateUser] = useState([]);
-  const [stateUserID, setStateUserID] = useState([]);
   const [stateCriteria, setStateCriteria] = useState([]);
-  const [, setStateCriteriaID] = useState([]);
-  const [stateOrg, setStateOrg] = useState([]);
-  const [stateOrgID, setStateOrgID] = useState([]);
-  const [stateShapeID, setStateShapeID] = useState([]);
+  const [stateCriteriaID, setStateCriteriaID] = useState([]);
   const [Date, setDate] = useState([]);
 
   function onDateChange(date, value) {
@@ -46,35 +43,32 @@ export default function FeedbackModal(props) {
         setStateFeedbackType(result || []);
       }
     });
-    getService('user/get').then(result => {
+    // getService('user/get').then(result => {
+    //   if (result) {
+    //     setStateUser(result.content || []);
+    //   }
+    // });
+    getService('criteria/getFeedbackCriteria').then(result => {
       if (result) {
-        setStateUser(result.content || []);
+        setStateCriteria(result || []);
       }
     });
-    getService('criteria/get').then(result => {
-      if (result) {
-        setStateCriteria(result.content || []);
-      }
-    });
-    getService('organization/get').then(result => {
-      if (result) {
-        setStateOrg(result.content || []);
-      }
-    });
+    // getService('organization/get').then(result => {
+    //   if (result) {
+    //     setStateOrg(result.content || []);
+    //   }
+    // });
     if (isEditMode) {
       setDate(Feedbackcontroller.feedbackDate);
       setStateFeedbackID(Feedbackcontroller.feedbackType.id);
-      setStateUserID(Feedbackcontroller.user && Feedbackcontroller.user.id);
-      setStateCriteriaID(
-        Feedbackcontroller.feedbackCriteria &&
-          Feedbackcontroller.feedbackCriteria.id
-      );
-      setStateOrgID(
-        Feedbackcontroller.organization && Feedbackcontroller.organization.id
-      );
-      setStateShapeID(
-        Feedbackcontroller.feedbackShape && Feedbackcontroller.feedbackShape.id
-      );
+      // setStateUserID(Feedbackcontroller.user && Feedbackcontroller.user.id);
+      setStateCriteriaID(Feedbackcontroller?.feedbackCriteria[0]?.criteria?.id);
+      // setStateOrgID(
+      //   Feedbackcontroller.organization && Feedbackcontroller.organization.id
+      // );
+      // setStateShapeID(
+      //   Feedbackcontroller.feedbackShape && Feedbackcontroller.feedbackShape.id
+      // );
       form.setFieldsValue({
         ...Feedbackcontroller,
         TypeID: Feedbackcontroller.feedbackType
@@ -100,34 +94,30 @@ export default function FeedbackModal(props) {
   const selectFeedbackType = value => {
     setStateFeedbackID(value);
   };
-  const selectUser = value => {
-    setStateUserID(value);
-  };
+
   const selectCriteria = value => {
     setStateCriteriaID(value);
-  };
-  const selectOrg = value => {
-    setStateOrgID(value);
-  };
-  const selectShape = value => {
-    setStateShapeID(value);
   };
 
   const save = () => {
     form
       .validateFields()
       .then(values => {
-        values.feedbackType = { id: stateFeedbackID };
-        values.user = { id: stateUserID };
-        values.organization = { id: stateOrgID };
-        values.feedbackShape = { id: stateShapeID };
-        values.feedbackDate = Date;
+        // values.user = { id: stateUserID };
+        // values.organization = { id: stateOrgID };
+        values.feedback = {
+          feedbackType: { id: stateFeedbackID },
+          // feedbackShape: { id: stateShapeID },
+          feedbackDate: Date,
+          complainant: values.complainant,
+          complainantEmail: values.complainantEmail,
+          isResolve: values.isResolve,
+          measures: values.measures,
+          description: values.description,
+        };
+        values.criteriaIds = [stateCriteriaID];
         if (isEditMode) {
-          const saveData = {
-            feedback: values,
-            criteriaIds: [23],
-          };
-          putService(`feedback/update/${Feedbackcontroller.id}`, saveData)
+          putService(`feedback/update/${Feedbackcontroller.id}`, values)
             .then(() => {
               message.success('Амжилттай хадгаллаа');
               props.close(true);
@@ -136,11 +126,7 @@ export default function FeedbackModal(props) {
               errorCatch(error);
             });
         } else {
-          const saveData = {
-            feedback: values,
-            criteriaIds: [23],
-          };
-          postService(`feedback/post`, saveData)
+          postService(`feedback/post`, values)
             .then(() => {
               message.success('Амжилттай хадгаллаа');
               props.close(true);
@@ -177,13 +163,14 @@ export default function FeedbackModal(props) {
             validateMessages={validateMessages}
           >
             <Row gutter={[30, 20]}>
-              <Col xs={24} md={24} lg={8}>
+              <Col xs={24} md={24} lg={12}>
                 <Form.Item placeholder="Огноо:">
                   <DatePicker
                     prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
                     placeholder="Огноо"
                     className="FormItem"
                     onChange={onDateChange}
+                    locale={locale}
                     defaultValue={
                       isEditMode
                         ? Feedbackcontroller &&
@@ -193,6 +180,35 @@ export default function FeedbackModal(props) {
                   />
                 </Form.Item>
                 <Form.Item
+                  name="complainant"
+                  placeholder="Санал гомдол гаргагч:"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Заавал бөглөх хэсгийг бөглөнө үү!',
+                    },
+                  ]}
+                >
+                  <Input
+                    className="FormItem"
+                    placeholder="Санал гомдол гаргагч"
+                  />
+                </Form.Item>
+                {/* <Form.Item name="shapeID" placeholder="Хэлбэр:">
+                  <AutoCompleteSelect
+                    valueField="id"
+                    placeholder="Хэлбэр"
+                    data={shapeData}
+                    onChange={value => selectShape(value)}
+                    defaultValue={
+                      isEditMode
+                        ? Feedbackcontroller &&
+                          Feedbackcontroller?.feedbackShape?.name
+                        : null
+                    }
+                  />
+                </Form.Item> */}
+                {/* <Form.Item
                   placeholder="Хүлээн авагч:"
                   name="UserID"
                   rules={[
@@ -208,15 +224,16 @@ export default function FeedbackModal(props) {
                     size="medium"
                     onChange={value => selectUser(value)}
                   />
-                </Form.Item>
+                </Form.Item> */}
               </Col>
-              <Col xs={24} md={24} lg={8}>
+              <Col xs={24} md={24} lg={12}>
                 <Form.Item
                   name="TypeID"
                   placeholder="Санал, гомдлын төрөл:"
                   rules={[
                     {
                       required: true,
+                      message: 'Заавал бөглөх хэсгийг бөглөнө үү!',
                     },
                   ]}
                 >
@@ -228,38 +245,25 @@ export default function FeedbackModal(props) {
                     onChange={value => selectFeedbackType(value)}
                   />
                 </Form.Item>
-                <Form.Item name="shapeID" placeholder="Хэлбэр:">
-                  <AutoCompleteSelect
-                    valueField="id"
-                    placeholder="Хэлбэр"
-                    data={shapeData}
-                    onChange={value => selectShape(value)}
-                    defaultValue={
-                      isEditMode
-                        ? Feedbackcontroller &&
-                          Feedbackcontroller.feedbackShape.name
-                        : null
-                    }
-                  />
-                </Form.Item>
-              </Col>
-
-              <Col xs={24} md={24} lg={8}>
                 <Form.Item
-                  name="complainant"
-                  placeholder="Санал гомдол гаргагч:"
+                  name="complainantEmail"
+                  placeholder="Санал гомдол гаргагчийн и-мэйл:"
                   rules={[
                     {
                       required: true,
+                      message: 'Заавал бөглөх хэсгийг бөглөнө үү!',
                     },
                   ]}
                 >
                   <Input
                     className="FormItem"
-                    placeholder="Санал гомдол гаргагч"
+                    placeholder="Санал гомдол гаргагчийн и-мэйл"
                   />
                 </Form.Item>
-                <Form.Item
+              </Col>
+
+              <Col xs={24} md={24} lg={8}>
+                {/* <Form.Item
                   name="OrgID"
                   placeholder="Байгууллага сонгох:"
                   rules={[
@@ -275,22 +279,30 @@ export default function FeedbackModal(props) {
                     size="medium"
                     onChange={value => selectOrg(value)}
                   />
-                </Form.Item>
+                </Form.Item> */}
               </Col>
               <Col xs={24} md={24} lg={24}>
                 <Form.Item name="CriteriaID" placeholder="Шалгуур үзүүлэлт:">
-                  <AutoCompleteSelect
-                    placeholder="Шалгуур үзүүлэлт"
-                    valueField="id"
-                    // defaultValue={
-                    //   Feedbackcontroller.criteria &&
-                    //   Feedbackcontroller.criteria[23].name
-                    // }
-                    defaultValue={23}
-                    data={stateCriteria}
-                    size="medium"
-                    onChange={value => selectCriteria(value)}
-                  />
+                  {isEditMode ? (
+                    <AutoCompleteSelect
+                      placeholder="Шалгуур үзүүлэлт"
+                      valueField="id"
+                      defaultValue={
+                        Feedbackcontroller?.feedbackCriteria[0]?.criteria?.id
+                      }
+                      data={stateCriteria}
+                      size="medium"
+                      onChange={value => selectCriteria(value)}
+                    />
+                  ) : (
+                    <AutoCompleteSelect
+                      placeholder="Шалгуур үзүүлэлт"
+                      valueField="id"
+                      data={stateCriteria}
+                      size="medium"
+                      onChange={value => selectCriteria(value)}
+                    />
+                  )}
                 </Form.Item>
               </Col>
             </Row>

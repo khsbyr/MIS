@@ -25,15 +25,10 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import AutoCompleteSelect from '../../components/Autocomplete';
-import RenderDateFilter from '../../components/renderDateFilter';
 import { PAGESIZE, PlanType } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
 import { deleteService, getService } from '../../service/service';
-import {
-  convertLazyParamsToObj,
-  errorCatch,
-  filterDate,
-} from '../../tools/Tools';
+import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
 import PlanModal from './components/planModal';
 
@@ -165,7 +160,8 @@ const Plan = () => {
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService(`plan/get?search=typeId:${value}`, obj)
+      const url = value ? `plan/get?search=typeId:${value}` : `plan/get`;
+      getService(url, obj)
         .then(result => {
           const listResult = result.content || [];
           setList(listResult);
@@ -222,15 +218,8 @@ const Plan = () => {
 
   const startDateBodyTemplate = row => (
     <>
-      <span className="p-column-title">Эхлэх огноо</span>
-      {moment(row && row.startDate).format('YYYY-M-D')}
-    </>
-  );
-
-  const endDateBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Дуусах огноо</span>
-      {moment(row && row.endDate).format('YYYY-M-D')}
+      <span className="p-column-title"> Огноо</span>
+      {moment(row && row.startDate).format('YYYY-MM')}
     </>
   );
 
@@ -249,121 +238,6 @@ const Plan = () => {
     setLazyParams(params);
   };
 
-  // const monthNavigatorTemplate = e => (
-  //   <Dropdown
-  //     value={e.value}
-  //     options={e.options}
-  //     onChange={event => e.onChange(event.originalEvent, event.value)}
-  //     style={{ lineHeight: 1 }}
-  //   />
-  // );
-
-  // const yearNavigatorTemplate = e => (
-  //   <Dropdown
-  //     value={e.value}
-  //     options={e.options}
-  //     onChange={event => e.onChange(event.originalEvent, event.value)}
-  //     className="p-ml-2"
-  //     style={{ lineHeight: 1, marginLeft: '10px' }}
-  //   />
-  // );
-
-  // const formatDate = date => {
-  //   let month = date.getMonth() + 1;
-  //   let day = date.getDate();
-
-  //   if (month < 10) {
-  //     month = `0${month}`;
-  //   }
-
-  //   if (day < 10) {
-  //     day = `0${day}`;
-  //   }
-
-  //   return `${date.getFullYear()}-${month}-${day}`;
-  // };
-
-  // const onDateFilterChange = event => {
-  //   if (event.value !== null) {
-  //     dt.current.filter(formatDate(event.value), 'startDate', 'equals');
-  //   } else {
-  //     dt.current.filter(null, 'startDate', 'equals');
-  //   }
-
-  //   setDateFilter(event.value);
-  // };
-
-  // addLocale('mn', {
-  //   firstDayOfWeek: 1,
-  //   dayNames: ['Ням', 'Даваа', 'Мягмар', 'Лхагва', 'Пүрэв', 'Баасан', 'Бямба'],
-  //   dayNamesShort: ['Ня', 'Да', 'Мя', 'Лха', 'Пү', 'Ба', 'Бя'],
-  //   dayNamesMin: ['Ня', 'Да', 'Мя', 'Лха', 'Пү', 'Ба', 'Бя'],
-  //   monthNames: [
-  //     '1-р сар',
-  //     '2-р сар',
-  //     '3-р сар',
-  //     '4-р сар',
-  //     '5-р сар',
-  //     '6-р сар',
-  //     '7-р сар',
-  //     '8-р сар',
-  //     '9-р сар',
-  //     '10-р сар',
-  //     '11-р сар',
-  //     '12-р сар',
-  //   ],
-  //   monthNamesShort: [
-  //     '1-р сар',
-  //     '2-р сар',
-  //     '3-р сар',
-  //     '4-р сар',
-  //     '5-р сар',
-  //     '6-р сар',
-  //     '7-р сар',
-  //     '8-р сар',
-  //     '9-р сар',
-  //     '10-р сар',
-  //     '11-р сар',
-  //     '12-р сар',
-  //   ],
-  //   today: 'Өнөөдөр',
-  //   clear: 'Устгах',
-  // });
-
-  // const renderDateFilter = () => (
-  //   <Calendar
-  //     value={dateFilter}
-  //     onChange={onDateFilterChange}
-  //     placeholder="Хайх"
-  //     dateFormat="yy-mm-dd"
-  //     className="p-column-filter"
-  //     monthNavigator
-  //     yearNavigator
-  //     yearRange="2010:2030"
-  //     yearNavigatorTemplate={yearNavigatorTemplate}
-  //     monthNavigatorTemplate={monthNavigatorTemplate}
-  //     locale="mn"
-  //   />
-  // );
-
-  // const dateFilterElement = renderDateFilter();
-
-  // const filterDate = (value, filter) => {
-  //   if (
-  //     filter === undefined ||
-  //     filter === null ||
-  //     (typeof filter === 'string' && filter.trim() === '')
-  //   ) {
-  //     return true;
-  //   }
-
-  //   if (value === undefined || value === null) {
-  //     return false;
-  //   }
-
-  //   return value === formatDate(filter);
-  // };
-
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -374,20 +248,25 @@ const Plan = () => {
             </Col>
             <Col xs={24} md={18} lg={18}>
               <Row justify="end" gutter={[16, 16]}>
-                <Col xs={12} md={12} lg={5}>
-                  <AutoCompleteSelect
-                    valueField="id"
-                    data={PlanType}
-                    placeholder="Төрөл сонгох"
-                    onChange={value => selectType(value)}
-                  />
-                </Col>
+                {toolsStore?.user?.roleId === 1 ? (
+                  <Col xs={12} md={12} lg={5}>
+                    <AutoCompleteSelect
+                      valueField="id"
+                      data={PlanType}
+                      placeholder="Төрөл сонгох"
+                      onChange={value => selectType(value)}
+                    />
+                  </Col>
+                ) : (
+                  ''
+                )}
                 <Col xs={12} md={12} lg={11}>
                   <Select
                     placeholder="Шалгуур үзүүлэлтийн бүрэлдэхүүн сонгох"
                     style={{ width: '100%' }}
                     onChange={value => selectComposition(value)}
                     size="small"
+                    allowClear
                   >
                     <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТҮВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
                       <Option value={1}>Малын эрүүл мэндийн үйлчилгээ</Option>
@@ -507,24 +386,15 @@ const Plan = () => {
               filterMatchMode="contains"
             />
             <Column
-              field="startDate"
-              header="Эхлэх огноо"
+              field="startDateFormat"
+              header="Огноо"
               body={startDateBodyTemplate}
               sortable
               filter
-              filterMatchMode="custom"
-              filterFunction={filterDate}
-              filterElement={<RenderDateFilter field="startDate" />}
-            />
-            <Column
-              field="endDate"
-              header="Дуусах огноо"
-              body={endDateBodyTemplate}
-              sortable
-              filter
               filterPlaceholder="Хайх"
-              filterMatchMode="contains"
+              filterMatchMode="startsWith"
             />
+
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (

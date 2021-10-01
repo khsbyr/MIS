@@ -261,16 +261,8 @@ const TrainingReport = props => {
               header="Сургалт явуулсан байгууллага, хүний нэр"
               body={respoUserBodyTemplate}
             />
-            <Column
-              header="Үүссэн огноо"
-              body={teacherBodyTemplate}
-              style={{ width: 200 }}
-            />
-            <Column
-              header="Зассан огноо"
-              body={updatedDateBodyTemplate}
-              style={{ width: 200 }}
-            />
+            <Column header="Үүссэн огноо" body={teacherBodyTemplate} />
+            <Column header="Зассан огноо" body={updatedDateBodyTemplate} />
             <Column headerStyle={{ width: '8rem' }} body={action} />
           </DataTable>
           {isModalVisible && (

@@ -105,6 +105,17 @@ export default function TrainingProgramModal(props) {
         errorCatch(info);
       });
   };
+
+  const handleSearch = value => {
+    getService(
+      `trainingTeam/getListWithoutOverlap/${trainingID}?search=user.fullName:*${value}*`
+    ).then(result => {
+      if (result) {
+        setStateTrainers(result.content);
+      }
+    }, 500);
+  };
+
   return (
     <div>
       <Modal
@@ -175,29 +186,10 @@ export default function TrainingProgramModal(props) {
                         }
                       />
                     </Form.Item>
-                    {/* <Form.Item
-                      layout="vertical"
-                      label="Хариуцах эзэн:"
-                      name="responsiblePersonName"
-                    >
-                      <Select
-                        showSearch
-                        style={{ width: '100%' }}
-                        optionFilterProp="children"
-                        maxTagCount="responsive"
-                      >
-                        {stateTrainers &&
-                          stateTrainers.map((z, index) => (
-                            <Option key={index} value={z.user.fullName}>
-                              {z.user.fullName}
-                            </Option>
-                          ))}
-                      </Select>
-                    </Form.Item> */}
                     <Form.Item
                       name="responsiblePersonName"
                       layout="vertical"
-                      label="Хариуцах эзэн:"
+                      label="Сургагч багшийн нэр:"
                       rules={[
                         {
                           required: true,
@@ -205,15 +197,11 @@ export default function TrainingProgramModal(props) {
                       ]}
                     >
                       <AutoComplete
-                        placeholder="Хариуцах эзэн"
-                        // onSelect={selectUser}
-                        filterOption={(inputValue, option) =>
-                          option.children !== null
-                            ? option.children
-                                .toUpperCase()
-                                .indexOf(inputValue.toUpperCase()) !== -1
-                            : ''
-                        }
+                        placeholder="Сургагч багшийн нэр"
+                        onSearch={handleSearch}
+                        filterOption={false}
+                        defaultActiveFirstOption={false}
+                        notFoundContent={null}
                       >
                         {stateTrainers &&
                           stateTrainers.map((z, index) => (

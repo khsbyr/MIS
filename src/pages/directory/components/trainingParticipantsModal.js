@@ -1,5 +1,13 @@
-import { Col, Form, Input, message, Modal, Row, Select } from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
+import {
+  Col,
+  Form,
+  Input,
+  message,
+  Modal,
+  Row,
+  Radio,
+  InputNumber,
+} from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import { getService, postService, putService } from '../../../service/service';
@@ -8,8 +16,7 @@ import { useToolsStore } from '../../../context/Tools';
 import validateMessages from '../../../tools/validateMessage';
 import ContentWrapper from '../../training/tabs/components/attendance.style';
 import PhoneNumber from '../../../components/PhoneNumber';
-
-const { Option } = Select;
+import { PATTERN_REGISTER } from '../../../constants/Pattern';
 
 export default function TrainingParticipantsModal(props) {
   const { Attendancecontroller, isModalVisible, isEditMode } = props;
@@ -17,7 +24,7 @@ export default function TrainingParticipantsModal(props) {
   const toolsStore = useToolsStore();
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
-  const [programList, setProgramList] = useState();
+  // const [programList, setProgramList] = useState();
   const [programValue, setProgramValue] = useState();
 
   const getSum = aimagId => {
@@ -45,23 +52,23 @@ export default function TrainingParticipantsModal(props) {
   };
 
   useEffect(() => {
-    getService(
-      `trainingProgram/get/${Attendancecontroller.trainingProgram.training.id}`
-    ).then(result => {
-      if (result) {
-        setProgramList(result.content);
-      }
-    });
+    // getService(
+    //   `trainingProgram/get/${Attendancecontroller.trainingProgram.training.id}`
+    // ).then(result => {
+    //   if (result) {
+    //     setProgramList(result.content);
+    //   }
+    // });
     if (Attendancecontroller !== undefined) {
       getService(
-        `soum/getList/${Attendancecontroller.user.address.aimag.id}`
+        `soum/getList/${Attendancecontroller?.user?.address?.aimag?.id}`
       ).then(result => {
         if (result) {
           setStateSum(result || []);
         }
       });
       getService(
-        `bag/getList/${Attendancecontroller.user.address.soum.id}`
+        `bag/getList/${Attendancecontroller?.user?.address?.soum?.id}`
       ).then(result => {
         if (result) {
           setStateBag(result || []);
@@ -72,19 +79,19 @@ export default function TrainingParticipantsModal(props) {
       setProgramValue(Attendancecontroller.trainingProgram.id);
       form.setFieldsValue({
         ...Attendancecontroller,
-        CountryID: Attendancecontroller.user.address
-          ? Attendancecontroller.user.address.country.id
+        CountryID: Attendancecontroller?.user?.address
+          ? Attendancecontroller?.user?.address?.country?.id
           : '',
-        AimagID: Attendancecontroller.user.address
-          ? Attendancecontroller.user.address.aimag.id
+        AimagID: Attendancecontroller?.user?.address
+          ? Attendancecontroller.user?.address?.aimag?.id
           : '',
-        SoumID: Attendancecontroller.user.address
-          ? Attendancecontroller.user.address.soum.id
+        SoumID: Attendancecontroller.user?.address
+          ? Attendancecontroller.user?.address?.soum?.id
           : '',
-        BagID: Attendancecontroller.user.address
-          ? Attendancecontroller.user.address.bag.id
+        BagID: Attendancecontroller.user?.address
+          ? Attendancecontroller.user?.address?.bag?.id
           : '',
-        addressDetail: Attendancecontroller.user.address.addressDetail,
+        addressDetail: Attendancecontroller.user?.address?.addressDetail,
         Gender: Attendancecontroller.gender.gender,
         GenderID: Attendancecontroller.gender.id,
         lastName: Attendancecontroller.user.lastname,
@@ -111,9 +118,11 @@ export default function TrainingParticipantsModal(props) {
           soum: {
             id: values.SoumID,
           },
-          bag: {
-            id: values.BagID,
-          },
+          bag: values.BagID
+            ? {
+                id: values.BagID,
+              }
+            : null,
         };
         if (isEditMode) {
           putService(`participants/update/${Attendancecontroller.id}`, values)
@@ -140,14 +149,24 @@ export default function TrainingParticipantsModal(props) {
       });
   };
 
-  function programID(e) {
-    setProgramValue(e);
-  }
+  // function programID(e) {
+  //   setProgramValue(e);
+  // }
+
+  // const handleSearch = value => {
+  //   getService(
+  //     `trainingProgram/get/${Attendancecontroller.trainingProgram.training.id}?search=operation:*${value}*`
+  //   ).then(result => {
+  //     if (result) {
+  //       setProgramList(result.content);
+  //     }
+  //   }, 500);
+  // };
 
   return (
     <div>
       <Modal
-        title="Ирцийн бүртгэл"
+        title="Оролцогчийн мэдээлэл"
         okText="Хадгалах"
         cancelText="Буцах"
         width={900}
@@ -205,12 +224,38 @@ export default function TrainingParticipantsModal(props) {
                   rules={[
                     {
                       required: true,
+                      pattern: PATTERN_REGISTER,
+                      message: 'Регистрийн дугаар буруу байна',
                     },
                   ]}
                 >
                   <Input maxLength={10} />
                 </Form.Item>
                 <PhoneNumber label="Холбогдох утас:" name="phone" />
+
+                <Form.Item
+                  name="familyMembers"
+                  label="Ам бүл"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <InputNumber size="large" type="number" />
+                </Form.Item>
+
+                <Form.Item
+                  name="numberOfLivestock"
+                  label="Малын тоо"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <InputNumber size="large" type="number" />
+                </Form.Item>
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Form.Item name="email" label="Email хаяг:">
@@ -254,27 +299,34 @@ export default function TrainingParticipantsModal(props) {
                     onChange={value => selectSum(value)}
                   />
                 </Form.Item>
+                <Form.Item name="BagID" layout="vertical" label="Баг, Хороо:">
+                  <AutoCompleteSelect valueField="id" data={stateBag} />
+                </Form.Item>
+
                 <Form.Item
-                  name="BagID"
-                  layout="vertical"
-                  label="Баг, Хороо:"
+                  name="account"
+                  label="А Данс"
                   rules={[
                     {
                       required: true,
                     },
                   ]}
                 >
-                  <AutoCompleteSelect valueField="id" data={stateBag} />
+                  <InputNumber size="large" type="number" />
                 </Form.Item>
               </Col>
-              <Col xs={24} md={24} lg={12}>
+              {/* <Col xs={24} md={24} lg={12}>
                 <Form.Item label="Хөтөлбөр:">
                   <Select
                     showSearch
                     placeholder="Хөтөлбөр сонгох"
                     onChange={programID}
-                    defaultValue={Attendancecontroller.trainingProgram.id}
+                    defaultValue={Attendancecontroller?.trainingProgram?.id}
                     size="small"
+                    onSearch={handleSearch}
+                    filterOption={false}
+                    defaultActiveFirstOption={false}
+                    notFoundContent={null}
                   >
                     {programList &&
                       programList.map((z, index) => (
@@ -284,20 +336,40 @@ export default function TrainingParticipantsModal(props) {
                       ))}
                   </Select>
                 </Form.Item>
-              </Col>
+              </Col> */}
             </Row>
             <Row>
-              <Col xs={24} md={24} lg={24}>
+              <Col xs={24} md={24} lg={5}>
                 <Form.Item
-                  name="addressDetail"
-                  label="Дэлгэрэнгүй хаяг"
+                  label="Оторт явсан эсэх:"
+                  name="isWentToOtor"
                   rules={[
                     {
                       required: true,
                     },
                   ]}
                 >
-                  <TextArea />
+                  <Radio.Group>
+                    <Radio value>Тийм</Radio>
+                    <Radio value={false}>Үгүй</Radio>
+                  </Radio.Group>
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} md={24} lg={5}>
+                <Form.Item
+                  label="Өрх толгойлсон эсэх:"
+                  name="isSingleParent"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Radio.Group>
+                    <Radio value>Тийм</Radio>
+                    <Radio value={false}>Үгүй</Radio>
+                  </Radio.Group>
                 </Form.Item>
               </Col>
             </Row>

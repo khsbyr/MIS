@@ -114,6 +114,10 @@ const TrainingParticipants = loadable({
   loading: Loader,
 });
 
+const Trainers = loadable({
+  loader: () => import('../pages/directory/trainers'),
+  loading: Loader,
+});
 const Page = ({ route }) => {
   const PageContent = () => {
     switch (route.code.toLowerCase()) {
@@ -178,6 +182,9 @@ const Page = ({ route }) => {
       case 'Factory'.toLowerCase():
         return <ProductiveProject type={3} />;
 
+      case 'Veterinary support'.toLowerCase():
+        return <ProductiveProject type={4} />;
+
       case 'Young Veterinarian Program'.toLowerCase():
         return <VeterinarianProject />;
 
@@ -197,6 +204,8 @@ const Page = ({ route }) => {
       case 'Training Participants'.toLowerCase():
         return <TrainingParticipants />;
 
+      case 'Trainers'.toLowerCase():
+        return <Trainers />;
       default:
         return null;
     }
