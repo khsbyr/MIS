@@ -140,11 +140,20 @@ const ConsultingOrg = () => {
         icon={<FontAwesomeIcon icon={faPen} />}
         onClick={() => edit(row)}
       />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
-      />
+      {toolsStore.user.roleId === 9 ||
+      toolsStore.user.roleId === 10 ||
+      toolsStore.user.roleId === 11 ||
+      toolsStore.user.roleId === 12 ||
+      toolsStore.user.roleId === 13 ||
+      toolsStore.user.roleId === 14 ? (
+        ''
+      ) : (
+        <Button
+          type="text"
+          icon={<FontAwesomeIcon icon={faTrash} />}
+          onClick={() => pop(row)}
+        />
+      )}
     </>
   );
 
@@ -163,14 +172,14 @@ const ConsultingOrg = () => {
   const nameBodyTemplate = row => (
     <>
       <span className="p-column-title">Байгууллагын нэр</span>
-      {row.name}
+      {row.name ? row.name : 'Тодорхойгүй'}
     </>
   );
 
   const registerNumberBodyTemplate = row => (
     <>
       <span className="p-column-title">Регистрийн дугаар</span>
-      {row.registerNumber}
+      {row.registerNumber ? row.registerNumber : 'Тодорхойгүй'}
     </>
   );
 
@@ -184,14 +193,14 @@ const ConsultingOrg = () => {
   const accountNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Дансны нэр</span>
-      {row.accountName}
+      {row.accountName ? row.accountName : 'Тодорхойгүй'}
     </>
   );
 
   const accountNumberBodyTemplate = row => (
     <>
       <span className="p-column-title">Дансны дугаар</span>
-      {row.accountNumber}
+      {row.accountNumber ? row.accountNumber : 'Тодорхойгүй'}
     </>
   );
 
@@ -237,18 +246,27 @@ const ConsultingOrg = () => {
                     </Button>
                   </Tooltip>
                 </Col>
-                <Col>
-                  <Tooltip title={t('add')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
+                {toolsStore.user.roleId === 9 ||
+                toolsStore.user.roleId === 10 ||
+                toolsStore.user.roleId === 11 ||
+                toolsStore.user.roleId === 12 ||
+                toolsStore.user.roleId === 13 ||
+                toolsStore.user.roleId === 14 ? (
+                  ''
+                ) : (
+                  <Col>
+                    <Tooltip title={t('add')} arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={add}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
+                  </Col>
+                )}
               </Row>
             </Col>
           </Row>

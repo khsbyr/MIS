@@ -272,6 +272,8 @@ const productiveProject = props => {
         return 'МАА-н инноваци шингээсэн үйлчилгээ үзүүлэх загвар';
       case 3:
         return 'Тэжээл үйлдвэрлэлийн дэд төсөл';
+      case 4:
+        return 'Мал эмнэлэгийг дэмжих хөтөлбөр';
       default:
         return '';
     }

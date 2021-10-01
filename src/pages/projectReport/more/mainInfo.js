@@ -10,6 +10,7 @@ import { errorCatch } from '../../../tools/Tools';
 function mainInfo(props) {
   const { PlanList, setPlanList } = useProjectStore();
   const { setIsShowLoader } = useToolsStore();
+  const toolsStore = useToolsStore();
 
   useEffect(() => {
     setIsShowLoader(true);
@@ -37,18 +38,30 @@ function mainInfo(props) {
           <Descriptions.Item label="Бүрэлдэхүүн хэсэг">
             {PlanList?.criteriaReference?.name}
           </Descriptions.Item>
-          <Descriptions.Item label="Эхлэх огноо">
-            {moment(PlanList?.startDate).format('YYYY-M-D')}
+          <Descriptions.Item label="Огноо">
+            {moment(PlanList?.startDate).format('YYYY-MM')}
           </Descriptions.Item>
-          <Descriptions.Item label="Дуусах огноо">
+          {/* <Descriptions.Item label="Дуусах огноо">
             {moment(PlanList?.endDate).format('YYYY-M-D')}
-          </Descriptions.Item>
-          <Descriptions.Item label="Төслийн хөгжлийн зорилт, дунд хугацааны шалгуур үзүүлэлтэд хамаарах үр дүн">
-            {PlanList?.target}
-          </Descriptions.Item>
-          <Descriptions.Item label="Тайлбар">
-            {PlanList?.description}
-          </Descriptions.Item>
+          </Descriptions.Item> */}
+          {toolsStore.user.roleId === 13 ||
+          toolsStore.user.roleId === 4 ||
+          toolsStore.user.roleId === 15 ? (
+            ''
+          ) : (
+            <Descriptions.Item label="Төслийн хөгжлийн зорилт, дунд хугацааны шалгуур үзүүлэлтэд хамаарах үр дүн">
+              {PlanList?.target}
+            </Descriptions.Item>
+          )}
+          {toolsStore.user.roleId === 13 ||
+          toolsStore.user.roleId === 4 ||
+          toolsStore.user.roleId === 15 ? (
+            ''
+          ) : (
+            <Descriptions.Item label="Тайлбар">
+              {PlanList?.description}
+            </Descriptions.Item>
+          )}
         </Descriptions>
       </ContentWrapper>
     </div>

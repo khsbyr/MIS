@@ -36,6 +36,7 @@ const { Content } = Layout;
 
 let isEditMode;
 let selectedRole;
+let editRow;
 
 export default function Roles() {
   const { t } = useTranslation();
@@ -106,8 +107,11 @@ export default function Roles() {
     isEditMode = false;
   };
 
-  const edit = row => {
+  const edit = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     isEditMode = true;
+    editRow = row;
     setIsShowModal(true);
     setSelectedRow(row.data);
   };
@@ -178,7 +182,7 @@ export default function Roles() {
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
+        onClick={event => edit(event, row)}
       />
       <Button
         type="text"
@@ -284,7 +288,6 @@ export default function Roles() {
               setSelectedRow(e.value);
             }}
             dataKey="id"
-            onRowClick={edit}
           >
             <Column field="index" header="№" style={{ width: 40 }} />
             <Column
@@ -308,7 +311,7 @@ export default function Roles() {
           <RoleModal
             visible={isShowModal}
             isEditMode={isEditMode}
-            roleController={selectedRow}
+            roleController={editRow}
             close={closeModal}
             save={save}
           />

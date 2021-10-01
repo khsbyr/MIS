@@ -2,6 +2,7 @@ import { Col, Layout, Row } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import moment from 'moment';
 import { PAGESIZE } from '../../../constants/Constant';
 import { ToolsContext } from '../../../context/Tools';
 import { getService } from '../../../service/service';
@@ -83,17 +84,10 @@ const PlanReport = props => {
     </>
   );
 
-  const result = row => (
+  const date = row => (
     <>
-      <span className="p-column-title">Үр дүн</span>
-      {row.result}
-    </>
-  );
-
-  const processResult = row => (
-    <>
-      <span className="p-column-title">Биелэлтийн хувь</span>
-      {row.processResult}
+      <span className="p-column-title">Он, сар</span>
+      {moment(row && row.dateFormat).format('YYYY-MM')}
     </>
   );
 
@@ -138,12 +132,7 @@ const PlanReport = props => {
               header="Нэр"
             />
             <Column field="performance" body={performance} header="Гүйцэтгэл" />
-            <Column field="result" body={result} header="Үр дүн" />
-            <Column
-              field="processResult"
-              body={processResult}
-              header="Биелэлтийн хувь"
-            />
+            <Column field="dateFormat" body={date} header="Он, сар" />
           </DataTable>
           {isModalVisible && (
             <ActivityModal

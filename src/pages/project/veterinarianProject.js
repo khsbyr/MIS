@@ -287,7 +287,7 @@ const veterinarianProject = () => {
   const genderBodyTemplate = row => (
     <>
       <span className="p-column-title">Хүйс</span>
-      {row.gender.gender}
+      {row.gender?.gender}
     </>
   );
 

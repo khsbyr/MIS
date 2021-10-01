@@ -181,16 +181,11 @@ const Feedback = () => {
       {row.complainant}
     </>
   );
-  const userBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Хүлээн авагч</span>
-      {row.user && row.user.firstname}
-    </>
-  );
+
   const measuresBodyTemplate = row => (
     <>
-      <span className="p-column-title">Хэлбэр</span>
-      {row.feedbackShape.name}
+      <span className="p-column-title">Санал, гомдол гаргагчийн и-мэйл</span>
+      {row.complainantEmail}
     </>
   );
   return (
@@ -273,7 +268,6 @@ const Feedback = () => {
             sortOrder={lazyParams.sortOrder}
             onFilter={onFilter}
             filters={lazyParams.filters}
-            tableStyle={{ minWidth: 1000 }}
             lazy
           >
             <Column
@@ -304,13 +298,8 @@ const Feedback = () => {
               body={complainantBodyTemplate}
             />
             <Column
-              header="Хүлээн авагч"
-              field="user.firstname"
-              body={userBodyTemplate}
-            />
-            <Column
-              header="Хэлбэр"
-              field="feedbackShape.name"
+              header="Санал, гомдол гаргагчийн и-мэйл"
+              field="complainantEmail"
               body={measuresBodyTemplate}
             />
             <Column headerStyle={{ width: '6rem' }} body={action} />

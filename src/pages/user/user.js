@@ -17,7 +17,7 @@ import { PAGESIZE } from '../../constants/Constant';
 import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
-import ContentWrapper from '../criteria/criteria.style';
+import ContentWrapper from './user.style';
 import UserModal from './components/UserModal';
 
 const { Content } = Layout;
@@ -185,7 +185,9 @@ const User = () => {
   const emailBodyTemplate = row => (
     <>
       <span className="p-column-title">Й-мэйл</span>
-      {row?.email ? row?.email : 'Тодорхойгүй'}
+      <Tooltip placement="topLeft" title={row.email}>
+        {row?.email ? row?.email : 'Тодорхойгүй'}
+      </Tooltip>
     </>
   );
 

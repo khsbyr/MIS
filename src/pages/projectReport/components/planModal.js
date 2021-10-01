@@ -1,44 +1,51 @@
-import { Col, DatePicker, Form, Input, message, Modal, Row } from 'antd';
+/* eslint-disable no-nested-ternary */
+import {
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Modal,
+  Row,
+  Select,
+  Tooltip,
+} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import locale from 'antd/es/date-picker/locale/mn_MN';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import MulticompleteSelect from '../../../components/MulticompleteSelect';
-import { PlanType } from '../../../constants/Constant';
-import { useCriteriaStore } from '../../../context/CriteriaContext';
+import { PlanType, PlanType1, PlanType2 } from '../../../constants/Constant';
 import { getService, postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
-// eslint-disable-next-line import/no-named-as-default
 import ContentWrapper from './plan.style';
+import 'moment/locale/mn';
+import { useToolsStore } from '../../../context/Tools';
+
+const { Option, OptGroup } = Select;
 
 export default function PlanModal(props) {
   const { EditRow, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
-  const { criteriaReferenceList, setCriteriaReferenceList } =
-    useCriteriaStore();
   const [userList, setUserList] = useState();
   const [youngDoctor, setYoungDoctor] = useState();
   const [criteriaReferenceId, setCriteriaReferenceId] = useState();
   const [startDateValue, setStartDateValue] = useState();
-  const [endDateValue, setEndDateValue] = useState();
-  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [endDateValue] = useState();
   const [ProjectUsers, setProjectUsers] = useState([]);
   const [planType, setPlanType] = useState();
+  const toolsStore = useToolsStore();
 
   useEffect(() => {
-    getService(`criteriaReference/get`).then(result => {
-      if (result) {
-        setCriteriaReferenceList(result.content || []);
-      }
-    });
-
-    getService(`user/get?search=organization.id:2`).then(result => {
-      if (result) {
-        setUserList(result.content || []);
-      }
-    });
-
+    toolsStore.user.roleId !== 15
+      ? getService(`user/getListByOrgId/1`).then(result => {
+          if (result) {
+            setUserList(result || []);
+          }
+        })
+      : '';
     getService(`user/getAllYoungDoctorUserList`).then(result => {
       if (result) {
         setYoungDoctor(result || []);
@@ -54,6 +61,7 @@ export default function PlanModal(props) {
           setProjectUsers([...ProjectUsers]);
         }
       });
+
       setPlanType(EditRow.typeId);
       setCriteriaReferenceId(EditRow.criteriaReference.id);
       form.setFieldsValue({
@@ -63,7 +71,7 @@ export default function PlanModal(props) {
   }, []);
 
   function SelectedUsers(value) {
-    setSelectedUsers(value);
+    setProjectUsers(value);
   }
 
   function SelectedType(value) {
@@ -75,11 +83,7 @@ export default function PlanModal(props) {
   }
 
   function startDate(date, value) {
-    setStartDateValue(value);
-  }
-
-  function endDate(date, value) {
-    setEndDateValue(value);
+    setStartDateValue(`${value}-01`);
   }
 
   const save = () => {
@@ -92,11 +96,11 @@ export default function PlanModal(props) {
           description: values.description,
           startDate: startDateValue,
           endDate: endDateValue,
-          organizationId: 2,
+          organizationId: toolsStore.user?.orgId,
           criteriaReference: { id: criteriaReferenceId },
           typeId: planType,
         };
-        values.userIds = selectedUsers;
+        values.userIds = ProjectUsers;
         if (isEditMode) {
           putService(`plan/update/${EditRow.id}`, values)
             .then(() => {
@@ -121,6 +125,7 @@ export default function PlanModal(props) {
         errorCatch(info);
       });
   };
+
   return (
     <div>
       <Modal
@@ -144,31 +149,27 @@ export default function PlanModal(props) {
             <Row gutter={30}>
               <Col xs={24} md={24} lg={8}>
                 <Form.Item label="Төрөл:">
-                  {isEditMode ? (
-                    <AutoCompleteSelect
-                      placeholder="Төрөл сонгох"
-                      defaultValue={EditRow.typeId}
-                      valueField="id"
-                      data={PlanType}
-                      mode="multiple"
-                      onChange={value => SelectedType(value)}
-                    />
-                  ) : (
-                    <AutoCompleteSelect
-                      placeholder="Төрөл сонгох"
-                      valueField="id"
-                      data={PlanType}
-                      mode="multiple"
-                      onChange={value => SelectedType(value)}
-                    />
-                  )}
+                  <AutoCompleteSelect
+                    placeholder="Төрөл сонгох"
+                    defaultValue={EditRow?.typeId}
+                    valueField="id"
+                    data={
+                      toolsStore.user.roleId === 15
+                        ? PlanType2
+                        : toolsStore.user.roleId === 1
+                        ? PlanType
+                        : PlanType1
+                    }
+                    mode="multiple"
+                    onChange={value => SelectedType(value)}
+                  />
                 </Form.Item>
               </Col>
               <Col xs={24} md={24} lg={16}>
                 <Form.Item label="Гүйцэтгэгчид:">
                   <MulticompleteSelect
                     data={planType === 1 ? youngDoctor : userList}
-                    defaultValue={ProjectUsers}
+                    value={ProjectUsers}
                     valuefield="id"
                     size="medium"
                     onChange={value => SelectedUsers(value)}
@@ -190,9 +191,9 @@ export default function PlanModal(props) {
                 </Form.Item>
               </Col>
 
-              <Col xs={24} md={24} lg={12}>
+              <Col xs={24} md={24} lg={19}>
                 <Form.Item name="TrainerID" label="Бүрэлдэхүүн хэсэг:">
-                  {isEditMode ? (
+                  {/* {isEditMode ? (
                     <AutoCompleteSelect
                       placeholder="Бүрэлдэхүүн хэсэг сонгох"
                       defaultValue={EditRow?.criteriaReference?.id}
@@ -209,41 +210,194 @@ export default function PlanModal(props) {
                       mode="multiple"
                       onChange={criteriaReference}
                     />
+                  )} */}
+                  {isEditMode ? (
+                    <Select
+                      placeholder="Шалгуур үзүүлэлтийн бүрэлдэхүүн сонгох"
+                      style={{ width: '100%' }}
+                      onChange={criteriaReference}
+                      size="small"
+                      allowClear
+                      defaultValue={EditRow?.criteriaReference?.id}
+                    >
+                      <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТҮВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                        <Option value={1}>
+                          <Tooltip
+                            placement="topLeft"
+                            title="Малын эрүүл мэндийн үйлчилгээ"
+                          >
+                            Малын эрүүл мэндийн үйлчилгээ
+                          </Tooltip>
+                        </Option>
+
+                        <Option value={2}>
+                          <Tooltip
+                            placement="topLeft"
+                            title="Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                            нэмэгдүүлэх"
+                          >
+                            Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                            нэмэгдүүлэх
+                          </Tooltip>
+                        </Option>
+                      </OptGroup>
+                      <OptGroup label="ДУНД ТҮВШНИЙ ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                        <Option value={3}>
+                          <Tooltip
+                            placement="topLeft"
+                            title="Малын эрүүл мэндийн үйлчилгээ"
+                          >
+                            Малын эрүүл мэндийн үйлчилгээ
+                          </Tooltip>
+                        </Option>
+                        <Option value={4}>
+                          <Tooltip
+                            placement="topLeft"
+                            title="Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                            нэмэгдүүлэх"
+                          >
+                            Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                            нэмэгдүүлэх
+                          </Tooltip>
+                        </Option>
+                        <Option value={5}>
+                          <Tooltip
+                            placement="topLeft"
+                            title="Төслийн хэрэгжилтийг дэмжлэг"
+                          >
+                            Төслийн хэрэгжилтийг дэмжлэг
+                          </Tooltip>
+                        </Option>
+                        <Option value={6}>
+                          <Tooltip
+                            placement="topLeft"
+                            title="Болзошгүй онцгой байдлын хариу арга хэмжээний
+                            бүрэлдэхүүн хэсэг"
+                          >
+                            Болзошгүй онцгой байдлын хариу арга хэмжээний
+                            бүрэлдэхүүн хэсэг
+                          </Tooltip>
+                        </Option>
+                      </OptGroup>
+                    </Select>
+                  ) : (
+                    <Select
+                      placeholder="Шалгуур үзүүлэлтийн бүрэлдэхүүн сонгох"
+                      style={{ width: '100%' }}
+                      onChange={criteriaReference}
+                      size="small"
+                      allowClear
+                    >
+                      <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТҮВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                        <Option value={1}>
+                          <Tooltip
+                            placement="topLeft"
+                            title="Малын эрүүл мэндийн үйлчилгээ"
+                          >
+                            Малын эрүүл мэндийн үйлчилгээ
+                          </Tooltip>
+                        </Option>
+
+                        <Option value={2}>
+                          <Tooltip
+                            placement="topLeft"
+                            title="Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                          нэмэгдүүлэх"
+                          >
+                            Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                            нэмэгдүүлэх
+                          </Tooltip>
+                        </Option>
+                      </OptGroup>
+                      <OptGroup label="ДУНД ТҮВШНИЙ ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                        <Option value={3}>
+                          <Tooltip
+                            placement="topLeft"
+                            title="Малын эрүүл мэндийн үйлчилгээ"
+                          >
+                            Малын эрүүл мэндийн үйлчилгээ
+                          </Tooltip>
+                        </Option>
+                        <Option value={4}>
+                          <Tooltip
+                            placement="topLeft"
+                            title="Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                          нэмэгдүүлэх"
+                          >
+                            Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                            нэмэгдүүлэх
+                          </Tooltip>
+                        </Option>
+                        <Option value={5}>
+                          <Tooltip
+                            placement="topLeft"
+                            title="Төслийн хэрэгжилтийг дэмжлэг"
+                          >
+                            Төслийн хэрэгжилтийг дэмжлэг
+                          </Tooltip>
+                        </Option>
+                        <Option value={6}>
+                          <Tooltip
+                            placement="topLeft"
+                            title="Болзошгүй онцгой байдлын хариу арга хэмжээний
+                          бүрэлдэхүүн хэсэг"
+                          >
+                            Болзошгүй онцгой байдлын хариу арга хэмжээний
+                            бүрэлдэхүүн хэсэг
+                          </Tooltip>
+                        </Option>
+                      </OptGroup>
+                    </Select>
                   )}
                 </Form.Item>
               </Col>
 
-              <Col xs={24} md={24} lg={6}>
-                <Form.Item label="Эхлэх огноо:">
+              <Col xs={24} md={24} lg={5}>
+                <Form.Item label="Огноо:">
                   <DatePicker
                     placeholder="Огноо сонгох"
+                    picker="month"
                     onChange={startDate}
-                    defaultValue={isEditMode ? moment(EditRow.startDate) : ''}
+                    defaultValue={
+                      isEditMode ? moment(EditRow.startDateFormat) : ''
+                    }
+                    locale={locale}
                   />
                 </Form.Item>
               </Col>
-              <Col xs={24} md={24} lg={6}>
+              {/* <Col xs={24} md={24} lg={5}>
                 <Form.Item label="Дуусах огноо:">
                   <DatePicker
-                    placeholder="Огноо сонгох"
+                    placeholder="Огноо"
                     onChange={endDate}
                     defaultValue={isEditMode ? moment(EditRow.endDate) : ''}
+                    locale={locale}
                   />
                 </Form.Item>
-              </Col>
-              <Col xs={24} md={24} lg={24}>
-                <Form.Item
-                  label="Төслийн хөгжлийн зорилт, дунд хугацааны шалгуур үзүүлэлтэд хамаарах үр дүн:"
-                  name="target"
-                >
-                  <Input.TextArea rows={3} />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={24} lg={24}>
-                <Form.Item label="Тайлбар:" name="description">
-                  <Input.TextArea rows={3} />
-                </Form.Item>
-              </Col>
+              </Col> */}
+              {toolsStore.user?.role?.id !== 15 ? (
+                <Col xs={24} md={24} lg={24}>
+                  <Form.Item
+                    label="Төслийн хөгжлийн зорилт, дунд хугацааны шалгуур үзүүлэлтэд хамаарах үр дүн:"
+                    name="target"
+                  >
+                    <Input.TextArea rows={3} />
+                  </Form.Item>
+                </Col>
+              ) : (
+                ''
+              )}
+              {toolsStore.user?.role?.id !== 15 ||
+              toolsStore.user?.role?.id !== 4 ||
+              toolsStore.user?.role?.id !== 13 ? (
+                <Col xs={24} md={24} lg={24}>
+                  <Form.Item label="Тайлбар:" name="description">
+                    <Input.TextArea rows={3} />
+                  </Form.Item>
+                </Col>
+              ) : (
+                ''
+              )}
             </Row>
           </Form>
         </ContentWrapper>

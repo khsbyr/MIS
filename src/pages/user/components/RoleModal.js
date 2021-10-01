@@ -29,8 +29,8 @@ export default function RoleModal(props) {
     if (isEditMode) {
       form.setFieldsValue({
         ...roleController,
-        roleLevelId: roleController.roleLevel
-          ? roleController.roleLevel.id
+        roleLevelId: roleController?.roleLevel
+          ? roleController?.roleLevel?.id
           : '',
       });
     }

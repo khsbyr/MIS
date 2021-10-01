@@ -3,7 +3,7 @@ import { React, useState } from 'react';
 
 export default function MulticompleteSelect(props) {
   const { Option } = Select;
-  const { data, value, valueField, type } = props;
+  const { data, value, valueField, type, defaultValue } = props;
   const [size] = useState([]);
 
   const placeholder = props.placeholder || 'Сонгох';
@@ -14,6 +14,7 @@ export default function MulticompleteSelect(props) {
       mode="multiple"
       style={{ width: '100%' }}
       placeholder={placeholder}
+      defaultValue={defaultValue}
       value={value}
       size={size || 'small'}
       maxTagCount="responsive"

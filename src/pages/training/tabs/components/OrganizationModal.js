@@ -1,9 +1,10 @@
-import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
+/* eslint-disable no-nested-ternary */
+import { PlusOutlined } from '@ant-design/icons';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  Button,
-  Checkbox,
+  // Button,
+  // Checkbox,
   Col,
   DatePicker,
   Form,
@@ -16,6 +17,7 @@ import {
 } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import locale from 'antd/es/date-picker/locale/mn_MN';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
 import PhoneNumber from '../../../../components/PhoneNumber';
 import { useToolsStore } from '../../../../context/Tools';
@@ -29,7 +31,9 @@ import {
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './organization.style';
-import { OrgType } from '../../../../constants/Constant';
+import { OrgType, OrgType1, OrgType2 } from '../../../../constants/Constant';
+import 'moment/locale/mn';
+import { PATTERN_REGISTER } from '../../../../constants/Pattern';
 
 const dummyRequest = ({ onSuccess }) => {
   setTimeout(() => {
@@ -175,11 +179,13 @@ export default function OrganizationModal(props) {
   };
 
   const getSum = aimagId => {
-    getService(`soum/getList/${aimagId}`, {}).then(result => {
-      if (result) {
-        setStateSum(result || []);
-      }
-    });
+    if (aimagId) {
+      getService(`soum/getList/${aimagId}`, {}).then(result => {
+        if (result) {
+          setStateSum(result || []);
+        }
+      });
+    }
   };
 
   const selectAimag = value => {
@@ -187,11 +193,13 @@ export default function OrganizationModal(props) {
   };
 
   const getBag = sumID => {
-    getService(`bag/getList/${sumID}`, {}).then(result => {
-      if (result) {
-        setStateBag(result || []);
-      }
-    });
+    if (sumID) {
+      getService(`bag/getList/${sumID}`, {}).then(result => {
+        if (result) {
+          setStateBag(result || []);
+        }
+      });
+    }
   };
 
   const selectSum = value => {
@@ -324,7 +332,7 @@ export default function OrganizationModal(props) {
         title="Байгууллага бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
-        width={1100}
+        width={1400}
         alignItems="center"
         visible={isModalVisible}
         onOk={save}
@@ -403,6 +411,7 @@ export default function OrganizationModal(props) {
                       <DatePicker
                         prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
                         onChange={onDateChange}
+                        locale={locale}
                         placeholder="Байгуулагдсан он"
                         style={{
                           height: '39px',
@@ -496,6 +505,8 @@ export default function OrganizationModal(props) {
                       rules={[
                         {
                           required: true,
+                          pattern: PATTERN_REGISTER,
+                          message: 'Регистрийн дугаар буруу байна',
                         },
                       ]}
                     >
@@ -531,7 +542,14 @@ export default function OrganizationModal(props) {
                     >
                       <AutoCompleteSelect
                         valueField="id"
-                        data={OrgType}
+                        data={
+                          toolsStore.user?.roleId === 13 ||
+                          toolsStore.user?.roleId === 4
+                            ? OrgType2
+                            : toolsStore.user?.roleId === 1
+                            ? OrgType
+                            : OrgType1
+                        }
                         onChange={value => selectOrgType(value)}
                       />
                     </Form.Item>
@@ -568,6 +586,11 @@ export default function OrganizationModal(props) {
                         valueField="id"
                         data={stateSum}
                         onChange={value => selectSum(value)}
+                        filterOption={(input, option) =>
+                          option.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
                       />
                     </Form.Item>
                   </Col>
@@ -645,6 +668,8 @@ export default function OrganizationModal(props) {
                       rules={[
                         {
                           required: true,
+                          pattern: PATTERN_REGISTER,
+                          message: 'Регистрийн дугаар буруу байна',
                         },
                       ]}
                     >
@@ -679,7 +704,7 @@ export default function OrganizationModal(props) {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row>
+                {/* <Row>
                   <Col xs={24} md={24} lg={20}>
                     <Form.Item label="Танилцуулга оруулах:">
                       <Upload {...props}>
@@ -699,7 +724,7 @@ export default function OrganizationModal(props) {
                       <Checkbox>Оруулсан мэдээлэл үнэн болно.</Checkbox>
                     </Form.Item>
                   </Col>
-                </Row>
+                </Row> */}
               </Col>
             </Row>
           </Form>

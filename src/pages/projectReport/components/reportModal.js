@@ -1,8 +1,20 @@
-import { Col, Form, message, Modal, Row, Select, Upload, Button } from 'antd';
+import {
+  Col,
+  Form,
+  message,
+  Modal,
+  Row,
+  Upload,
+  Button,
+  DatePicker,
+  Select,
+  Tooltip,
+} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import React, { useEffect, useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
-import AutoCompleteSelect from '../../../components/Autocomplete';
+import locale from 'antd/es/date-picker/locale/mn_MN';
+import moment from 'moment';
 import {
   getService,
   postService,
@@ -13,8 +25,9 @@ import {
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 import ContentWrapper from './report.style';
+import 'moment/locale/mn';
 
-const { Option } = Select;
+let loadLazyTimeout = null;
 
 const dummyRequest = ({ onSuccess }) => {
   setTimeout(() => {
@@ -22,13 +35,15 @@ const dummyRequest = ({ onSuccess }) => {
   }, 0);
 };
 
+const { Option } = Select;
+
 export default function ReportModal(props) {
   const { EditRow, isModalVisible, isEditMode } = props;
   const [form] = Form.useForm();
   const [planList, setPlanList] = useState();
   const [selectedPlan, setSelectedPlan] = useState([]);
   const [fileList, setFileList] = useState([]);
-  const [, setProcessValue] = useState();
+  const [dateValue, setDateValue] = useState();
 
   const defaultFileList =
     EditRow?.file && isEditMode
@@ -60,10 +75,6 @@ export default function ReportModal(props) {
     setSelectedPlan(value);
   }
 
-  function handleChange(value) {
-    setProcessValue(value);
-  }
-
   function handleUpload(info) {
     setFileList([info.file.originFileObj]);
   }
@@ -75,9 +86,8 @@ export default function ReportModal(props) {
         values.planReport = {
           name: values.name,
           performance: values.performance,
-          result: values.result,
-          processResult: values.processResult,
           plan: { id: selectedPlan },
+          date: dateValue,
         };
         if (isEditMode) {
           if (fileList[0]) {
@@ -140,6 +150,32 @@ export default function ReportModal(props) {
         errorCatch(info);
       });
   };
+
+  function dateChange(date, dateString) {
+    setDateValue(`${dateString}-01`);
+  }
+
+  const options = planList?.map(d => (
+    <Option key={d.id} value={d.id}>
+      <Tooltip placement="topLeft" title={d.name}>
+        {d.name}
+      </Tooltip>
+    </Option>
+  ));
+
+  const handleSearch = value => {
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    loadLazyTimeout = setTimeout(() => {
+      getService(`plan/get?search=name:*${value}*`).then(result => {
+        if (result) {
+          setPlanList(result.content);
+        }
+      });
+    }, 300);
+  };
+
   return (
     <div>
       <Modal
@@ -161,13 +197,13 @@ export default function ReportModal(props) {
             validateMessages={validateMessages}
           >
             <Row gutter={30}>
-              <Col xs={24} md={24} lg={24}>
+              <Col xs={24} md={24} lg={18}>
                 <Form.Item
                   label="Төлөвлөгөөний нэр:"
                   name="name"
                   className="planName"
                 >
-                  {isEditMode ? (
+                  {/* {isEditMode ? (
                     <AutoCompleteSelect
                       defaultValue={EditRow.plan.id}
                       data={planList}
@@ -179,8 +215,51 @@ export default function ReportModal(props) {
                       data={planList}
                       valueField="id"
                       onChange={value => SelectedPlan(value)}
-                    />
+                    />          
+                  )} */}
+                  {isEditMode ? (
+                    <Select
+                      showSearch
+                      style={{ width: '100%' }}
+                      defaultValue={EditRow.plan?.id}
+                      onChange={value => SelectedPlan(value)}
+                      placeholder="Төлөвлөгөөний нэрээр хайх"
+                      size="small"
+                      allowClear
+                      onSearch={handleSearch}
+                      filterOption={false}
+                      defaultActiveFirstOption={false}
+                      notFoundContent={null}
+                    >
+                      {options}
+                    </Select>
+                  ) : (
+                    <Select
+                      showSearch
+                      style={{ width: '100%' }}
+                      onChange={value => SelectedPlan(value)}
+                      placeholder="Төлөвлөгөөний нэрээр хайх"
+                      size="small"
+                      allowClear
+                      onSearch={handleSearch}
+                      filterOption={false}
+                      defaultActiveFirstOption={false}
+                      notFoundContent={null}
+                    >
+                      {options}
+                    </Select>
                   )}
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={24} lg={6}>
+                <Form.Item label="Он, сар:">
+                  <DatePicker
+                    onChange={dateChange}
+                    picker="month"
+                    placeholder="Он, сар сонгох"
+                    locale={locale}
+                    defaultValue={isEditMode ? moment(EditRow.dateFormat) : ''}
+                  />
                 </Form.Item>
               </Col>
               <Col xs={24} md={24} lg={24}>
@@ -188,32 +267,7 @@ export default function ReportModal(props) {
                   <TextArea rows={5} />
                 </Form.Item>
               </Col>
-              <Col xs={24} md={24} lg={24}>
-                <Form.Item label="Үр дүн:" name="result">
-                  <TextArea rows={5} />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={24} lg={24}>
-                <Form.Item label="Үр дүн:" name="processResult">
-                  <Select
-                    defaultValue="Сонгох"
-                    style={{ width: 120 }}
-                    onChange={handleChange}
-                  >
-                    <Option value={0}>0</Option>
-                    <Option value={1}>1</Option>
-                    <Option value={2}>2</Option>
-                    <Option value={3}>3</Option>
-                    <Option value={4}>4</Option>
-                    <Option value={5}>5</Option>
-                    <Option value={61}>6</Option>
-                    <Option value={7}>7</Option>
-                    <Option value={8}>8</Option>
-                    <Option value={9}>9</Option>
-                    <Option value={10}>10</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
+
               <Col xs={24} md={24} lg={24}>
                 <Upload
                   accept="image/*,.pdf"

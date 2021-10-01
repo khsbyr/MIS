@@ -26,6 +26,13 @@ const ContentWrapper = styled.div`
     .ant-select-selection-search-input {
     height: 33px !important;
   }
+
+  .p-datatable .p-datatable-tbody > tr > td:nth-child(2),
+  td:nth-child(4) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 `;
 
 export default ContentWrapper;

@@ -20,7 +20,7 @@ import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
-import TrainingParticipantsModal from './components/trainingParticipantsModal';
+import TrainersModal from './components/TrainersModal';
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -28,14 +28,13 @@ const { Option } = Select;
 let editRow;
 let isEditMode;
 let loadLazyTimeout = null;
+let trainerID;
 
-const TrainingParticipants = props => {
+const Trainers = () => {
   const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const toolsStore = useContext(ToolsContext);
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [trainingID, setTrainingID] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [lazyParams, setLazyParams] = useState({
     first: 0,
@@ -54,11 +53,10 @@ const TrainingParticipants = props => {
       const obj = convertLazyParamsToObj(lazyParams);
       const url = value
         ? `participants/get?search=trainingProgram.training.id:${value}`
-        : `participants/get`;
+        : `user/getAllTrainerUserList`;
       getService(url, obj)
         .then(data => {
           const dataList = data.content || [];
-          setTrainingID(props.id);
           dataList.forEach((item, index) => {
             item.index = lazyParams.page * PAGESIZE + index + 1;
           });
@@ -99,6 +97,7 @@ const TrainingParticipants = props => {
   };
 
   const edit = row => {
+    trainerID = row.trainers.id;
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
@@ -109,7 +108,7 @@ const TrainingParticipants = props => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`participants/delete/${row.id}`)
+    putService(`trainers/delete/${row.trainers.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -172,51 +171,28 @@ const TrainingParticipants = props => {
   const FirstNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Нэр</span>
-      {row.user.firstname}
+      {row.firstname}
     </>
   );
 
   const LastNameBodyTemplate = row => (
     <>
       <span className="p-column-title">Овог</span>
-      {row.user.lastname}
+      {row.lastname}
     </>
   );
 
-  const registerNumberBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Регистрийн дугаар</span>
-      {row.user.register}
-    </>
-  );
-
-  // const trainingProgram = row => (
-  //   <>
-  //     <span className="p-column-title">Хөтөлбөр</span>
-  //     {row.trainingProgram.operation
-  //       ? row.trainingProgram.operation
-  //       : 'Тодорхойгүй'}
-  //   </>
-  // );
-
-  const phone = row => (
+  const phoneBodyTemplate = row => (
     <>
       <span className="p-column-title">Утас</span>
-      {row.user.phoneNumber}
+      {row.phoneNumber}
     </>
   );
 
-  const jobDesc = row => (
+  const registerBodyTemplate = row => (
     <>
-      <span className="p-column-title">Ажил эрхлэлт</span>
-      {row.jobDescription ? row.jobDescription : 'Тодорхойгүй'}
-    </>
-  );
-
-  const gender = row => (
-    <>
-      <span className="p-column-title">Хүйс</span>
-      {row.gender.gender}
+      <span className="p-column-title">Сургагч багшийн регистер</span>
+      {row.register}
     </>
   );
 
@@ -255,7 +231,7 @@ const TrainingParticipants = props => {
         <Content>
           <Row>
             <Col xs={24} md={12} lg={14}>
-              <p className="title">Сургалтын оролцогчид</p>
+              <p className="title">Сургалтын багш</p>
             </Col>
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
@@ -292,14 +268,12 @@ const TrainingParticipants = props => {
         </Content>
         <div className="datatable-responsive-demo">
           <DataTable
+            ref={dt}
+            lazy
             emptyMessage="Өгөгдөл олдсонгүй..."
             value={list}
             removableSort
             paginator
-            className="p-datatable-responsive-demo"
-            selection={selectedRows}
-            ref={dt}
-            lazy
             first={lazyParams.first}
             rows={PAGESIZE}
             totalRecords={totalRecords}
@@ -309,9 +283,7 @@ const TrainingParticipants = props => {
             sortOrder={lazyParams.sortOrder}
             onFilter={onFilter}
             filters={lazyParams.filters}
-            onSelectionChange={e => {
-              setSelectedRows(e.value);
-            }}
+            className="p-datatable-responsive-demo"
             dataKey="id"
           >
             <Column
@@ -321,77 +293,52 @@ const TrainingParticipants = props => {
               style={{ width: 40 }}
             />
             <Column
-              field="user.lastname"
               header="Овог"
-              sortable
-              filter
-              filterPlaceholder="Хайх"
+              field="lastname"
               body={LastNameBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
               filterMatchMode="contains"
             />
             <Column
-              field="user.firstname"
               header="Нэр"
-              sortable
-              filter
-              filterPlaceholder="Хайх"
+              field="firstname"
               body={FirstNameBodyTemplate}
-              filterMatchMode="contains"
-            />
-            <Column
-              field="user.register"
-              header="Регистрийн дугаар"
               sortable
               filter
               filterPlaceholder="Хайх"
-              body={registerNumberBodyTemplate}
-              filterMatchMode="startsWith"
+              filterMatchMode="contains"
             />
+
             <Column
-              field="user.phoneNumber"
               header="Утас"
+              field="phoneNumber"
+              body={phoneBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
-              body={phone}
-              filterMatchMode="startsWith"
-            />
-            <Column
-              field="jobDescription"
-              header="Ажил эрхлэлт"
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-              body={jobDesc}
               filterMatchMode="contains"
             />
             <Column
-              field="gender.gender"
-              header="Хүйс"
+              field="register"
+              header="Регистер"
+              body={registerBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
-              body={gender}
               filterMatchMode="contains"
             />
-            {/* <Column
-              field="trainingProgram.operation"
-              header="Хөтөлбөр"
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-              body={trainingProgram}
-              filterMatchMode="contains"
-            /> */}
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <TrainingParticipantsModal
-              Attendancecontroller={editRow}
+            <TrainersModal
+              Trainerscontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              trainingID={trainingID}
+              orgId={TrainingList?.organization?.id}
+              trainerID={trainerID}
             />
           )}
         </div>
@@ -400,4 +347,4 @@ const TrainingParticipants = props => {
   );
 };
 
-export default TrainingParticipants;
+export default Trainers;

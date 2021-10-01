@@ -13,7 +13,7 @@ const rootSubmenuKeys = [
   'Project3',
   'Makhis4',
   'Directory registration5',
-  'Other6',
+  'Feedback6',
   'Consulting service7',
   'Dashboard8',
   'Project implementing unit9',
