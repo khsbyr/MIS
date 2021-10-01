@@ -7,12 +7,14 @@ import {
   Upload,
   Button,
   DatePicker,
+  Select,
+  Tooltip,
 } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import React, { useEffect, useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 import locale from 'antd/es/date-picker/locale/mn_MN';
-import AutoCompleteSelect from '../../../components/Autocomplete';
+import moment from 'moment';
 import {
   getService,
   postService,
@@ -25,11 +27,15 @@ import validateMessages from '../../../tools/validateMessage';
 import ContentWrapper from './report.style';
 import 'moment/locale/mn';
 
+let loadLazyTimeout = null;
+
 const dummyRequest = ({ onSuccess }) => {
   setTimeout(() => {
     onSuccess('ok');
   }, 0);
 };
+
+const { Option } = Select;
 
 export default function ReportModal(props) {
   const { EditRow, isModalVisible, isEditMode } = props;
@@ -37,6 +43,7 @@ export default function ReportModal(props) {
   const [planList, setPlanList] = useState();
   const [selectedPlan, setSelectedPlan] = useState([]);
   const [fileList, setFileList] = useState([]);
+  const [dateValue, setDateValue] = useState();
 
   const defaultFileList =
     EditRow?.file && isEditMode
@@ -80,6 +87,7 @@ export default function ReportModal(props) {
           name: values.name,
           performance: values.performance,
           plan: { id: selectedPlan },
+          date: dateValue,
         };
         if (isEditMode) {
           if (fileList[0]) {
@@ -143,7 +151,30 @@ export default function ReportModal(props) {
       });
   };
 
-  function dateChange(date, dateString) {}
+  function dateChange(date, dateString) {
+    setDateValue(`${dateString}-01`);
+  }
+
+  const options = planList?.map(d => (
+    <Option key={d.id} value={d.id}>
+      <Tooltip placement="topLeft" title={d.name}>
+        {d.name}
+      </Tooltip>
+    </Option>
+  ));
+
+  const handleSearch = value => {
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    loadLazyTimeout = setTimeout(() => {
+      getService(`plan/get?search=name:*${value}*`).then(result => {
+        if (result) {
+          setPlanList(result.content);
+        }
+      });
+    }, 300);
+  };
 
   return (
     <div>
@@ -166,13 +197,13 @@ export default function ReportModal(props) {
             validateMessages={validateMessages}
           >
             <Row gutter={30}>
-              <Col xs={24} md={24} lg={24}>
+              <Col xs={24} md={24} lg={18}>
                 <Form.Item
                   label="Төлөвлөгөөний нэр:"
                   name="name"
                   className="planName"
                 >
-                  {isEditMode ? (
+                  {/* {isEditMode ? (
                     <AutoCompleteSelect
                       defaultValue={EditRow.plan.id}
                       data={planList}
@@ -184,8 +215,51 @@ export default function ReportModal(props) {
                       data={planList}
                       valueField="id"
                       onChange={value => SelectedPlan(value)}
-                    />
+                    />          
+                  )} */}
+                  {isEditMode ? (
+                    <Select
+                      showSearch
+                      style={{ width: '100%' }}
+                      defaultValue={EditRow.plan?.id}
+                      onChange={value => SelectedPlan(value)}
+                      placeholder="Төлөвлөгөөний нэрээр хайх"
+                      size="small"
+                      allowClear
+                      onSearch={handleSearch}
+                      filterOption={false}
+                      defaultActiveFirstOption={false}
+                      notFoundContent={null}
+                    >
+                      {options}
+                    </Select>
+                  ) : (
+                    <Select
+                      showSearch
+                      style={{ width: '100%' }}
+                      onChange={value => SelectedPlan(value)}
+                      placeholder="Төлөвлөгөөний нэрээр хайх"
+                      size="small"
+                      allowClear
+                      onSearch={handleSearch}
+                      filterOption={false}
+                      defaultActiveFirstOption={false}
+                      notFoundContent={null}
+                    >
+                      {options}
+                    </Select>
                   )}
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={24} lg={6}>
+                <Form.Item label="Он, сар:">
+                  <DatePicker
+                    onChange={dateChange}
+                    picker="month"
+                    placeholder="Он, сар сонгох"
+                    locale={locale}
+                    defaultValue={isEditMode ? moment(EditRow.dateFormat) : ''}
+                  />
                 </Form.Item>
               </Col>
               <Col xs={24} md={24} lg={24}>
@@ -193,16 +267,7 @@ export default function ReportModal(props) {
                   <TextArea rows={5} />
                 </Form.Item>
               </Col>
-              <Col xs={24} md={24} lg={6}>
-                <Form.Item label="Он, сар:" name="date">
-                  <DatePicker
-                    onChange={dateChange}
-                    picker="month"
-                    placeholder="Он, сар сонгох"
-                    locale={locale}
-                  />
-                </Form.Item>
-              </Col>
+
               <Col xs={24} md={24} lg={24}>
                 <Upload
                   accept="image/*,.pdf"

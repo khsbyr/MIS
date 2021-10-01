@@ -31,9 +31,7 @@ export default function productiveProjectModal(props) {
   const [criteriaList, setCriteriaList] = useState([]);
   const [criteriaListMulti, setCriteriaListMulti] = useState([]);
   const [, setSelectedOrg] = useState();
-  const [selectedProjectOrg, setSelectedProjectOrg] = useState([]);
   const [valueAddress, setValueAddress] = useState(undefined);
-  const [criteriaIds, setCriteriaIds] = useState([]);
   const [projectOrgs, setProjectOrgs] = useState([]);
   const [innovationProjectType, setInnovationProjectType] = useState();
   const [innovationProjectTypeId, setInnovationProjectTypeId] = useState();
@@ -97,8 +95,8 @@ export default function productiveProjectModal(props) {
         `projectCriteria/getCriteriaListByProjectId/${ProductiveController?.id}`
       ).then(result => {
         if (result) {
-          setCriteriaIds(result.map(z => criteriaIds.push(z.id)));
-          setCriteriaIds([...criteriaIds]);
+          setCriteriaListMulti(result.map(z => criteriaListMulti.push(z.id)));
+          setCriteriaListMulti([...criteriaListMulti]);
         }
       });
       getService(
@@ -117,9 +115,9 @@ export default function productiveProjectModal(props) {
     });
 
     if (isEditMode) {
-      setSelectedProjectOrg(projectOrgs);
+      setProjectOrgs(projectOrgs);
       setValueAddress(ProjectChildrenAddress);
-      setCriteriaListMulti(criteriaIds);
+      setCriteriaListMulti(criteriaListMulti);
       setInnovationProjectTypeId(
         ProductiveController.subProjectType
           ? ProductiveController.subProjectType.id
@@ -135,7 +133,7 @@ export default function productiveProjectModal(props) {
   }, []);
 
   const selectProjectOrg = value => {
-    setSelectedProjectOrg(value);
+    setProjectOrgs(value);
   };
 
   const selectType = value => {
@@ -159,7 +157,7 @@ export default function productiveProjectModal(props) {
           subProjectType:
             type === 1 || type === 2 ? { id: innovationProjectTypeId } : null,
         };
-        values.organizationIds = selectedProjectOrg;
+        values.organizationIds = projectOrgs;
         values.criteriaIds = criteriaListMulti;
         values.soumList = valueAddress;
         if (isEditMode) {
@@ -218,14 +216,27 @@ export default function productiveProjectModal(props) {
                     <Form.Item label="Төсөл хэрэгжүүлэх хугацаа:" name="period">
                       <InputNumber />
                     </Form.Item>
-                    <Form.Item label="Шалгуур үзүүлэлт:">
-                      <MulticompleteSelect
-                        data={criteriaList}
-                        defaultValue={criteriaIds}
-                        valueField="id"
-                        size="medium"
-                        onChange={value => selectCriteriaMulti(value)}
-                      />
+                    <Form.Item
+                      label="Шалгуур үзүүлэлт:"
+                      name="CriteriaID"
+                      valuePropName="option"
+                    >
+                      {isEditMode ? (
+                        <MulticompleteSelect
+                          data={criteriaList}
+                          value={criteriaListMulti}
+                          valueField="id"
+                          size="medium"
+                          onChange={value => selectCriteriaMulti(value)}
+                        />
+                      ) : (
+                        <MulticompleteSelect
+                          data={criteriaList}
+                          valueField="id"
+                          size="medium"
+                          onChange={value => selectCriteriaMulti(value)}
+                        />
+                      )}
                     </Form.Item>
                     <Form.Item label="Төсөв:" name="projectBudget">
                       <CurrencyInput precision="0" suffix=" ₮" />
@@ -307,7 +318,7 @@ export default function productiveProjectModal(props) {
                     >
                       <MulticompleteSelect
                         data={toolsStore.partnerList}
-                        defaultValue={projectOrgs}
+                        value={projectOrgs}
                         valueField="id"
                         size="medium"
                         onChange={value => selectProjectOrg(value)}

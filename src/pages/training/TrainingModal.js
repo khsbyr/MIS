@@ -217,7 +217,7 @@ export default function TrainingModal(props) {
                       {isEditMode ? (
                         <MulticompleteSelect
                           data={stateCriteria}
-                          defaultValue={selectedCriteria}
+                          value={selectedCriteria}
                           valueField="id"
                           size="medium"
                           onChange={value => SelectCriteria(value)}

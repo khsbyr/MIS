@@ -8,20 +8,30 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import {
+  Button,
+  Col,
+  Layout,
+  message,
+  Modal,
+  Row,
+  Tooltip,
+  Select,
+} from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import AutoCompleteSelect from '../../components/Autocomplete';
+import moment from 'moment';
 import { PAGESIZE } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
 import { deleteService, getService } from '../../service/service';
 import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
-import ContentWrapper from '../criteria/criteria.style';
+import ContentWrapper from './more/report.style';
 import ReportModal from './components/reportModal';
 
 const { Content } = Layout;
+const { Option } = Select;
 
 let editRow;
 let isEditMode;
@@ -181,13 +191,16 @@ const Report = () => {
   const nameBodyTemplate = row => (
     <>
       <span className="p-column-title">Төлөвлөгөөний нэр</span>
-      {row.plan.name}
+      <Tooltip placement="topLeft" title={row.plan.name}>
+        {row.plan.name}
+      </Tooltip>
     </>
   );
 
   const firstnameBodyTemplate = row => (
     <>
-      <span className="p-column-title">Төлөвлөгөөний нэр</span>
+      <span className="p-column-title">Гүйцэтгэгч</span>
+
       {row.user.firstname}
     </>
   );
@@ -195,24 +208,18 @@ const Report = () => {
   const indicatorProcessBodyTemplate = row => (
     <>
       <span className="p-column-title">Гүйцэтгэл</span>
-      {row.performance}
+      <Tooltip placement="topLeft" title={row.performance}>
+        {row.performance}
+      </Tooltip>
     </>
   );
 
   const upIndicatorBodyTemplate = row => (
     <>
-      <span className="p-column-title">Үр дүн</span>
-      {row.result}
+      <span className="p-column-title">Он, сар</span>
+      {moment(row && row.dateFormat).format('YYYY-MM')}
     </>
   );
-
-  const processResultBodyTemplate = row => (
-    <>
-      <span className="p-column-title">Биелэлтийн хувь</span>
-      {row.processResult}
-    </>
-  );
-
   const onPage = event => {
     const params = { ...lazyParams, ...event };
     setLazyParams(params);
@@ -228,6 +235,19 @@ const Report = () => {
     setLazyParams(params);
   };
 
+  const handleSearch = value => {
+    if (loadLazyTimeout) {
+      clearTimeout(loadLazyTimeout);
+    }
+    loadLazyTimeout = setTimeout(() => {
+      getService(`plan/get?search=name:*${value}*`).then(result => {
+        if (result) {
+          setPlanList(result.content);
+        }
+      });
+    }, 300);
+  };
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -239,12 +259,29 @@ const Report = () => {
             <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col xs={12} md={12} lg={16}>
-                  <AutoCompleteSelect
+                  <Select
                     valueField="id"
                     data={planList}
-                    placeholder="Төлөвлөгөө сонгох"
+                    size="small"
+                    style={{ width: '100%' }}
+                    placeholder="Төлөвлөгөөний нэрээр хайх"
                     onChange={value => selectPlan(value)}
-                  />
+                    onSearch={handleSearch}
+                    filterOption={false}
+                    defaultActiveFirstOption={false}
+                    notFoundContent={null}
+                    allowClear
+                    showSearch
+                  >
+                    {planList &&
+                      planList.map((z, index) => (
+                        <Option key={index} value={z.id}>
+                          <Tooltip placement="topLeft" title={z.name}>
+                            {z.name}
+                          </Tooltip>
+                        </Option>
+                      ))}
+                  </Select>
                 </Col>
                 <Col xs={8} md={3} lg={2}>
                   <Tooltip title={t('print')} arrowPointAtCenter>
@@ -324,7 +361,7 @@ const Report = () => {
               body={indexBodyTemplate}
             />
             <Column
-              field="name"
+              field="plan.name"
               header="Төлөвлөгөөний нэр"
               body={nameBodyTemplate}
               filter
@@ -333,7 +370,7 @@ const Report = () => {
               filterMatchMode="contains"
             />
             <Column
-              field="firstname"
+              field="user.firstname"
               header="Гүйцэтгэгч"
               body={firstnameBodyTemplate}
               filter
@@ -348,25 +385,16 @@ const Report = () => {
               sortable
               filter
               filterPlaceholder="Хайх"
-              filterMatchMode="equals"
+              filterMatchMode="contains"
             />
             <Column
-              field="result"
-              header="Үр дүн"
+              field="dateFormat"
+              header="Он, сар"
               body={upIndicatorBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
-              filterMatchMode="equals"
-            />
-            <Column
-              field="processResult"
-              header="Биелэлтийн хувь"
-              body={processResultBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-              filterMatchMode="equals"
+              filterMatchMode="startsWith"
             />
             <Column headerStyle={{ width: '8rem' }} body={action} />
           </DataTable>

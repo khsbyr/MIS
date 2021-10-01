@@ -24,7 +24,9 @@ export default function TraningInfo() {
   const { t } = useTranslation();
   const { id } = useParams();
   const { setIsShowLoader } = useToolsStore();
+  const toolsStore = useToolsStore();
   const { setTrainingList } = useTrainingStore();
+
   useEffect(() => {
     setIsShowLoader(true);
     getService(`/training/get/${id}`)
@@ -52,9 +54,13 @@ export default function TraningInfo() {
         <TabPane tab={t('training_program')} key="4">
           <TrainingProgram id={id} />
         </TabPane>
-        <TabPane tab={t('training_budget')} key="8">
-          <Budget id={id} />
-        </TabPane>
+        {toolsStore.user.role?.roleLevel?.id === 3 ? (
+          ''
+        ) : (
+          <TabPane tab={t('training_budget')} key="8">
+            <Budget id={id} />
+          </TabPane>
+        )}
         <TabPane tab={t('attendance_registration')} key="5">
           <Attendance id={id} />
         </TabPane>

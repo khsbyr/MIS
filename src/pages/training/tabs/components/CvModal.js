@@ -24,6 +24,7 @@ import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './cv.styled';
 import CvShowModal from './CvShowModal';
+import { PATTERN_REGISTER } from '../../../../constants/Pattern';
 
 const { Option } = Select;
 const layout = {
@@ -261,6 +262,8 @@ export default function CvModal(props) {
                   rules={[
                     {
                       required: true,
+                      pattern: PATTERN_REGISTER,
+                      message: 'Регистрийн дугаар буруу байна',
                     },
                   ]}
                 >

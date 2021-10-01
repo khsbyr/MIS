@@ -1,4 +1,4 @@
-import { Select } from 'antd';
+import { Select, Tooltip } from 'antd';
 import { React } from 'react';
 
 export default function AutocompleteSelect(props) {
@@ -29,11 +29,18 @@ export default function AutocompleteSelect(props) {
       size={size || 'small'}
       onChange={props.onChange}
       allowClear
+      filterOption={(input, option) =>
+        option.children[0]?.props?.children
+          .toLowerCase()
+          .indexOf(input.toLowerCase()) >= 0
+      }
     >
       {data &&
         data.map((z, index) => (
           <Option key={index} value={valueField ? z[valueField] : z.id}>
-            {type === 2 ? `${z.code}.${z.name}` : z.name}
+            <Tooltip placement="topLeft" title={z.name}>
+              {type === 2 ? `${z.code}.${z.name}` : z.name}
+            </Tooltip>
             {viewField ? z[viewField] : z.fullName}
           </Option>
         ))}

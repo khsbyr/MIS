@@ -86,11 +86,39 @@ export const PlanType = [
   },
 ];
 
+export const PlanType1 = [
+  {
+    id: 0,
+    name: 'Төсөл хэрэгжүүлэгч нэгж',
+  },
+];
+
+export const PlanType2 = [
+  {
+    id: 1,
+    name: 'Залуу малын эмч хөтөлбөр',
+  },
+];
+
 export const OrgType = [
   {
     id: 1,
     name: 'Энгийн байгууллага',
   },
+  {
+    id: 2,
+    name: 'Ажил олгогч',
+  },
+];
+
+export const OrgType1 = [
+  {
+    id: 1,
+    name: 'Энгийн байгууллага',
+  },
+];
+
+export const OrgType2 = [
   {
     id: 2,
     name: 'Ажил олгогч',

@@ -1,17 +1,6 @@
-import { UploadOutlined } from '@ant-design/icons';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Modal,
-  Row,
-  Upload,
-} from 'antd';
+import { Col, Form, Input, InputNumber, message, Modal, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import { useToolsStore } from '../../../context/Tools';
@@ -28,11 +17,11 @@ import ContentWrapper from '../../training/tabs/components/cv.styled';
 import VeterinarianEducation from './veterinarianEducation';
 import VeterinarianExperience from './veterinarianExperience';
 
-const dummyRequest = ({ onSuccess }) => {
-  setTimeout(() => {
-    onSuccess('ok');
-  }, 0);
-};
+// const dummyRequest = ({ onSuccess }) => {
+//   setTimeout(() => {
+//     onSuccess('ok');
+//   }, 0);
+// };
 
 const layout = {
   labelCol: {
@@ -51,25 +40,25 @@ export default function veterinarianProjectModal(props) {
   const [stateBag, setStateBag] = useState([]);
   const loadLazyTimeout = null;
   const [userID, setUserID] = useState();
-  const [fileList, setFileList] = useState([]);
-  const [orgList, setOrgList] = useState();
-  const [selectedOrgId, setSelectedOrgId] = useState();
+  const [fileList] = useState([]);
+  // const [orgList, setOrgList] = useState();
+  // const [selectedOrgId, setSelectedOrgId] = useState();
 
-  const defaultFileList =
-    EditRow?.youngDoctor?.file && isEditMode
-      ? [
-          {
-            uid: '-1',
-            name: EditRow?.youngDoctor?.file?.fileName,
-            status: 'done',
-            url: EditRow?.youngDoctor?.file?.path,
-          },
-        ]
-      : [];
+  // const defaultFileList =
+  //   EditRow?.youngDoctor?.file && isEditMode
+  //     ? [
+  //         {
+  //           uid: '-1',
+  //           name: EditRow?.youngDoctor?.file?.fileName,
+  //           status: 'done',
+  //           url: EditRow?.youngDoctor?.file?.path,
+  //         },
+  //       ]
+  //     : [];
 
-  function handleUpload(info) {
-    setFileList([info.file.originFileObj]);
-  }
+  // function handleUpload(info) {
+  //   setFileList([info.file.originFileObj]);
+  // }
 
   const onInit = () => {
     toolsStore.setIsShowLoader(false);
@@ -79,11 +68,11 @@ export default function veterinarianProjectModal(props) {
   };
   useEffect(() => {
     onInit();
-    getService(`organization/getByType/2`).then(result => {
-      if (result) {
-        setOrgList(result.content || []);
-      }
-    });
+    // getService(`organization/getByType/2`).then(result => {
+    //   if (result) {
+    //     setOrgList(result.content || []);
+    //   }
+    // });
     if (EditRow !== null) {
       getService(`soum/getList/${EditRow.address?.aimag.id}`).then(result => {
         if (result) {
@@ -98,7 +87,7 @@ export default function veterinarianProjectModal(props) {
     }
     if (isEditMode) {
       setUserID(EditRow.id);
-      setSelectedOrgId(EditRow.youngDoctor.organization.id);
+      // setSelectedOrgId(EditRow.youngDoctor.organization.id);
       form.setFieldsValue({
         ...EditRow,
         lastname: EditRow.lastname,
@@ -142,9 +131,9 @@ export default function veterinarianProjectModal(props) {
     getBag(value);
   };
 
-  const selectOrg = value => {
-    setSelectedOrgId(value);
-  };
+  // const selectOrg = value => {
+  //   setSelectedOrgId(value);
+  // };
 
   const save = () => {
     form
@@ -179,7 +168,7 @@ export default function veterinarianProjectModal(props) {
                 values.youngDoctor = {
                   purpose: values.purpose,
                   file: { id: response.data.id },
-                  organization: { id: selectedOrgId },
+                  // organization: { id: selectedOrgId },
                 };
                 putService(`user/update/${EditRow.id}`, values)
                   .then(() => {
@@ -196,7 +185,7 @@ export default function veterinarianProjectModal(props) {
           } else {
             values.youngDoctor = {
               purpose: values.purpose,
-              organization: { id: selectedOrgId },
+              // organization: { id: selectedOrgId },
             };
             putService(`user/update/${EditRow.id}`, values)
               .then(() => {
@@ -235,7 +224,7 @@ export default function veterinarianProjectModal(props) {
               };
               values.youngDoctor = {
                 purpose: values.purpose,
-                organization: { id: selectedOrgId },
+                // organization: { id: selectedOrgId },
                 file: { id: response.data.id },
               };
               postService(`youngDoctor/post`, values)
@@ -276,7 +265,7 @@ export default function veterinarianProjectModal(props) {
           };
           values.youngDoctor = {
             purpose: values.purpose,
-            organization: { id: selectedOrgId },
+            // organization: { id: selectedOrgId },
           };
           postService(`youngDoctor/post`, values)
             .then(() => {
@@ -393,7 +382,7 @@ export default function veterinarianProjectModal(props) {
                     data={stateBag}
                   />
                 </Form.Item>
-                <Form.Item name="OrgID">
+                {/* <Form.Item name="OrgID">
                   <AutoCompleteSelect
                     className="FormItem"
                     placeholder="Байгууллага сонгох"
@@ -401,7 +390,7 @@ export default function veterinarianProjectModal(props) {
                     data={orgList}
                     onChange={value => selectOrg(value)}
                   />
-                </Form.Item>
+                </Form.Item> */}
               </Col>
             </Row>
             <h2 className="title">1. Дэлгэрэнгүй хаяг</h2>
@@ -432,7 +421,7 @@ export default function veterinarianProjectModal(props) {
                 </Form.Item>
               </Col>
             </Row>
-            <h2 className="title">3. Тайлан</h2>
+            {/* <h2 className="title">3. Тайлан</h2>
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Upload
@@ -445,7 +434,7 @@ export default function veterinarianProjectModal(props) {
                   <Button icon={<UploadOutlined />}>Файл хавсаргах</Button>
                 </Upload>
               </Col>
-            </Row>
+            </Row> */}
             {isEditMode ? (
               <Row>
                 <Col xs={24} md={24} lg={24}>

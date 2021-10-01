@@ -17,7 +17,7 @@ function Register() {
   const history = useHistory();
 
   useEffect(() => {
-    getService('/role/getAdmin').then(result => {
+    getService('role/getOrgRoles').then(result => {
       setUserRoles(result);
     });
   }, []);

@@ -1,40 +1,27 @@
-import { PlusOutlined } from '@ant-design/icons';
-import { faCalendarAlt, faPhone } from '@fortawesome/free-solid-svg-icons';
+import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  AutoComplete,
   Col,
-  DatePicker,
   Form,
   Input,
   InputNumber,
   message,
   Modal,
   Row,
-  Upload,
+  Select,
 } from 'antd';
-import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
-import { PATTERN_PHONE, PATTERN_REGISTER } from '../../../constants/Pattern';
 import { useToolsStore } from '../../../context/Tools';
-import {
-  getService,
-  postService,
-  putService,
-  writeFileServer,
-  updateFileServer,
-} from '../../../service/service';
+import { getService, postService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 import ContentWrapper from '../../training/tabs/components/cv.styled';
-import ConsultingShowModal from './ConsultingShowModal';
+import TrainersShowModal from './TrainersShowModal';
+import { PATTERN_REGISTER } from '../../../constants/Pattern';
 
-const dummyRequest = ({ onSuccess }) => {
-  setTimeout(() => {
-    onSuccess('ok');
-  }, 0);
-};
-
+const { Option } = Select;
 const layout = {
   labelCol: {
     span: 20,
@@ -44,48 +31,16 @@ const layout = {
   },
 };
 
-export default function ConsultingPersonModal(props) {
+export default function TrainersModal(props) {
   const { Trainerscontroller, isModalVisible, isEditMode, trainerID } = props;
   const [form] = Form.useForm();
   const toolsStore = useToolsStore();
   const [stateSum, setStateSum] = useState([]);
   const [stateBag, setStateBag] = useState([]);
   const loadLazyTimeout = null;
-  const [userID, setUserID] = useState();
-  const [BirthDatee] = useState();
-  const [personID] = useState();
-  const [fileList, setFileList] = useState([]);
-  const [imageUrl, setImageUrl] = useState();
-
-  function getBase64(img, callback) {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
-  }
-
-  const defaultFileList =
-    Trainerscontroller?.person?.file && isEditMode
-      ? [
-          {
-            uid: '-1',
-            name: Trainerscontroller?.person?.file?.fileName,
-            status: 'done',
-            url: Trainerscontroller?.person?.file?.path,
-          },
-        ]
-      : [];
-
-  function handleUpload(info) {
-    setFileList([info.file.originFileObj]);
-    getBase64(info.file.originFileObj, imageUrll => setImageUrl(imageUrll));
-  }
-
-  const uploadButton = (
-    <div>
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Зураг оруулах</div>
-    </div>
-  );
+  const [, setBirthDatee] = useState();
+  const [, setIsOnchange] = useState(false);
+  const [options, setOptions] = useState([]);
 
   const onInit = () => {
     toolsStore.setIsShowLoader(false);
@@ -97,14 +52,14 @@ export default function ConsultingPersonModal(props) {
   useEffect(() => {
     onInit();
     if (Trainerscontroller !== null) {
-      getService(`soum/getList/${Trainerscontroller?.address?.aimag.id}`).then(
+      getService(`soum/getList/${Trainerscontroller.address.aimag.id}`).then(
         result => {
           if (result) {
             setStateSum(result || []);
           }
         }
       );
-      getService(`bag/getList/${Trainerscontroller?.address?.soum.id}`).then(
+      getService(`bag/getList/${Trainerscontroller.address.soum.id}`).then(
         result => {
           if (result) {
             setStateBag(result || []);
@@ -114,8 +69,6 @@ export default function ConsultingPersonModal(props) {
     }
 
     if (isEditMode) {
-      setImageUrl(Trainerscontroller?.person?.file?.path);
-      setUserID(Trainerscontroller.id);
       form.setFieldsValue({
         ...Trainerscontroller,
         lastname: Trainerscontroller.lastname,
@@ -139,9 +92,47 @@ export default function ConsultingPersonModal(props) {
         BagID: Trainerscontroller.address
           ? Trainerscontroller.address.bag.id
           : '',
+        purpose: Trainerscontroller.trainers.purpose,
+        skill: Trainerscontroller.trainers.skill,
       });
     }
   }, []);
+
+  const selectUser = (value, option) => {
+    setIsOnchange(true);
+    getService(`user/get/${option.key}`, {}).then(result => {
+      if (result) {
+        const selectedUser = result;
+        setBirthDatee(selectedUser.birthDate);
+        getService(`soum/getList/${selectedUser.address?.aimag?.id}`).then(
+          result1 => {
+            if (result1) {
+              setStateSum(result1 || []);
+            }
+          }
+        );
+        getService(`bag/getList/${selectedUser.address?.soum?.id}`).then(
+          result2 => {
+            if (result2) {
+              setStateBag(result2 || []);
+            }
+          }
+        );
+        form.setFieldsValue({
+          ...selectedUser,
+          CountryID: selectedUser.address
+            ? selectedUser.address.country.id
+            : '',
+          AimagID: selectedUser.address ? selectedUser.address.aimag.id : '',
+          SoumID: selectedUser.address ? selectedUser.address.soum.id : '',
+          BagID: selectedUser.address ? selectedUser.address.bag.id : '',
+          AddressDetail: selectedUser.address
+            ? selectedUser.address.addressDetail
+            : '',
+        });
+      }
+    });
+  };
 
   const getSum = aimagId => {
     getService(`soum/getList/${aimagId}`, {}).then(result => {
@@ -171,9 +162,19 @@ export default function ConsultingPersonModal(props) {
     form
       .validateFields()
       .then(values => {
-        if (isEditMode) {
-          values.id = userID;
-          values.address = {
+        values.trainers = {
+          purpose: values.purpose,
+          skill: values.skill,
+        };
+        values.user = {
+          // id: userID,
+          firstname: values.firstname,
+          lastname: values.lastname,
+          register: values.registerNumber,
+          phoneNumber: values.phoneNumber,
+          email: values.email,
+          isTrue: true,
+          address: {
             addressDetail: values.AddressDetail,
             country: {
               id: 107,
@@ -187,109 +188,23 @@ export default function ConsultingPersonModal(props) {
             bag: {
               id: values.BagID,
             },
-          };
-          if (fileList[0]) {
-            const serverApi = Trainerscontroller.person.file
-              ? updateFileServer(
-                  `file/update/${Trainerscontroller.person.file.id}`,
-                  fileList[0]
-                )
-              : writeFileServer(`file/upload`, fileList[0]);
-            serverApi
-              .then(response => {
-                values.person = {
-                  file: { id: response.data.id },
-                };
-                putService(`user/update/${Trainerscontroller.id}`, values)
-                  .then(() => {
-                    message.success('Амжилттай хадгаллаа');
-                    props.close(true);
-                  })
-                  .catch(error => {
-                    errorCatch(error);
-                  });
-              })
-              .catch(error => {
-                errorCatch(error);
-              });
-          } else {
-            putService(`user/update/${Trainerscontroller.id}`, values)
-              .then(() => {
-                message.success('Амжилттай хадгаллаа');
-                props.close(true);
-              })
-              .catch(error => {
-                errorCatch(error);
-              });
-          }
-        } else if (fileList[0]) {
-          writeFileServer(`file/upload`, fileList[0])
-            .then(response => {
-              values.person = {
-                id: personID,
-                file: { id: response.data.id },
-              };
-              values.user = {
-                id: userID,
-                firstname: values.firstname,
-                lastname: values.lastname,
-                register: values.registerNumber,
-                phoneNumber: values.phoneNumber,
-                email: values.email,
-                address: {
-                  addressDetail: values.AddressDetail,
-                  country: {
-                    id: 107,
-                  },
-                  aimag: {
-                    id: values.AimagID,
-                  },
-                  soum: {
-                    id: values.SoumID,
-                  },
-                  bag: {
-                    id: values.BagID,
-                  },
-                },
-              };
-              postService(`person/post`, values)
-                .then(() => {
-                  message.success('Амжилттай хадгаллаа');
-                  props.close(true);
-                })
-                .catch(error => {
-                  errorCatch(error);
-                });
+          },
+        };
+
+        if (isEditMode) {
+          putService(
+            `trainers/update/${Trainerscontroller.trainers.id}`,
+            values
+          )
+            .then(() => {
+              message.success('Амжилттай хадгаллаа');
+              props.close(true);
             })
             .catch(error => {
               errorCatch(error);
             });
         } else {
-          values.person = { id: personID };
-          values.user = {
-            id: userID,
-            firstname: values.firstname,
-            lastname: values.lastname,
-            register: values.registerNumber,
-            phoneNumber: values.phoneNumber,
-            email: values.email,
-            address: {
-              addressDetail: values.AddressDetail,
-              country: {
-                id: 107,
-              },
-              aimag: {
-                id: values.AimagID,
-              },
-              soum: {
-                id: values.SoumID,
-              },
-              bag: {
-                id: values.BagID,
-              },
-            },
-          };
-          postService(`person/post`, values)
+          postService('trainers/post', values)
             .then(() => {
               message.success('Амжилттай хадгаллаа');
               props.close(true);
@@ -304,10 +219,21 @@ export default function ConsultingPersonModal(props) {
       });
   };
 
+  const handleSearch = value => {
+    getService(`user/getAllTrainerUserList?search=register:${value}*`).then(
+      result => {
+        if (result) {
+          setOptions(result.content);
+        }
+      },
+      500
+    );
+  };
+
   return (
     <div>
       <Modal
-        title="Хувь хүн бүртгэх"
+        title="Сургалтын баг бүртгэх"
         okText="Хадгалах"
         cancelText="Буцах"
         width={1200}
@@ -327,27 +253,7 @@ export default function ConsultingPersonModal(props) {
           >
             <h2 className="title">1. Хувь хүний мэдээлэл</h2>
             <Row gutter={[30, 30]}>
-              <Col xs={24} md={24} lg={4}>
-                <Upload
-                  name="avatar"
-                  listType="picture-card"
-                  className="avatar-uploader"
-                  showUploadList={false}
-                  accept="image/*,.pdf"
-                  maxCount={1}
-                  defaultFileList={[...defaultFileList]}
-                  customRequest={dummyRequest}
-                  onChange={handleUpload}
-                >
-                  {imageUrl ? (
-                    <img src={imageUrl} alt="Зураг" style={{ width: '100%' }} />
-                  ) : (
-                    uploadButton
-                  )}
-                </Upload>
-              </Col>
-              <Col xs={24} md={24} lg={2} />
-              <Col xs={24} md={24} lg={9}>
+              <Col xs={24} md={24} lg={12}>
                 <Form.Item
                   name="registerNumber"
                   rules={[
@@ -358,7 +264,20 @@ export default function ConsultingPersonModal(props) {
                     },
                   ]}
                 >
-                  <Input className="FormItem" placeholder="Регистр:" />
+                  <AutoComplete
+                    placeholder="Регистрын дугаар"
+                    onSelect={selectUser}
+                    onSearch={handleSearch}
+                    filterOption={false}
+                    defaultActiveFirstOption={false}
+                    notFoundContent={null}
+                  >
+                    {options.map(value => (
+                      <Option key={value.id} value={value.register}>
+                        {value.register}
+                      </Option>
+                    ))}
+                  </AutoComplete>
                 </Form.Item>
                 <Form.Item name="lastname">
                   <Input className="FormItem" placeholder="Овог:" />
@@ -367,16 +286,7 @@ export default function ConsultingPersonModal(props) {
                 <Form.Item name="firstname">
                   <Input className="FormItem" placeholder="Нэр:" />
                 </Form.Item>
-                <Form.Item
-                  name="phoneNumber"
-                  rules={[
-                    {
-                      required: true,
-                      pattern: PATTERN_PHONE,
-                      message: 'Утасны дугаар буруу байна!',
-                    },
-                  ]}
-                >
+                <Form.Item name="phoneNumber">
                   <InputNumber
                     parser={value => value.substring(0, 12)}
                     type="number"
@@ -390,12 +300,12 @@ export default function ConsultingPersonModal(props) {
                 </Form.Item>
               </Col>
 
-              <Col xs={24} md={24} lg={9}>
+              <Col xs={24} md={24} lg={12}>
                 <Form.Item name="CountryID">
                   <AutoCompleteSelect
                     className="FormItem"
                     placeholder="Улс сонгох"
-                    defaultValue={[107]}
+                    defaultValue={107}
                     valueField="id"
                     data={toolsStore.countryList}
                   />
@@ -426,25 +336,51 @@ export default function ConsultingPersonModal(props) {
                     data={stateBag}
                   />
                 </Form.Item>
-                <Form.Item>
-                  {isEditMode && (
-                    <DatePicker
-                      disabled
-                      prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
-                      placeholder="Төрсөн он, сар, өдөр"
-                      className="FormItem"
-                      defaultValue={
-                        isEditMode
-                          ? Trainerscontroller &&
-                            moment(Trainerscontroller.birthDate).zone(0)
-                          : BirthDatee
-                      }
-                    />
-                  )}
+              </Col>
+            </Row>
+            {/* <h2 className="title">1. Гүйцэтгэх үүрэг</h2>
+            <Row>
+              <Col xs={24} md={24} lg={24}>
+                <Form.Item name="mission">
+                  <Input.TextArea
+                    placeholder="(Гүйцэтгэх үүргээ бичнэ үү)"
+                    style={{
+                      width: '100%',
+                      height: '100px',
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row> */}
+            <h2 className="title">1. Ажлын зорилго</h2>
+            <Row>
+              <Col xs={24} md={24} lg={24}>
+                <Form.Item name="purpose">
+                  <Input.TextArea
+                    placeholder="(Горилж буй ажлын зорилгоо товч бичнэ үү)"
+                    style={{
+                      width: '100%',
+                      height: '100px',
+                    }}
+                  />
                 </Form.Item>
               </Col>
             </Row>
-            <h2 className="title">1. Дэлгэрэнгүй хаяг</h2>
+            <h2 className="title">2. Ур чадвар</h2>
+            <Row>
+              <Col xs={24} md={24} lg={24}>
+                <Form.Item name="skill">
+                  <Input.TextArea
+                    placeholder="(Өөрийн давуу тал, ур чадвараа нэрлэнэ үү)"
+                    style={{
+                      width: '100%',
+                      height: '100px',
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>{' '}
+            <h2 className="title">3. Дэлгэрэнгүй хаяг</h2>
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Form.Item name="AddressDetail">
@@ -459,7 +395,7 @@ export default function ConsultingPersonModal(props) {
               </Col>
             </Row>
             {isEditMode ? (
-              <ConsultingShowModal
+              <TrainersShowModal
                 Trainerscontroller={Trainerscontroller}
                 isModalVisible={isModalVisible}
                 isEditMode={isEditMode}
