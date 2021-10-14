@@ -118,6 +118,12 @@ const Trainers = loadable({
   loader: () => import('../pages/directory/trainers'),
   loading: Loader,
 });
+
+const Tejeel = loadable({
+  loader: () => import('../pages/tejeel/tejeel'),
+  loading: Loader,
+});
+
 const Page = ({ route }) => {
   const PageContent = () => {
     switch (route.code.toLowerCase()) {
@@ -206,6 +212,10 @@ const Page = ({ route }) => {
 
       case 'Trainers'.toLowerCase():
         return <Trainers />;
+
+      case 'Tejeel'.toLowerCase():
+        return <Tejeel />;
+
       default:
         return null;
     }

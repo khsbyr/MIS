@@ -15,7 +15,7 @@ import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import FileUploadModal from './components/fileUploadModal';
-import ContentWrapper from './components/organization.style';
+import ContentWrapper from '../../project/more/file.style';
 
 const { Content } = Layout;
 
@@ -150,14 +150,18 @@ const fileUpload = props => {
   const fileName = row => (
     <>
       <span className="p-column-title">Файлын нэр</span>
-      {row.file.fileName}
+      <Tooltip placement="topLeft" title={row.file.fileName}>
+        {row.file.fileName}
+      </Tooltip>
     </>
   );
 
   const description = row => (
     <>
       <span className="p-column-title">Тайлбар</span>
-      {row.description}
+      <Tooltip placement="topLeft" title={row.description}>
+        {row.description}
+      </Tooltip>
     </>
   );
 

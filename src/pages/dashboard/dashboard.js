@@ -1,14 +1,24 @@
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import React, { useState } from 'react';
+import { Tabs } from 'antd';
 import mapDataMongolia from './mapDataMongolia';
 import DashboardDetail from './more/dashboardDetail';
 import { getService } from '../../service/service';
+import DashboardCriteria from './more/dashboardCriteria';
+import DashboardProject from './more/dashboardProject';
+import ContentWrapper from './more/dashboard.style';
+import { useToolsStore } from '../../context/Tools';
 
 require('highcharts/modules/map')(Highcharts);
 
+const { TabPane } = Tabs;
+
 function dashboard() {
   const [aimagList, setAimagList] = useState();
+  const [statusList, setStatusList] = useState();
+  const tabPosition = 'top';
+  const toolsStore = useToolsStore();
 
   const data = [
     ['mn-da', 9],
@@ -35,7 +45,7 @@ function dashboard() {
     ['mn-sb', 3],
   ];
 
-  const list = aimagList && aimagList.soums;
+  const list = aimagList && aimagList;
 
   const mapOptions = {
     chart: {
@@ -74,24 +84,22 @@ function dashboard() {
       },
     },
 
-    mapNavigation: {
-      enabled: true,
-      buttonOptions: {
-        theme: {
-          r: 8,
-        },
-        verticalAlign: 'top',
-      },
-    },
-
     series: [
       {
         events: {
           click(e) {
-            e.point.zoomTo();
-            getService(`aimag/get/${e.point.value}`).then(result => {
+            // e.point.zoomTo();
+            toolsStore.setIsAimag(true);
+            getService(`training/getSoums/${e.point.value}`).then(result => {
               if (result) {
                 setAimagList(result || []);
+              }
+            });
+            getService(
+              `training/getDashboardInfo?aimagId=${e.point.value}&soumId=0`
+            ).then(result => {
+              if (result) {
+                setStatusList(result);
               }
             });
           },
@@ -103,6 +111,9 @@ function dashboard() {
         data,
         name: 'dasdasd',
         states: {
+          select: {
+            color: 'blue',
+          },
           hover: {
             color: '#BADA55',
           },
@@ -124,17 +135,35 @@ function dashboard() {
   };
 
   return (
-    <div style={{ backgroundColor: '#283047', height: '100%' }}>
-      <HighchartsReact
-        options={mapOptions}
-        constructorType="mapChart"
-        highcharts={Highcharts}
-        containerProps={{
-          style: { height: '100vh' },
-        }}
-      />
-      <DashboardDetail list={list} />
-    </div>
+    <ContentWrapper>
+      <Tabs tabPosition={tabPosition}>
+        <TabPane tab="Сургалт" key="1">
+          <HighchartsReact
+            options={mapOptions}
+            constructorType="mapChart"
+            highcharts={Highcharts}
+            containerProps={{
+              style: { height: '100vh' },
+            }}
+          />
+          <DashboardDetail list={list} status={statusList} />
+        </TabPane>
+        <TabPane tab="Төсөл" key="2">
+          <HighchartsReact
+            options={mapOptions}
+            constructorType="mapChart"
+            highcharts={Highcharts}
+            containerProps={{
+              style: { height: '100vh' },
+            }}
+          />
+          <DashboardProject list={list} />
+        </TabPane>
+        <TabPane tab="Шалгуур үзүүлэлт" key="3">
+          <DashboardCriteria />
+        </TabPane>
+      </Tabs>
+    </ContentWrapper>
   );
 }
 

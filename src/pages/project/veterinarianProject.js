@@ -25,6 +25,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import moment from 'moment';
 import { PAGESIZE } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
@@ -291,6 +292,13 @@ const veterinarianProject = () => {
     </>
   );
 
+  const date = row => (
+    <>
+      <span className="p-column-title">Тайлан илгээсэн огноо</span>
+      {moment(row && row.youngDoctor?.reportDate).format('YYYY-MM')}
+    </>
+  );
+
   const getColor = id => {
     switch (id) {
       case 1:
@@ -309,6 +317,7 @@ const veterinarianProject = () => {
       <span className="p-column-title">Статус</span>
 
       <Select
+        disabled
         defaultValue={
           <Tag color={getColor(row.youngDoctor.youngDoctorStatus.id)}>
             {row.youngDoctor.youngDoctorStatus.status}
@@ -476,11 +485,20 @@ const veterinarianProject = () => {
               filterMatchMode="contains"
             />
             <Column
+              header="Тайлан илгээсэн огноо"
+              field="youngDoctor.reportDate"
+              body={date}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
+            />
+            <Column
               header="Төлөв"
               body={statusBodyTemplate}
               filterPlaceholder="Хайх"
             />
-            <Column headerStyle={{ width: '10rem' }} body={action} />
+            <Column headerStyle={{ width: '8rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <VeterinarianProjectModal

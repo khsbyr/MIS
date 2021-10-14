@@ -14,6 +14,7 @@ import {
   Modal,
   Row,
   Upload,
+  Select,
 } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -34,6 +35,8 @@ import ContentWrapper from './organization.style';
 import { OrgType, OrgType1, OrgType2 } from '../../../../constants/Constant';
 import 'moment/locale/mn';
 import { PATTERN_REGISTER } from '../../../../constants/Pattern';
+
+const { Option } = Select;
 
 const dummyRequest = ({ onSuccess }) => {
   setTimeout(() => {
@@ -57,11 +60,30 @@ export default function OrganizationModal(props) {
   const [stateBag, setStateBag] = useState([]);
   const [responsibleUserID, setResponsibleUserID] = useState(null);
   const [role, setRole] = useState([]);
-  const [, setRoleID] = useState([]);
+  const [RoleID, setRoleID] = useState([]);
   const [foundedDate, setFoundedDate] = useState([]);
   const [fileList, setFileList] = useState([]);
   const [imageUrl, setImageUrl] = useState();
   const [orgTypeId, setOrgTypeId] = useState();
+  const [unSelectedProject, setUnselectedProject] = useState();
+  const [SelectedProjectId, setSelectedProjectId] = useState();
+
+  const dateFormat = 'YYYY-MM-DD';
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Зураг оруулах</div>
+    </div>
+  );
+
+  const orgProjects = Orgcontroller?.organizationProjects?.map(
+    z => z.projectId
+  );
+
+  function SelectedProjects(value) {
+    setSelectedProjectId(value);
+  }
 
   function getBase64(img, callback) {
     const reader = new FileReader();
@@ -108,32 +130,46 @@ export default function OrganizationModal(props) {
         setStateCurrency(result.content || []);
       }
     });
+
+    getService('project/getAllList').then(result => {
+      if (result) {
+        setUnselectedProject(result || []);
+      }
+    });
+
     if (Orgcontroller !== undefined) {
-      getService(
-        `soum/getList/${
-          Orgcontroller.address && Orgcontroller.address.aimag.id
-        }`
-      ).then(result => {
-        if (result) {
-          setStateSum(result || []);
-        }
-      });
-      getService(
-        `bag/getList/${Orgcontroller.address && Orgcontroller.address.soum.id}`
-      ).then(result => {
-        if (result) {
-          setStateBag(result || []);
-        }
-      });
+      if (Orgcontroller.address.aimag) {
+        getService(
+          `soum/getList/${
+            Orgcontroller.address && Orgcontroller.address.aimag.id
+          }`
+        ).then(result => {
+          if (result) {
+            setStateSum(result || []);
+          }
+        });
+      }
+      if (Orgcontroller.address.soum) {
+        getService(
+          `bag/getList/${
+            Orgcontroller.address && Orgcontroller.address.soum.id
+          }`
+        ).then(result => {
+          if (result) {
+            setStateBag(result || []);
+          }
+        });
+      }
     }
     if (isEditMode) {
       setImageUrl(Orgcontroller?.file?.path);
       setOrgTypeId(Orgcontroller?.organizationType?.id);
       setFoundedDate(Orgcontroller?.foundedYear);
+      setSelectedProjectId(orgProjects);
       setResponsibleUserID(
         Orgcontroller?.responsibleUser && Orgcontroller.responsibleUser.id
       );
-      setRoleID(Orgcontroller?.roleId);
+      setRoleID(Orgcontroller?.role?.id);
       form.setFieldsValue({
         ...Orgcontroller,
         foundedYear: Orgcontroller ? Orgcontroller.foundedYear : '',
@@ -142,9 +178,11 @@ export default function OrganizationModal(props) {
         CountryID: Orgcontroller?.address
           ? Orgcontroller?.address.country.id
           : '',
-        AimagID: Orgcontroller?.address ? Orgcontroller?.address.aimag.id : '',
-        SoumID: Orgcontroller?.address ? Orgcontroller?.address.soum.id : '',
-        BagID: Orgcontroller?.address ? Orgcontroller?.address.bag.id : '',
+        AimagID: Orgcontroller?.address
+          ? Orgcontroller?.address?.aimag?.id
+          : '',
+        SoumID: Orgcontroller?.address ? Orgcontroller?.address?.soum?.id : '',
+        BagID: Orgcontroller?.address ? Orgcontroller?.address?.bag?.id : '',
         AddressDetail:
           Orgcontroller?.address && Orgcontroller?.address.addressDetail,
         RespoUserFirstName:
@@ -166,6 +204,7 @@ export default function OrganizationModal(props) {
           Orgcontroller?.responsibleUser &&
           Orgcontroller?.responsibleUser.email,
         OrgType: Orgcontroller?.organizationType?.id,
+        roleId: Orgcontroller?.role?.id,
       });
     }
   }, []);
@@ -210,34 +249,53 @@ export default function OrganizationModal(props) {
     form
       .validateFields()
       .then(values => {
-        values.foundedYear = foundedDate;
-        values.organizationType = { id: orgTypeId };
-        values.bank = { id: values.bankID };
-        values.currency = { id: values.Currency };
-        values.address = {
-          addressDetail: values.AddressDetail,
-          country: {
-            id: 107,
+        values.organization = {
+          name: values.name,
+          registerNumber: values.registerNumber,
+          certificateNumber: values.certificateNumber,
+          accountName: values.accountName,
+          accountNumber: values.accountNumber,
+          directorRegister: values.directorRegister,
+          role: { id: values.roleId },
+          foundedYear: foundedDate,
+          phone: values.phone,
+          email: values.email,
+          web: values.web,
+          organizationType: { id: orgTypeId },
+          bank: { id: values.bankID },
+          currency: { id: values.Currency },
+          address: {
+            addressDetail: values.AddressDetail,
+            country: {
+              id: 107,
+            },
+            aimag: values.AimagID
+              ? {
+                  id: values.AimagID,
+                }
+              : null,
+            soum: values.SoumID
+              ? {
+                  id: values.SoumID,
+                }
+              : null,
+            bag: values.BagID
+              ? {
+                  id: values.BagID,
+                }
+              : null,
           },
-          aimag: {
-            id: values.AimagID,
-          },
-          soum: {
-            id: values.SoumID,
-          },
-          bag: {
-            id: values.BagID,
+          responsibleUser: {
+            id: responsibleUserID,
+            firstname: values.RespoUserFirstName,
+            lastname: values.RespoUserLastName,
+            register: values.RespoUserRegister,
+            position: values.RespoUserPosition,
+            phoneNumber: values.RespoUserPhone,
+            email: values.RespoUserEmail,
           },
         };
-        values.responsibleUser = {
-          id: responsibleUserID,
-          firstname: values.RespoUserFirstName,
-          lastname: values.RespoUserLastName,
-          register: values.RespoUserRegister,
-          position: values.RespoUserPosition,
-          phoneNumber: values.RespoUserPhone,
-          email: values.RespoUserEmail,
-        };
+        values.projectIds = SelectedProjectId;
         if (isEditMode) {
           const url = orgId
             ? `organization/update/${orgId}`
@@ -252,7 +310,7 @@ export default function OrganizationModal(props) {
                 : writeFileServer(`file/upload`, fileList[0]);
             serverApi
               .then(response => {
-                values.file = { id: response.data.id };
+                values.fileId = response.data.id;
                 putService(`${url}`, values)
                   .then(() => {
                     getService('organization/getAll').then(resultOrg => {
@@ -288,7 +346,7 @@ export default function OrganizationModal(props) {
         } else if (fileList[0]) {
           writeFileServer(`file/upload`, fileList[0])
             .then(response => {
-              values.file = { id: response.data.id };
+              values.fileId = response.data.id;
               postService('organization/post', values)
                 .then(() => {
                   message.success('Амжилттай хадгаллаа');
@@ -316,15 +374,6 @@ export default function OrganizationModal(props) {
         errorCatch(info);
       });
   };
-
-  const dateFormat = 'YYYY-MM-DD';
-
-  const uploadButton = (
-    <div>
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Зураг оруулах</div>
-    </div>
-  );
 
   return (
     <div>
@@ -363,7 +412,7 @@ export default function OrganizationModal(props) {
                   onChange={handleUpload}
                 >
                   {imageUrl ? (
-                    <img src={imageUrl} alt="Зураг" style={{ width: '100%' }} />
+                    <img src={imageUrl} style={{ width: '100%' }} />
                   ) : (
                     uploadButton
                   )}
@@ -436,7 +485,7 @@ export default function OrganizationModal(props) {
                         },
                       ]}
                     >
-                      <Input />
+                      <Input placeholder="Улсын бүртгэлийн гэрчилгээний дугаар" />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -554,6 +603,59 @@ export default function OrganizationModal(props) {
                       />
                     </Form.Item>
                   </Col>
+                  {RoleID === 21 &&
+                  toolsStore.user?.role?.roleLevel.id !== 3 ? (
+                    <Col xs={24} md={24} lg={12}>
+                      <Form.Item label="Төсөл:">
+                        {isEditMode ? (
+                          <Select
+                            mode="multiple"
+                            defaultValue={orgProjects}
+                            showSearch
+                            style={{ width: '100%' }}
+                            maxTagCount="responsive"
+                            placeholder="Төсөл сонгох"
+                            filterOption={(input, option) =>
+                              option.children
+                                ?.toLowerCase()
+                                .indexOf(input.toLowerCase()) >= 0
+                            }
+                            onChange={value => SelectedProjects(value)}
+                          >
+                            {unSelectedProject &&
+                              unSelectedProject.map((z, index) => (
+                                <Option key={index} value={z.id}>
+                                  {z.projectName}
+                                </Option>
+                              ))}
+                          </Select>
+                        ) : (
+                          <Select
+                            mode="multiple"
+                            showSearch
+                            style={{ width: '100%' }}
+                            maxTagCount="responsive"
+                            placeholder="Төсөл сонгох"
+                            filterOption={(input, option) =>
+                              option.children
+                                ?.toLowerCase()
+                                .indexOf(input.toLowerCase()) >= 0
+                            }
+                            onChange={value => SelectedProjects(value)}
+                          >
+                            {unSelectedProject &&
+                              unSelectedProject.map((z, index) => (
+                                <Option key={index} value={z.id}>
+                                  {z.projectName}
+                                </Option>
+                              ))}
+                          </Select>
+                        )}
+                      </Form.Item>
+                    </Col>
+                  ) : (
+                    ''
+                  )}
                 </Row>
 
                 <h2 className="title">Холбоо барих мэдээлэл</h2>
@@ -704,27 +806,6 @@ export default function OrganizationModal(props) {
                     </Form.Item>
                   </Col>
                 </Row>
-                {/* <Row>
-                  <Col xs={24} md={24} lg={20}>
-                    <Form.Item label="Танилцуулга оруулах:">
-                      <Upload {...props}>
-                        <Button
-                          icon={<UploadOutlined />}
-                          style={{ height: '40px' }}
-                        >
-                          Танилцуулга оруулах
-                        </Button>
-                      </Upload>
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col xs={24} md={24} lg={20}>
-                    <Form.Item>
-                      <Checkbox>Оруулсан мэдээлэл үнэн болно.</Checkbox>
-                    </Form.Item>
-                  </Col>
-                </Row> */}
               </Col>
             </Row>
           </Form>

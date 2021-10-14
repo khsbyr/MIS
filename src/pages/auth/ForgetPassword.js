@@ -8,6 +8,7 @@ import { postService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import { ToolsContext } from '../../context/Tools';
 import Partner from './components/Partner';
+import Header from '../../layout/header';
 
 const useFormInput = initialValue => {
   const [value, setValue] = useState(initialValue);
@@ -54,53 +55,56 @@ function ForgetPassword() {
   }
 
   return (
-    <Row>
-      <Partner />
-      <Col xs={24} md={24} lg={9} style={{ backgroundColor: '#F8F8F8' }}>
-        <LogIn>
-          <Form
-            name="forget_password"
-            className="forget-password-form"
-            initialValues={{
-              remember: true,
-            }}
-          >
-            <Form.Item>
-              <p className="title">{t('forget_password')}</p>
-            </Form.Item>
-            <Form.Item>
-              <p className="subTitle">{t('email')}</p>
-            </Form.Item>
-            <Form.Item
-              name="email"
-              className="underline"
-              rules={[
-                {
-                  required: true,
-                  message: 'Энэ хэсгийг заавал бөглөнө үү!',
-                },
-              ]}
+    <>
+      <Header />
+      <Row>
+        <Partner />
+        <Col xs={24} md={24} lg={9} style={{ backgroundColor: '#F8F8F8' }}>
+          <LogIn>
+            <Form
+              name="forget_password"
+              className="forget-password-form"
+              initialValues={{
+                remember: true,
+              }}
             >
-              <Input placeholder={t('email')} {...email} bordered={false} />
-            </Form.Item>
-            <Form.Item>
-              <Button
-                type="primary"
-                size="large"
-                className="reset-form-button"
-                onClick={handleForgetPassword}
+              <Form.Item>
+                <p className="title">{t('forget_password')}</p>
+              </Form.Item>
+              <Form.Item>
+                <p className="subTitle">{t('email')}</p>
+              </Form.Item>
+              <Form.Item
+                name="email"
+                className="underline"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Энэ хэсгийг заавал бөглөнө үү!',
+                  },
+                ]}
               >
-                {t('send_password')}
-              </Button>
-            </Form.Item>
+                <Input placeholder={t('email')} {...email} bordered={false} />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  size="large"
+                  className="reset-form-button"
+                  onClick={handleForgetPassword}
+                >
+                  {t('send_password')}
+                </Button>
+              </Form.Item>
 
-            <Form.Item>
-              <p className="copyright">{t('rights_reserved')}</p>
-            </Form.Item>
-          </Form>
-        </LogIn>
-      </Col>
-    </Row>
+              <Form.Item>
+                <p className="copyright">{t('rights_reserved')}</p>
+              </Form.Item>
+            </Form>
+          </LogIn>
+        </Col>
+      </Row>
+    </>
   );
 }
 

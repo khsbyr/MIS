@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 const ContentWrapper = styled.div`
   color: white;
-  margin-top: -30%;
   .title {
     width: 100%;
     height: 11%;
@@ -64,18 +63,6 @@ const ContentWrapper = styled.div`
 
   .ant-select-selection-item {
     color: white !important;
-  }
-
-  .scale {
-    border-color: white;
-    border-width: 2px;
-    font-size: 18px;
-    font-weight: 600;
-    background: none;
-    :hover {
-      background: white;
-      color: black;
-    }
   }
 `;
 

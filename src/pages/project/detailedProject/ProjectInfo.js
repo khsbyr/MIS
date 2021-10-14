@@ -1,11 +1,9 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
-  faFileExcel,
+  faHistory,
   faPen,
   faPlus,
-  faPrint,
   faTrash,
-  faHistory,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -15,23 +13,23 @@ import {
   message,
   Modal,
   Row,
-  Tooltip,
   Select,
-  Tag,
   Table,
+  Tag,
+  Tooltip,
 } from 'antd';
+import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import moment from 'moment';
-import { ToolsContext } from '../../../context/Tools';
-import { getService, putService } from '../../../service/service';
-import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
-import ContentWrapper from './style/ProjectInfo.style';
-import { useProjectStore } from '../../../context/ProjectContext';
-import ProjectInfoModal from './components/ProjectInfoModal';
 import { PAGESIZE } from '../../../constants/Constant';
+import { useProjectStore } from '../../../context/ProjectContext';
+import { ToolsContext, useToolsStore } from '../../../context/Tools';
+import { getService, putService } from '../../../service/service';
+import { convertLazyParamsToObj, errorCatch } from '../../../tools/Tools';
 import DescriptionModal from './components/DescriptionModal';
+import ProjectInfoModal from './components/ProjectInfoModal';
+import ContentWrapper from './style/ProjectInfo.style';
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -56,6 +54,14 @@ const columns = [
     title: 'Шалтгаан',
     dataIndex: 'definition',
     key: 'definition',
+    ellipsis: {
+      showTitle: false,
+    },
+    render: definition => (
+      <Tooltip placement="topLeft" title={definition}>
+        {definition}
+      </Tooltip>
+    ),
   },
 ];
 
@@ -77,6 +83,8 @@ const ProjectInfo = () => {
   const [operationID, setOperationID] = useState();
   const [visible, setVisible] = useState(false);
   const [statusId, setStatusId] = useState();
+  const [generalStatus, setGeneralStatus] = useState();
+  const { setIsShowLoader } = useToolsStore();
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
@@ -104,6 +112,16 @@ const ProjectInfo = () => {
 
   useEffect(() => {
     onInit();
+    getService(`/operation/getGeneralStatus/${ProjectList.id}`)
+      .then(result => {
+        setGeneralStatus(result);
+      })
+      .finally(setIsShowLoader(false))
+      .catch(error => {
+        errorCatch(error);
+        setIsShowLoader(false);
+      });
+
     getService('projectStatus/getByTypeId/2').then(result => {
       if (result) {
         setStatus(result || []);
@@ -205,23 +223,39 @@ const ProjectInfo = () => {
 
   const action = row => (
     <>
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={event => edit(event, row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={event => pop(event, row)}
-      />
-      <Tooltip title="Төлөвийн түүх харах">
+      {toolsStore.user.role.id === 21 ||
+      toolsStore.user.role.id === 19 ||
+      toolsStore.user.role.id === 22 ? (
+        ''
+      ) : (
         <Button
           type="text"
-          icon={<FontAwesomeIcon icon={faHistory} />}
-          onClick={() => info(row)}
+          icon={<FontAwesomeIcon icon={faPen} />}
+          onClick={event => edit(event, row)}
         />
-      </Tooltip>
+      )}
+      {toolsStore.user.role.id === 21 ||
+      toolsStore.user.role.id === 19 ||
+      toolsStore.user.role.id === 22 ? (
+        ''
+      ) : (
+        <Button
+          type="text"
+          icon={<FontAwesomeIcon icon={faTrash} />}
+          onClick={event => pop(event, row)}
+        />
+      )}
+      {toolsStore.user.role.id === 21 || toolsStore.user.role.id === 22 ? (
+        ''
+      ) : (
+        <Tooltip title="Төлөвийн түүх харах">
+          <Button
+            type="text"
+            icon={<FontAwesomeIcon icon={faHistory} />}
+            onClick={() => info(row)}
+          />
+        </Tooltip>
+      )}
     </>
   );
 
@@ -267,14 +301,18 @@ const ProjectInfo = () => {
   const job = row => (
     <>
       <span className="p-column-title">Төлөвлөсөн ажил</span>
-      {row.plannedWork}
+      <Tooltip placement="topLeft" title={row.plannedWork}>
+        {row.plannedWork}
+      </Tooltip>
     </>
   );
 
   const process = row => (
     <>
       <span className="p-column-title">Гүйцэтгэлийн явц</span>
-      {row.performanceProcess}
+      <Tooltip placement="topLeft" title={row.performanceProcess}>
+        {row.performanceProcess}
+      </Tooltip>
     </>
   );
 
@@ -319,22 +357,44 @@ const ProjectInfo = () => {
   const statusBodyTemplate = row => (
     <>
       <span className="p-column-title">Статус</span>
-      <Select
-        defaultValue={
-          <Tag color={getColor(row.projectStatus.id)}>
-            {row.projectStatus.name}
-          </Tag>
-        }
-        onChange={onChangeStatus}
-        onClick={event => selectedStatus(event, row)}
-        style={{ width: '100%' }}
-      >
-        {status?.map(z => (
-          <Option key={z.id}>
-            <Tag color={getColor(z.id)}>{z.name}</Tag>
-          </Option>
-        ))}
-      </Select>
+      {toolsStore.user?.role?.roleLevel?.id === 3 ||
+      toolsStore.user?.role?.roleLevel?.id === 5 ||
+      toolsStore.user.role.id === 22 ? (
+        <Select
+          disabled
+          defaultValue={
+            <Tag color={getColor(row.projectStatus.id)}>
+              {row.projectStatus.name}
+            </Tag>
+          }
+          onChange={onChangeStatus}
+          onClick={event => selectedStatus(event, row)}
+          style={{ width: '100%' }}
+        >
+          {status?.map(z => (
+            <Option key={z.id}>
+              <Tag color={getColor(z.id)}>{z.name}</Tag>
+            </Option>
+          ))}
+        </Select>
+      ) : (
+        <Select
+          defaultValue={
+            <Tag color={getColor(row.projectStatus.id)}>
+              {row.projectStatus.name}
+            </Tag>
+          }
+          onChange={onChangeStatus}
+          onClick={event => selectedStatus(event, row)}
+          style={{ width: '100%' }}
+        >
+          {status?.map(z => (
+            <Option key={z.id}>
+              <Tag color={getColor(z.id)}>{z.name}</Tag>
+            </Option>
+          ))}
+        </Select>
+      )}
     </>
   );
 
@@ -344,41 +404,36 @@ const ProjectInfo = () => {
         <Layout className="btn-layout">
           <Content>
             <Row>
-              <Col xs={24} md={24} lg={24}>
+              <Col xs={24} md={24} lg={10}>
+                <pre
+                  style={{
+                    fontSize: '16px',
+                    color: 'grey',
+                  }}
+                >
+                  Үйл ажиллагааны үр дүн: {generalStatus}
+                </pre>
+              </Col>
+              <Col xs={24} md={24} lg={14}>
                 <Row justify="end" gutter={[16, 16]}>
-                  <Col>
-                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        icon={<FontAwesomeIcon icon={faPrint} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title="Экспорт" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faFileExcel} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title="Нэмэх" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faPlus} />}
-                        onClick={add}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
+                  {toolsStore.user.role.id === 21 ||
+                  toolsStore.user.role.id === 19 ||
+                  toolsStore.user.role.id === 22 ? (
+                    ''
+                  ) : (
+                    <Col>
+                      <Tooltip title="Нэмэх" arrowPointAtCenter>
+                        <Button
+                          type="text"
+                          className="export"
+                          icon={<FontAwesomeIcon icon={faPlus} />}
+                          onClick={add}
+                        >
+                          {' '}
+                        </Button>
+                      </Tooltip>
+                    </Col>
+                  )}
                 </Row>
               </Col>
             </Row>

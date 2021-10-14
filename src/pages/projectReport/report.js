@@ -1,7 +1,9 @@
+/* eslint-disable no-nested-ternary */
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faFilePdf,
+  faHistory,
   faPen,
   faPlus,
   faPrint,
@@ -17,21 +19,56 @@ import {
   Row,
   Tooltip,
   Select,
+  Tag,
+  Table,
 } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
-import { PAGESIZE } from '../../constants/Constant';
+import { PAGESIZE, PlanType } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
-import { deleteService, getService } from '../../service/service';
+import { deleteService, getService, putService } from '../../service/service';
 import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import ContentWrapper from './more/report.style';
 import ReportModal from './components/reportModal';
+import AutocompleteSelect from '../../components/Autocomplete';
+import DescriptionModal from './components/DescriptionModal';
 
 const { Content } = Layout;
 const { Option } = Select;
+const columns = [
+  {
+    title: 'Он, сар',
+    dataIndex: 'createdDate',
+    key: 'createdDate',
+    render: createdDate => moment(createdDate).zone(0).format('YYYY-MM-DD'),
+  },
+  {
+    title: 'Буцаасан ажилтан',
+    dataIndex: ['user', 'firstname'],
+    key: ['user', 'firstname'],
+  },
+  {
+    title: 'Статус',
+    dataIndex: ['planReportStatus', 'status'],
+    key: ['planReportStatus', 'status'],
+  },
+  {
+    title: 'Шалтгаан',
+    dataIndex: 'definition',
+    key: 'definition',
+    ellipsis: {
+      showTitle: false,
+    },
+    render: definition => (
+      <Tooltip placement="topLeft" title={definition}>
+        {definition}
+      </Tooltip>
+    ),
+  },
+];
 
 let editRow;
 let isEditMode;
@@ -49,7 +86,10 @@ const Report = () => {
   });
   const [totalRecords, setTotalRecords] = useState(0);
   const dt = useRef(null);
-  const [planList, setPlanList] = useState();
+  // const [planList, setPlanList] = useState();
+  const [status, setStatus] = useState();
+  const [visible, setVisible] = useState(false);
+  const [reportId, setReportId] = useState();
 
   let loadLazyTimeout = null;
 
@@ -142,17 +182,48 @@ const Report = () => {
     if (isSuccess) onInit();
   };
 
+  const modalClose = () => {
+    setVisible(false);
+  };
+
   useEffect(() => {
     onInit();
-    getService('/plan/get').then(result => {
+    getService('planReportStatus/get').then(result => {
       if (result) {
-        setPlanList(result.content || []);
+        setStatus(result || []);
       }
     });
+    // getService('/plan/get').then(result => {
+    //   if (result) {
+    //     setPlanList(result.content || []);
+    //   }
+    // });
   }, [lazyParams]);
 
-  const selectPlan = value => {
-    onInit(value);
+  // const selectPlan = value => {
+  //   onInit(value);
+  // };
+
+  const info = row => {
+    getService(`planReportStatusHistory/get/${row.id}`).then(result => {
+      if (result) {
+        Modal.info({
+          title: 'Төлөвийн түүх',
+          width: 1200,
+          okText: 'Буцах',
+          content: (
+            <Table
+              columns={columns}
+              dataSource={result}
+              size="small"
+              style={{ marginTop: '30px' }}
+              pagination={false}
+            />
+          ),
+          onOk() {},
+        });
+      }
+    });
   };
 
   const action = row => (
@@ -173,6 +244,17 @@ const Report = () => {
             type="text"
             icon={<FontAwesomeIcon icon={faFilePdf} />}
             onClick={() => openTab(row)}
+          />
+        </Tooltip>
+      ) : (
+        ''
+      )}
+      {row.plan.typeId === 1 ? (
+        <Tooltip title="Төлөвийн түүх харах">
+          <Button
+            type="text"
+            icon={<FontAwesomeIcon icon={faHistory} />}
+            onClick={() => info(row)}
           />
         </Tooltip>
       ) : (
@@ -235,18 +317,114 @@ const Report = () => {
     setLazyParams(params);
   };
 
-  const handleSearch = value => {
+  // const handleSearch = value => {
+  //   if (loadLazyTimeout) {
+  //     clearTimeout(loadLazyTimeout);
+  //   }
+  //   loadLazyTimeout = setTimeout(() => {
+  //     getService(`plan/get?search=name:*${value}*`).then(result => {
+  //       if (result) {
+  //         setPlanList(result.content);
+  //       }
+  //     });
+  //   }, 300);
+  // };
+
+  const selectType = value => {
+    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
     loadLazyTimeout = setTimeout(() => {
-      getService(`plan/get?search=name:*${value}*`).then(result => {
-        if (result) {
-          setPlanList(result.content);
-        }
-      });
-    }, 300);
+      const obj = convertLazyParamsToObj(lazyParams);
+      const url =
+        value === 1
+          ? `planReport/getByTypeId/1`
+          : value === 0
+          ? `planReport/get?search=plan.typeId:0`
+          : `planReport/get`;
+      getService(url, obj)
+        .then(result => {
+          const listResult = result.content || [];
+          setList(listResult);
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+
+          setTotalRecords(result.totalElements);
+          setSelectedRows([]);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
+        });
+    }, 500);
   };
+
+  const onChangeStatus = value => {
+    if (value === '3') {
+      setVisible(true);
+    } else {
+      const datas = {
+        statusId: value,
+        planReportId: reportId,
+      };
+      putService(`planReportStatus/updatePlanReportStatus`, datas)
+        .then(() => {
+          message.success('Амжилттай хадгаллаа');
+        })
+        .catch(error => {
+          errorCatch(error);
+        });
+    }
+  };
+
+  const selectedStatus = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setReportId(row.id);
+  };
+
+  const getColor = id => {
+    switch (id) {
+      case 1:
+        return 'processing';
+      case 2:
+        return 'success';
+      case 3:
+        return 'error';
+      default:
+        return 'processing';
+    }
+  };
+
+  const statusBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Статус</span>
+      {row.plan.typeId === 1 ? (
+        <Select
+          disabled={toolsStore.user.role.id !== 4}
+          defaultValue={
+            <Tag color={getColor(row.planReportStatus.id)}>
+              {row.planReportStatus.status}
+            </Tag>
+          }
+          onChange={onChangeStatus}
+          onClick={event => selectedStatus(event, row)}
+          style={{ width: '100%', background: 'unset' }}
+        >
+          {status?.map(z => (
+            <Option key={z.id}>
+              <Tag color={getColor(z.id)}>{z.status}</Tag>
+            </Option>
+          ))}
+        </Select>
+      ) : (
+        'Тодорхойгүй'
+      )}
+    </>
+  );
 
   return (
     <ContentWrapper>
@@ -258,7 +436,20 @@ const Report = () => {
             </Col>
             <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>
-                <Col xs={12} md={12} lg={16}>
+                {toolsStore?.user?.roleId === 1 ||
+                toolsStore?.user?.roleId === 4 ? (
+                  <Col xs={12} md={12} lg={7}>
+                    <AutocompleteSelect
+                      valueField="id"
+                      data={PlanType}
+                      placeholder="Төрөл сонгох"
+                      onChange={value => selectType(value)}
+                    />
+                  </Col>
+                ) : (
+                  ''
+                )}
+                {/* <Col xs={12} md={12} lg={11}>
                   <Select
                     valueField="id"
                     data={planList}
@@ -282,7 +473,7 @@ const Report = () => {
                         </Option>
                       ))}
                   </Select>
-                </Col>
+                </Col> */}
                 <Col xs={8} md={3} lg={2}>
                   <Tooltip title={t('print')} arrowPointAtCenter>
                     <Button
@@ -396,7 +587,12 @@ const Report = () => {
               filterPlaceholder="Хайх"
               filterMatchMode="startsWith"
             />
-            <Column headerStyle={{ width: '8rem' }} body={action} />
+            <Column
+              header="Төлөв"
+              body={statusBodyTemplate}
+              filterPlaceholder="Хайх"
+            />
+            <Column headerStyle={{ width: '10rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <ReportModal
@@ -404,6 +600,13 @@ const Report = () => {
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
+            />
+          )}
+          {visible && (
+            <DescriptionModal
+              isModalVisible={visible}
+              close={modalClose}
+              planReportId={reportId}
             />
           )}
         </div>

@@ -61,14 +61,17 @@ const productiveProject = props => {
 
   let loadLazyTimeout = null;
 
-  const onInit = () => {
+  const onInit = value => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService(`project/getByProjectTypeId/${props.type}`, obj)
+      const url = value
+        ? `project/getByProjectTypeId/${props.type}?search=organization.id:${value}`
+        : `project/getByProjectTypeId/${props.type}`;
+      getService(url, obj)
         .then(result => {
           const listResult = result.content;
           listResult.forEach((item, index) => {
@@ -117,22 +120,8 @@ const productiveProject = props => {
       });
   };
 
-  const getTraining = orgId => {
-    getService(
-      `project/getByProjectTypeId/${props.type}?search=organization.id:${orgId}`
-    ).then(result => {
-      if (result) {
-        const listResult = result.content || [];
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
-        });
-        setList(listResult);
-      }
-    });
-  };
-
   const selectOrgs = value => {
-    getTraining(value);
+    onInit(value);
   };
 
   const add = () => {
@@ -192,16 +181,28 @@ const productiveProject = props => {
 
   const action = row => (
     <>
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={event => edit(event, row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={event => pop(event, row)}
-      />
+      {toolsStore.user.role.id === 21 ||
+      toolsStore.user.role.id === 19 ||
+      toolsStore.user.role.id === 22 ? (
+        ''
+      ) : (
+        <Button
+          type="text"
+          icon={<FontAwesomeIcon icon={faPen} />}
+          onClick={event => edit(event, row)}
+        />
+      )}
+      {toolsStore.user.role.id === 21 ||
+      toolsStore.user.role.id === 19 ||
+      toolsStore.user.role.id === 22 ? (
+        ''
+      ) : (
+        <Button
+          type="text"
+          icon={<FontAwesomeIcon icon={faTrash} />}
+          onClick={event => pop(event, row)}
+        />
+      )}
     </>
   );
 
@@ -241,7 +242,7 @@ const productiveProject = props => {
   const dateSentBodyTemplate = row => (
     <>
       <span className="p-column-title">Төсөл ирүүлсэн огноо</span>
-      {moment(row.createdDate && row.createdDate).format('YYYY-M-D')}
+      {moment(row.createdDate && row.createdDate).format('YYYY-MM-DD')}
     </>
   );
 
@@ -282,7 +283,9 @@ const productiveProject = props => {
   const statusBodyTemplate = row => (
     <>
       <span className="p-column-title">Статус</span>
+
       <Select
+        disabled
         defaultValue={
           <Tag color={getColor(row.projectStatus.id)}>
             {row.projectStatus.name}
@@ -388,18 +391,24 @@ const productiveProject = props => {
                     </Button>
                   </Tooltip>
                 </Col>
-                <Col xs={6} md={2} lg={2}>
-                  <Tooltip title={t('add')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faPlus} />}
-                      onClick={add}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
+                {toolsStore.user.role.id === 21 ||
+                toolsStore.user.role.id === 19 ||
+                toolsStore.user.role.id === 22 ? (
+                  ''
+                ) : (
+                  <Col xs={6} md={2} lg={2}>
+                    <Tooltip title={t('add')} arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={add}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
+                  </Col>
+                )}
               </Row>
             </Col>
           </Row>
@@ -464,17 +473,29 @@ const productiveProject = props => {
             />
             <Column
               header="Төсөл ирүүлсэн огноо"
-              field="createdDate"
+              field="createdDateFormat"
               sortable
               body={dateSentBodyTemplate}
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="startsWith"
             />
-            <Column header="Төрөл" field="" sortable body={typeBodyTemplate} />
+            <Column
+              header="Төрөл"
+              field="subProjectType.name"
+              body={typeBodyTemplate}
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
+            />
 
             <Column
               field="projectStatus.name"
               header="Статус"
               body={statusBodyTemplate}
-              sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
             />
             <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>
