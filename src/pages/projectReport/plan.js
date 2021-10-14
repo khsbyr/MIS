@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
@@ -8,16 +9,7 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Button,
-  Col,
-  Layout,
-  message,
-  Modal,
-  Row,
-  Tooltip,
-  Select,
-} from 'antd';
+import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -51,7 +43,7 @@ const Plan = () => {
   });
   const [totalRecords, setTotalRecords] = useState(0);
   const dt = useRef(null);
-  const { Option, OptGroup } = Select;
+  // const { Option, OptGroup } = Select;
 
   let loadLazyTimeout = null;
 
@@ -149,9 +141,9 @@ const Plan = () => {
     onInit();
   }, [lazyParams]);
 
-  const selectComposition = value => {
-    onInit(value);
-  };
+  // const selectComposition = value => {
+  //   onInit(value);
+  // };
 
   const selectType = value => {
     toolsStore.setIsShowLoader(true);
@@ -160,7 +152,12 @@ const Plan = () => {
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      const url = value ? `plan/get?search=typeId:${value}` : `plan/get`;
+      const url =
+        value === 1
+          ? `plan/getByTypeId/1`
+          : value === 0
+          ? `plan/get?search=typeId:0`
+          : `plan/get`;
       getService(url, obj)
         .then(result => {
           const listResult = result.content || [];
@@ -219,7 +216,7 @@ const Plan = () => {
   const startDateBodyTemplate = row => (
     <>
       <span className="p-column-title"> Огноо</span>
-      {moment(row && row.startDate).format('YYYY-MM')}
+      {moment(row && row.startDate).format('YYYY')}
     </>
   );
 
@@ -238,6 +235,10 @@ const Plan = () => {
     setLazyParams(params);
   };
 
+  function exportTab() {
+    window.open(`/exportPlan`);
+  }
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -248,8 +249,9 @@ const Plan = () => {
             </Col>
             <Col xs={24} md={18} lg={18}>
               <Row justify="end" gutter={[16, 16]}>
-                {toolsStore?.user?.roleId === 1 ? (
-                  <Col xs={12} md={12} lg={5}>
+                {toolsStore?.user?.roleId === 1 ||
+                toolsStore?.user?.roleId === 4 ? (
+                  <Col xs={12} md={12} lg={6}>
                     <AutoCompleteSelect
                       valueField="id"
                       data={PlanType}
@@ -260,7 +262,7 @@ const Plan = () => {
                 ) : (
                   ''
                 )}
-                <Col xs={12} md={12} lg={11}>
+                {/* <Col xs={12} md={12} lg={11}>
                   <Select
                     placeholder="Шалгуур үзүүлэлтийн бүрэлдэхүүн сонгох"
                     style={{ width: '100%' }}
@@ -268,7 +270,7 @@ const Plan = () => {
                     size="small"
                     allowClear
                   >
-                    <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТҮВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                    <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙНЗОРИЛГЫНТҮВШНИЙШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
                       <Option value={1}>Малын эрүүл мэндийн үйлчилгээ</Option>
                       <Option value={2}>
                         Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
@@ -288,7 +290,7 @@ const Plan = () => {
                       </Option>
                     </OptGroup>
                   </Select>
-                </Col>
+                </Col> */}
                 <Col xs={8} md={3} lg={2}>
                   <Tooltip title={t('print')} arrowPointAtCenter>
                     <Button
@@ -305,6 +307,7 @@ const Plan = () => {
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faFileExcel} />}
+                      onClick={() => exportTab()}
                     >
                       {' '}
                     </Button>
@@ -386,6 +389,7 @@ const Plan = () => {
               filterMatchMode="contains"
             />
             <Column
+              headerStyle={{ width: '15rem' }}
               field="startDateFormat"
               header="Огноо"
               body={startDateBodyTemplate}

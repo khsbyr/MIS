@@ -66,7 +66,7 @@ const Criteria = () => {
       const obj = convertLazyParamsToObj(lazyParams);
       const url = value
         ? `/criteria/getListByCriteriaReferenceId/${value}`
-        : '/criteria/get';
+        : '/criteria/get?stringDate=';
       getService(`${url}`, obj)
         .then(result => {
           if (value) {

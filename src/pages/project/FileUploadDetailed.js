@@ -17,21 +17,20 @@ import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import ContentWrapper from './more/file.style';
-import FileUploadModal from './components/ModalComponent/fileUploadModal';
 import { useProjectStore } from '../../context/ProjectContext';
+import FileUploadDetailedModal from './FileUploadDetailedModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const fileUpload = () => {
+const FileUploadDetailed = props => {
   const loadLazyTimeout = null;
   const { ProjectList } = useProjectStore();
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const PAGESIZE = 20;
-  const [summaryID, setSummaryID] = useState([]);
   const [lazyParams] = useState({
     page: 0,
   });
@@ -40,16 +39,13 @@ const fileUpload = () => {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService(
-      `summaryBallotForm/getBudgetCostEstimatesBySbfId/${ProjectList.summaryBallotForm.id}`
-    )
+    getService(`projectFiles/getByProject/${ProjectList.id}`)
       .then(result => {
         const listResult = result;
         listResult.forEach((item, index) => {
           item.index = lazyParams.page * PAGESIZE + index + 1;
         });
         setList(listResult);
-        setSummaryID(ProjectList.summaryBallotForm.id);
       })
       .finally(toolsStore.setIsShowLoader(false))
       .catch(error => {
@@ -80,7 +76,7 @@ const fileUpload = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`budgetCostEstimates/delete/${row.id}`)
+    putService(`projectFiles/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -125,24 +121,16 @@ const fileUpload = () => {
 
   const action = row => (
     <>
-      {toolsStore.user.role.id === 21 || toolsStore.user.role.id === 19 ? (
-        ''
-      ) : (
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faPen} />}
-          onClick={event => edit(event, row)}
-        />
-      )}
-      {toolsStore.user.role.id === 21 || toolsStore.user.role.id === 19 ? (
-        ''
-      ) : (
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faTrash} />}
-          onClick={event => pop(event, row)}
-        />
-      )}
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={event => edit(event, row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={event => pop(event, row)}
+      />
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faFilePdf} />}
@@ -217,23 +205,18 @@ const fileUpload = () => {
                       </Button>
                     </Tooltip>
                   </Col>
-                  {toolsStore.user.role.id === 21 ||
-                  toolsStore.user.role.id === 19 ? (
-                    ''
-                  ) : (
-                    <Col>
-                      <Tooltip title="Нэмэх" arrowPointAtCenter>
-                        <Button
-                          type="text"
-                          className="export"
-                          icon={<FontAwesomeIcon icon={faPlus} />}
-                          onClick={add}
-                        >
-                          {' '}
-                        </Button>
-                      </Tooltip>
-                    </Col>
-                  )}
+                  <Col>
+                    <Tooltip title="Нэмэх" arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faPlus} />}
+                        onClick={add}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
+                  </Col>
                 </Row>
               </Col>
             </Row>
@@ -257,12 +240,12 @@ const fileUpload = () => {
             <Column headerStyle={{ width: '8rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <FileUploadModal
+            <FileUploadDetailedModal
               EditRow={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              summaryID={summaryID}
+              projectID={props.projectId}
             />
           )}
         </div>
@@ -271,4 +254,4 @@ const fileUpload = () => {
   );
 };
 
-export default fileUpload;
+export default FileUploadDetailed;

@@ -1,66 +1,84 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
-  faFileExcel,
   faFilePdf,
   faPen,
   faPlus,
-  faPrint,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import moment from 'moment';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
-import ContentWrapper from './more/file.style';
-import FileUploadModal from './components/ModalComponent/fileUploadModal';
-import { useProjectStore } from '../../context/ProjectContext';
+import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
+// import ContentWrapper from '../project/more/file.style';
+import ContentWrapper from '../criteria/criteria.style';
+import TejeelModal from './tejeelModal';
 
 const { Content } = Layout;
 
 let editRow;
+let loadLazyTimeout = null;
 let isEditMode;
-const fileUpload = () => {
-  const loadLazyTimeout = null;
-  const { ProjectList } = useProjectStore();
+
+const Tejeel = props => {
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const PAGESIZE = 20;
-  const [summaryID, setSummaryID] = useState([]);
-  const [lazyParams] = useState({
+  const [lazyParams, setLazyParams] = useState({
+    first: 0,
     page: 0,
+    size: PAGESIZE || 20,
   });
+  const [totalRecords, setTotalRecords] = useState(0);
+
   const onInit = () => {
+    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    toolsStore.setIsShowLoader(true);
-    getService(
-      `summaryBallotForm/getBudgetCostEstimatesBySbfId/${ProjectList.summaryBallotForm.id}`
-    )
-      .then(result => {
-        const listResult = result;
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService('tejeel/get', obj)
+        .then(data => {
+          const dataList = data.content || [];
+          dataList.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(data.totalElements);
+          setList(dataList);
+          toolsStore.setIsShowLoader(false);
+        })
+        .catch(error => {
+          message.error(error.toString());
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setSummaryID(ProjectList.summaryBallotForm.id);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
     onInit();
   }, [lazyParams]);
+
+  const onPage = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onSort = event => {
+    const params = { ...lazyParams, ...event };
+    setLazyParams(params);
+  };
+
+  const onFilter = event => {
+    const params = { ...lazyParams, ...event };
+    params.first = 0;
+    setLazyParams(params);
+  };
 
   const add = () => {
     setIsModalVisible(true);
@@ -80,7 +98,7 @@ const fileUpload = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`budgetCostEstimates/delete/${row.id}`)
+    putService(`tejeel/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -125,24 +143,16 @@ const fileUpload = () => {
 
   const action = row => (
     <>
-      {toolsStore.user.role.id === 21 || toolsStore.user.role.id === 19 ? (
-        ''
-      ) : (
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faPen} />}
-          onClick={event => edit(event, row)}
-        />
-      )}
-      {toolsStore.user.role.id === 21 || toolsStore.user.role.id === 19 ? (
-        ''
-      ) : (
-        <Button
-          type="text"
-          icon={<FontAwesomeIcon icon={faTrash} />}
-          onClick={event => pop(event, row)}
-        />
-      )}
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={event => edit(event, row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={event => pop(event, row)}
+      />
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faFilePdf} />}
@@ -172,6 +182,15 @@ const fileUpload = () => {
     </>
   );
 
+  const number = row => (
+    <>
+      <span className="p-column-title">Тоо</span>
+      <Tooltip placement="topLeft" title={row.number}>
+        {row.number}
+      </Tooltip>
+    </>
+  );
+
   const description = row => (
     <>
       <span className="p-column-title">Тайлбар</span>
@@ -191,78 +210,60 @@ const fileUpload = () => {
   return (
     <ContentWrapper>
       <div className="button-demo">
-        <Layout className="btn-layout">
-          <Content>
-            <Row>
-              <Col xs={24} md={24} lg={24}>
-                <Row justify="end" gutter={[16, 16]}>
-                  <Col>
-                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        icon={<FontAwesomeIcon icon={faPrint} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title="Экспорт" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faFileExcel} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  {toolsStore.user.role.id === 21 ||
-                  toolsStore.user.role.id === 19 ? (
-                    ''
-                  ) : (
-                    <Col>
-                      <Tooltip title="Нэмэх" arrowPointAtCenter>
-                        <Button
-                          type="text"
-                          className="export"
-                          icon={<FontAwesomeIcon icon={faPlus} />}
-                          onClick={add}
-                        >
-                          {' '}
-                        </Button>
-                      </Tooltip>
-                    </Col>
-                  )}
-                </Row>
-              </Col>
-            </Row>
-          </Content>
-        </Layout>
+        <Content>
+          <Row>
+            <Col xs={24} md={24} lg={10}>
+              <p className="title">Тэжээл</p>
+            </Col>
+            <Col xs={24} md={18} lg={14}>
+              <Row justify="end" gutter={[16, 16]}>
+                <Col xs={8} md={3} lg={2}>
+                  <Tooltip title="Нэмэх" arrowPointAtCenter>
+                    <Button
+                      type="text"
+                      className="export"
+                      icon={<FontAwesomeIcon icon={faPlus} />}
+                      onClick={add}
+                    >
+                      {' '}
+                    </Button>
+                  </Tooltip>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Content>
         <div className="datatable-responsive-demo">
           <DataTable
             value={list}
             removableSort
             paginator
             emptyMessage="Өгөгдөл олдсонгүй..."
-            rows={10}
             className="p-datatable-responsive-demo"
             dataKey="id"
             onRowClick={openTab1}
+            rows={PAGESIZE}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            onSort={onSort}
+            sortField={lazyParams.sortField}
+            sortOrder={lazyParams.sortOrder}
+            onFilter={onFilter}
           >
             <Column header="№" body={indexBodyTemplate} style={{ width: 40 }} />
             <Column header="Файлын нэр" body={fileName} />
+            <Column header="Тоо" body={number} />
             <Column header="Тайлбар" body={description} />
             <Column header="Огноо" body={date} />
             <Column headerStyle={{ width: '8rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <FileUploadModal
+            <TejeelModal
               EditRow={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              summaryID={summaryID}
+              trainingID={props.id}
             />
           )}
         </div>
@@ -271,4 +272,4 @@ const fileUpload = () => {
   );
 };
 
-export default fileUpload;
+export default Tejeel;

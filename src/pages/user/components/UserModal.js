@@ -225,7 +225,7 @@ export default function UserModal(props) {
             <Col xs={24} md={24} lg={6}>
               <FormItemEmail />
             </Col>
-            {isEditMode && Usercontroller?.role?.roleLevel?.id === 3 ? (
+            {isEditMode && toolsStore.user?.role?.roleLevel?.id === 3 ? (
               <Col xs={24} md={24} lg={6}>
                 <Form.Item
                   size="large"

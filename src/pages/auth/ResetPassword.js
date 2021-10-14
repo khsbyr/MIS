@@ -9,6 +9,7 @@ import { putService } from '../../service/service';
 import { errorCatch } from '../../tools/Tools';
 import { ToolsContext } from '../../context/Tools';
 import Partner from './components/Partner';
+import Header from '../../layout/header';
 
 const useFormInput = initialValue => {
   const [value, setValue] = useState(initialValue);
@@ -63,78 +64,81 @@ function ResetPassword() {
   }
 
   return (
-    <Row>
-      <Partner />
-      <Col xs={24} md={24} lg={9} style={{ backgroundColor: '#F8F8F8' }}>
-        <LogIn>
-          <Form
-            name="forget_password"
-            className="forget-password-form"
-            initialValues={{
-              remember: true,
-            }}
-          >
-            <Form.Item>
-              <p className="title">{t('reset_password')}</p>
-            </Form.Item>
-            <Form.Item>
-              <p className="subTitle">{t('password')}</p>
-            </Form.Item>
-            <Form.Item
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your Password!',
-                },
-              ]}
+    <>
+      <Header />
+      <Row>
+        <Partner />
+        <Col xs={24} md={24} lg={9} style={{ backgroundColor: '#F8F8F8' }}>
+          <LogIn>
+            <Form
+              name="forget_password"
+              className="forget-password-form"
+              initialValues={{
+                remember: true,
+              }}
             >
-              <Input.Password
-                type="password"
-                placeholder="**************"
-                {...password}
-                bordered={false}
-                className="underline"
-              />
-            </Form.Item>
-            <Form.Item>
-              <p className="subTitle">{t('confirm_pass')}</p>
-            </Form.Item>
-            <Form.Item
-              name="confirmPassword"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your Password!',
-                },
-              ]}
-            >
-              <Input
-                type="password"
-                placeholder="**************"
-                {...repeatPassword}
-                bordered={false}
-                className="underline"
-              />
-            </Form.Item>
-            <Form.Item>
-              <Button
-                type="primary"
-                size="large"
-                className="reset-form-button"
-                onClick={handleResetPassword}
+              <Form.Item>
+                <p className="title">{t('reset_password')}</p>
+              </Form.Item>
+              <Form.Item>
+                <p className="subTitle">{t('password')}</p>
+              </Form.Item>
+              <Form.Item
+                name="password"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your Password!',
+                  },
+                ]}
               >
-                {t('reset_password')}
-              </Button>
-            </Form.Item>
+                <Input.Password
+                  type="password"
+                  placeholder="**************"
+                  {...password}
+                  bordered={false}
+                  className="underline"
+                />
+              </Form.Item>
+              <Form.Item>
+                <p className="subTitle">{t('confirm_pass')}</p>
+              </Form.Item>
+              <Form.Item
+                name="confirmPassword"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your Password!',
+                  },
+                ]}
+              >
+                <Input
+                  type="password"
+                  placeholder="**************"
+                  {...repeatPassword}
+                  bordered={false}
+                  className="underline"
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  size="large"
+                  className="reset-form-button"
+                  onClick={handleResetPassword}
+                >
+                  {t('reset_password')}
+                </Button>
+              </Form.Item>
 
-            <Form.Item>
-              <p className="copyright">{t('rights_reserved')}</p>
-            </Form.Item>
-          </Form>
-        </LogIn>
-      </Col>
-    </Row>
+              <Form.Item>
+                <p className="copyright">{t('rights_reserved')}</p>
+              </Form.Item>
+            </Form>
+          </LogIn>
+        </Col>
+      </Row>
+    </>
   );
 }
 

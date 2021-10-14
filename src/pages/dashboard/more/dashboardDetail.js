@@ -1,172 +1,99 @@
-import { Button, Col, Row, Select } from 'antd';
-import { Chart } from 'primereact/chart';
-import React from 'react';
+import { Button, Col, Row } from 'antd';
+import React, { useEffect, useState } from 'react';
 import ContentWrapper from './map.style';
-
-const stackedOptions = {
-  indexAxis: 'y',
-  maintainAspectRatio: false,
-  aspectRatio: 0.9,
-
-  plugins: {
-    tooltips: {
-      mode: 'index',
-      intersect: false,
-    },
-    legend: {
-      display: true,
-    },
-  },
-  scales: {
-    x: {
-      stacked: true,
-      ticks: {
-        color: 'white',
-      },
-      grid: {
-        color: '#ebedef',
-        display: false,
-      },
-    },
-    y: {
-      stacked: true,
-      ticks: {
-        color: 'white',
-      },
-      grid: {
-        color: '#ebedef',
-        display: false,
-      },
-    },
-  },
-};
-
-const stackedData = {
-  labels: [
-    'Залуу мэргэжилтэн (тоо)',
-    'Залуу мэргэжилтэн (тоо) эмэгтэй',
-    'ХХАБ-ын төслийн нэгжийн ажилчид (Эр)',
-    'ХХАБ-ын төслийн нэгжийн ажилчид (Эм)',
-  ],
-  datasets: [
-    {
-      type: 'bar',
-      label: 'Гүйцэтгэл',
-      backgroundColor: '#66BB6A',
-      data: [80, 40, 30, 50],
-    },
-    {
-      type: 'bar',
-      label: '',
-      backgroundColor: '#42A5F5',
-      data: [20, 60, 70, 50],
-    },
-  ],
-};
+import { getService } from '../../../service/service';
+import { useToolsStore } from '../../../context/Tools';
 
 function dashboardDetail(props) {
   const aimagList = props.list;
-  const { Option, OptGroup } = Select;
+  const [list, setList] = useState([]);
+  const toolsStore = useToolsStore();
 
+  useEffect(() => {
+    getService('training/getDashboardInfo?aimagId=0&soumId=0').then(result => {
+      if (result) {
+        toolsStore.setIsAimag(false);
+        setList(result);
+      }
+    });
+  }, []);
+
+  function onClick(value) {
+    toolsStore.setIsAimag(false);
+    getService(
+      `training/getDashboardInfo?aimagId=${value.aimagId}&soumId=${value.id}`
+    ).then(result => {
+      if (result) {
+        setList(result);
+      }
+    });
+  }
+  // 36577a
   return (
     <div>
       <ContentWrapper>
-        <Row style={{ marginTop: '-50%', marginLeft: '10%' }}>
+        <Row style={{ marginTop: '0%', marginLeft: '12%' }}>
           <Col span={24}>
             {aimagList?.map(z => (
               <Button
                 type="primary"
+                className="scale"
                 style={{
                   marginLeft: '10px',
                   marginTop: '20px',
                   width: '200px',
                   height: '60px',
-                  backgroundColor: '#36577a',
-                  borderColor: '#36577a',
+                  // background: 'none',
+                  // borderColor: '#36577a',
                 }}
+                onClick={() => onClick(z)}
               >
                 {z.name}
               </Button>
             ))}
           </Col>
         </Row>
-        <Row justify="space-between" style={{ marginTop: '18%' }}>
+
+        <Row justify="space-between" style={{ marginTop: '5%' }}>
           <Col lg={1} />
-          <Col lg={9}>
+          <Col lg={15}>
             <h1 className="title">Сургалт</h1>
             <Row gutter={20}>
               <Col lg={12}>
                 <div className="body">
-                  Нийт сургалтын тоо <p className="total">24</p>
+                  Нийт сургалтын тоо
+                  <p className="total">
+                    {toolsStore.isAimag
+                      ? props.status?.trainingNumbers
+                      : list.trainingNumbers}
+                  </p>
                 </div>
               </Col>
               <Col lg={12}>
                 <div className="body">
-                  Гүйцэтгэлийн хувь <p className="total">91%</p>
+                  Гүйцэтгэлийн хувь
+                  <p className="total">
+                    {toolsStore.isAimag
+                      ? props.status?.performPercent
+                      : list.performPercent}{' '}
+                    %
+                  </p>
                 </div>
               </Col>
               <Col lg={24}>
                 <div className="body2">
-                  Сургалтанд хамрагдагсдын тоо <p className="total2">128</p>
+                  Сургалтанд хамрагдагсдын тоо
+                  <p className="total2">
+                    {toolsStore.isAimag
+                      ? props.status?.trainingParticipantsNumbers
+                      : list.trainingParticipantsNumbers}
+                  </p>
                 </div>
               </Col>
             </Row>
           </Col>
 
-          <Col lg={9}>
-            <h1 className="title">Төсөл</h1>
-            <Row gutter={20}>
-              <Col lg={12}>
-                <div className="body">
-                  Нийт төслийн тоо <p className="total">24</p>
-                </div>
-              </Col>
-              <Col lg={12}>
-                <div className="body">
-                  Гүйцэтгэлийн хувь <p className="total">91%</p>
-                </div>
-              </Col>
-              <Col lg={24}>
-                <div className="body2">
-                  Төсөлд хамрагдагсдын тоо <p className="total2">128</p>
-                </div>
-              </Col>
-            </Row>
-          </Col>
           <Col lg={1} />
-        </Row>
-        <Row>
-          <Col lg={20}>
-            <div style={{ marginLeft: '12%', width: '50%' }}>
-              <Select
-                placeholder="Шалгуур үзүүлэлтийн бүрэлдэхүүн сонгох"
-                style={{ width: '100%' }}
-                // onChange={value => selectComposition(value)}
-                size="small"
-              >
-                <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТҮВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
-                  <Option value={1}>Малын эрүүл мэндийн үйлчилгээ</Option>
-                  <Option value={2}>
-                    Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг нэмэгдүүлэх
-                  </Option>
-                </OptGroup>
-                <OptGroup label="ДУНД ТҮВШНИЙ ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
-                  <Option value={3}>Малын эрүүл мэндийн үйлчилгээ</Option>
-                  <Option value={4}>
-                    Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг нэмэгдүүлэх
-                  </Option>
-                  <Option value={5}>Төслийн хэрэгжилтийг дэмжлэг</Option>
-                  <Option value={6}>
-                    Болзошгүй онцгой байдлын хариу арга хэмжээний бүрэлдэхүүн
-                    хэсэг
-                  </Option>
-                </OptGroup>
-              </Select>
-            </div>
-            <div style={{ marginLeft: '12%' }}>
-              <Chart type="bar" data={stackedData} options={stackedOptions} />
-            </div>
-          </Col>
         </Row>
       </ContentWrapper>
     </div>

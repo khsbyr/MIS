@@ -1,61 +1,56 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import {
-  faFileExcel,
-  faFilePdf,
-  faPen,
-  faPlus,
-  faPrint,
-  faTrash,
-} from '@fortawesome/free-solid-svg-icons';
+import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import { Button, Col, Layout, message, Modal, Row, Tooltip, Rate } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import moment from 'moment';
-import { ToolsContext } from '../../context/Tools';
-import { getService, putService } from '../../service/service';
-import { errorCatch } from '../../tools/Tools';
-import ContentWrapper from './more/file.style';
-import FileUploadModal from './components/ModalComponent/fileUploadModal';
-import { useProjectStore } from '../../context/ProjectContext';
+import { useProjectStore } from '../../../context/ProjectContext';
+import { ToolsContext } from '../../../context/Tools';
+import { getService, putService } from '../../../service/service';
+import { convertLazyParamsToObj, errorCatch } from '../../../tools/Tools';
+import ContentWrapper from '../more/file.style';
+import RatingModal from './components/RatingModal';
+// import FileUploadDetailedModal from './FileUploadDetailedModal';
 
 const { Content } = Layout;
 
 let editRow;
 let isEditMode;
-const fileUpload = () => {
-  const loadLazyTimeout = null;
+const Rating = props => {
+  let loadLazyTimeout = null;
   const { ProjectList } = useProjectStore();
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [totalRecords, setTotalRecords] = useState(0);
   const PAGESIZE = 20;
-  const [summaryID, setSummaryID] = useState([]);
   const [lazyParams] = useState({
     page: 0,
   });
+
   const onInit = () => {
+    toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
-    toolsStore.setIsShowLoader(true);
-    getService(
-      `summaryBallotForm/getBudgetCostEstimatesBySbfId/${ProjectList.summaryBallotForm.id}`
-    )
-      .then(result => {
-        const listResult = result;
-        listResult.forEach((item, index) => {
-          item.index = lazyParams.page * PAGESIZE + index + 1;
+    loadLazyTimeout = setTimeout(() => {
+      const obj = convertLazyParamsToObj(lazyParams);
+      getService(`rating/getByProjectId/${ProjectList.id}`, obj)
+        .then(result => {
+          const listResult = result || [];
+          listResult.forEach((item, index) => {
+            item.index = lazyParams.page * PAGESIZE + index + 1;
+          });
+          setTotalRecords(result.totalElements);
+          setList(listResult);
+        })
+        .finally(toolsStore.setIsShowLoader(false))
+        .catch(error => {
+          errorCatch(error);
+          toolsStore.setIsShowLoader(false);
         });
-        setList(listResult);
-        setSummaryID(ProjectList.summaryBallotForm.id);
-      })
-      .finally(toolsStore.setIsShowLoader(false))
-      .catch(error => {
-        errorCatch(error);
-        toolsStore.setIsShowLoader(false);
-      });
+    }, 500);
   };
 
   useEffect(() => {
@@ -80,7 +75,7 @@ const fileUpload = () => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`budgetCostEstimates/delete/${row.id}`)
+    putService(`rating/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -115,17 +110,9 @@ const fileUpload = () => {
     }
   };
 
-  function openTab(row) {
-    window.open(`${row.file.path}`);
-  }
-
-  function openTab1(row) {
-    window.open(`${row.data.file.path}`);
-  }
-
   const action = row => (
     <>
-      {toolsStore.user.role.id === 21 || toolsStore.user.role.id === 19 ? (
+      {toolsStore.user.role.id === 21 ? (
         ''
       ) : (
         <Button
@@ -134,7 +121,7 @@ const fileUpload = () => {
           onClick={event => edit(event, row)}
         />
       )}
-      {toolsStore.user.role.id === 21 || toolsStore.user.role.id === 19 ? (
+      {toolsStore.user.role.id === 21 ? (
         ''
       ) : (
         <Button
@@ -143,11 +130,6 @@ const fileUpload = () => {
           onClick={event => pop(event, row)}
         />
       )}
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faFilePdf} />}
-        onClick={() => openTab(row)}
-      />
     </>
   );
 
@@ -165,9 +147,18 @@ const fileUpload = () => {
 
   const fileName = row => (
     <>
-      <span className="p-column-title">Файлын нэр</span>
-      <Tooltip placement="topLeft" title={row.file.fileName}>
-        {row.file.fileName}
+      <span className="p-column-title">Байгууллагийн нэр</span>
+      <Tooltip placement="topLeft" title={row.organization.name}>
+        {row.organization.name}
+      </Tooltip>
+    </>
+  );
+
+  const rating = row => (
+    <>
+      <span className="p-column-title">Үнэлгээ</span>
+      <Tooltip placement="topLeft" title={row.rating}>
+        <Rate disabled defaultValue={row.rating} />
       </Tooltip>
     </>
   );
@@ -181,13 +172,6 @@ const fileUpload = () => {
     </>
   );
 
-  const date = row => (
-    <>
-      <span className="p-column-title">Огноо</span>
-      <>{moment(row && row.createdDate).format('YYYY-M-D')}</>
-    </>
-  );
-
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -197,31 +181,9 @@ const fileUpload = () => {
               <Col xs={24} md={24} lg={24}>
                 <Row justify="end" gutter={[16, 16]}>
                   <Col>
-                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        icon={<FontAwesomeIcon icon={faPrint} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title="Экспорт" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faFileExcel} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  {toolsStore.user.role.id === 21 ||
-                  toolsStore.user.role.id === 19 ? (
-                    ''
-                  ) : (
-                    <Col>
+                    {toolsStore.user.role.id === 21 ? (
+                      ''
+                    ) : (
                       <Tooltip title="Нэмэх" arrowPointAtCenter>
                         <Button
                           type="text"
@@ -232,8 +194,8 @@ const fileUpload = () => {
                           {' '}
                         </Button>
                       </Tooltip>
-                    </Col>
-                  )}
+                    )}
+                  </Col>
                 </Row>
               </Col>
             </Row>
@@ -248,21 +210,21 @@ const fileUpload = () => {
             rows={10}
             className="p-datatable-responsive-demo"
             dataKey="id"
-            onRowClick={openTab1}
+            totalRecords={totalRecords}
           >
             <Column header="№" body={indexBodyTemplate} style={{ width: 40 }} />
-            <Column header="Файлын нэр" body={fileName} />
+            <Column header="Байгууллагийн нэр" body={fileName} />
+            <Column header="Үнэлгээ" body={rating} />
             <Column header="Тайлбар" body={description} />
-            <Column header="Огноо" body={date} />
-            <Column headerStyle={{ width: '8rem' }} body={action} />
+            <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <FileUploadModal
+            <RatingModal
               EditRow={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              summaryID={summaryID}
+              projectID={props.projectId}
             />
           )}
         </div>
@@ -271,4 +233,4 @@ const fileUpload = () => {
   );
 };
 
-export default fileUpload;
+export default Rating;

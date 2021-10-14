@@ -1,13 +1,13 @@
 import { Col, Form, Input, message, Modal, Row } from 'antd';
 import React, { useEffect } from 'react';
-import { postService, putService } from '../../../../service/service';
-import { errorCatch } from '../../../../tools/Tools';
-import validateMessages from '../../../../tools/validateMessage';
+import { postService, putService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import validateMessages from '../../../tools/validateMessage';
 
 const { TextArea } = Input;
 
 export default function DescriptionModal(props) {
-  const { isModalVisible, isEditMode, operationID, statusID, type } = props;
+  const { isModalVisible, isEditMode, planReportId } = props;
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -20,21 +20,17 @@ export default function DescriptionModal(props) {
       .validateFields()
       .then(values => {
         const data = {
-          projectStatus: { id: statusID },
+          planReportStatus: { id: 3 },
+          planReport: { id: planReportId },
           definition: values.description,
-          operation: type === 1 ? { id: operationID } : null,
-          implementationOfSemp: type === 2 ? { id: operationID } : null,
-          externalMonitoring: type === 3 ? { id: operationID } : null,
         };
-        postService('projectStatusHistory/post', data)
+        postService('planReportStatusHistory/post', data)
           .then(() => {
             const datas = {
-              statusId: statusID,
-              operationId: type === 1 ? operationID : null,
-              implementationId: type === 2 ? operationID : null,
-              externalId: type === 3 ? operationID : null,
+              planReportId,
+              statusId: 3,
             };
-            putService(`project/updateStatus`, datas)
+            putService(`planReportStatus/updatePlanReportStatus`, datas)
               .then(() => {
                 message.success('Амжилттай хадгаллаа');
               })
@@ -54,7 +50,7 @@ export default function DescriptionModal(props) {
   return (
     <div>
       <Modal
-        title="Шалтгаанаа оруулна уу!"
+        title="Буцаасан шалтгаанаа оруулна уу!"
         okText="Хадгалах"
         cancelText="Буцах"
         width={600}
