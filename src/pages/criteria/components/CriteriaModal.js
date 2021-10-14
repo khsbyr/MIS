@@ -148,19 +148,6 @@ export default function CriteriaModal(props) {
             </Col>
             <Col xs={16} md={16} lg={8}>
               <Form.Item
-                name="processResult"
-                label={t('Execution of results')}
-                rules={[
-                  {
-                    required: false,
-                  },
-                ]}
-              >
-                <InputNumber style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-            <Col xs={16} md={16} lg={8}>
-              <Form.Item
                 name="frequency"
                 layout="vertical"
                 label={t('Frequency')}
@@ -171,6 +158,25 @@ export default function CriteriaModal(props) {
                   data={criteriaFrequencyData}
                   size="medium"
                 />
+              </Form.Item>
+            </Col>
+            <Col xs={16} md={16} lg={8}>
+              {/* <Form.Item
+                name="processResult"
+                label={t('Execution of results')}
+                rules={[
+                  {
+                    required: false,
+                  },
+                ]}
+              >
+                <InputNumber style={{ width: '100%' }} />
+              </Form.Item> */}
+              <Form.Item
+                label={t('Responsible unit')}
+                name="unitOfResponsibility"
+              >
+                <Input placeholder={t('Responsible unit')} />
               </Form.Item>
             </Col>
           </Row>
@@ -191,14 +197,14 @@ export default function CriteriaModal(props) {
                 <Input placeholder={t('Data collection methodology')} />
               </Form.Item>
             </Col>
-            <Col xs={16} md={16} lg={8}>
+            {/* <Col xs={16} md={16} lg={8}>
               <Form.Item
                 label={t('Responsible unit')}
                 name="unitOfResponsibility"
               >
                 <Input placeholder={t('Responsible unit')} />
               </Form.Item>
-            </Col>
+            </Col> */}
           </Row>
           <Row gutter={24}>
             <Col xs={16} md={16} lg={8}>

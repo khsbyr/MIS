@@ -25,16 +25,20 @@ export default function CriteriaMore() {
         <TabPane tab="Төсөл" key="3">
           <CriteriaProject id={id} />
         </TabPane>
-        <TabPane tab="Тэжээл" key="4">
-          Content 5
-        </TabPane>
         {id === `10` ||
         id === `27` ||
         id === `28` ||
         id === `11` ||
         id === `29` ||
         id === `30` ||
-        id === `33` ? (
+        id === `33` ||
+        id === '1' ||
+        id === '2' ||
+        id === '3' ||
+        id === '4' ||
+        id === '5' ||
+        id === '6' ||
+        id === '20' ? (
           <TabPane tab="Үр дүн" key="5">
             <IndicatorsReport id={id} />
           </TabPane>

@@ -67,8 +67,11 @@ const ContentWrapper = styled.div`
     height: 240px !important;
   }
 
-  .ant-select-selection-overflow {
-    height: 35px;
+  .p-datatable .p-datatable-tbody > tr > td:nth-child(2),
+  td:nth-child(3) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 `;
 

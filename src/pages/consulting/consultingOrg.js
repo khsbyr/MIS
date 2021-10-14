@@ -204,6 +204,13 @@ const ConsultingOrg = () => {
     </>
   );
 
+  const role = row => (
+    <>
+      <span className="p-column-title">Эрх</span>
+      {row.role ? row.role.name : 'Тодорхойгүй'}
+    </>
+  );
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -246,12 +253,7 @@ const ConsultingOrg = () => {
                     </Button>
                   </Tooltip>
                 </Col>
-                {toolsStore.user.roleId === 9 ||
-                toolsStore.user.roleId === 10 ||
-                toolsStore.user.roleId === 11 ||
-                toolsStore.user.roleId === 12 ||
-                toolsStore.user.roleId === 13 ||
-                toolsStore.user.roleId === 14 ? (
+                {toolsStore.user?.role?.roleLevel.id === 3 ? (
                   ''
                 ) : (
                   <Col>
@@ -285,7 +287,6 @@ const ConsultingOrg = () => {
             sortOrder={lazyParams.sortOrder}
             onFilter={onFilter}
             filters={lazyParams.filters}
-            tableStyle={{ minWidth: 1000 }}
             lazy
             paginator
             className="p-datatable-responsive-demo"
@@ -336,6 +337,14 @@ const ConsultingOrg = () => {
               sortable
               header="Дансны дугаар"
               body={accountNumberBodyTemplate}
+            />
+            <Column
+              filterPlaceholder="Хайх"
+              field="role.name"
+              filter
+              sortable
+              header="Эрх"
+              body={role}
             />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>

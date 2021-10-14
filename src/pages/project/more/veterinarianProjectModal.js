@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Col, Form, Input, InputNumber, message, Modal, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../components/Autocomplete';
+import { PATTERN_PHONE, PATTERN_REGISTER } from '../../../constants/Pattern';
 import { useToolsStore } from '../../../context/Tools';
 import {
   getService,
@@ -320,6 +321,8 @@ export default function veterinarianProjectModal(props) {
                   rules={[
                     {
                       required: true,
+                      pattern: PATTERN_REGISTER,
+                      message: 'Регистрийн дугаар буруу байна',
                     },
                   ]}
                 >
@@ -332,7 +335,16 @@ export default function veterinarianProjectModal(props) {
                 <Form.Item name="firstname">
                   <Input className="FormItem" placeholder="Нэр:" />
                 </Form.Item>
-                <Form.Item name="phoneNumber">
+                <Form.Item
+                  name="phoneNumber"
+                  rules={[
+                    { required: true, message: '' },
+                    {
+                      pattern: PATTERN_PHONE,
+                      message: 'Утасны дугаар буруу байна',
+                    },
+                  ]}
+                >
                   <InputNumber
                     parser={value => value.substring(0, 12)}
                     type="number"

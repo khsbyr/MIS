@@ -22,6 +22,7 @@ import PlanMore from '../pages/projectReport/more/PlanMore';
 import OrganizationModal from '../pages/training/tabs/components/OrganizationModal';
 import TrainingContextProvider from '../context/TrainingContext';
 import MakhisMore from '../pages/makhis/more/MakhisMore';
+import Header from './header';
 
 const { Sider, Content } = Layout;
 
@@ -94,6 +95,7 @@ function Admin() {
 
   return (
     <Router history={history}>
+      <Header />
       <Layout>
         <Sider
           className="site-layout-background"

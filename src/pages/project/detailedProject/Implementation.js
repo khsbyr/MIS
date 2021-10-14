@@ -1,12 +1,10 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
-  faFileExcel,
+  faFilePdf,
+  faHistory,
   faPen,
   faPlus,
-  faPrint,
   faTrash,
-  faHistory,
-  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -16,23 +14,23 @@ import {
   message,
   Modal,
   Row,
-  Tooltip,
   Select,
-  Tag,
   Table,
+  Tag,
+  Tooltip,
 } from 'antd';
+import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import moment from 'moment';
+import { PAGESIZE } from '../../../constants/Constant';
+import { useProjectStore } from '../../../context/ProjectContext';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
-import { errorCatch, convertLazyParamsToObj } from '../../../tools/Tools';
-import ContentWrapper from './style/ProjectInfo.style';
-import { useProjectStore } from '../../../context/ProjectContext';
-import { PAGESIZE } from '../../../constants/Constant';
+import { convertLazyParamsToObj, errorCatch } from '../../../tools/Tools';
 import DescriptionModal from './components/DescriptionModal';
 import ImplementationModal from './components/ImplementationModal';
+import ContentWrapper from './style/ProjectInfo.style';
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -57,6 +55,14 @@ const columns = [
     title: 'Шалтгаан',
     dataIndex: 'definition',
     key: 'definition',
+    ellipsis: {
+      showTitle: false,
+    },
+    render: definition => (
+      <Tooltip placement="topLeft" title={definition}>
+        {definition}
+      </Tooltip>
+    ),
   },
 ];
 
@@ -213,24 +219,44 @@ const Implementation = () => {
 
   const action = row => (
     <>
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={event => edit(event, row)}
-      />
-      <Button
-        type="text"
-        icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={event => pop(event, row)}
-      />
-      <Tooltip title="Төлөвийн түүх харах">
+      {toolsStore.user.role.id === 21 ||
+      toolsStore.user.role.id === 19 ||
+      toolsStore.user.role.id === 22 ? (
+        ''
+      ) : (
         <Button
           type="text"
-          icon={<FontAwesomeIcon icon={faHistory} />}
-          onClick={() => info(row)}
+          icon={<FontAwesomeIcon icon={faPen} />}
+          onClick={event => edit(event, row)}
         />
-      </Tooltip>
-      {row.file ? (
+      )}
+      {toolsStore.user.role.id === 21 ||
+      toolsStore.user.role.id === 19 ||
+      toolsStore.user.role.id === 22 ? (
+        ''
+      ) : (
+        <Button
+          type="text"
+          icon={<FontAwesomeIcon icon={faTrash} />}
+          onClick={event => pop(event, row)}
+        />
+      )}
+      {toolsStore.user.role.id === 21 ||
+      toolsStore.user.role.id === 19 ||
+      toolsStore.user.role.id === 22 ? (
+        ''
+      ) : (
+        <Tooltip title="Төлөвийн түүх харах">
+          <Button
+            type="text"
+            icon={<FontAwesomeIcon icon={faHistory} />}
+            onClick={() => info(row)}
+          />
+        </Tooltip>
+      )}
+
+      {(row.file && toolsStore.user.role.id !== 21) ||
+      toolsStore.user.role.id !== 19 ? (
         <Tooltip title="Файл харах">
           <Button
             type="text"
@@ -286,14 +312,18 @@ const Implementation = () => {
   const job = row => (
     <>
       <span className="p-column-title">Төлөвлөсөн үйл ажиллагаа</span>
-      {row.plannedWork}
+      <Tooltip placement="topLeft" title={row.plannedWork}>
+        {row.plannedWork}
+      </Tooltip>
     </>
   );
 
   const description = row => (
     <>
       <span className="p-column-title">Тайлбар</span>
-      {row.description}
+      <Tooltip placement="topLeft" title={row.description}>
+        {row.description}
+      </Tooltip>
     </>
   );
 
@@ -331,22 +361,45 @@ const Implementation = () => {
   const statusBodyTemplate = row => (
     <>
       <span className="p-column-title">Статус</span>
-      <Select
-        defaultValue={
-          <Tag color={getColor(row.projectStatus.id)}>
-            {row.projectStatus.name}
-          </Tag>
-        }
-        onChange={onChangeStatus}
-        onClick={event => selectedStatus(event, row)}
-        style={{ width: '100%' }}
-      >
-        {status?.map(z => (
-          <Option key={z.id}>
-            <Tag color={getColor(z.id)}>{z.name}</Tag>
-          </Option>
-        ))}
-      </Select>
+      {toolsStore.user?.role?.roleLevel?.id === 3 ||
+      toolsStore.user?.role?.roleLevel?.id === 4 ||
+      toolsStore.user?.role?.roleLevel?.id === 5 ||
+      toolsStore.user.role.id === 22 ? (
+        <Select
+          disabled
+          defaultValue={
+            <Tag color={getColor(row.projectStatus.id)}>
+              {row.projectStatus.name}
+            </Tag>
+          }
+          onChange={onChangeStatus}
+          onClick={event => selectedStatus(event, row)}
+          style={{ width: '100%' }}
+        >
+          {status?.map(z => (
+            <Option key={z.id}>
+              <Tag color={getColor(z.id)}>{z.name}</Tag>
+            </Option>
+          ))}
+        </Select>
+      ) : (
+        <Select
+          defaultValue={
+            <Tag color={getColor(row.projectStatus.id)}>
+              {row.projectStatus.name}
+            </Tag>
+          }
+          onChange={onChangeStatus}
+          onClick={event => selectedStatus(event, row)}
+          style={{ width: '100%' }}
+        >
+          {status?.map(z => (
+            <Option key={z.id}>
+              <Tag color={getColor(z.id)}>{z.name}</Tag>
+            </Option>
+          ))}
+        </Select>
+      )}
     </>
   );
 
@@ -358,39 +411,24 @@ const Implementation = () => {
             <Row>
               <Col xs={24} md={24} lg={24}>
                 <Row justify="end" gutter={[16, 16]}>
-                  <Col>
-                    <Tooltip title="Хэвлэх" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        icon={<FontAwesomeIcon icon={faPrint} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title="Экспорт" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faFileExcel} />}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                  <Col>
-                    <Tooltip title="Нэмэх" arrowPointAtCenter>
-                      <Button
-                        type="text"
-                        className="export"
-                        icon={<FontAwesomeIcon icon={faPlus} />}
-                        onClick={add}
-                      >
-                        {' '}
-                      </Button>
-                    </Tooltip>
-                  </Col>
+                  {toolsStore.user.role.id === 21 ||
+                  toolsStore.user.role.id === 19 ||
+                  toolsStore.user.role.id === 22 ? (
+                    ''
+                  ) : (
+                    <Col>
+                      <Tooltip title="Нэмэх" arrowPointAtCenter>
+                        <Button
+                          type="text"
+                          className="export"
+                          icon={<FontAwesomeIcon icon={faPlus} />}
+                          onClick={add}
+                        >
+                          {' '}
+                        </Button>
+                      </Tooltip>
+                    </Col>
+                  )}
                 </Row>
               </Col>
             </Row>

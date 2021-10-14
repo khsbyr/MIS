@@ -12,6 +12,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { UploadOutlined } from '@ant-design/icons';
+import locale from 'antd/es/date-picker/locale/mn_MN';
 import {
   postService,
   putService,
@@ -21,6 +22,7 @@ import {
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from '../style/ProjectInfoModal.style';
+import 'moment/locale/mn';
 
 const { TextArea } = Input;
 
@@ -169,6 +171,7 @@ export default function ImplementationModal(props) {
                 <Form.Item label="Эхлэх хугацаа:">
                   <DatePicker
                     placeholder="Огноо сонгох"
+                    locale={locale}
                     onChange={startDate}
                     defaultValue={
                       isEditMode ? moment(EditRow.startDate).zone(0) : ''
@@ -180,6 +183,7 @@ export default function ImplementationModal(props) {
                 <Form.Item label="Дуусах хугацаа:">
                   <DatePicker
                     placeholder="Огноо сонгох"
+                    locale={locale}
                     onChange={endDate}
                     defaultValue={
                       isEditMode ? moment(EditRow.endDate).zone(0) : ''

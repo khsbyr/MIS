@@ -83,7 +83,7 @@ export default function PlanModal(props) {
   }
 
   function startDate(date, value) {
-    setStartDateValue(`${value}-01`);
+    setStartDateValue(`${value}-01-01`);
   }
 
   const save = () => {
@@ -149,20 +149,36 @@ export default function PlanModal(props) {
             <Row gutter={30}>
               <Col xs={24} md={24} lg={8}>
                 <Form.Item label="Төрөл:">
-                  <AutoCompleteSelect
-                    placeholder="Төрөл сонгох"
-                    defaultValue={EditRow?.typeId}
-                    valueField="id"
-                    data={
-                      toolsStore.user.roleId === 15
-                        ? PlanType2
-                        : toolsStore.user.roleId === 1
-                        ? PlanType
-                        : PlanType1
-                    }
-                    mode="multiple"
-                    onChange={value => SelectedType(value)}
-                  />
+                  {isEditMode ? (
+                    <AutoCompleteSelect
+                      placeholder="Төрөл сонгох"
+                      defaultValue={EditRow?.typeId}
+                      valueField="id"
+                      data={
+                        toolsStore.user.roleId === 15
+                          ? PlanType2
+                          : toolsStore.user.roleId === 1
+                          ? PlanType
+                          : PlanType1
+                      }
+                      mode="multiple"
+                      onChange={value => SelectedType(value)}
+                    />
+                  ) : (
+                    <AutoCompleteSelect
+                      placeholder="Төрөл сонгох"
+                      valueField="id"
+                      data={
+                        toolsStore.user.roleId === 15
+                          ? PlanType2
+                          : toolsStore.user.roleId === 1
+                          ? PlanType
+                          : PlanType1
+                      }
+                      mode="multiple"
+                      onChange={value => SelectedType(value)}
+                    />
+                  )}
                 </Form.Item>
               </Col>
               <Col xs={24} md={24} lg={16}>
@@ -191,172 +207,207 @@ export default function PlanModal(props) {
                 </Form.Item>
               </Col>
 
-              <Col xs={24} md={24} lg={19}>
-                <Form.Item name="TrainerID" label="Бүрэлдэхүүн хэсэг:">
-                  {/* {isEditMode ? (
-                    <AutoCompleteSelect
-                      placeholder="Бүрэлдэхүүн хэсэг сонгох"
-                      defaultValue={EditRow?.criteriaReference?.id}
-                      valueField="id"
-                      data={criteriaReferenceList}
-                      mode="multiple"
-                      onChange={criteriaReference}
-                    />
-                  ) : (
-                    <AutoCompleteSelect
-                      placeholder="Бүрэлдэхүүн хэсэг сонгох"
-                      valueField="id"
-                      data={criteriaReferenceList}
-                      mode="multiple"
-                      onChange={criteriaReference}
-                    />
-                  )} */}
-                  {isEditMode ? (
-                    <Select
-                      placeholder="Шалгуур үзүүлэлтийн бүрэлдэхүүн сонгох"
-                      style={{ width: '100%' }}
-                      onChange={criteriaReference}
-                      size="small"
-                      allowClear
-                      defaultValue={EditRow?.criteriaReference?.id}
-                    >
-                      <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТҮВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
-                        <Option value={1}>
-                          <Tooltip
-                            placement="topLeft"
-                            title="Малын эрүүл мэндийн үйлчилгээ"
-                          >
-                            Малын эрүүл мэндийн үйлчилгээ
-                          </Tooltip>
-                        </Option>
+              {toolsStore.user.role.id !== 15 ? (
+                <Col xs={24} md={24} lg={19}>
+                  <Form.Item name="TrainerID" label="Бүрэлдэхүүн хэсэг:">
+                    {isEditMode ? (
+                      <Select
+                        placeholder="Шалгуур үзүүлэлтийн бүрэлдэхүүн сонгох"
+                        style={{ width: '100%' }}
+                        onChange={criteriaReference}
+                        size="small"
+                        allowClear
+                        defaultValue={EditRow?.criteriaReference?.id}
+                      >
+                        <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТҮВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                          <Option value={1}>
+                            <Tooltip
+                              placement="topLeft"
+                              title="Малын эрүүл мэндийн үйлчилгээ"
+                            >
+                              Малын эрүүл мэндийн үйлчилгээ
+                            </Tooltip>
+                          </Option>
 
-                        <Option value={2}>
-                          <Tooltip
-                            placement="topLeft"
-                            title="Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                          <Option value={2}>
+                            <Tooltip
+                              placement="topLeft"
+                              title="Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
                             нэмэгдүүлэх"
-                          >
-                            Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
-                            нэмэгдүүлэх
-                          </Tooltip>
-                        </Option>
-                      </OptGroup>
-                      <OptGroup label="ДУНД ТҮВШНИЙ ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
-                        <Option value={3}>
-                          <Tooltip
-                            placement="topLeft"
-                            title="Малын эрүүл мэндийн үйлчилгээ"
-                          >
-                            Малын эрүүл мэндийн үйлчилгээ
-                          </Tooltip>
-                        </Option>
-                        <Option value={4}>
-                          <Tooltip
-                            placement="topLeft"
-                            title="Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                            >
+                              Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                              нэмэгдүүлэх
+                            </Tooltip>
+                          </Option>
+                        </OptGroup>
+                        <OptGroup label="ДУНД ТҮВШНИЙ ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                          <Option value={3}>
+                            <Tooltip
+                              placement="topLeft"
+                              title="Малын эрүүл мэндийн үйлчилгээ"
+                            >
+                              Малын эрүүл мэндийн үйлчилгээ
+                            </Tooltip>
+                          </Option>
+                          <Option value={4}>
+                            <Tooltip
+                              placement="topLeft"
+                              title="Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
                             нэмэгдүүлэх"
-                          >
-                            Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
-                            нэмэгдүүлэх
-                          </Tooltip>
-                        </Option>
-                        <Option value={5}>
-                          <Tooltip
-                            placement="topLeft"
-                            title="Төслийн хэрэгжилтийг дэмжлэг"
-                          >
-                            Төслийн хэрэгжилтийг дэмжлэг
-                          </Tooltip>
-                        </Option>
-                        <Option value={6}>
-                          <Tooltip
-                            placement="topLeft"
-                            title="Болзошгүй онцгой байдлын хариу арга хэмжээний
+                            >
+                              Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                              нэмэгдүүлэх
+                            </Tooltip>
+                          </Option>
+                          <Option value={5}>
+                            <Tooltip
+                              placement="topLeft"
+                              title="Төслийн хэрэгжилтийг дэмжлэг"
+                            >
+                              Төслийн хэрэгжилтийг дэмжлэг
+                            </Tooltip>
+                          </Option>
+                          <Option value={6}>
+                            <Tooltip
+                              placement="topLeft"
+                              title="Болзошгүй онцгой байдлын хариу арга хэмжээний
                             бүрэлдэхүүн хэсэг"
-                          >
-                            Болзошгүй онцгой байдлын хариу арга хэмжээний
-                            бүрэлдэхүүн хэсэг
-                          </Tooltip>
-                        </Option>
-                      </OptGroup>
-                    </Select>
-                  ) : (
-                    <Select
-                      placeholder="Шалгуур үзүүлэлтийн бүрэлдэхүүн сонгох"
-                      style={{ width: '100%' }}
-                      onChange={criteriaReference}
-                      size="small"
-                      allowClear
-                    >
-                      <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТҮВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
-                        <Option value={1}>
-                          <Tooltip
-                            placement="topLeft"
-                            title="Малын эрүүл мэндийн үйлчилгээ"
-                          >
-                            Малын эрүүл мэндийн үйлчилгээ
-                          </Tooltip>
-                        </Option>
+                            >
+                              Болзошгүй онцгой байдлын хариу арга хэмжээний
+                              бүрэлдэхүүн хэсэг
+                            </Tooltip>
+                          </Option>
+                        </OptGroup>
+                      </Select>
+                    ) : (
+                      <Select
+                        placeholder="Шалгуур үзүүлэлтийн бүрэлдэхүүн сонгох"
+                        style={{ width: '100%' }}
+                        onChange={criteriaReference}
+                        size="small"
+                        allowClear
+                      >
+                        <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТҮВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                          <Option value={1}>
+                            <Tooltip
+                              placement="topLeft"
+                              title="Малын эрүүл мэндийн үйлчилгээ"
+                            >
+                              Малын эрүүл мэндийн үйлчилгээ
+                            </Tooltip>
+                          </Option>
 
-                        <Option value={2}>
-                          <Tooltip
-                            placement="topLeft"
-                            title="Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                          <Option value={2}>
+                            <Tooltip
+                              placement="topLeft"
+                              title="Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
                           нэмэгдүүлэх"
-                          >
-                            Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
-                            нэмэгдүүлэх
-                          </Tooltip>
-                        </Option>
-                      </OptGroup>
-                      <OptGroup label="ДУНД ТҮВШНИЙ ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
-                        <Option value={3}>
-                          <Tooltip
-                            placement="topLeft"
-                            title="Малын эрүүл мэндийн үйлчилгээ"
-                          >
-                            Малын эрүүл мэндийн үйлчилгээ
-                          </Tooltip>
-                        </Option>
-                        <Option value={4}>
-                          <Tooltip
-                            placement="topLeft"
-                            title="Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                            >
+                              Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                              нэмэгдүүлэх
+                            </Tooltip>
+                          </Option>
+                        </OptGroup>
+                        <OptGroup label="ДУНД ТҮВШНИЙ ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                          <Option value={3}>
+                            <Tooltip
+                              placement="topLeft"
+                              title="Малын эрүүл мэндийн үйлчилгээ"
+                            >
+                              Малын эрүүл мэндийн үйлчилгээ
+                            </Tooltip>
+                          </Option>
+                          <Option value={4}>
+                            <Tooltip
+                              placement="topLeft"
+                              title="Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
                           нэмэгдүүлэх"
-                          >
-                            Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
-                            нэмэгдүүлэх
-                          </Tooltip>
-                        </Option>
-                        <Option value={5}>
-                          <Tooltip
-                            placement="topLeft"
-                            title="Төслийн хэрэгжилтийг дэмжлэг"
-                          >
-                            Төслийн хэрэгжилтийг дэмжлэг
-                          </Tooltip>
-                        </Option>
-                        <Option value={6}>
-                          <Tooltip
-                            placement="topLeft"
-                            title="Болзошгүй онцгой байдлын хариу арга хэмжээний
+                            >
+                              Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
+                              нэмэгдүүлэх
+                            </Tooltip>
+                          </Option>
+                          <Option value={5}>
+                            <Tooltip
+                              placement="topLeft"
+                              title="Төслийн хэрэгжилтийг дэмжлэг"
+                            >
+                              Төслийн хэрэгжилтийг дэмжлэг
+                            </Tooltip>
+                          </Option>
+                          <Option value={6}>
+                            <Tooltip
+                              placement="topLeft"
+                              title="Болзошгүй онцгой байдлын хариу арга хэмжээний
                           бүрэлдэхүүн хэсэг"
-                          >
-                            Болзошгүй онцгой байдлын хариу арга хэмжээний
-                            бүрэлдэхүүн хэсэг
-                          </Tooltip>
-                        </Option>
-                      </OptGroup>
-                    </Select>
-                  )}
-                </Form.Item>
-              </Col>
+                            >
+                              Болзошгүй онцгой байдлын хариу арга хэмжээний
+                              бүрэлдэхүүн хэсэг
+                            </Tooltip>
+                          </Option>
+                        </OptGroup>
+                      </Select>
+                    )}
+                  </Form.Item>
+                </Col>
+              ) : (
+                ''
+              )}
+
+              {toolsStore.user.role.id === 15 ? (
+                <Col xs={24} md={24} lg={19}>
+                  <Form.Item name="TrainerID" label="Бүрэлдэхүүн хэсэг:">
+                    {isEditMode ? (
+                      <Select
+                        placeholder="Шалгуур үзүүлэлтийн бүрэлдэхүүн сонгох"
+                        style={{ width: '100%' }}
+                        onChange={criteriaReference}
+                        size="small"
+                        allowClear
+                        defaultValue={EditRow?.criteriaReference?.id}
+                      >
+                        <OptGroup label="ДУНД ТҮВШНИЙ ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                          <Option value={3}>
+                            <Tooltip
+                              placement="topLeft"
+                              title="Малын эрүүл мэндийн үйлчилгээ"
+                            >
+                              Малын эрүүл мэндийн үйлчилгээ
+                            </Tooltip>
+                          </Option>
+                        </OptGroup>
+                      </Select>
+                    ) : (
+                      <Select
+                        placeholder="Шалгуур үзүүлэлтийн бүрэлдэхүүн сонгох"
+                        style={{ width: '100%' }}
+                        onChange={criteriaReference}
+                        size="small"
+                        allowClear
+                      >
+                        <OptGroup label="ДУНД ТҮВШНИЙ ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
+                          <Option value={3}>
+                            <Tooltip
+                              placement="topLeft"
+                              title="Малын эрүүл мэндийн үйлчилгээ"
+                            >
+                              Малын эрүүл мэндийн үйлчилгээ
+                            </Tooltip>
+                          </Option>
+                        </OptGroup>
+                      </Select>
+                    )}
+                  </Form.Item>
+                </Col>
+              ) : (
+                ''
+              )}
 
               <Col xs={24} md={24} lg={5}>
                 <Form.Item label="Огноо:">
                   <DatePicker
                     placeholder="Огноо сонгох"
-                    picker="month"
+                    picker="year"
                     onChange={startDate}
                     defaultValue={
                       isEditMode ? moment(EditRow.startDateFormat) : ''
@@ -365,16 +416,7 @@ export default function PlanModal(props) {
                   />
                 </Form.Item>
               </Col>
-              {/* <Col xs={24} md={24} lg={5}>
-                <Form.Item label="Дуусах огноо:">
-                  <DatePicker
-                    placeholder="Огноо"
-                    onChange={endDate}
-                    defaultValue={isEditMode ? moment(EditRow.endDate) : ''}
-                    locale={locale}
-                  />
-                </Form.Item>
-              </Col> */}
+
               {toolsStore.user?.role?.id !== 15 ? (
                 <Col xs={24} md={24} lg={24}>
                   <Form.Item

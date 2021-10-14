@@ -8,6 +8,7 @@ import { getService, postService } from '../../service/service';
 import { errorCatch, requireFieldFocus } from '../../tools/Tools';
 import Partner from './components/Partner';
 import { LogIn } from './Login.style';
+import Header from '../../layout/header';
 
 function Register() {
   const { t } = useTranslation();
@@ -55,136 +56,139 @@ function Register() {
     }
   };
   return (
-    <Row>
-      <Partner />
-      <Col xs={24} md={24} lg={9} style={{ backgroundColor: '#F8F8F8' }}>
-        <LogIn>
-          <Form
-            name="normal_login"
-            className="login-form"
-            initialValues={{
-              remember: true,
-            }}
-            onFinish={requestNewUser}
-            onFinishFailed={requireFieldFocus}
-          >
-            <Form.Item>
-              <p className="title">{t('register_system')}</p>
-            </Form.Item>
-            <Form.Item>
-              <p className="subTitle">{t('email')}</p>
-            </Form.Item>
-            <Form.Item
-              name="email"
-              className="underline"
-              rules={[
-                {
-                  type: 'email',
-                  message: 'И-мэйл буруу байна!',
-                },
-                {
-                  required: true,
-                  message: 'Энэ хэсгийг заавал бөглөнө үү!',
-                },
-              ]}
+    <>
+      <Header />
+      <Row>
+        <Partner />
+        <Col xs={24} md={24} lg={9} style={{ backgroundColor: '#F8F8F8' }}>
+          <LogIn>
+            <Form
+              name="normal_login"
+              className="login-form"
+              initialValues={{
+                remember: true,
+              }}
+              onFinish={requestNewUser}
+              onFinishFailed={requireFieldFocus}
             >
-              <Input placeholder={t('email')} bordered={false} />
-            </Form.Item>
-            <Form.Item>
-              <p className="subTitle">{t('username')}</p>
-            </Form.Item>
-            <Form.Item
-              name="username"
-              className="underline"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your Username!',
-                },
-              ]}
-            >
-              <Input placeholder={t('username')} bordered={false} />
-            </Form.Item>
-            <Form.Item>
-              <p className="subTitle">{t('user_role')}</p>
-            </Form.Item>
-            <Form.Item name="code" className="underline">
-              <Select
-                placeholder={t('user_role')}
-                style={{ width: '100%' }}
-                bordered={false}
-                allowClear
-              >
-                {userRoles &&
-                  userRoles.map((userRole, index) => (
-                    <Option key={index} value={userRole.id}>
-                      {userRole.name}
-                    </Option>
-                  ))}
-              </Select>
-            </Form.Item>
-            <Form.Item>
-              <p className="subTitle">{t('password')}</p>
-            </Form.Item>
-            <Form.Item
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your Password!',
-                },
-              ]}
-            >
-              <Input.Password
-                type="password"
-                placeholder="**************"
-                bordered={false}
+              <Form.Item>
+                <p className="title">{t('register_system')}</p>
+              </Form.Item>
+              <Form.Item>
+                <p className="subTitle">{t('email')}</p>
+              </Form.Item>
+              <Form.Item
+                name="email"
                 className="underline"
-              />
-            </Form.Item>
-            <Form.Item>
-              <p className="subTitle">{t('confirm_pass')}</p>
-            </Form.Item>
-            <Form.Item
-              name="confirmPassword"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your Password!',
-                },
-              ]}
-            >
-              <Input
-                type="password"
-                placeholder="**************"
-                bordered={false}
+                rules={[
+                  {
+                    type: 'email',
+                    message: 'И-мэйл буруу байна!',
+                  },
+                  {
+                    required: true,
+                    message: 'Энэ хэсгийг заавал бөглөнө үү!',
+                  },
+                ]}
+              >
+                <Input placeholder={t('email')} bordered={false} />
+              </Form.Item>
+              <Form.Item>
+                <p className="subTitle">{t('username')}</p>
+              </Form.Item>
+              <Form.Item
+                name="username"
                 className="underline"
-              />
-            </Form.Item>
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="login-form-button"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your Username!',
+                  },
+                ]}
               >
-                {t('register')}
-              </Button>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="login-form-button"
-                onClick={Login}
+                <Input placeholder={t('username')} bordered={false} />
+              </Form.Item>
+              <Form.Item>
+                <p className="subTitle">{t('user_role')}</p>
+              </Form.Item>
+              <Form.Item name="code" className="underline">
+                <Select
+                  placeholder={t('user_role')}
+                  style={{ width: '100%' }}
+                  bordered={false}
+                  allowClear
+                >
+                  {userRoles &&
+                    userRoles.map((userRole, index) => (
+                      <Option key={index} value={userRole.id}>
+                        {userRole.name}
+                      </Option>
+                    ))}
+                </Select>
+              </Form.Item>
+              <Form.Item>
+                <p className="subTitle">{t('password')}</p>
+              </Form.Item>
+              <Form.Item
+                name="password"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your Password!',
+                  },
+                ]}
               >
-                {t('login')}
-              </Button>
-            </Form.Item>
-            <Form.Item>
-              <p className="copyright">{t('rights_reserved')}</p>
-            </Form.Item>
-          </Form>
-        </LogIn>
-      </Col>
-    </Row>
+                <Input.Password
+                  type="password"
+                  placeholder="**************"
+                  bordered={false}
+                  className="underline"
+                />
+              </Form.Item>
+              <Form.Item>
+                <p className="subTitle">{t('confirm_pass')}</p>
+              </Form.Item>
+              <Form.Item
+                name="confirmPassword"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your Password!',
+                  },
+                ]}
+              >
+                <Input
+                  type="password"
+                  placeholder="**************"
+                  bordered={false}
+                  className="underline"
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="login-form-button"
+                >
+                  {t('register')}
+                </Button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="login-form-button"
+                  onClick={Login}
+                >
+                  {t('login')}
+                </Button>
+              </Form.Item>
+              <Form.Item>
+                <p className="copyright">{t('rights_reserved')}</p>
+              </Form.Item>
+            </Form>
+          </LogIn>
+        </Col>
+      </Row>
+    </>
   );
 }
 

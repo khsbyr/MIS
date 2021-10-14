@@ -80,11 +80,17 @@ export default function productiveProjectModal(props) {
   };
 
   useEffect(() => {
-    getService('criteria/getListByForWhatId/2').then(result => {
-      if (result) {
-        setCriteriaList(result || []);
-      }
-    });
+    type === 1
+      ? getService('criteria/getForProject').then(result => {
+          if (result) {
+            setCriteriaList(result || []);
+          }
+        })
+      : getService('criteria/getForProjectTwo').then(result => {
+          if (result) {
+            setCriteriaList(result || []);
+          }
+        });
     getService(`subProjectType/getByProjectTypeId/${type}`).then(result => {
       if (result) {
         setInnovationProjectType(result || []);
