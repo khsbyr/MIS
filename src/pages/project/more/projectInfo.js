@@ -144,7 +144,7 @@ export default function projectInfo() {
               <ProjectInfo />
             </TabPane>
             <TabPane
-              tab="Байгаль орчин нийгмийн менежментийн төлөвлөгөөний биелэлт"
+              tab="Байгаль орчин нийгмийн менежментийн төлөвлөгөө"
               key="9"
             >
               <Implementation />
