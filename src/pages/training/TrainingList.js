@@ -89,12 +89,12 @@ const TrainingList = () => {
         setParticipantsList(result || []);
       }
     });
-    getService(`participants/get?search=gender.id:2`).then(result => {
+    getService(`participants/get?search=gender.id:1`).then(result => {
       if (result) {
         setParticipantsListM(result || []);
       }
     });
-    getService(`participants/get?search=gender.id:1`).then(result => {
+    getService(`participants/get?search=gender.id:2`).then(result => {
       if (result) {
         setParticipantsListF(result || []);
       }

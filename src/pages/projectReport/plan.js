@@ -55,7 +55,7 @@ const Plan = () => {
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
       const url = value
-        ? `plan/get?search=criteriaReference.id:${value}`
+        ? `plan/get?search=subCriteriaReference.id:${value}`
         : `plan/get`;
       getService(`${url}`, obj)
         .then(result => {
@@ -75,6 +75,7 @@ const Plan = () => {
         });
     }, 500);
   };
+
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
@@ -208,8 +209,8 @@ const Plan = () => {
 
   const indicatorProcessBodyTemplate = row => (
     <>
-      <span className="p-column-title">Бүрэлдэхүүн хэсэг</span>
-      {row.criteriaReference.name}
+      <span className="p-column-title">Дэд бүрэлдэхүүн хэсэг</span>
+      {row.subCriteriaReference.name}
     </>
   );
 
@@ -380,7 +381,7 @@ const Plan = () => {
               filterMatchMode="contains"
             />
             <Column
-              field="criteriaReference.name"
+              field="subCriteriaReference.criteriaReference.name"
               header="Бүрэлдэхүүн хэсэг"
               body={indicatorProcessBodyTemplate}
               sortable
