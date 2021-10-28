@@ -1,38 +1,37 @@
-import React, { useEffect, useState, useContext, useRef } from 'react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
-  faFilePdf,
   faPen,
   faPlus,
-  faPrint,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
   Col,
+  DatePicker,
   Layout,
   message,
   Modal,
   Row,
-  Tooltip,
   Select,
+  Tooltip,
 } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { useHistory } from 'react-router-dom';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
+import { PAGESIZE } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
 import {
+  convertLazyParamsToObj,
   errorCatch,
   formatIndicator,
-  convertLazyParamsToObj,
 } from '../../tools/Tools';
 import CriteriaModal from './components/CriteriaModal';
 import ContentWrapper from './criteria.style';
-import { PAGESIZE } from '../../constants/Constant';
 
 const { Content } = Layout;
 const { Option, OptGroup } = Select;
@@ -196,7 +195,7 @@ const Criteria = () => {
   const nameBodyTemplate = row => (
     <>
       <span className="p-column-title">Шалгуур үзүүлэлтийн нэр</span>
-      {row.name}
+      {toolsStore.isLangChange ? row.englishName : row.name}
     </>
   );
 
@@ -229,6 +228,18 @@ const Criteria = () => {
     setLazyParams(params);
   };
 
+  function selectedQ(date, dateString) {
+    getService(`/criteria/get?stringDate=${dateString}`).then(result => {
+      if (result) {
+        setList(result.content || []);
+      }
+    });
+  }
+
+  function exportTab() {
+    window.open(`/exportIndicators`);
+  }
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -239,7 +250,7 @@ const Criteria = () => {
             </Col>
             <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>
-                <Col xs={12} md={12} lg={16}>
+                <Col xs={12} md={12} lg={12}>
                   {/* <AutoCompleteSelect
                     valueField="id"
                     data={criteriaReferenceList}
@@ -255,6 +266,7 @@ const Criteria = () => {
                   >
                     <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙН ЗОРИЛГЫН ТҮВШНИЙ  ШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
                       <Option value={1}>Малын эрүүл мэндийн үйлчилгээ</Option>
+
                       <Option value={2}>
                         Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
                         нэмэгдүүлэх
@@ -274,36 +286,31 @@ const Criteria = () => {
                     </OptGroup>
                   </Select>
                 </Col>
-                <Col xs={8} md={3} lg={2}>
-                  <Tooltip title={t('print')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
+                <Col xs={8} md={3} lg={6}>
+                  <DatePicker
+                    picker="quarter"
+                    className="datepicker"
+                    placeholder="Улирал сонгох"
+                    style={{
+                      border: 'none',
+                    }}
+                    onChange={selectedQ}
+                  />
                 </Col>
+
                 <Col xs={8} md={3} lg={2}>
                   <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faFileExcel} />}
+                      onClick={() => exportTab()}
                     >
                       {' '}
                     </Button>
                   </Tooltip>
                 </Col>
-                <Col xs={8} md={3} lg={2}>
-                  <Tooltip title={t('pdf')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFilePdf} />}
-                    />
-                  </Tooltip>
-                </Col>
+
                 {toolsStore.user?.roleId === 1 ? (
                   <Col xs={8} md={3} lg={2}>
                     <Tooltip title={t('add')} arrowPointAtCenter>

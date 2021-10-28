@@ -5,7 +5,7 @@ import { useProjectStore } from '../../../context/ProjectContext';
 import { useToolsStore } from '../../../context/Tools';
 import { getService } from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
-import BriefDraft from '../briefdraft';
+import BriefDraft from '../briefDraft';
 import Investment from '../investment';
 import MainInfo from '../mainInfo';
 import ProjectOrg from '../projectOrganizations';
@@ -24,7 +24,7 @@ const tabPosition2 = 'top';
 
 export default function projectInfo() {
   const { id } = useParams();
-  const { setProjectList } = useProjectStore();
+  const { ProjectList, setProjectList } = useProjectStore();
   const [CriteriaList, setCriteriaList] = useState();
   const { setIsShowLoader } = useToolsStore();
   const toolsStore = useToolsStore();
@@ -56,6 +56,17 @@ export default function projectInfo() {
 
   return (
     <ContentWrapper>
+      <h1
+        style={{
+          marginLeft: '45px',
+          marginRight: '45px',
+          color: '#103154',
+          fontWeight: '600',
+          textAlign: 'right',
+        }}
+      >
+        {ProjectList.projectName}{' '}
+      </h1>
       <Tabs tabPosition={tabPosition2}>
         <TabPane tab="Төслийн мэдээлэл" key="1">
           <Tabs tabPosition={tabPosition}>

@@ -5,7 +5,7 @@ import { Tabs } from 'antd';
 import mapDataMongolia from './mapDataMongolia';
 import DashboardDetail from './more/dashboardDetail';
 import { getService } from '../../service/service';
-import DashboardCriteria from './more/dashboardCriteria';
+// import DashboardCriteria from './more/dashboardCriteria';
 import DashboardProject from './more/dashboardProject';
 import ContentWrapper from './more/dashboard.style';
 import { useToolsStore } from '../../context/Tools';
@@ -16,9 +16,14 @@ const { TabPane } = Tabs;
 
 function dashboard() {
   const [aimagList, setAimagList] = useState();
+  const [aimagListProject, setAimagListProject] = useState();
   const [statusList, setStatusList] = useState();
   const tabPosition = 'top';
   const toolsStore = useToolsStore();
+  const [Buteemjit, setButeemjit] = useState();
+  const [Innovation, setInnovation] = useState();
+  const [Tejeel, setTejeel] = useState();
+  const [MalEmneleg, setMalEmneleg] = useState();
 
   const data = [
     ['mn-da', 9],
@@ -134,6 +139,114 @@ function dashboard() {
     ],
   };
 
+  const mapOptionss = {
+    chart: {
+      align: 'left',
+      backgroundColor: '#283047',
+      map: mapDataMongolia,
+      resetZoomButton: {
+        position: {
+          align: 'left',
+          x: 100,
+          y: 100,
+        },
+      },
+    },
+
+    colorAxis: {
+      min: 0,
+      max: 21,
+    },
+
+    title: {
+      text: '',
+    },
+
+    legend: { enabled: false },
+    credits: {
+      enabled: false,
+    },
+
+    plotOptions: {
+      map: {
+        tooltip: {
+          headerFormat: '',
+          pointFormat: '<b>{point.name}</b>',
+        },
+      },
+    },
+
+    series: [
+      {
+        events: {
+          click(e) {
+            // e.point.zoomTo();
+            toolsStore.setIsAimag2(true);
+            getService(`project/getSoums/${e.point.value}`).then(result => {
+              if (result) {
+                setAimagListProject(result || []);
+              }
+            });
+            getService(
+              `farmer/getProjectDashboardInfo?projectTypeId=1&aimagId=${e.point.value}&soumId=0`
+            ).then(result => {
+              if (result) {
+                setButeemjit(result);
+              }
+            });
+            getService(
+              `farmer/getProjectDashboardInfo?projectTypeId=2&aimagId=${e.point.value}&soumId=0`
+            ).then(result => {
+              if (result) {
+                setInnovation(result);
+              }
+            });
+            getService(
+              `farmer/getProjectDashboardInfo?projectTypeId=3&aimagId=${e.point.value}&soumId=0`
+            ).then(result => {
+              if (result) {
+                setTejeel(result);
+              }
+            });
+            getService(
+              `farmer/getProjectDashboardInfo?projectTypeId=4&aimagId=${e.point.value}&soumId=0`
+            ).then(result => {
+              if (result) {
+                setMalEmneleg(result);
+              }
+            });
+          },
+        },
+        threshold: 0,
+        cursor: 'pointer',
+        borderWidth: 0.2,
+        borderColor: '#283047',
+        data,
+        name: 'dasdasd',
+        states: {
+          select: {
+            color: 'blue',
+          },
+          hover: {
+            color: '#BADA55',
+          },
+        },
+        dataLabels: {
+          useHTML: true,
+          style: {
+            textOutline: 0,
+            color: 'white',
+            textShadow: false,
+            fontSize: '14px',
+            fontWeight: '300',
+          },
+          enabled: true,
+          format: '{point.name}',
+        },
+      },
+    ],
+  };
+
   return (
     <ContentWrapper>
       <Tabs tabPosition={tabPosition}>
@@ -150,18 +263,24 @@ function dashboard() {
         </TabPane>
         <TabPane tab="Төсөл" key="2">
           <HighchartsReact
-            options={mapOptions}
+            options={mapOptionss}
             constructorType="mapChart"
             highcharts={Highcharts}
             containerProps={{
               style: { height: '100vh' },
             }}
           />
-          <DashboardProject list={list} />
+          <DashboardProject
+            aimagListProject={aimagListProject}
+            Buteemjit={Buteemjit}
+            Innovation={Innovation}
+            Tejeel={Tejeel}
+            MalEmneleg={MalEmneleg}
+          />
         </TabPane>
-        <TabPane tab="Шалгуур үзүүлэлт" key="3">
+        {/* <TabPane tab="Шалгуур үзүүлэлт" key="3">
           <DashboardCriteria />
-        </TabPane>
+        </TabPane> */}
       </Tabs>
     </ContentWrapper>
   );

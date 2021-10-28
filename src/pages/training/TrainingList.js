@@ -281,6 +281,13 @@ const TrainingList = () => {
     </>
   );
 
+  const orgName = row => (
+    <>
+      <span className="p-column-title">Байгууллага</span>
+      {row.organization.name}
+    </>
+  );
+
   const ShowTrainingInfo = row => history.push(`/trainingList/${row.data.id}`);
 
   const exportCSV = () => {
@@ -473,6 +480,15 @@ const TrainingList = () => {
                 filter
                 sortable
                 body={participantBodyTemplate}
+                filterMatchMode="equals"
+              />
+              <Column
+                field="organization.name"
+                header="Байгууллага"
+                filterPlaceholder="Хайх"
+                filter
+                sortable
+                body={orgName}
                 filterMatchMode="equals"
               />
               <Column headerStyle={{ width: '6rem' }} body={action} />

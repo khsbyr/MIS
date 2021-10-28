@@ -22,6 +22,7 @@ import PlanMore from '../pages/projectReport/more/PlanMore';
 import OrganizationModal from '../pages/training/tabs/components/OrganizationModal';
 import TrainingContextProvider from '../context/TrainingContext';
 import MakhisMore from '../pages/makhis/more/MakhisMore';
+import FeedbackMore from '../pages/other/more/feedbackMore';
 import Header from './header';
 
 const { Sider, Content } = Layout;
@@ -198,6 +199,9 @@ function Admin() {
                     </Route>
                     <Route path="/makhisDetail/:id">
                       <MakhisMore />
+                    </Route>
+                    <Route path="/feedbackDetail/:id">
+                      <FeedbackMore />
                     </Route>
                   </Switch>
                 </TrainingContextProvider>

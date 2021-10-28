@@ -56,7 +56,7 @@ const exportPlan = () => {
       dataIndex: ['plan','criteriaReference', 'name'],
       key: ['plan','criteriaReference', 'name'],
        width: '10%',
-      render: (value0, row, index) => {
+      render: (value0) => {
         const obj = {
           //  children: value0,
           children: <div className={styles.exportPlan}>
@@ -85,7 +85,7 @@ const exportPlan = () => {
       dataIndex: ['plan','subCriteriaReference', 'name'],
       key: ['plan','subCriteriaReference', 'name'],
        width: '10%',
-      render: (value1, row, index) => {
+      render: (value1) => {
         const obj = {
           children: value1,
           props: {
@@ -110,7 +110,7 @@ const exportPlan = () => {
       title: 'Үйл ажиллагаа',
       dataIndex: ['plan','name'],
       key: ['plan','name'],
-      render: (value2, row, index) => {
+      render: (value2) => {
         const obj = {
           children: value2,
           props: {},
@@ -132,7 +132,7 @@ const exportPlan = () => {
       title: 'Үйл ажиллагааны дэс дараалал, задаргаа',
       dataIndex: ['operation'],
       key: ['operation'],
-      render: (value5, row, index) => {
+      render: (value5) => {
         const obj = {
           children: value5,
           props: {},
@@ -158,10 +158,10 @@ const exportPlan = () => {
             title: 'Q1',
             key: 'q1',
             dataIndex: 'q1',
-            render(text, record) {
+            render(text) {
               return {
                 props: {
-                  style: { background:  text===true ? "cornflowerblue" : "none"  }
+                  style: { background:  text===true ? "#B4C6E7" : "none"  }
                 },
               };
             }
@@ -170,10 +170,10 @@ const exportPlan = () => {
             title: 'Q2',
             dataIndex: 'q2',
            key: 'q2',
-           render(text, record) {
+           render(text) {
             return {
               props: {
-                style: { background:  text===true ? "cornflowerblue" : "none"  }
+                style: { background:  text===true ? "#B4C6E7" : "none"  }
               },
             };
           }
@@ -182,10 +182,10 @@ const exportPlan = () => {
            title: 'Q3',
            dataIndex: 'q3',
            key: 'q3',
-           render(text, record) {
+           render(text) {
             return {
               props: {
-                style: { background:  text===true ? "cornflowerblue" : "none"  }
+                style: { background:  text===true ? "#B4C6E7" : "none"  }
               },
             };
           }
@@ -194,10 +194,10 @@ const exportPlan = () => {
            title: 'Q4',
            dataIndex: 'q4',
            key: 'q4',
-           render(text, record) {
+           render(text) {
             return {
               props: {
-                style: { background:  text===true ? "cornflowerblue" : "none"  }
+                style: { background:  text===true ? "#B4C6E7" : "none"  }
               },
             };
           }
@@ -209,7 +209,7 @@ const exportPlan = () => {
         'Төслийн хөгжлийн зорилт, дунд хугацааны шалгуур үзүүлэлтэд хамаарах үр дүн',
       dataIndex: ['plan','target'],
       key: ['plan','target'],
-      render: (value3, row, index) => {
+      render: (value3) => {
         const obj = {
           children: value3,
           props: {},
@@ -233,7 +233,7 @@ const exportPlan = () => {
       title: 'Тайлбар',
       dataIndex: ['plan','description'],
       key: ['plan','description'],
-      render: (value4, row, index) => {
+      render: (value4) => {
         const obj = {
           children: value4,
           props: {},
@@ -257,7 +257,7 @@ const exportPlan = () => {
 
   return (
     <div className="App">
-<header className="App-header">
+    <header className="App-header">
           {/* <img src className="App-logo" alt="logo" /> */}
           <p>&nbsp;</p>
         <p style={{textAlign: 'right', paddingRight: '100px'}}><span data-contrast="auto">Батлав:&nbsp; ______________________________</span><strong><span data-contrast="auto">&nbsp;</span></strong> <strong><span data-contrast="auto">Т.Жамбалцэрэн&nbsp;</span></strong><span data-ccp-props="{&quot;201341983&quot;:0,&quot;335551550&quot;:6,&quot;335551620&quot;:6,&quot;335559739&quot;:0,&quot;335559740&quot;:240}">&nbsp;</span></p>
@@ -273,12 +273,17 @@ const exportPlan = () => {
         <p style={{textAlign: 'center'}}><span data-contrast="auto">Шинэчилсэн огноо:&nbsp;</span> <span data-contrast="auto">2021&nbsp;оны&nbsp;1&nbsp;дүгээр сарын&nbsp;</span><span data-contrast="auto">…</span><span data-ccp-props="{&quot;201341983&quot;:0,&quot;335551550&quot;:6,&quot;335551620&quot;:6,&quot;335559739&quot;:0,&quot;335559740&quot;:240}">&nbsp;</span></p>
         <p style={{textAlign: 'center'}}><span data-contrast="auto">Баталсан огноо:&nbsp;</span> <span data-contrast="auto">2021 оны 1&nbsp;дугаар сарын&nbsp;</span><span data-contrast="auto">...</span><span data-ccp-props="{&quot;201341983&quot;:0,&quot;335551550&quot;:6,&quot;335551620&quot;:6,&quot;335559739&quot;:0,&quot;335559740&quot;:240}">&nbsp;</span></p>
         <p><span data-ccp-props="{&quot;201341983&quot;:0,&quot;335551550&quot;:6,&quot;335551620&quot;:6,&quot;335559739&quot;:0,&quot;335559740&quot;:240}">&nbsp;</span></p>
-        </header>
-        <Table
+      </header>
+      <Table
       columns={columns}
       dataSource={referenceId.map((d, i) => ({ key: i, ...d }))}
       pagination={false}
       bordered
+      style={{
+        paddingLeft: '30px',
+        paddingRight: '30px',
+
+      }}
     />
     </div>
     

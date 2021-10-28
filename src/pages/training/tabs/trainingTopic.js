@@ -2,18 +2,17 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
-import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
+import { Toast } from 'primereact/toast';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Toast } from 'primereact/toast';
 import { PAGESIZE } from '../../../constants/Constant';
 import { ToolsContext } from '../../../context/Tools';
 import { getService, putService } from '../../../service/service';
 import { convertLazyParamsToObj, errorCatch } from '../../../tools/Tools';
 import ContentWrapper from './components/trainingProgram.style';
-import TrainingProgramModal from './components/trainingProgramModal';
+import TrainingTopicModal from './trainingTopicModal';
 
 const { Content } = Layout;
 
@@ -21,13 +20,12 @@ let editRow;
 let isEditMode;
 let loadLazyTimeout = null;
 
-const TrainingProgram = props => {
+const TrainingTopic = props => {
   const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [trainingID, setTrainingID] = useState([]);
-  const [orgID] = useState([]);
   const toolsStore = useContext(ToolsContext);
   const [totalRecords, setTotalRecords] = useState(0);
   const toast = useRef(null);
@@ -45,7 +43,7 @@ const TrainingProgram = props => {
     }
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
-      getService(`trainingProgram/get/${props.id}`, obj)
+      getService(`trainingTopic/getByTrainingId/${props.id}`, obj)
         .then(data => {
           const dataList = data.content || [];
           setTrainingID(props.id);
@@ -94,7 +92,7 @@ const TrainingProgram = props => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`trainingProgram/delete/${row.id}`)
+    putService(`trainingTopic/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -163,14 +161,28 @@ const TrainingProgram = props => {
   const operationBodyTemplate = row => (
     <>
       <span className="p-column-title">Үйл ажиллагаа</span>
-      {row.operation}
+      {row.trainingProgram.operation}
     </>
   );
 
   const programDateBodyTemplate = row => (
     <>
-      <span className="p-column-title">Огноо</span>
-      {moment(row && row.date).format('YYYY-MM-DD')}
+      <span className="p-column-title">Цаг</span>
+      {row.time}
+    </>
+  );
+
+  const trainingTopic = row => (
+    <>
+      <span className="p-column-title">Сургалтын сэдэв</span>
+      {row.topic}
+    </>
+  );
+
+  const respoUser = row => (
+    <>
+      <span className="p-column-title">Сургагч багш</span>
+      {row.resPersonTrainingTopics.map(z => z.resPersonName).join(', ')}
     </>
   );
 
@@ -233,8 +245,8 @@ const TrainingProgram = props => {
             />
 
             <Column
-              field="operation"
-              header="Үйл ажиллагаа"
+              field="trainingProgram.operation"
+              header="Хөтөлбөрийн нэр"
               body={operationBodyTemplate}
               sortable
               filter
@@ -242,25 +254,37 @@ const TrainingProgram = props => {
               filterMatchMode="contains"
             />
             <Column
-              field="date"
-              header="Огноо"
+              field="time"
+              header="Цаг"
               body={programDateBodyTemplate}
               sortable
               filter
               filterPlaceholder="Хайх"
               filterMatchMode="startsWith"
             />
-
+            <Column
+              field="topic"
+              header="Сургалтын сэдэв"
+              body={trainingTopic}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="startsWith"
+            />
+            <Column
+              field="resPersonTrainingTopics"
+              header="Сургагч багш"
+              body={respoUser}
+            />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
-            <TrainingProgramModal
+            <TrainingTopicModal
               Trainingprogramcontroller={editRow}
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
               trainingID={trainingID}
-              orgID={orgID}
             />
           )}
         </div>
@@ -268,4 +292,4 @@ const TrainingProgram = props => {
     </ContentWrapper>
   );
 };
-export default TrainingProgram;
+export default TrainingTopic;

@@ -1,23 +1,22 @@
-import { UploadOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Input, message, Modal, Row, Upload } from 'antd';
+import { Col, Form, Input, message, Modal, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useToolsStore } from '../../../../context/Tools';
+import { useTrainingStore } from '../../../../context/TrainingContext';
 import {
   postService,
   putService,
-  writeFileServer,
   updateFileServer,
+  writeFileServer,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
-import { useTrainingStore } from '../../../../context/TrainingContext';
 import ContentWrapper from './trainingReport.style';
 
-const dummyRequest = ({ onSuccess }) => {
-  setTimeout(() => {
-    onSuccess('ok');
-  }, 0);
-};
+// const dummyRequest = ({ onSuccess }) => {
+//   setTimeout(() => {
+//     onSuccess('ok');
+//   }, 0);
+// };
 
 export default function TrainingReportModal(props) {
   const { TrainingReportController, isModalVisible, isEditMode, trainingIDD } =
@@ -33,23 +32,23 @@ export default function TrainingReportModal(props) {
   const [performedProcess3ID] = useState();
   const [performedProcess4ID] = useState();
   const { TrainingList } = useTrainingStore();
-  const [fileList, setFileList] = useState([]);
+  const [fileList] = useState([]);
 
-  function handleUpload(info) {
-    setFileList([info.file.originFileObj]);
-  }
+  // function handleUpload(info) {
+  //   setFileList([info.file.originFileObj]);
+  // }
 
-  const defaultFileList =
-    TrainingReportController?.trainingReport?.file && isEditMode
-      ? [
-          {
-            uid: '-1',
-            name: TrainingReportController?.trainingReport?.file?.fileName,
-            status: 'done',
-            url: TrainingReportController?.trainingReport?.file?.path,
-          },
-        ]
-      : [];
+  // const defaultFileList =
+  //   TrainingReportController?.trainingReport?.file && isEditMode
+  //     ? [
+  //         {
+  //           uid: '-1',
+  //           name: TrainingReportController?.trainingReport?.file?.fileName,
+  //           status: 'done',
+  //           url: TrainingReportController?.trainingReport?.file?.path,
+  //         },
+  //       ]
+  //     : [];
 
   useEffect(() => {
     if (isEditMode) {
@@ -208,6 +207,7 @@ export default function TrainingReportModal(props) {
         visible={isModalVisible}
         onOk={save}
         onCancel={() => props.close()}
+        maskClosable={false}
       >
         <ContentWrapper>
           <Form
@@ -375,7 +375,7 @@ export default function TrainingReportModal(props) {
                     }}
                   />
                 </Form.Item>
-                <h1 className="title">6. Зураг, хавсралт файл</h1>
+                {/* <h1 className="title">6. Зураг, хавсралт файл</h1>
                 <Form.Item>
                   <Upload
                     accept="image/*,.pdf"
@@ -386,7 +386,7 @@ export default function TrainingReportModal(props) {
                   >
                     <Button icon={<UploadOutlined />}>Файл хавсаргах</Button>
                   </Upload>
-                </Form.Item>
+                </Form.Item> */}
               </Col>
             </Row>
           </Form>

@@ -14,6 +14,8 @@ export default function ContextProvider({ children }) {
   const [aimagList, setAimagList] = useState();
   const [partnerList, setPartnerList] = useState();
   const [isAimag, setIsAimag] = useState(true);
+  const [isAimag2, setIsAimag2] = useState(true);
+  const [isLangChange, setIsLangChange] = useState(false);
 
   return (
     <ToolsContext.Provider
@@ -32,6 +34,10 @@ export default function ContextProvider({ children }) {
         partnerList,
         isAimag,
         setIsAimag,
+        isAimag2,
+        setIsAimag2,
+        isLangChange,
+        setIsLangChange,
       }}
     >
       {isShowLoader && <Loader />}

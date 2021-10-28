@@ -1,71 +1,33 @@
-import {
-  Col,
-  Form,
-  Input,
-  Modal,
-  Row,
-  Select,
-  message,
-  DatePicker,
-  AutoComplete,
-} from 'antd';
-import React, { useEffect, useState } from 'react';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Col, DatePicker, Form, Input, message, Modal, Row } from 'antd';
 import moment from 'moment';
-import {
-  postService,
-  putService,
-  getService,
-} from '../../../../service/service';
+import React, { useEffect, useState } from 'react';
+import locale from 'antd/es/date-picker/locale/mn_MN';
+import { postService, putService } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './trainingProgram.style';
-
-const { Option } = Select;
-const layout = {
-  labelCol: {
-    span: 20,
-  },
-  wrapperCol: {
-    span: 22,
-  },
-};
+import 'moment/locale/mn';
 
 export default function TrainingProgramModal(props) {
   const { Trainingprogramcontroller, isModalVisible, isEditMode, trainingID } =
     props;
   const [form] = Form.useForm();
-  const [stateTrainers, setStateTrainers] = useState(false);
   const [startDate, setStartDate] = useState([]);
-  const [endDate, setEndDate] = useState([]);
 
   function onStartDateChange(date, value) {
     setStartDate(value);
   }
 
-  function onEndDateChange(date, value) {
-    setEndDate(value);
-  }
-
   useEffect(() => {
-    getService(`trainingTeam/getListWithoutOverlap/${trainingID}`).then(
-      result => {
-        if (result) {
-          setStateTrainers(result.content || []);
-        }
-      }
-    );
     if (isEditMode) {
       setStartDate(Trainingprogramcontroller.startDate);
-      setEndDate(Trainingprogramcontroller.endDate);
+
       form.setFieldsValue({
         ...Trainingprogramcontroller,
         startDate: Trainingprogramcontroller
           ? Trainingprogramcontroller.startDate
-          : '',
-        endDate: Trainingprogramcontroller
-          ? Trainingprogramcontroller.endDate
           : '',
       });
     }
@@ -75,8 +37,7 @@ export default function TrainingProgramModal(props) {
     form
       .validateFields()
       .then(values => {
-        values.startDate = startDate;
-        values.endDate = endDate;
+        values.date = startDate;
         values.training = { id: trainingID };
         if (isEditMode) {
           putService(
@@ -106,16 +67,6 @@ export default function TrainingProgramModal(props) {
       });
   };
 
-  const handleSearch = value => {
-    getService(
-      `trainingTeam/getListWithoutOverlap/${trainingID}?search=user.fullName:*${value}*`
-    ).then(result => {
-      if (result) {
-        setStateTrainers(result.content);
-      }
-    }, 500);
-  };
-
   return (
     <div>
       <Modal
@@ -132,7 +83,6 @@ export default function TrainingProgramModal(props) {
           <Form
             form={form}
             labelAlign="left"
-            {...layout}
             layout="vertical"
             name="nest-messages"
             validateMessages={validateMessages}
@@ -152,64 +102,20 @@ export default function TrainingProgramModal(props) {
                     >
                       <Input />
                     </Form.Item>
-                    <Form.Item label="Эхэлсэн огноо:">
+                    <Form.Item label="Огноо:">
                       <DatePicker
-                        format="YYYY-MM-DD HH:mm"
-                        showTime
                         prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
                         style={{ width: '100%', height: '40px' }}
-                        placeholder="Эхэлсэн огноо:"
+                        placeholder="Огноо:"
                         className="FormItem"
                         onChange={onStartDateChange}
+                        locale={locale}
                         defaultValue={
                           isEditMode
-                            ? moment(Trainingprogramcontroller.startDate)
+                            ? moment(Trainingprogramcontroller.date)
                             : null
                         }
                       />
-                    </Form.Item>
-
-                    <Form.Item label="Дууссан огноо:">
-                      <DatePicker
-                        allowClear
-                        format="YYYY-MM-DD HH:mm"
-                        showTime
-                        prefix={<FontAwesomeIcon icon={faCalendarAlt} />}
-                        style={{ width: '100%', height: '40px' }}
-                        placeholder="Дууссан огноо:"
-                        className="FormItem"
-                        onChange={onEndDateChange}
-                        defaultValue={
-                          isEditMode
-                            ? moment(Trainingprogramcontroller.endDate)
-                            : null
-                        }
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="responsiblePersonName"
-                      layout="vertical"
-                      label="Сургагч багшийн нэр:"
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
-                      <AutoComplete
-                        placeholder="Сургагч багшийн нэр"
-                        onSearch={handleSearch}
-                        filterOption={false}
-                        defaultActiveFirstOption={false}
-                        notFoundContent={null}
-                      >
-                        {stateTrainers &&
-                          stateTrainers.map((z, index) => (
-                            <Option key={index} value={z.user.fullName}>
-                              {z.user.fullName}
-                            </Option>
-                          ))}
-                      </AutoComplete>
                     </Form.Item>
                   </Col>
                 </Row>

@@ -283,7 +283,7 @@ const Report = () => {
     <>
       <span className="p-column-title">Гүйцэтгэгч</span>
 
-      {row.user.firstname}
+      {row?.user?.firstname}
     </>
   );
 

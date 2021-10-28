@@ -195,11 +195,6 @@ export default function ImplementationModal(props) {
 
             <Row gutter={30}>
               <Col xs={24} md={24} lg={12}>
-                <Form.Item label="Төлөвлөсөн ажил:" name="plannedWork">
-                  <TextArea rows={6} />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={24} lg={12}>
                 <Form.Item label="Тайлбар:" name="description">
                   <TextArea rows={6} />
                 </Form.Item>
@@ -209,7 +204,6 @@ export default function ImplementationModal(props) {
             <Row>
               <Col xs={24} md={24} lg={6}>
                 <Upload
-                  accept="image/*,.pdf"
                   maxCount={1}
                   defaultFileList={[...defaultFileList]}
                   customRequest={dummyRequest}

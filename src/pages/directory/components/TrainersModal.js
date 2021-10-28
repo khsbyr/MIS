@@ -10,11 +10,19 @@ import {
   Modal,
   Row,
   Select,
+  Upload,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { PlusOutlined } from '@ant-design/icons';
 import AutoCompleteSelect from '../../../components/Autocomplete';
 import { useToolsStore } from '../../../context/Tools';
-import { getService, postService, putService } from '../../../service/service';
+import {
+  getService,
+  postService,
+  putService,
+  updateFileServer,
+  writeFileServer,
+} from '../../../service/service';
 import { errorCatch } from '../../../tools/Tools';
 import validateMessages from '../../../tools/validateMessage';
 import ContentWrapper from '../../training/tabs/components/cv.styled';
@@ -41,7 +49,44 @@ export default function TrainersModal(props) {
   const [, setBirthDatee] = useState();
   const [, setIsOnchange] = useState(false);
   const [options, setOptions] = useState([]);
+  const [fileList, setFileList] = useState([]);
+  const [imageUrl, setImageUrl] = useState();
 
+  function getBase64(img, callback) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+  }
+
+  const defaultFileList =
+    Trainerscontroller.trainers.file && isEditMode
+      ? [
+          {
+            uid: '-1',
+            name: Trainerscontroller.trainers.file.fileName,
+            status: 'done',
+            url: Trainerscontroller.trainers.file.path,
+          },
+        ]
+      : [];
+
+  function handleUpload(info) {
+    setFileList([info.file.originFileObj]);
+    getBase64(info.file.originFileObj, imageUrll => setImageUrl(imageUrll));
+  }
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Зураг оруулах</div>
+    </div>
+  );
+
+  const dummyRequest = ({ onSuccess }) => {
+    setTimeout(() => {
+      onSuccess('ok');
+    }, 0);
+  };
   const onInit = () => {
     toolsStore.setIsShowLoader(false);
     if (loadLazyTimeout) {
@@ -69,6 +114,8 @@ export default function TrainersModal(props) {
     }
 
     if (isEditMode) {
+      setImageUrl(Trainerscontroller?.trainers?.file?.path);
+
       form.setFieldsValue({
         ...Trainerscontroller,
         lastname: Trainerscontroller.lastname,
@@ -162,10 +209,6 @@ export default function TrainersModal(props) {
     form
       .validateFields()
       .then(values => {
-        values.trainers = {
-          purpose: values.purpose,
-          skill: values.skill,
-        };
         values.user = {
           // id: userID,
           firstname: values.firstname,
@@ -192,18 +235,83 @@ export default function TrainersModal(props) {
         };
 
         if (isEditMode) {
-          putService(
-            `trainers/update/${Trainerscontroller.trainers.id}`,
-            values
-          )
-            .then(() => {
-              message.success('Амжилттай хадгаллаа');
-              props.close(true);
+          if (fileList[0]) {
+            const serverApi =
+              Trainerscontroller && Trainerscontroller.trainers.file
+                ? updateFileServer(
+                    `file/update/${Trainerscontroller.trainers.file.id}`,
+                    fileList[0]
+                  )
+                : writeFileServer(`file/upload`, fileList[0]);
+            serverApi
+              .then(response => {
+                values.trainers = {
+                  purpose: values.purpose,
+                  skill: values.skill,
+                  file: { id: response.data.id },
+                };
+                putService(
+                  `trainers/update/${Trainerscontroller.trainers.id}`,
+                  values
+                )
+                  .then(() => {
+                    message.success('Амжилттай хадгаллаа');
+                    props.close(true);
+                  })
+                  .catch(error => {
+                    errorCatch(error);
+                  });
+              })
+              .catch(error => {
+                errorCatch(error);
+              });
+          } else {
+            values.trainers = {
+              purpose: values.purpose,
+              skill: values.skill,
+            };
+            putService(
+              `trainers/update/${Trainerscontroller.trainers.id}`,
+              values
+            )
+              .then(() => {
+                getService('organization/getAll').then(resultOrg => {
+                  if (resultOrg) {
+                    toolsStore.setOrgList(resultOrg || []);
+                  }
+                });
+                message.success('Амжилттай хадгаллаа');
+                props.close(true);
+              })
+              .catch(error => {
+                errorCatch(error);
+              });
+          }
+        } else if (fileList[0]) {
+          writeFileServer(`file/upload`, fileList[0])
+            .then(response => {
+              values.trainers = {
+                purpose: values.purpose,
+                skill: values.skill,
+                file: { id: response.data.id },
+              };
+              postService('trainers/post', values)
+                .then(() => {
+                  message.success('Амжилттай хадгаллаа');
+                  props.close(true);
+                })
+                .catch(error => {
+                  errorCatch(error);
+                });
             })
             .catch(error => {
               errorCatch(error);
             });
         } else {
+          values.trainers = {
+            purpose: values.purpose,
+            skill: values.skill,
+          };
           postService('trainers/post', values)
             .then(() => {
               message.success('Амжилттай хадгаллаа');
@@ -253,7 +361,26 @@ export default function TrainersModal(props) {
           >
             <h2 className="title">1. Хувь хүний мэдээлэл</h2>
             <Row gutter={[30, 30]}>
-              <Col xs={24} md={24} lg={12}>
+              <Col xs={24} md={24} lg={6}>
+                <Upload
+                  name="avatar"
+                  listType="picture-card"
+                  className="avatar-uploader"
+                  showUploadList={false}
+                  accept="image/*,.pdf"
+                  maxCount={1}
+                  defaultFileList={[...defaultFileList]}
+                  customRequest={dummyRequest}
+                  onChange={handleUpload}
+                >
+                  {imageUrl ? (
+                    <img src={imageUrl} style={{ width: '100%' }} />
+                  ) : (
+                    uploadButton
+                  )}
+                </Upload>
+              </Col>
+              <Col xs={24} md={24} lg={9}>
                 <Form.Item
                   name="registerNumber"
                   rules={[
@@ -300,7 +427,7 @@ export default function TrainersModal(props) {
                 </Form.Item>
               </Col>
 
-              <Col xs={24} md={24} lg={12}>
+              <Col xs={24} md={24} lg={9}>
                 <Form.Item name="CountryID">
                   <AutoCompleteSelect
                     className="FormItem"

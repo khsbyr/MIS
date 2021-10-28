@@ -116,6 +116,7 @@ export default function AttendanceCheckModal(props) {
         visible={isModalVisible}
         onOk={save}
         onCancel={() => props.close()}
+        maskClosable={false}
       >
         <ContentWrapper>
           <Form
