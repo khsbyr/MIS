@@ -162,7 +162,6 @@ export default function fileUploadModal(props) {
                   <Button icon={<UploadOutlined />}>Файл хавсаргах</Button>
                 </Upload> */}
                 <Dragger
-                  accept="image/*,.pdf"
                   maxCount={1}
                   customRequest={dummyRequest}
                   onChange={handleUpload}

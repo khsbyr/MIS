@@ -14,6 +14,7 @@ import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
 import { ToolsContext } from '../../context/Tools';
 import { getService, deleteService } from '../../service/service';
 import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
@@ -35,6 +36,7 @@ const Feedback = () => {
   const toolsStore = useContext(ToolsContext);
   const [totalRecords, setTotalRecords] = useState(0);
   const dt = useRef(null);
+  const history = useHistory();
   const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
@@ -74,7 +76,9 @@ const Feedback = () => {
     isEditMode = false;
   };
 
-  const edit = row => {
+  const edit = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     editRow = row;
     isEditMode = true;
     setIsModalVisible(true);
@@ -127,7 +131,9 @@ const Feedback = () => {
     });
   }
 
-  const pop = row => {
+  const pop = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (row.length === 0) {
       message.warning('Устгах өгөгдлөө сонгоно уу');
     } else {
@@ -140,12 +146,12 @@ const Feedback = () => {
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faPen} />}
-        onClick={() => edit(row)}
+        onClick={event => edit(event, row)}
       />
       <Button
         type="text"
         icon={<FontAwesomeIcon icon={faTrash} />}
-        onClick={() => pop(row)}
+        onClick={event => pop(event, row)}
       />
     </>
   );
@@ -184,17 +190,29 @@ const Feedback = () => {
 
   const measuresBodyTemplate = row => (
     <>
-      <span className="p-column-title">Санал, гомдол гаргагчийн и-мэйл</span>
-      {row.complainantEmail}
+      <span className="p-column-title">Санал, гомдол гаргагчийн регистр</span>
+      {row.registerNumber}
     </>
   );
+
+  const phoneBodyTemplate = row => (
+    <>
+      <span className="p-column-title">Санал, гомдол гаргагчийн утас</span>
+      {row.phoneNumber}
+    </>
+  );
+
+  const more = row => {
+    history.push(`/feedbackDetail/${row.data.id}`);
+  };
+
   return (
     <ContentWrapper>
       <div className="button-demo">
         <Content>
           <Row>
             <Col xs={24} md={12} lg={14}>
-              <p className="title">Санал гомдол</p>
+              <p className="title">Санал гомдол, санал хүсэлт</p>
             </Col>
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
@@ -269,6 +287,7 @@ const Feedback = () => {
             onFilter={onFilter}
             filters={lazyParams.filters}
             lazy
+            onRowClick={more}
           >
             <Column
               field="index"
@@ -296,11 +315,22 @@ const Feedback = () => {
               header="Санал, гомдол гаргагч"
               field="complainant"
               body={complainantBodyTemplate}
+              filter
+              filterPlaceholder="Хайх"
             />
             <Column
-              header="Санал, гомдол гаргагчийн и-мэйл"
-              field="complainantEmail"
+              header="Санал, гомдол гаргагчийн регистр"
+              field="registerNumber"
               body={measuresBodyTemplate}
+              filter
+              filterPlaceholder="Хайх"
+            />
+            <Column
+              header="Санал, гомдол гаргагчийн утас"
+              field="phoneNumber"
+              body={phoneBodyTemplate}
+              filter
+              filterPlaceholder="Хайх"
             />
             <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>

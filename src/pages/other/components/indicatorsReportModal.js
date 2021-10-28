@@ -367,7 +367,6 @@ export default function IndicatorsReportModal(props) {
                   <TextArea style={{ width: '100%', height: '80px' }} />
                 </Form.Item>
                 <Upload
-                  accept="image/*,.pdf"
                   maxCount={1}
                   defaultFileList={[...defaultFileList]}
                   customRequest={dummyRequest}

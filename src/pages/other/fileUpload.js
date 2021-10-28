@@ -11,11 +11,11 @@ import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
-import { ToolsContext } from '../../../context/Tools';
-import { getService, putService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
-import FileUploadModal from './components/fileUploadModal';
-import ContentWrapper from '../../project/more/file.style';
+import { ToolsContext } from '../../context/Tools';
+import { getService, putService } from '../../service/service';
+import { errorCatch } from '../../tools/Tools';
+import FileUploadModal from './fileUploadModal';
+import ContentWrapper from '../project/more/file.style';
 
 const { Content } = Layout;
 
@@ -35,7 +35,7 @@ const fileUpload = props => {
       clearTimeout(loadLazyTimeout);
     }
     toolsStore.setIsShowLoader(true);
-    getService(`trainingFiles/getByTraining/${props.id}`)
+    getService(`feedbackFiles/getByFeedback/${props.id}`)
       .then(result => {
         const listResult = result;
         listResult.forEach((item, index) => {
@@ -72,7 +72,7 @@ const fileUpload = props => {
       message.warning('Устгах өгөгдлөө сонгоно уу');
       return;
     }
-    putService(`trainingFiles/delete/${row.id}`)
+    putService(`feedbackFiles/delete/${row.id}`)
       .then(() => {
         message.success('Амжилттай устлаа');
         onInit();
@@ -220,7 +220,7 @@ const fileUpload = props => {
               isModalVisible={isModalVisible}
               close={closeModal}
               isEditMode={isEditMode}
-              trainingID={props.id}
+              feedbackId={props.id}
             />
           )}
         </div>

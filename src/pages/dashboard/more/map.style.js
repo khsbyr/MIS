@@ -77,6 +77,51 @@ const ContentWrapper = styled.div`
       color: black;
     }
   }
+
+  .bodyTusul {
+    width: 100%;
+    height: 100%;
+    background-color: #36577a;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 500;
+    padding-top: 20px;
+    font-size: 1vw;
+  }
+
+  .bodyTusul .total {
+    font-size: 1.5vw;
+  }
+
+  .body2Tusul {
+    width: 100%;
+    height: 70%;
+    background-color: #36577a;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 500;
+    padding-top: 20px;
+    padding-left: 55px;
+    font-size: 1vw;
+    margin-top: 10px;
+  }
+
+  .body2Tusul .total2 {
+    font-size: 2vw;
+    text-align: center;
+  }
+
+  .titleTusul {
+    width: 100%;
+    height: 13%;
+    background-color: #ffffff;
+    border-radius: 5px;
+    text-align: center;
+    color: #283047;
+    font-weight: 700;
+    padding-top: 6px;
+    font-size: 0.9vw;
+  }
 `;
 
 export default ContentWrapper;

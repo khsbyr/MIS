@@ -135,7 +135,6 @@ export default function FileUploadDetailedModal(props) {
               </Col>
               <Col span={24} style={{ marginBottom: '30px' }}>
                 <Dragger
-                  accept="image/*,.pdf"
                   maxCount={1}
                   customRequest={dummyRequest}
                   onChange={handleUpload}

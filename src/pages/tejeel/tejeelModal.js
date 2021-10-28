@@ -136,7 +136,16 @@ export default function TejeelModal(props) {
           >
             <Row gutter={30}>
               <Col span={24}>
-                <Form.Item name="number" label="Тоо: ">
+                <Form.Item name="number" label="Нийт оо: ">
+                  <InputNumber
+                    style={{ width: '100%' }}
+                    size="large"
+                    type="number"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item name="femaleNumber" label="Эмэгтэй: ">
                   <InputNumber
                     style={{ width: '100%' }}
                     size="large"
@@ -151,7 +160,6 @@ export default function TejeelModal(props) {
               </Col>
               <Col span={24} style={{ marginBottom: '30px' }}>
                 <Dragger
-                  accept="image/*,.pdf"
                   maxCount={1}
                   customRequest={dummyRequest}
                   onChange={handleUpload}

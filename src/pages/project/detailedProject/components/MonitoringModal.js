@@ -214,7 +214,6 @@ export default function MonitoringModal(props) {
               <Col xs={12} md={12} lg={8}>
                 <Form.Item label="Баримт:">
                   <Upload
-                    accept="image/*,.pdf"
                     defaultFileList={[...defaultFileList]}
                     customRequest={dummyRequest}
                     onChange={handleUpload}

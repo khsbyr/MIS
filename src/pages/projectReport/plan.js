@@ -21,7 +21,7 @@ import { PAGESIZE, PlanType } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
 import { deleteService, getService } from '../../service/service';
 import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
-import ContentWrapper from '../criteria/criteria.style';
+import ContentWrapper from './plan.style';
 import PlanModal from './components/planModal';
 
 const { Content } = Layout;
@@ -55,7 +55,7 @@ const Plan = () => {
     loadLazyTimeout = setTimeout(() => {
       const obj = convertLazyParamsToObj(lazyParams);
       const url = value
-        ? `plan/get?search=criteriaReference.id:${value}`
+        ? `plan/get?search=subCriteriaReference.id:${value}`
         : `plan/get`;
       getService(`${url}`, obj)
         .then(result => {
@@ -75,6 +75,7 @@ const Plan = () => {
         });
     }, 500);
   };
+
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
@@ -202,21 +203,32 @@ const Plan = () => {
   const nameBodyTemplate = row => (
     <>
       <span className="p-column-title">Үйл ажиллагаа</span>
-      {row.name}
+      <Tooltip title={row.name} placement="topLeft">
+        {row.name}
+      </Tooltip>
+    </>
+  );
+
+  const CriteriaNameBody = row => (
+    <>
+      <span className="p-column-title">Дэд бүрэлдэхүүн хэсэг</span>
+      {row.criteriaReference.name}
     </>
   );
 
   const indicatorProcessBodyTemplate = row => (
     <>
-      <span className="p-column-title">Бүрэлдэхүүн хэсэг</span>
-      {row.criteriaReference.name}
+      <span className="p-column-title">Дэд бүрэлдэхүүн хэсэг</span>
+      {row?.subCriteriaReference?.name}
     </>
   );
 
   const startDateBodyTemplate = row => (
     <>
       <span className="p-column-title"> Огноо</span>
-      {moment(row && row.startDate).format('YYYY')}
+      {row.typeId === 0
+        ? moment(row && row.startDate).format('YYYY')
+        : moment(row && row.startDate).format('YYYY-MM')}
     </>
   );
 
@@ -382,6 +394,15 @@ const Plan = () => {
             <Column
               field="criteriaReference.name"
               header="Бүрэлдэхүүн хэсэг"
+              body={CriteriaNameBody}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="contains"
+            />
+            <Column
+              field="subCriteriaReference.name"
+              header="Дэд бүрэлдэхүүн хэсэг"
               body={indicatorProcessBodyTemplate}
               sortable
               filter
@@ -398,7 +419,16 @@ const Plan = () => {
               filterPlaceholder="Хайх"
               filterMatchMode="startsWith"
             />
-
+            <Column
+              headerStyle={{ width: '15rem' }}
+              field="startDateFormat"
+              header="Огноо"
+              body={startDateBodyTemplate}
+              sortable
+              filter
+              filterPlaceholder="Хайх"
+              filterMatchMode="startsWith"
+            />
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (

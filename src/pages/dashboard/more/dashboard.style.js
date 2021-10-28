@@ -26,6 +26,11 @@ const ContentWrapper = styled.div`
   .ant-tabs > div > .ant-tabs-nav {
     position: static;
   }
+
+  .ant-tabs-top > .ant-tabs-nav::before,
+  .ant-tabs-top > div > .ant-tabs-nav::before {
+    display: none !important;
+  }
 `;
 
 export default ContentWrapper;

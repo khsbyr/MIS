@@ -2,6 +2,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -141,6 +142,20 @@ const Activity = props => {
     </>
   );
 
+  const startDate = row => (
+    <>
+      <span className="p-column-title">Эхллэх огноо</span>
+      {moment(row && row.startDate).format('YYYY-MM-DD')}
+    </>
+  );
+
+  const endDate = row => (
+    <>
+      <span className="p-column-title">Дуусах огноо</span>
+      {moment(row && row.endDate).format('YYYY-MM-DD')}
+    </>
+  );
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -189,6 +204,8 @@ const Activity = props => {
               body={nameBodyTemplate}
               header="Үйл ажиллагааны дэс дараалал, задаргаа"
             />
+            <Column field="startDate" body={startDate} header="Эхлэх огноо" />
+            <Column field="endDate" body={endDate} header="Дуусах огноо" />
             <Column headerStyle={{ width: '6rem' }} body={action} />
           </DataTable>
           {isModalVisible && (

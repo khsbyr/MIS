@@ -270,7 +270,6 @@ export default function ReportModal(props) {
 
               <Col xs={24} md={24} lg={24}>
                 <Upload
-                  accept="image/*,.pdf"
                   maxCount={1}
                   defaultFileList={[...defaultFileList]}
                   customRequest={dummyRequest}

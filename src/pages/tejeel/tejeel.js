@@ -184,9 +184,18 @@ const Tejeel = props => {
 
   const number = row => (
     <>
-      <span className="p-column-title">Тоо</span>
+      <span className="p-column-title">Нийт тоо</span>
       <Tooltip placement="topLeft" title={row.number}>
         {row.number}
+      </Tooltip>
+    </>
+  );
+
+  const numberF = row => (
+    <>
+      <span className="p-column-title">Эмэгтэй</span>
+      <Tooltip placement="topLeft" title={row.femaleNumber}>
+        {row.femaleNumber}
       </Tooltip>
     </>
   );
@@ -252,7 +261,8 @@ const Tejeel = props => {
           >
             <Column header="№" body={indexBodyTemplate} style={{ width: 40 }} />
             <Column header="Файлын нэр" body={fileName} />
-            <Column header="Тоо" body={number} />
+            <Column header="Нийт тоо" body={number} />
+            <Column header="Эмэгтэй" body={numberF} />
             <Column header="Тайлбар" body={description} />
             <Column header="Огноо" body={date} />
             <Column headerStyle={{ width: '8rem' }} body={action} />
