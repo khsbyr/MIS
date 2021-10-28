@@ -19,7 +19,7 @@ docker-build:
   services: 
     - docker:$DOCKER_VERSION-dind
   script:
-    - echo $CI_JOB_TOKEN | docker login -u dlp-khosbayar.s -p QP4x-xCgSDXHh9Uanv1x
+    - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin "$CI_REGISTRY"
     - docker build --pull -t "$CI_REGISTRY_IMAGE" .
     - docker push "$CI_REGISTRY_IMAGE"
 
