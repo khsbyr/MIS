@@ -6,9 +6,9 @@ import {
   putService,
   updateFileServer,
   writeFileServer,
-} from '../../../../service/service';
-import { errorCatch } from '../../../../tools/Tools';
-import validateMessages from '../../../../tools/validateMessage';
+} from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import validateMessages from '../../../tools/validateMessage';
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -19,8 +19,8 @@ const dummyRequest = ({ onSuccess }) => {
   }, 0);
 };
 
-export default function fileUploadModal(props) {
-  const { isModalVisible, EditRow, isEditMode, trainingID } = props;
+export default function ImplementationFileModal(props) {
+  const { isModalVisible, EditRow, isEditMode, impId } = props;
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
 
@@ -60,11 +60,14 @@ export default function fileUploadModal(props) {
             serverApi
               .then(response => {
                 values.file = { id: response.data.id };
-                values.training = { id: trainingID };
-                putService(`trainingFiles/update/${EditRow.id}`, values)
+                values.implementationSemp = { id: impId };
+                putService(
+                  `implementationSempFiles/update/${EditRow.id}`,
+                  values
+                )
                   .then(() => {
                     message.success('Амжилттай хадгаллаа');
-                    props.close(true);
+                    props.close(EditRow);
                   })
                   .catch(error => {
                     errorCatch(error);
@@ -74,10 +77,10 @@ export default function fileUploadModal(props) {
                 errorCatch(error);
               });
           } else {
-            putService(`trainingFiles/update/${EditRow.id}`, values)
+            putService(`implementationSempFiles/update/${EditRow.id}`, values)
               .then(() => {
                 message.success('Амжилттай хадгаллаа');
-                props.close(true);
+                props.close(EditRow);
               })
               .catch(error => {
                 errorCatch(error);
@@ -87,11 +90,11 @@ export default function fileUploadModal(props) {
           writeFileServer(`file/upload`, fileList[0])
             .then(response => {
               values.file = { id: response.data.id };
-              values.training = { id: trainingID };
-              postService('trainingFiles/post', values)
+              values.implementationSemp = { id: impId };
+              postService('implementationSempFiles/post', values)
                 .then(() => {
                   message.success('Амжилттай хадгаллаа');
-                  props.close(true);
+                  props.close(EditRow);
                 })
                 .catch(error => {
                   errorCatch(error);
@@ -117,7 +120,7 @@ export default function fileUploadModal(props) {
         alignItems="center"
         visible={isModalVisible}
         onOk={save}
-        onCancel={() => props.close()}
+        onCancel={() => props.close(EditRow)}
       >
         <div>
           <Form

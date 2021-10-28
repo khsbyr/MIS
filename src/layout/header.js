@@ -12,6 +12,7 @@ import { React } from 'react';
 import { Link } from 'react-router-dom';
 import i18n from '../i18n';
 import HeaderWrapper from './header.style';
+import { useToolsStore } from '../context/Tools';
 
 const { Option } = Select;
 const { Header } = Layout;
@@ -35,7 +36,10 @@ const AvatarDropdown = () => {
 };
 
 const Headers = () => {
+  const toolsStore = useToolsStore();
+
   function handleChange(value) {
+    toolsStore.setIsLangChange(!toolsStore.isLangChange);
     i18n.changeLanguage(value);
   }
 

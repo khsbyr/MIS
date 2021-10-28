@@ -28,7 +28,7 @@ function dashboardDetail(props) {
       }
     });
   }
-  // 36577a
+
   return (
     <div>
       <ContentWrapper>

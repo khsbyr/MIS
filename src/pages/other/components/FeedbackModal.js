@@ -11,6 +11,7 @@ import validateMessages from '../../../tools/validateMessage';
 import ContentWrapper from '../../training/tabs/components/cv.styled';
 // import { shapeData } from '../../../constants/Constant';
 import 'moment/locale/mn';
+import { PATTERN_PHONE, PATTERN_REGISTER } from '../../../constants/Pattern';
 
 const layout = {
   labelCol: {
@@ -43,32 +44,18 @@ export default function FeedbackModal(props) {
         setStateFeedbackType(result || []);
       }
     });
-    // getService('user/get').then(result => {
-    //   if (result) {
-    //     setStateUser(result.content || []);
-    //   }
-    // });
+
     getService('criteria/getFeedbackCriteria').then(result => {
       if (result) {
         setStateCriteria(result || []);
       }
     });
-    // getService('organization/get').then(result => {
-    //   if (result) {
-    //     setStateOrg(result.content || []);
-    //   }
-    // });
+
     if (isEditMode) {
       setDate(Feedbackcontroller.feedbackDate);
       setStateFeedbackID(Feedbackcontroller.feedbackType.id);
-      // setStateUserID(Feedbackcontroller.user && Feedbackcontroller.user.id);
       setStateCriteriaID(Feedbackcontroller?.feedbackCriteria[0]?.criteria?.id);
-      // setStateOrgID(
-      //   Feedbackcontroller.organization && Feedbackcontroller.organization.id
-      // );
-      // setStateShapeID(
-      //   Feedbackcontroller.feedbackShape && Feedbackcontroller.feedbackShape.id
-      // );
+
       form.setFieldsValue({
         ...Feedbackcontroller,
         TypeID: Feedbackcontroller.feedbackType
@@ -114,6 +101,9 @@ export default function FeedbackModal(props) {
           isResolve: values.isResolve,
           measures: values.measures,
           description: values.description,
+          phoneNumber: values.phoneNumber,
+          addressDetail: values.addressDetail,
+          registerNumber: values.registerNumber,
         };
         values.criteriaIds = [stateCriteriaID];
         if (isEditMode) {
@@ -194,37 +184,15 @@ export default function FeedbackModal(props) {
                     placeholder="Санал гомдол гаргагч"
                   />
                 </Form.Item>
-                {/* <Form.Item name="shapeID" placeholder="Хэлбэр:">
-                  <AutoCompleteSelect
-                    valueField="id"
-                    placeholder="Хэлбэр"
-                    data={shapeData}
-                    onChange={value => selectShape(value)}
-                    defaultValue={
-                      isEditMode
-                        ? Feedbackcontroller &&
-                          Feedbackcontroller?.feedbackShape?.name
-                        : null
-                    }
-                  />
-                </Form.Item> */}
-                {/* <Form.Item
-                  placeholder="Хүлээн авагч:"
-                  name="UserID"
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
+                <Form.Item
+                  name="complainantEmail"
+                  placeholder="Санал гомдол гаргагчийн и-мэйл:"
                 >
-                  <AutoCompleteSelect
-                    placeholder="Хүлээн авагч"
-                    valueField="id"
-                    data={stateUser}
-                    size="medium"
-                    onChange={value => selectUser(value)}
+                  <Input
+                    className="FormItem"
+                    placeholder="Санал гомдол гаргагчийн и-мэйл"
                   />
-                </Form.Item> */}
+                </Form.Item>
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Form.Item
@@ -238,7 +206,7 @@ export default function FeedbackModal(props) {
                   ]}
                 >
                   <AutoCompleteSelect
-                    placeholder="Санал, гомдлын төрөл"
+                    placeholder="Хүлээн авсан хэлбэр"
                     valueField="id"
                     data={stateFeedbackType}
                     size="medium"
@@ -246,40 +214,43 @@ export default function FeedbackModal(props) {
                   />
                 </Form.Item>
                 <Form.Item
-                  name="complainantEmail"
-                  placeholder="Санал гомдол гаргагчийн и-мэйл:"
+                  name="registerNumber"
+                  placeholder="Санал гомдол гаргагчийн регистр:"
                   rules={[
                     {
                       required: true,
-                      message: 'Заавал бөглөх хэсгийг бөглөнө үү!',
+                      pattern: PATTERN_REGISTER,
+                      message: 'Регистрийн дугаар буруу байна',
                     },
                   ]}
                 >
                   <Input
                     className="FormItem"
-                    placeholder="Санал гомдол гаргагчийн и-мэйл"
+                    placeholder="Санал гомдол гаргагчийн регистр"
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="phoneNumber"
+                  placeholder="Санал гомдол гаргагчийн утас:"
+                  rules={[
+                    {
+                      required: true,
+                      pattern: PATTERN_PHONE,
+                      message: 'Утасны дугаар буруу байна',
+                    },
+                  ]}
+                >
+                  <Input
+                    className="FormItem"
+                    placeholder="Санал гомдол гаргагчийн утас"
                   />
                 </Form.Item>
               </Col>
 
-              <Col xs={24} md={24} lg={8}>
-                {/* <Form.Item
-                  name="OrgID"
-                  placeholder="Байгууллага сонгох:"
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
-                  <AutoCompleteSelect
-                    placeholder="Байгууллага сонгох"
-                    valueField="id"
-                    data={stateOrg}
-                    size="medium"
-                    onChange={value => selectOrg(value)}
-                  />
-                </Form.Item> */}
+              <Col xs={24} md={24} lg={24}>
+                <Form.Item name="addressDetail">
+                  <Input.TextArea placeholder="Санал гомдол гаргагчийн хаяг" />
+                </Form.Item>
               </Col>
               <Col xs={24} md={24} lg={24}>
                 <Form.Item name="CriteriaID" placeholder="Шалгуур үзүүлэлт:">

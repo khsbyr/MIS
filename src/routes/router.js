@@ -13,6 +13,7 @@ import ResetPassword from '../pages/auth/ResetPassword';
 import Admin from '../layout/admin';
 import Register from '../pages/auth/Register';
 import ExportPlan from '../pages/export/exportPlan';
+import ExportIndicators from '../pages/criteria/export/exportIndicator';
 
 export default function Routes() {
   return (
@@ -23,6 +24,7 @@ export default function Routes() {
         <Route path={RESET_PASSWORD} component={ResetPassword} />
         <Route path={LOGIN_PAGE} component={Login} />
         <Route path="/exportPlan" component={ExportPlan} />
+        <Route path="/exportIndicators" component={ExportIndicators} />
         <Route path="/" component={Admin} />
       </Switch>
     </Layouts>

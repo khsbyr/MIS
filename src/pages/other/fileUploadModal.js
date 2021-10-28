@@ -6,9 +6,9 @@ import {
   putService,
   updateFileServer,
   writeFileServer,
-} from '../../../../service/service';
-import { errorCatch } from '../../../../tools/Tools';
-import validateMessages from '../../../../tools/validateMessage';
+} from '../../service/service';
+import { errorCatch } from '../../tools/Tools';
+import validateMessages from '../../tools/validateMessage';
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -20,7 +20,7 @@ const dummyRequest = ({ onSuccess }) => {
 };
 
 export default function fileUploadModal(props) {
-  const { isModalVisible, EditRow, isEditMode, trainingID } = props;
+  const { isModalVisible, EditRow, isEditMode, feedbackId } = props;
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
 
@@ -60,8 +60,8 @@ export default function fileUploadModal(props) {
             serverApi
               .then(response => {
                 values.file = { id: response.data.id };
-                values.training = { id: trainingID };
-                putService(`trainingFiles/update/${EditRow.id}`, values)
+                values.feedback = { id: feedbackId };
+                putService(`feedbackFiles/update/${EditRow.id}`, values)
                   .then(() => {
                     message.success('Амжилттай хадгаллаа');
                     props.close(true);
@@ -74,7 +74,7 @@ export default function fileUploadModal(props) {
                 errorCatch(error);
               });
           } else {
-            putService(`trainingFiles/update/${EditRow.id}`, values)
+            putService(`feedbackFiles/update/${EditRow.id}`, values)
               .then(() => {
                 message.success('Амжилттай хадгаллаа');
                 props.close(true);
@@ -87,8 +87,8 @@ export default function fileUploadModal(props) {
           writeFileServer(`file/upload`, fileList[0])
             .then(response => {
               values.file = { id: response.data.id };
-              values.training = { id: trainingID };
-              postService('trainingFiles/post', values)
+              values.feedback = { id: feedbackId };
+              postService('feedbackFiles/post', values)
                 .then(() => {
                   message.success('Амжилттай хадгаллаа');
                   props.close(true);

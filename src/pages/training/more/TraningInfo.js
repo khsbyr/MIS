@@ -12,10 +12,11 @@ import TrainingReport from '../tabs/trainingReport';
 import Guidelines from '../tabs/guidelines';
 import TrainingProgram from '../tabs/trainingProgram';
 import Budget from '../tabs/budget';
-import TrainingTest from '../tabs/testAggregation';
+// import TrainingTest from '../tabs/testAggregation';
 import { useTrainingStore } from '../../../context/TrainingContext';
 import { useToolsStore } from '../../../context/Tools';
 import FileUpload from '../tabs/fileUpload';
+import TrainingTopic from '../tabs/trainingTopic';
 
 const { TabPane } = Tabs;
 const tabPosition = 'top';
@@ -25,7 +26,7 @@ export default function TraningInfo() {
   const { id } = useParams();
   const { setIsShowLoader } = useToolsStore();
   const toolsStore = useToolsStore();
-  const { setTrainingList } = useTrainingStore();
+  const { TrainingList, setTrainingList } = useTrainingStore();
 
   useEffect(() => {
     setIsShowLoader(true);
@@ -39,8 +40,22 @@ export default function TraningInfo() {
         setIsShowLoader(false);
       });
   }, []);
+
   return (
     <ContentWrapper>
+      <h1
+        style={{
+          marginLeft: '45px',
+          marginRight: '45px',
+          marginBottom: '10px',
+          color: '#103154',
+          fontWeight: '600',
+          textAlign: 'right',
+        }}
+      >
+        {TrainingList.name}
+      </h1>
+
       <Tabs tabPosition={tabPosition}>
         <TabPane tab={t('consulting_orga')} key="1">
           <Organization id={id} />
@@ -54,7 +69,10 @@ export default function TraningInfo() {
         <TabPane tab={t('training_program')} key="4">
           <TrainingProgram id={id} />
         </TabPane>
-        {toolsStore.user.role?.roleLevel?.id === 3 ? (
+        <TabPane tab="Сургалтын сэдэв" key="6">
+          <TrainingTopic id={id} />
+        </TabPane>
+        {toolsStore?.user?.role?.roleLevel?.id === 3 ? (
           ''
         ) : (
           <TabPane tab={t('training_budget')} key="8">
@@ -64,9 +82,9 @@ export default function TraningInfo() {
         <TabPane tab={t('attendance_registration')} key="5">
           <Attendance id={id} />
         </TabPane>
-        <TabPane tab={t('test_aggregation')} key="6">
+        {/* <TabPane tab={t('test_aggregation')} key="6">
           <TrainingTest id={id} />
-        </TabPane>
+        </TabPane> */}
         <TabPane tab={t('training_report')} key="7">
           <TrainingReport id={id} />
         </TabPane>

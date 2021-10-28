@@ -1,26 +1,16 @@
-import {
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Modal,
-  Row,
-  Select,
-  Radio,
-} from 'antd';
+import { Col, Form, Input, message, Modal, Row, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
+import PhoneNumber from '../../../../components/PhoneNumber';
+import { useToolsStore } from '../../../../context/Tools';
 import {
   getService,
   postService,
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import { useToolsStore } from '../../../../context/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from './attendance.style';
-import PhoneNumber from '../../../../components/PhoneNumber';
 
 const { Option } = Select;
 
@@ -33,6 +23,7 @@ export default function TrainingProgramModal(props) {
   const [stateBag, setStateBag] = useState([]);
   const [programList, setProgramList] = useState();
   const [programValue, setProgramValue] = useState();
+  message.info('Хэрэглэгч системд бүртгэлгүй тул бүртгүүлнэ үү!', 7);
 
   const getSum = aimagId => {
     getService(`soum/getList/${aimagId}`, {}).then(result => {
@@ -151,6 +142,7 @@ export default function TrainingProgramModal(props) {
         visible={isModalVisible}
         onOk={save}
         onCancel={() => props.close()}
+        maskClosable={false}
       >
         <ContentWrapper>
           <Form
@@ -209,7 +201,7 @@ export default function TrainingProgramModal(props) {
 
                 <PhoneNumber label="Холбогдох утас:" name="phone" />
 
-                <Form.Item
+                {/* <Form.Item
                   name="familyMembers"
                   label="Ам бүл"
                   rules={[
@@ -219,7 +211,7 @@ export default function TrainingProgramModal(props) {
                   ]}
                 >
                   <InputNumber size="large" type="number" />
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Item label="Хөтөлбөр:">
                   <Select
@@ -240,7 +232,7 @@ export default function TrainingProgramModal(props) {
                       ))}
                   </Select>
                 </Form.Item>
-
+                {/* 
                 <Form.Item
                   label="Өрх толгойлсон эсэх:"
                   name="isSingleParent"
@@ -254,7 +246,7 @@ export default function TrainingProgramModal(props) {
                     <Radio value>Тийм</Radio>
                     <Radio value={false}>Үгүй</Radio>
                   </Radio.Group>
-                </Form.Item>
+                </Form.Item> */}
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Form.Item name="email" label="Email хаяг:">
@@ -302,7 +294,7 @@ export default function TrainingProgramModal(props) {
                   <AutoCompleteSelect valueField="id" data={stateBag} />
                 </Form.Item>
 
-                <Form.Item
+                {/* <Form.Item
                   name="account"
                   label="А Данс"
                   rules={[
@@ -338,7 +330,7 @@ export default function TrainingProgramModal(props) {
                     <Radio value>Тийм</Radio>
                     <Radio value={false}>Үгүй</Radio>
                   </Radio.Group>
-                </Form.Item>
+                </Form.Item> */}
               </Col>
             </Row>
           </Form>

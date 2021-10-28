@@ -227,8 +227,8 @@ const productiveProject = props => {
 
   const userBodyTemplate = row => (
     <>
-      <span className="p-column-title">Хариуцсан хүн</span>
-      {row.nameOfAuthorizedPerson}
+      <span className="p-column-title">Байгууллага</span>
+      {row.organization.name}
     </>
   );
 
@@ -454,8 +454,8 @@ const productiveProject = props => {
               filterMatchMode="contains"
             />
             <Column
-              header="Хариуцсан хүн"
-              field="nameOfAuthorizedPerson"
+              header="Байгууллага"
+              field="organization.name"
               filter
               sortable
               body={userBodyTemplate}

@@ -30,6 +30,7 @@ import { getService, putService } from '../../../service/service';
 import { convertLazyParamsToObj, errorCatch } from '../../../tools/Tools';
 import DescriptionModal from './components/DescriptionModal';
 import ImplementationModal from './components/ImplementationModal';
+import ImplementationFileModal from './ImplementationFileModa';
 import ContentWrapper from './style/ProjectInfo.style';
 
 const { Content } = Layout;
@@ -68,11 +69,15 @@ const columns = [
 
 let editRow;
 let isEditMode;
+let editRoww;
+let isEditModee;
 const Implementation = () => {
   const { ProjectList } = useProjectStore();
   const toolsStore = useContext(ToolsContext);
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisiblee, setIsModalVisiblee] = useState(false);
+  const [impId, setImpId] = useState();
   const [lazyParams, setLazyParams] = useState({
     first: 0,
     page: 0,
@@ -136,6 +141,23 @@ const Implementation = () => {
     setLazyParams(params);
   };
 
+  const addd = () => {
+    setIsModalVisiblee(true);
+    isEditModee = false;
+  };
+
+  const editt = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
+    editRoww = row;
+    isEditModee = true;
+    setIsModalVisiblee(true);
+  };
+
+  const closeModall = () => {
+    setIsModalVisiblee(false);
+  };
+
   const add = () => {
     setIsModalVisible(true);
     isEditMode = false;
@@ -189,6 +211,10 @@ const Implementation = () => {
     }
   };
 
+  function openTab(row) {
+    window.open(`${row.file.path}`);
+  }
+
   const info = row => {
     getService(
       `projectStatusHistory/getByImplementationOfSempId/${row.id}`
@@ -213,9 +239,132 @@ const Implementation = () => {
     });
   };
 
-  function openTab(row) {
-    window.open(`${row.file.path}`);
+  const handleDeletedd = row => {
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+      return;
+    }
+    putService(`implementationSempFiles/delete/${row.id}`)
+      .then(() => {
+        message.success('Амжилттай устлаа');
+        onInit();
+      })
+      .catch(error => {
+        errorCatch(error);
+      });
+  };
+
+  function confirmm(row) {
+    Modal.confirm({
+      title: 'Та устгахдаа итгэлтэй байна уу ?',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: {},
+      okText: 'Устгах',
+      cancelText: 'Буцах',
+      onOk() {
+        handleDeletedd(row);
+        onInit();
+      },
+      onCancel() {},
+    });
   }
+
+  const popp = (event, row) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (row.length === 0) {
+      message.warning('Устгах өгөгдлөө сонгоно уу');
+    } else {
+      confirmm(row);
+    }
+  };
+
+  const actionFile = row => (
+    <>
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faPen} />}
+        onClick={event => editt(event, row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faTrash} />}
+        onClick={event => popp(event, row)}
+      />
+      <Button
+        type="text"
+        icon={<FontAwesomeIcon icon={faFilePdf} />}
+        onClick={() => openTab(row)}
+      />
+    </>
+  );
+
+  const creadetDate = row => (
+    <>
+      <>{moment(row && row.createdDate).format('YYYY-M-D')}</>
+    </>
+  );
+
+  const addFile = row => {
+    setImpId(row.id);
+    getService(
+      `implementationSempFiles/getByImplementationSemp/${row.id}`
+    ).then(result => {
+      if (result) {
+        Modal.info({
+          title: 'Хавсралт файл',
+          width: 1300,
+          okText: 'Буцах',
+          content: (
+            <div className="button-demo">
+              <Layout className="btn-layout">
+                <Content>
+                  <Row>
+                    <Col xs={24} md={24} lg={24}>
+                      <Row justify="end" gutter={[16, 16]}>
+                        <Col>
+                          {toolsStore.user.role.id === 21 ? (
+                            ''
+                          ) : (
+                            <Tooltip title="Нэмэх" arrowPointAtCenter>
+                              <Button
+                                type="text"
+                                className="export"
+                                icon={<FontAwesomeIcon icon={faPlus} />}
+                                onClick={addd}
+                              >
+                                {' '}
+                              </Button>
+                            </Tooltip>
+                          )}
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                </Content>
+              </Layout>
+              <div className="datatable-responsive-demo">
+                <DataTable
+                  value={result}
+                  removableSort
+                  paginator
+                  emptyMessage="Өгөгдөл олдсонгүй..."
+                  rows={10}
+                  className="p-datatable-responsive-demo"
+                  dataKey="id"
+                >
+                  <Column header="Тайлбар" field="description" />
+                  <Column header="Огноо" body={creadetDate} />
+                  <Column headerStyle={{ width: '8rem' }} body={actionFile} />
+                </DataTable>
+              </div>
+            </div>
+          ),
+          onOk() {},
+        });
+      }
+    });
+  };
 
   const action = row => (
     <>
@@ -241,9 +390,7 @@ const Implementation = () => {
           onClick={event => pop(event, row)}
         />
       )}
-      {toolsStore.user.role.id === 21 ||
-      toolsStore.user.role.id === 19 ||
-      toolsStore.user.role.id === 22 ? (
+      {toolsStore.user.role.id === 21 || toolsStore.user.role.id === 22 ? (
         ''
       ) : (
         <Tooltip title="Төлөвийн түүх харах">
@@ -255,13 +402,25 @@ const Implementation = () => {
         </Tooltip>
       )}
 
-      {(row.file && toolsStore.user.role.id !== 21) ||
-      toolsStore.user.role.id !== 19 ? (
+      {row.file && toolsStore.user.role.id !== 21 ? (
         <Tooltip title="Файл харах">
           <Button
             type="text"
             icon={<FontAwesomeIcon icon={faFilePdf} />}
             onClick={() => openTab(row)}
+          />
+        </Tooltip>
+      ) : (
+        ''
+      )}
+
+      {row.projectStatus.name === 'Зөвшөөрсөн' &&
+      toolsStore.user.role.id !== 21 ? (
+        <Tooltip title="Файл нэмэх">
+          <Button
+            type="text"
+            icon={<FontAwesomeIcon icon={faPlus} />}
+            onClick={() => addFile(row)}
           />
         </Tooltip>
       ) : (
@@ -309,15 +468,6 @@ const Implementation = () => {
     </>
   );
 
-  const job = row => (
-    <>
-      <span className="p-column-title">Төлөвлөсөн үйл ажиллагаа</span>
-      <Tooltip placement="topLeft" title={row.plannedWork}>
-        {row.plannedWork}
-      </Tooltip>
-    </>
-  );
-
   const description = row => (
     <>
       <span className="p-column-title">Тайлбар</span>
@@ -362,7 +512,6 @@ const Implementation = () => {
     <>
       <span className="p-column-title">Статус</span>
       {toolsStore.user?.role?.roleLevel?.id === 3 ||
-      toolsStore.user?.role?.roleLevel?.id === 4 ||
       toolsStore.user?.role?.roleLevel?.id === 5 ||
       toolsStore.user.role.id === 22 ? (
         <Select
@@ -456,7 +605,6 @@ const Implementation = () => {
             <Column header="№" body={indexBodyTemplate} style={{ width: 40 }} />
             <Column header="Эхлэх хугацаа" body={startDate} />
             <Column header="Дуусах хугацаа" body={endDate} />
-            <Column header="Төлөвлөсөн үйл ажиллагаа" body={job} />
             <Column header="Тайлбар" body={description} />
             <Column header="Хугацаа" body={period} />
             <Column
@@ -464,7 +612,7 @@ const Implementation = () => {
               header="Статус"
               body={statusBodyTemplate}
             />
-            <Column headerStyle={{ width: '10rem' }} body={action} />
+            <Column headerStyle={{ width: '12rem' }} body={action} />
           </DataTable>
           {isModalVisible && (
             <ImplementationModal
@@ -482,6 +630,15 @@ const Implementation = () => {
               operationID={operationID}
               statusID={statusId}
               type={2}
+            />
+          )}
+          {isModalVisiblee && (
+            <ImplementationFileModal
+              EditRow={editRoww}
+              isModalVisible={isModalVisiblee}
+              close={closeModall}
+              isEditMode={isEditModee}
+              impId={impId}
             />
           )}
         </div>

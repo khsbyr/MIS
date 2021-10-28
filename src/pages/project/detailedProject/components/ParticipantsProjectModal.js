@@ -1,26 +1,17 @@
-import {
-  Col,
-  Form,
-  Input,
-  message,
-  Modal,
-  Row,
-  Radio,
-  InputNumber,
-} from 'antd';
+import { Col, Form, Input, message, Modal, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AutoCompleteSelect from '../../../../components/Autocomplete';
+import PhoneNumber from '../../../../components/PhoneNumber';
+import { PATTERN_REGISTER } from '../../../../constants/Pattern';
+import { useToolsStore } from '../../../../context/Tools';
 import {
   getService,
   postService,
   putService,
 } from '../../../../service/service';
 import { errorCatch } from '../../../../tools/Tools';
-import { useToolsStore } from '../../../../context/Tools';
 import validateMessages from '../../../../tools/validateMessage';
 import ContentWrapper from '../../../training/tabs/components/attendance.style';
-import PhoneNumber from '../../../../components/PhoneNumber';
-import { PATTERN_REGISTER } from '../../../../constants/Pattern';
 
 export default function ParticipantsProjectModal(props) {
   const {
@@ -228,7 +219,7 @@ export default function ParticipantsProjectModal(props) {
                 </Form.Item>
                 <PhoneNumber label="Холбогдох утас:" name="phone" />
 
-                <Form.Item
+                {/* <Form.Item
                   name="familyMembers"
                   label="Ам бүл"
                   rules={[
@@ -250,7 +241,7 @@ export default function ParticipantsProjectModal(props) {
                   ]}
                 >
                   <InputNumber size="large" type="number" />
-                </Form.Item>
+                </Form.Item> */}
               </Col>
               <Col xs={24} md={24} lg={12}>
                 <Form.Item name="email" label="Email хаяг:">
@@ -298,7 +289,7 @@ export default function ParticipantsProjectModal(props) {
                   <AutoCompleteSelect valueField="id" data={stateBag} />
                 </Form.Item>
 
-                <Form.Item
+                {/* <Form.Item
                   name="account"
                   label="А Данс"
                   rules={[
@@ -308,7 +299,7 @@ export default function ParticipantsProjectModal(props) {
                   ]}
                 >
                   <InputNumber size="large" type="number" />
-                </Form.Item>
+                </Form.Item> */}
               </Col>
               {/* <Col xs={24} md={24} lg={12}>
                   <Form.Item label="Хөтөлбөр:">
@@ -333,7 +324,7 @@ export default function ParticipantsProjectModal(props) {
                   </Form.Item>
                 </Col> */}
             </Row>
-            <Row>
+            {/* <Row>
               <Col xs={24} md={24} lg={5}>
                 <Form.Item
                   label="Оторт явсан эсэх:"
@@ -367,7 +358,7 @@ export default function ParticipantsProjectModal(props) {
                   </Radio.Group>
                 </Form.Item>
               </Col>
-            </Row>
+            </Row> */}
           </Form>
         </ContentWrapper>
       </Modal>
