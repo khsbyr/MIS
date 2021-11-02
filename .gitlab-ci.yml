@@ -29,8 +29,9 @@ deploy:
   image: kroniak/ssh-client
   before_script:
     - echo "Deploying app"
+    - apk add --update curl && rm -rf /var/cache/apk/*
   script:
-    - 'curl --request POST --header "Content-Type: application/json" "http://47.243.62.69:8001/api/bus/sync_bus/"'
+    - curl --request POST --header "Content-Type: application/json" "http://47.243.62.69:8001/api/bus/sync_bus/"
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > key.pem
     - chmod 400 key.pem
     - ssh -o StrictHostKeyChecking=no -i key.pem root@$PROD_SERVER_IP "docker pull $CI_REGISTRY_IMAGE"
