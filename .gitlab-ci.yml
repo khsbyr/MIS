@@ -9,7 +9,7 @@ stages:
 variables:
   DOCKER_VERSION: 20.10.6
   DOCKER_TLS_CERTDIR: "/certs"
-  APP_NAME: mis-front
+  APP_NAME: mis-front-new
   PORT: 80
 
 docker-build:
