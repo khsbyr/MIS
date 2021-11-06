@@ -8,15 +8,15 @@ stages:
 
 variables:
   DOCKER_VERSION: 20.10.6
-  DOCKER_TLS_CERTDIR: "/certs"
-  APP_NAME: mis-front-new
+  DOCKER_TLS_CERTDIR: '/certs'
+  APP_NAME: mis-front
   PORT: 80
 
 docker-build:
   <<: *only-default
   stage: docker-build
   image: docker:$DOCKER_VERSION
-  services: 
+  services:
     - docker:$DOCKER_VERSION-dind
   script:
     - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin "$CI_REGISTRY"
@@ -24,7 +24,6 @@ docker-build:
     - docker push "$CI_REGISTRY_IMAGE"
 
 deploy:
-  <<: *only-default
   stage: deploy
   image: kroniak/ssh-client
   before_script:
