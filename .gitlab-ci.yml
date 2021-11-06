@@ -39,7 +39,5 @@ deploy:
     - ssh -o StrictHostKeyChecking=no -i key.pem root@$PROD_SERVER_IP "docker stop $APP_NAME || true && docker rm $APP_NAME || true"
 
     - ssh -o StrictHostKeyChecking=no -i key.pem root@$PROD_SERVER_IP "docker run -p $PORT:$PORT -d --name $APP_NAME $CI_REGISTRY_IMAGE"
-  timeout:
-    job: 1h 30m # this is what's currently passed at `timeout:`
 
 
