@@ -36,7 +36,6 @@ deploy:
     - chmod 400 key.pem
     - ssh -o StrictHostKeyChecking=no -i key.pem root@$PROD_SERVER_IP "docker pull $CI_REGISTRY_IMAGE"
     - ssh -o StrictHostKeyChecking=no -i key.pem root@$PROD_SERVER_IP "docker stop $APP_NAME || true && docker rm $APP_NAME || true"
-
     - ssh -o StrictHostKeyChecking=no -i key.pem root@$PROD_SERVER_IP "docker run -p $PORT:$PORT -d --name $APP_NAME $CI_REGISTRY_IMAGE"
 
 
