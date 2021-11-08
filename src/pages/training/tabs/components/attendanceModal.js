@@ -213,7 +213,15 @@ export default function TrainingProgramModal(props) {
                   <InputNumber size="large" type="number" />
                 </Form.Item> */}
 
-                <Form.Item label="Хөтөлбөр:">
+                <Form.Item
+                  label="Хөтөлбөр:"
+                  name=""
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
                   <Select
                     showSearch
                     placeholder="Хөтөлбөр сонгох"

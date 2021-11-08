@@ -1,22 +1,24 @@
-import { Tabs } from 'antd';
+import { faFileDownload } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Tabs, Tooltip } from 'antd';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { getService } from '../../../service/service';
-import { errorCatch } from '../../../tools/Tools';
-import ContentWrapper from './TrainingInfo.style';
-import Organization from '../tabs/organization';
-import CV from '../tabs/cv';
-import Attendance from '../tabs/attendance';
-import TrainingReport from '../tabs/trainingReport';
-import Guidelines from '../tabs/guidelines';
-import TrainingProgram from '../tabs/trainingProgram';
-import Budget from '../tabs/budget';
+import { useToolsStore } from '../../../context/Tools';
 // import TrainingTest from '../tabs/testAggregation';
 import { useTrainingStore } from '../../../context/TrainingContext';
-import { useToolsStore } from '../../../context/Tools';
+import { getService } from '../../../service/service';
+import { errorCatch } from '../../../tools/Tools';
+import Attendance from '../tabs/attendance';
+// import Budget from '../tabs/budget';
+import CV from '../tabs/cv';
 import FileUpload from '../tabs/fileUpload';
+import Guidelines from '../tabs/guidelines';
+import Organization from '../tabs/organization';
+import TrainingProgram from '../tabs/trainingProgram';
+import TrainingReport from '../tabs/trainingReport';
 import TrainingTopic from '../tabs/trainingTopic';
+import ContentWrapper from './TrainingInfo.style';
 
 const { TabPane } = Tabs;
 const tabPosition = 'top';
@@ -25,7 +27,7 @@ export default function TraningInfo() {
   const { t } = useTranslation();
   const { id } = useParams();
   const { setIsShowLoader } = useToolsStore();
-  const toolsStore = useToolsStore();
+  // const toolsStore = useToolsStore();
   const { TrainingList, setTrainingList } = useTrainingStore();
 
   useEffect(() => {
@@ -41,6 +43,10 @@ export default function TraningInfo() {
       });
   }, []);
 
+  function exportTraining(value) {
+    window.open(`/exportTraining?trainingId=${value}`);
+  }
+
   return (
     <ContentWrapper>
       <h1
@@ -54,6 +60,16 @@ export default function TraningInfo() {
         }}
       >
         {TrainingList.name}
+        <Tooltip title={t('export')} arrowPointAtCenter>
+          <Button
+            type="text"
+            className="export"
+            icon={<FontAwesomeIcon icon={faFileDownload} />}
+            onClick={() => exportTraining(TrainingList.id)}
+          >
+            {' '}
+          </Button>
+        </Tooltip>
       </h1>
 
       <Tabs tabPosition={tabPosition}>
@@ -72,13 +88,13 @@ export default function TraningInfo() {
         <TabPane tab="Сургалтын сэдэв" key="6">
           <TrainingTopic id={id} />
         </TabPane>
-        {toolsStore?.user?.role?.roleLevel?.id === 3 ? (
+        {/* {toolsStore?.user?.role?.roleLevel?.id === 3 ? (
           ''
         ) : (
           <TabPane tab={t('training_budget')} key="8">
             <Budget id={id} />
           </TabPane>
-        )}
+        )} */}
         <TabPane tab={t('attendance_registration')} key="5">
           <Attendance id={id} />
         </TabPane>

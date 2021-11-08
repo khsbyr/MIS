@@ -2,25 +2,23 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
-  faPrint,
-  faTrash,
   faPlus,
-  faFilePdf,
+  faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState, useRef } from 'react';
-import moment from 'moment';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
+import { PAGESIZE } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
-import { getService, deleteService } from '../../service/service';
-import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
+import { deleteService, getService } from '../../service/service';
+import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
 import FeedbackModal from './components/FeedbackModal';
-import { PAGESIZE } from '../../constants/Constant';
 
 const { Content } = Layout;
 
@@ -206,6 +204,10 @@ const Feedback = () => {
     history.push(`/feedbackDetail/${row.data.id}`);
   };
 
+  function exportTab() {
+    window.open(`/exportFeedback`);
+  }
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -217,32 +219,12 @@ const Feedback = () => {
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col>
-                  <Tooltip title={t('print')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col>
                   <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
                       className="export"
                       icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col>
-                  <Tooltip title={t('pdf')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFilePdf} />}
+                      onClick={() => exportTab()}
                     >
                       {' '}
                     </Button>
@@ -304,7 +286,7 @@ const Feedback = () => {
               filterPlaceholder="Хайх"
             />
             <Column
-              header="Санал, гомдлын төрөл"
+              header="Хүлээн авсан хэлбэр"
               field="feedbackType.name"
               sortable
               filter

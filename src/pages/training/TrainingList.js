@@ -1,4 +1,4 @@
-import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   faFileExcel,
   faPen,
@@ -9,26 +9,25 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
   Col,
-  DatePicker,
   Layout,
   message,
   Modal,
   Row,
-  Tooltip,
   Select,
+  Tooltip,
 } from 'antd';
 import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useRef } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
+import { PAGESIZE } from '../../constants/Constant';
 import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
-import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
+import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import ContentWrapper from './training.style';
 import TrainingModal from './TrainingModal';
-import { PAGESIZE } from '../../constants/Constant';
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -54,8 +53,6 @@ const TrainingList = () => {
   const dt = useRef(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [participantsList, setParticipantsList] = useState();
-  const [participantsListM, setParticipantsListM] = useState();
-  const [participantsListF, setParticipantsListF] = useState();
 
   const onInit = () => {
     toolsStore.setIsShowLoader(true);
@@ -84,19 +81,9 @@ const TrainingList = () => {
 
   useEffect(() => {
     onInit();
-    getService(`participants/get`).then(result => {
+    getService(`training/getTotalParticipantsNumber`).then(result => {
       if (result) {
         setParticipantsList(result || []);
-      }
-    });
-    getService(`participants/get?search=gender.id:1`).then(result => {
-      if (result) {
-        setParticipantsListM(result || []);
-      }
-    });
-    getService(`participants/get?search=gender.id:2`).then(result => {
-      if (result) {
-        setParticipantsListF(result || []);
       }
     });
   }, [lazyParams]);
@@ -290,9 +277,9 @@ const TrainingList = () => {
 
   const ShowTrainingInfo = row => history.push(`/trainingList/${row.data.id}`);
 
-  const exportCSV = () => {
-    dt.current.exportCSV();
-  };
+  function exportTab() {
+    window.open(`/exportTrainingList`);
+  }
 
   return (
     <ContentWrapper>
@@ -308,9 +295,8 @@ const TrainingList = () => {
                     color: 'grey',
                   }}
                 >
-                  Нийт оролцогчид: {participantsList?.totalElements} Эрэгтэй:{' '}
-                  {participantsListM?.totalElements} Эмэгтэй:{' '}
-                  {participantsListF?.totalElements}{' '}
+                  Нийт оролцогчид: {participantsList?.total} Эрэгтэй:{' '}
+                  {participantsList?.male} Эмэгтэй: {participantsList?.female}{' '}
                 </pre>
               ) : (
                 ''
@@ -320,7 +306,8 @@ const TrainingList = () => {
             <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col xs={12} md={12} lg={8}>
-                  {toolsStore?.user?.roleId === 1 ? (
+                  {toolsStore?.user?.roleId === 1 ||
+                  toolsStore?.user?.roleId === 3 ? (
                     <Select
                       showSearch
                       allowClear
@@ -348,35 +335,27 @@ const TrainingList = () => {
                     ''
                   )}
                 </Col>
-                <Col xs={12} md={5} lg={5}>
-                  <DatePicker
-                    bordered={false}
-                    suffixIcon={<DownOutlined />}
-                    placeholder="Жил сонгох"
-                    picker="year"
-                    className="DatePicker"
-                    style={{
-                      width: '120px',
-                      color: 'black',
-                      cursor: 'pointer',
-                    }}
-                  />
-                </Col>
-                <Col xs={8} md={2} lg={2}>
-                  <Tooltip title={t('export')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                      onClick={exportCSV}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                {toolsStore.user.roleId === 9 ? (
-                  ''
+
+                {toolsStore.user.role.id === 1 ||
+                toolsStore.user.role.id === 3 ? (
+                  <Col xs={8} md={2} lg={2}>
+                    <Tooltip title={t('export')} arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFileExcel} />}
+                        onClick={() => exportTab()}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
+                  </Col>
                 ) : (
+                  ''
+                )}
+
+                {toolsStore.user.role.id === 1 ||
+                toolsStore.user.role.id === 3 ? (
                   <Col xs={8} md={2} lg={2}>
                     <Tooltip title={t('add')} arrowPointAtCenter>
                       <Button
@@ -386,11 +365,9 @@ const TrainingList = () => {
                         onClick={add}
                       />
                     </Tooltip>
-                    <Tooltip
-                      target=".export-buttons>button"
-                      position="bottom"
-                    />
                   </Col>
+                ) : (
+                  ''
                 )}
               </Row>
             </Col>

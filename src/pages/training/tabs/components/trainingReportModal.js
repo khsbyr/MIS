@@ -54,12 +54,10 @@ export default function TrainingReportModal(props) {
     if (isEditMode) {
       form.setFieldsValue({
         ...TrainingReportController,
-        CountryID: TrainingList.address.childrenAddress.map(z => z.soum.name),
+        CountryID: TrainingList.address.aimagSoums,
         TrainingName: TrainingList && TrainingList?.name,
         TotalParticipants: TrainingList && TrainingList?.totalParticipants,
-        ResponsibleUserName:
-          TrainingList &&
-          TrainingList?.organization?.responsibleUser?.firstname,
+        ResponsibleUserName: TrainingList && TrainingList?.organization?.name,
         PerformanceBudget:
           TrainingList && TrainingList?.trainingBudget?.performanceBudget,
         ReportsAim:
@@ -219,12 +217,12 @@ export default function TrainingReportModal(props) {
             initialValues={{
               name: TrainingList.name,
               TotalParticipants: TrainingList.totalParticipants,
-              ResponsibleUserName:
-                TrainingList.organization.responsibleUser.firstname,
+              ResponsibleUserName: TrainingList.organization.name,
               PerformanceBudget: TrainingList.trainingBudget.performanceBudget,
-              CountryID: TrainingList.address.childrenAddress.map(
-                z => z.soum.name
-              ),
+              // CountryID: TrainingList.address.childrenAddress.map(
+              //   z => z.soum.name
+              // ),
+              CountryID: TrainingList.address.aimagSoums,
               AimagID: TrainingList.address.aimag,
               SoumID: TrainingList.address.soum,
               BagID: TrainingList.address.bag,
@@ -237,7 +235,7 @@ export default function TrainingReportModal(props) {
                 </Form.Item>
 
                 <Form.Item
-                  label="Сургалт явуулсан байгууллага, хүний нэр:"
+                  label="Сургалт явуулсан байгууллага:"
                   name="ResponsibleUserName"
                 >
                   <Input className="FormItem" disabled />

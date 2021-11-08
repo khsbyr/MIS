@@ -1,12 +1,5 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import {
-  faFileExcel,
-  faFilePdf,
-  faPen,
-  faPlus,
-  faPrint,
-  faTrash,
-} from '@fortawesome/free-solid-svg-icons';
+import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
@@ -22,10 +15,10 @@ import { useTranslation } from 'react-i18next';
 import { PAGESIZE } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
 import {
+  deleteService,
   getService,
   postService,
   putService,
-  deleteService,
 } from '../../service/service';
 import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
@@ -218,38 +211,6 @@ export default function Roles() {
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
                 <Col>
-                  <Tooltip title={t('print')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col>
-                  <Tooltip title={t('export')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col>
-                  <Tooltip title={t('pdf')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFilePdf} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col>
                   <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button
                       type="text"
@@ -290,14 +251,7 @@ export default function Roles() {
             dataKey="id"
           >
             <Column field="index" header="№" style={{ width: 40 }} />
-            <Column
-              field="name"
-              header={t('Role name')}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-              filterMatchMode="contains"
-            />
+            <Column field="name" header={t('Role name')} />
             <Column
               field=""
               header={t('Action')}

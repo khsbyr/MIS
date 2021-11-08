@@ -14,7 +14,7 @@ import locale from 'antd/es/date-picker/locale/mn_MN';
 import moment from 'moment';
 import 'moment/locale/mn';
 import React, { useEffect, useState } from 'react';
-import CurrencyInput from 'react-currency-input';
+// import CurrencyInput from 'react-currency-input';
 import AutoCompleteSelect from '../../components/Autocomplete';
 import MulticompleteSelect from '../../components/MulticompleteSelect';
 import { useToolsStore } from '../../context/Tools';
@@ -150,7 +150,7 @@ export default function TrainingModal(props) {
           const saveData = {
             training: values,
             criteriaIds: selectedCriteria,
-            totalBudget: `${values.totalBudget}00`,
+            // totalBudget: `${values.totalBudget}00`,
             soumList: valueAddress,
           };
           putService(`training/update/${Trainingcontroller.id}`, saveData)
@@ -165,7 +165,7 @@ export default function TrainingModal(props) {
           const saveData = {
             training: values,
             criteriaIds: selectedCriteria,
-            totalBudget: values.totalBudget,
+            // totalBudget: values.totalBudget,
             soumList: valueAddress,
           };
 
@@ -245,9 +245,22 @@ export default function TrainingModal(props) {
                       <Input placeholder="Сургалтын сэдэв" />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={8}>
+                  {/* <Col xs={24} md={24} lg={8}>
                     <Form.Item label="Төсөв:" name="totalBudget">
                       <CurrencyInput precision="0" suffix=" ₮" />
+                    </Form.Item>
+                  </Col> */}
+                  <Col xs={24} md={24} lg={8}>
+                    <Form.Item
+                      name="orgID"
+                      layout="vertical"
+                      label="Байгууллага:"
+                    >
+                      <AutoCompleteSelect
+                        valueField="id"
+                        data={toolsStore.orgList}
+                        size="medium"
+                      />
                     </Form.Item>
                   </Col>
                   <Col xs={24} md={24} lg={8}>
@@ -282,19 +295,7 @@ export default function TrainingModal(props) {
                       />
                     </Form.Item>
                   </Col>
-                  <Col xs={24} md={24} lg={8}>
-                    <Form.Item
-                      name="orgID"
-                      layout="vertical"
-                      label="Байгууллага:"
-                    >
-                      <AutoCompleteSelect
-                        valueField="id"
-                        data={toolsStore.orgList}
-                        size="medium"
-                      />
-                    </Form.Item>
-                  </Col>
+
                   <Col xs={24} md={24} lg={8}>
                     <Form.Item label="Хаяг:">
                       {ProjectChildrenAddress === null ? (

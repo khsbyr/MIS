@@ -199,7 +199,7 @@ const TrainingReport = props => {
       <span className="p-column-title">
         Сургалт явуулсан байгууллага, хүний нэр
       </span>
-      {row.organization.responsibleUser.firstname}
+      {row.organization.name}
     </>
   );
 
@@ -258,7 +258,7 @@ const TrainingReport = props => {
               body={trainingnameBodyTemplate}
             />
             <Column
-              header="Сургалт явуулсан байгууллага, хүний нэр"
+              header="Сургалт явуулсан байгууллага"
               body={respoUserBodyTemplate}
             />
             <Column header="Үүссэн огноо" body={teacherBodyTemplate} />

@@ -3,22 +3,20 @@ import {
   faFileExcel,
   faPen,
   faPlus,
-  faPrint,
   faTrash,
-  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PAGESIZE } from '../../constants/Constant';
 import { useToolsStore } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
-import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
+import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
 import OrganizationModal from '../training/tabs/components/OrganizationModal';
-import { PAGESIZE } from '../../constants/Constant';
 
 const { Content } = Layout;
 
@@ -211,48 +209,37 @@ const ConsultingOrg = () => {
     </>
   );
 
+  function exportTab() {
+    window.open(`/exportOrganization`);
+  }
+
   return (
     <ContentWrapper>
       <div className="button-demo">
         <Content>
           <Row>
             <Col xs={24} md={12} lg={14}>
-              <p className="title">Байгууллага </p>
+              <p className="title">Байгууллага</p>
             </Col>
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
-                <Col>
-                  <Tooltip title={t('print')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col>
-                  <Tooltip title={t('export')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col>
-                  <Tooltip title={t('pdf')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFilePdf} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
+                {toolsStore.user.role.id === 1 ? (
+                  <Col>
+                    <Tooltip title={t('export')} arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFileExcel} />}
+                        onClick={() => exportTab()}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
+                  </Col>
+                ) : (
+                  ''
+                )}
+
                 {toolsStore.user?.role?.roleLevel.id === 3 ? (
                   ''
                 ) : (
