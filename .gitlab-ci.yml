@@ -28,10 +28,6 @@ deploy:
   image: kroniak/ssh-client
   before_script:
     - echo "Deploying app"
-    - apk add --no-cache make curl
-    - echo IP publique de sortie du gitlab runner $(curl -s https://ifconfig.me/ip )
-    - traceroute -4 -l -I partners.doctolib.fr
-    - curl --silent --fail --head https://partners.doctolib.fr/
   script:
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > key.pem
     - chmod 400 key.pem
