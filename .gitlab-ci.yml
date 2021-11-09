@@ -29,7 +29,6 @@ deploy:
   before_script:
     - echo "Deploying app"
     - apk add --no-cache make curl
-    - ./scripts/install
     - echo IP publique de sortie du gitlab runner $(curl -s https://ifconfig.me/ip )
     - traceroute -4 -l -I partners.doctolib.fr
     - curl --silent --fail --head https://partners.doctolib.fr/
