@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import { Button } from 'antd';
 import React, { useRef } from 'react';
 import ReactToPrint from 'react-to-print';
