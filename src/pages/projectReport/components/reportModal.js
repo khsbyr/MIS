@@ -235,7 +235,6 @@ export default function ReportModal(props) {
                     </Select>
                   ) : (
                     <Select
-                      showSearch
                       style={{ width: '100%' }}
                       onChange={value => SelectedPlan(value)}
                       placeholder="Төлөвлөгөөний нэрээр хайх"

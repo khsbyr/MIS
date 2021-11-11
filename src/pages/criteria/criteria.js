@@ -9,7 +9,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
   Col,
-  DatePicker,
   Layout,
   message,
   Modal,
@@ -228,14 +227,6 @@ const Criteria = () => {
     setLazyParams(params);
   };
 
-  function selectedQ(date, dateString) {
-    getService(`/criteria/get?stringDate=${dateString}`).then(result => {
-      if (result) {
-        setList(result.content || []);
-      }
-    });
-  }
-
   function exportTab() {
     window.open(`/exportIndicators`);
   }
@@ -286,30 +277,23 @@ const Criteria = () => {
                     </OptGroup>
                   </Select>
                 </Col>
-                <Col xs={8} md={3} lg={6}>
-                  <DatePicker
-                    picker="quarter"
-                    className="datepicker"
-                    placeholder="Улирал сонгох"
-                    style={{
-                      border: 'none',
-                    }}
-                    onChange={selectedQ}
-                  />
-                </Col>
 
-                <Col xs={8} md={3} lg={2}>
-                  <Tooltip title={t('export')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                      onClick={() => exportTab()}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
+                {toolsStore.user.role.id === 1 ? (
+                  <Col xs={8} md={3} lg={2}>
+                    <Tooltip title={t('export')} arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFileExcel} />}
+                        onClick={() => exportTab()}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
+                  </Col>
+                ) : (
+                  ''
+                )}
 
                 {toolsStore.user?.roleId === 1 ? (
                   <Col xs={8} md={3} lg={2}>

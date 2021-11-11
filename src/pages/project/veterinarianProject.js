@@ -1,11 +1,9 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
-  faFileExcel,
   faFilePdf,
   faHistory,
   faPen,
   faPlus,
-  faPrint,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,15 +15,15 @@ import {
   Modal,
   Row,
   Select,
+  Table,
   Tag,
   Tooltip,
-  Table,
 } from 'antd';
+import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import moment from 'moment';
 import { PAGESIZE } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
@@ -361,17 +359,7 @@ const veterinarianProject = () => {
             </Col>
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
-                <Col>
-                  <Tooltip title={t('print')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col>
+                {/* <Col>
                   <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
                       type="text"
@@ -381,18 +369,8 @@ const veterinarianProject = () => {
                       {' '}
                     </Button>
                   </Tooltip>
-                </Col>
-                <Col>
-                  <Tooltip title={t('pdf')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFilePdf} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
+                </Col> */}
+
                 <Col>
                   <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button

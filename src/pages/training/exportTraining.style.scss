@@ -1,0 +1,115 @@
+.trainingExport {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+    margin-bottom: 50px;
+    // border: 1px solid black;
+    text-align: justify;
+    line-height: 1.1;
+}
+
+.headerExportTraining {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px;
+}
+
+.exportTbody {
+    padding: 20px 40px 20px 40px;
+}
+
+.redTitle {
+    color: red;
+    font-weight: 400;
+    margin-left: 50px
+}
+
+.titleGuidelines {
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+}
+
+.tableTraining {
+    width: 100%;
+ 
+}
+
+.tableTrTraining{
+    border: 1px solid black;
+}
+
+.tableThTraining{
+    border: 1px solid black;
+    width: 20%;
+    padding-left: 10px;
+    font-size: 13px;
+}
+
+.tableThInfo {
+    padding-left: 20px;
+    border: 1px solid black;
+    font-size: 13px;
+}
+
+.tableThInfo1 {
+    padding-left: 10px;
+    border: 1px solid black;
+    font-size: 13px;
+}
+
+.tableThTrainingEducation {
+    font-size: 13px;
+
+    border: 1px solid black;
+    // width: 20px;
+    padding-left: 10px;
+}
+
+.tableThTrainingProgram {
+    border: 1px solid black;
+    padding-left: 10px;
+    width: 20px;
+    font-size: 13px;
+}
+
+.subTitleExportTraining {
+    margin-top: 25px;
+}
+
+
+
+@media all {
+    .page-break {
+      display: none;
+      size: auto;
+      margin: 10mm;
+    }
+  }
+  
+  @media print {
+    html, body {
+      height: initial !important;
+      overflow: initial !important;
+      -webkit-print-color-adjust: exact;
+    }
+
+  }
+  
+  @media print {
+    .page-break {
+      margin-top: 3rem;
+      display: block;
+      page-break-before: always;
+    }
+    .ant-table {
+        font-size: xx-small !important;
+      }
+  }
+  
+  @page {
+    size: auto;
+    margin: 10mm;
+  }
