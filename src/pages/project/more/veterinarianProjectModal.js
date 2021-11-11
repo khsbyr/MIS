@@ -42,8 +42,8 @@ export default function veterinarianProjectModal(props) {
   const loadLazyTimeout = null;
   const [userID, setUserID] = useState();
   const [fileList] = useState([]);
-  // const [orgList, setOrgList] = useState();
-  // const [selectedOrgId, setSelectedOrgId] = useState();
+  const [orgList, setOrgList] = useState();
+  const [selectedOrgId, setSelectedOrgId] = useState();
 
   // const defaultFileList =
   //   EditRow?.youngDoctor?.file && isEditMode
@@ -69,11 +69,11 @@ export default function veterinarianProjectModal(props) {
   };
   useEffect(() => {
     onInit();
-    // getService(`organization/getByType/2`).then(result => {
-    //   if (result) {
-    //     setOrgList(result.content || []);
-    //   }
-    // });
+    getService(`organization/getByType/2`).then(result => {
+      if (result) {
+        setOrgList(result.content || []);
+      }
+    });
     if (EditRow !== null) {
       getService(`soum/getList/${EditRow.address?.aimag.id}`).then(result => {
         if (result) {
@@ -88,7 +88,7 @@ export default function veterinarianProjectModal(props) {
     }
     if (isEditMode) {
       setUserID(EditRow.id);
-      // setSelectedOrgId(EditRow.youngDoctor.organization.id);
+      setSelectedOrgId(EditRow.orgId);
       form.setFieldsValue({
         ...EditRow,
         lastname: EditRow.lastname,
@@ -103,7 +103,7 @@ export default function veterinarianProjectModal(props) {
         AimagID: EditRow.address ? EditRow.address.aimag.id : '',
         SoumID: EditRow.address ? EditRow.address.soum.id : '',
         BagID: EditRow.address ? EditRow.address.bag.id : '',
-        OrgID: EditRow?.youngDoctor?.organization?.id,
+        OrgID: EditRow?.orgId,
       });
     }
   }, []);
@@ -132,9 +132,9 @@ export default function veterinarianProjectModal(props) {
     getBag(value);
   };
 
-  // const selectOrg = value => {
-  //   setSelectedOrgId(value);
-  // };
+  const selectOrg = value => {
+    setSelectedOrgId(value);
+  };
 
   const save = () => {
     form
@@ -142,6 +142,7 @@ export default function veterinarianProjectModal(props) {
       .then(values => {
         if (isEditMode) {
           values.id = userID;
+          values.organization = { id: selectedOrgId };
           values.address = {
             addressDetail: values.AddressDetail,
             country: {
@@ -169,7 +170,6 @@ export default function veterinarianProjectModal(props) {
                 values.youngDoctor = {
                   purpose: values.purpose,
                   file: { id: response.data.id },
-                  // organization: { id: selectedOrgId },
                 };
                 putService(`user/update/${EditRow.id}`, values)
                   .then(() => {
@@ -186,7 +186,6 @@ export default function veterinarianProjectModal(props) {
           } else {
             values.youngDoctor = {
               purpose: values.purpose,
-              // organization: { id: selectedOrgId },
             };
             putService(`user/update/${EditRow.id}`, values)
               .then(() => {
@@ -205,6 +204,7 @@ export default function veterinarianProjectModal(props) {
                 lastname: values.lastname,
                 register: values.registerNumber,
                 phoneNumber: values.phoneNumber,
+                organization: { id: selectedOrgId },
                 email: values.email,
                 roleId: 15,
                 address: {
@@ -225,7 +225,6 @@ export default function veterinarianProjectModal(props) {
               };
               values.youngDoctor = {
                 purpose: values.purpose,
-                // organization: { id: selectedOrgId },
                 file: { id: response.data.id },
               };
               postService(`youngDoctor/post`, values)
@@ -246,6 +245,7 @@ export default function veterinarianProjectModal(props) {
             lastname: values.lastname,
             register: values.registerNumber,
             phoneNumber: values.phoneNumber,
+            organization: { id: selectedOrgId },
             email: values.email,
             roleId: 15,
             address: {
@@ -266,7 +266,6 @@ export default function veterinarianProjectModal(props) {
           };
           values.youngDoctor = {
             purpose: values.purpose,
-            // organization: { id: selectedOrgId },
           };
           postService(`youngDoctor/post`, values)
             .then(() => {
@@ -394,7 +393,14 @@ export default function veterinarianProjectModal(props) {
                     data={stateBag}
                   />
                 </Form.Item>
-                {/* <Form.Item name="OrgID">
+                <Form.Item
+                  name="OrgID"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
                   <AutoCompleteSelect
                     className="FormItem"
                     placeholder="Байгууллага сонгох"
@@ -402,7 +408,7 @@ export default function veterinarianProjectModal(props) {
                     data={orgList}
                     onChange={value => selectOrg(value)}
                   />
-                </Form.Item> */}
+                </Form.Item>
               </Col>
             </Row>
             <h2 className="title">1. Дэлгэрэнгүй хаяг</h2>

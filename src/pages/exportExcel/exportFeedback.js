@@ -1,20 +1,21 @@
 import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, DatePicker, Layout, Row, Tooltip } from 'antd';
+import { Button, Col, Layout, Row, Tooltip } from 'antd';
+import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useToolsStore } from '../../../context/Tools';
-import { getService } from '../../../service/service';
-import { errorCatch, formatIndicator } from '../../../tools/Tools';
-import ContentWrapper from '../../exportExcel/style';
+import { useToolsStore } from '../../context/Tools';
+import { getService } from '../../service/service';
+import { errorCatch } from '../../tools/Tools';
+import ContentWrapper from './style';
 
 const { Content } = Layout;
 
 let loadLazyTimeout = null;
 
-const exportIndicators = () => {
+const ExportFeedback = () => {
   const { t } = useTranslation();
   const toolsStore = useToolsStore();
   const [list, setList] = useState([]);
@@ -23,19 +24,15 @@ const exportIndicators = () => {
     page: 0,
   });
   const dt = useRef(null);
-
   const PAGESIZE = 25;
 
-  const onInit = value => {
+  const onInit = () => {
     toolsStore.setIsShowLoader(true);
     if (loadLazyTimeout) {
       clearTimeout(loadLazyTimeout);
     }
     loadLazyTimeout = setTimeout(() => {
-      const url = value
-        ? `/criteria/getList?stringDate=${value}`
-        : `/criteria/getList?stringDate=`;
-      getService(`${url}`)
+      getService(`/feedback/getList`)
         .then(result => {
           const listResult = result;
           listResult.forEach((item, index) => {
@@ -55,21 +52,17 @@ const exportIndicators = () => {
     onInit();
   }, [lazyParams]);
 
-  const indicatorProcessBodyTemplate = row => (
-    <>{row.resultTobeAchieved + formatIndicator(row.indicator)}</>
-  );
-
-  const upIndicatorBodyTemplate = row => (
-    <>{row.processResult + formatIndicator(row.indicator)}</>
+  const birthDate = row => (
+    <>
+      {moment(row && row.feedbackDate)
+        .zone(0)
+        .format('YYYY-MM-DD')}
+    </>
   );
 
   const exportCSV = () => {
     dt.current.exportCSV();
   };
-
-  function selectedQ(date, dateString) {
-    onInit(dateString);
-  }
 
   return (
     <ContentWrapper>
@@ -77,21 +70,10 @@ const exportIndicators = () => {
         <Content>
           <Row>
             <Col xs={24} md={12} lg={14}>
-              <p className="title">Шалгуур үзүүлэлт</p>
+              <p className="title">Санал гомдол, санал хүсэлт</p>
             </Col>
             <Col xs={18} md={12} lg={10}>
               <Row justify="end" gutter={[16, 16]}>
-                <Col>
-                  <DatePicker
-                    picker="quarter"
-                    className="datepicker"
-                    placeholder="Улирал сонгох"
-                    style={{
-                      border: 'none',
-                    }}
-                    onChange={selectedQ}
-                  />
-                </Col>
                 <Col>
                   <Tooltip title={t('export')} arrowPointAtCenter>
                     <Button
@@ -120,27 +102,39 @@ const exportIndicators = () => {
             emptyMessage="Өгөгдөл олдсонгүй..."
             className="p-datatable-responsive-demo"
           >
-            <Column field="index" header="Код" style={{ width: 80 }} />
-            <Column field="name" header="Шалгуур үзүүлэлтийн нэр" />
-            <Column field="englishName" header="Шалгуур үзүүлэлтийн нэр" />
+            <Column field="index" header="№" style={{ width: 80 }} />
+            <Column field="complainant" header="Санал, гомдол гаргагч" />
             <Column
-              field="resultTobeAchieved"
-              header="Хүрэх үр дүн"
-              body={indicatorProcessBodyTemplate}
+              field="registerNumber"
+              header="Санал, гомдол гаргагчийн регистр"
             />
             <Column
-              field="processResult"
-              header="Үр дүнгийн биелэлт"
-              body={upIndicatorBodyTemplate}
+              field="complainantEmail"
+              header="Санал, гомдол гаргагчийн и-мэйл"
             />
-            <Column field="criteriaReference.name" header="Бүрэлдэхүүн" />
-            <Column field="description" header="Тайлбар" />
-            <Column field="sourceOfInformation" header="Мэдээллийн эх үүсвэр" />
             <Column
-              field="dataCollectionMethodology"
-              header="Мэдээлэл цуглуулах аргачлал"
+              field="phoneNumber"
+              header="Санал, гомдол гаргагчийн утас"
             />
-            <Column field="unitOfResponsibility" header="Хариуцах нэгж" />
+            <Column
+              field="addressDetail"
+              header="Санал, гомдол гаргагчийн хаяг"
+            />
+            <Column
+              field="feedbackDate"
+              header="Хүлээн авсан огноо"
+              body={birthDate}
+            />
+            <Column
+              field="description"
+              header="Санал, гомдлын агуулга
+"
+            />
+            <Column
+              field="measures"
+              header="Авсан арга хэмжээ
+"
+            />
           </DataTable>
         </div>
       </div>
@@ -148,4 +142,4 @@ const exportIndicators = () => {
   );
 };
 
-export default exportIndicators;
+export default ExportFeedback;

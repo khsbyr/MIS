@@ -1,24 +1,17 @@
-import React, { useEffect, useState, useContext, useRef } from 'react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import {
-  faFileExcel,
-  faFilePdf,
-  faPen,
-  faPlus,
-  faPrint,
-  faTrash,
-} from '@fortawesome/free-solid-svg-icons';
+import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { useHistory } from 'react-router-dom';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
+import { PAGESIZE } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
-import { errorCatch, convertLazyParamsToObj } from '../../tools/Tools';
+import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
 import ContentWrapper from '../criteria/criteria.style';
-import { PAGESIZE } from '../../constants/Constant';
 import MakhisModal from './component/MakhisModal';
 
 const { Content } = Layout;
@@ -207,38 +200,6 @@ const Makhis = () => {
             </Col>
             <Col xs={24} md={18} lg={14}>
               <Row justify="end" gutter={[16, 16]}>
-                <Col xs={8} md={3} lg={2}>
-                  <Tooltip title={t('print')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col xs={8} md={3} lg={2}>
-                  <Tooltip title={t('export')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col xs={8} md={3} lg={2}>
-                  <Tooltip title={t('pdf')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFilePdf} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
                 <Col xs={8} md={3} lg={2}>
                   <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button

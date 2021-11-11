@@ -1,40 +1,42 @@
 /* eslint-disable no-nested-ternary */
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
-  faFileExcel,
+  faFileDownload,
   faFilePdf,
   faHistory,
   faPen,
   faPlus,
-  faPrint,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
   Col,
+  DatePicker,
   Layout,
   message,
   Modal,
   Row,
-  Tooltip,
   Select,
-  Tag,
   Table,
+  Tag,
+  Tooltip,
 } from 'antd';
+import locale from 'antd/es/date-picker/locale/mn_MN';
+import moment from 'moment';
+import 'moment/locale/mn';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import moment from 'moment';
+import AutocompleteSelect from '../../components/Autocomplete';
 import { PAGESIZE, PlanType } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
 import { deleteService, getService, putService } from '../../service/service';
 import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
-import ContentWrapper from './more/report.style';
-import ReportModal from './components/reportModal';
-import AutocompleteSelect from '../../components/Autocomplete';
 import DescriptionModal from './components/DescriptionModal';
+import ReportModal from './components/reportModal';
+import ContentWrapper from './more/report.style';
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -90,6 +92,9 @@ const Report = () => {
   const [status, setStatus] = useState();
   const [visible, setVisible] = useState(false);
   const [reportId, setReportId] = useState();
+  const [ExportDateValue, setExportDateValue] = useState();
+  const [ExportTypeId, setExportTypeId] = useState();
+  const [visibleExport, setVisibleExport] = useState(false);
 
   let loadLazyTimeout = null;
 
@@ -426,6 +431,35 @@ const Report = () => {
     </>
   );
 
+  function exportTab() {
+    window.open(
+      `/exportReport?year=${ExportDateValue}&typeId=${
+        ExportTypeId === 0 ? 0 : ExportTypeId === 1 ? 1 : 2
+      }`
+    );
+  }
+
+  const showModal = () => {
+    setVisibleExport(true);
+  };
+
+  const handleOk = () => {
+    exportTab();
+    setVisibleExport(false);
+  };
+
+  const handleCancel = () => {
+    setVisibleExport(false);
+  };
+
+  const exportDate = (e, value) => {
+    setExportDateValue(value);
+  };
+
+  const exportType = value => {
+    setExportTypeId(value);
+  };
+
   return (
     <ContentWrapper>
       <div className="button-demo">
@@ -474,38 +508,56 @@ const Report = () => {
                       ))}
                   </Select>
                 </Col> */}
-                <Col xs={8} md={3} lg={2}>
-                  <Tooltip title={t('print')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col xs={8} md={3} lg={2}>
-                  <Tooltip title={t('export')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col xs={8} md={3} lg={2}>
-                  <Tooltip title={t('pdf')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFilePdf} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
+
+                <Modal
+                  title="Он сонгох"
+                  visible={visibleExport}
+                  onOk={handleOk}
+                  onCancel={handleCancel}
+                  okText="Хайх"
+                  cancelText="Буцах"
+                >
+                  <Row gutter={12}>
+                    <Col span={12}>
+                      <DatePicker
+                        placeholder="Он сонгох"
+                        picker="month"
+                        onChange={exportDate}
+                        style={{ width: '100%' }}
+                        locale={locale}
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <Select
+                        placeholder="Төрөл"
+                        onChange={exportType}
+                        style={{ width: '100%' }}
+                        allowClear
+                      >
+                        <Option value={0}>Төсөл хэрэгжүүлэгч нэгж</Option>
+                        <Option value={1}>Залуу малын эмч хөтөлбөр</Option>
+                      </Select>
+                    </Col>
+                  </Row>
+                </Modal>
+
+                {toolsStore.user.role.id === 1 ? (
+                  <Col xs={8} md={3} lg={2}>
+                    <Tooltip title={t('export')} arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFileDownload} />}
+                        onClick={() => showModal()}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
+                  </Col>
+                ) : (
+                  ''
+                )}
+
                 <Col xs={8} md={3} lg={2}>
                   <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button

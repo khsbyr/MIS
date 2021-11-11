@@ -1,15 +1,23 @@
 /* eslint-disable no-nested-ternary */
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
-  faFileExcel,
-  faFilePdf,
+  faFileDownload,
   faPen,
   faPlus,
-  faPrint,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Layout, message, Modal, Row, Tooltip } from 'antd';
+import {
+  Button,
+  Col,
+  DatePicker,
+  Layout,
+  message,
+  Modal,
+  Row,
+  Select,
+  Tooltip,
+} from 'antd';
 import moment from 'moment';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -21,10 +29,11 @@ import { PAGESIZE, PlanType } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
 import { deleteService, getService } from '../../service/service';
 import { convertLazyParamsToObj, errorCatch } from '../../tools/Tools';
-import ContentWrapper from './plan.style';
 import PlanModal from './components/planModal';
+import ContentWrapper from './plan.style';
 
 const { Content } = Layout;
+const { Option } = Select;
 
 let editRow;
 let isEditMode;
@@ -44,6 +53,9 @@ const Plan = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const dt = useRef(null);
   // const { Option, OptGroup } = Select;
+  const [visible, setVisible] = useState(false);
+  const [ExportDateValue, setExportDateValue] = useState();
+  const [ExportTypeId, setExportTypeId] = useState();
 
   let loadLazyTimeout = null;
 
@@ -248,8 +260,33 @@ const Plan = () => {
   };
 
   function exportTab() {
-    window.open(`/exportPlan`);
+    window.open(
+      `/exportPlan?year=${ExportDateValue}&typeId=${
+        ExportTypeId === 0 ? 0 : ExportTypeId === 1 ? 1 : 2
+      }`
+    );
   }
+
+  const showModal = () => {
+    setVisible(true);
+  };
+
+  const handleOk = () => {
+    exportTab();
+    setVisible(false);
+  };
+
+  const handleCancel = () => {
+    setVisible(false);
+  };
+
+  const exportDate = (e, value) => {
+    setExportDateValue(value);
+  };
+
+  const exportType = value => {
+    setExportTypeId(value);
+  };
 
   return (
     <ContentWrapper>
@@ -283,7 +320,7 @@ const Plan = () => {
                     allowClear
                   >
                     <OptGroup label="ТӨСЛИЙН ХӨГЖЛИЙНЗОРИЛГЫНТҮВШНИЙШАЛГУУР ҮЗҮҮЛЭЛТҮҮД">
-                      <Option value={1}>Малын эрүүл мэндийн үйлчилгээ</Option>
+                      <Option value={1}>Малын эрүүл мэндийн үйлчилгээ</Option>s
                       <Option value={2}>
                         Нэмүү өртгийн сүлжээний эдийн засгийн эргэлтийг
                         нэмэгдүүлэх
@@ -303,39 +340,55 @@ const Plan = () => {
                     </OptGroup>
                   </Select>
                 </Col> */}
-                <Col xs={8} md={3} lg={2}>
-                  <Tooltip title={t('print')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      icon={<FontAwesomeIcon icon={faPrint} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col xs={8} md={3} lg={2}>
-                  <Tooltip title={t('export')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                      onClick={() => exportTab()}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col xs={8} md={3} lg={2}>
-                  <Tooltip title={t('pdf')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFilePdf} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
-                </Col>
+
+                <Modal
+                  title="Он сонгох"
+                  visible={visible}
+                  onOk={handleOk}
+                  onCancel={handleCancel}
+                  okText="Хайх"
+                  cancelText="Буцах"
+                >
+                  <Row gutter={12}>
+                    <Col span={12}>
+                      <DatePicker
+                        placeholder="Он сонгох"
+                        picker="year"
+                        onChange={exportDate}
+                        style={{ width: '100%' }}
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <Select
+                        placeholder="Төрөл"
+                        onChange={exportType}
+                        style={{ width: '100%' }}
+                        allowClear
+                      >
+                        <Option value={0}>Төсөл хэрэгжүүлэгч нэгж</Option>
+                        <Option value={1}>Залуу малын эмч хөтөлбөр</Option>
+                      </Select>
+                    </Col>
+                  </Row>
+                </Modal>
+
+                {toolsStore.user.role.id === 1 ? (
+                  <Col xs={8} md={3} lg={2}>
+                    <Tooltip title={t('export')} arrowPointAtCenter>
+                      <Button
+                        type="text"
+                        className="export"
+                        icon={<FontAwesomeIcon icon={faFileDownload} />}
+                        onClick={() => showModal()}
+                      >
+                        {' '}
+                      </Button>
+                    </Tooltip>
+                  </Col>
+                ) : (
+                  ''
+                )}
+
                 <Col xs={8} md={3} lg={2}>
                   <Tooltip title={t('add')} arrowPointAtCenter>
                     <Button
@@ -410,7 +463,6 @@ const Plan = () => {
               filterMatchMode="contains"
             />
             <Column
-              headerStyle={{ width: '15rem' }}
               field="startDateFormat"
               header="Огноо"
               body={startDateBodyTemplate}
@@ -419,16 +471,7 @@ const Plan = () => {
               filterPlaceholder="Хайх"
               filterMatchMode="startsWith"
             />
-            <Column
-              headerStyle={{ width: '15rem' }}
-              field="startDateFormat"
-              header="Огноо"
-              body={startDateBodyTemplate}
-              sortable
-              filter
-              filterPlaceholder="Хайх"
-              filterMatchMode="startsWith"
-            />
+
             <Column headerStyle={{ width: '7rem' }} body={action} />
           </DataTable>
           {isModalVisible && (

@@ -122,9 +122,15 @@ export default function PlanModal(props) {
           endDate: endDateValue,
           organizationId: toolsStore.user?.orgId,
           criteriaReference: { id: criteriaReferenceId },
-          subCriteriaReference: subCriteriaID
-            ? { id: subCriteriaID }
-            : { id: '' },
+          // subCriteriaReference: subCriteriaID
+          //   ? { id: subCriteriaID }
+          //   : { id: '' },
+          subCriteriaReference:
+            criteriaReferenceId === 5
+              ? { id: 7 }
+              : criteriaReferenceId === 6
+              ? { id: 8 }
+              : { id: subCriteriaID },
           typeId: planType,
         };
         values.userIds = ProjectUsers;
@@ -184,7 +190,8 @@ export default function PlanModal(props) {
                       data={
                         toolsStore.user.roleId === 15
                           ? PlanType2
-                          : toolsStore.user.roleId === 1
+                          : toolsStore.user.roleId === 1 ||
+                            toolsStore.user.role.id === 4
                           ? PlanType
                           : PlanType1
                       }
@@ -198,7 +205,8 @@ export default function PlanModal(props) {
                       data={
                         toolsStore.user.roleId === 15
                           ? PlanType2
-                          : toolsStore.user.roleId === 1
+                          : toolsStore.user.roleId === 1 ||
+                            toolsStore.user.role.id === 4
                           ? PlanType
                           : PlanType1
                       }
@@ -312,9 +320,9 @@ export default function PlanModal(props) {
                         <Option value={5}>
                           <Tooltip
                             placement="topLeft"
-                            title="Төслийн хэрэгжилтийг дэмжлэг"
+                            title="Төслийн хэрэгжилтийг дэмжих"
                           >
-                            Төслийн хэрэгжилтийг дэмжлэг
+                            Төслийн хэрэгжилтийг дэмжих
                           </Tooltip>
                         </Option>
                         <Option value={6}>

@@ -1,5 +1,5 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { faFileExcel, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
@@ -14,7 +14,6 @@ import {
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { PAGESIZE } from '../../constants/Constant';
 import { ToolsContext } from '../../context/Tools';
 import { getService, putService } from '../../service/service';
@@ -30,7 +29,6 @@ let isEditMode;
 let loadLazyTimeout = null;
 
 const TrainingParticipants = props => {
-  const { t } = useTranslation();
   const [list, setList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const toolsStore = useContext(ToolsContext);
@@ -274,17 +272,6 @@ const TrainingParticipants = props => {
                   >
                     {options}
                   </Select>
-                </Col>
-                <Col>
-                  <Tooltip title={t('export')} arrowPointAtCenter>
-                    <Button
-                      type="text"
-                      className="export"
-                      icon={<FontAwesomeIcon icon={faFileExcel} />}
-                    >
-                      {' '}
-                    </Button>
-                  </Tooltip>
                 </Col>
               </Row>
             </Col>
